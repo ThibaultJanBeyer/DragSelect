@@ -74,7 +74,7 @@ v1.0.0
 var dragSelect = function(options) {
   // Errors
   if(!options) {
-    console.log('ERROR: dragNdrop: please provide an options object to the function. See reference at: https://github.com/ThibaultJanBeyer/dragSelect for more info');
+    console.log('ERROR: dragSelect: please provide an options object to the function. See reference at: https://github.com/ThibaultJanBeyer/dragSelect for more info');
   }
 
   // Setup

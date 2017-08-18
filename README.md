@@ -100,4 +100,4 @@ ds.getSelection();  // returns all currently selected nodes
 
 # Have Fun!
 
-[![Typewriter Gif](https://thibaultjanbeyer.github.io/dragNdrop/typewriter.gif)](http://thibaultjanbeyer.com/)
+[![Typewriter Gif](https://thibaultjanbeyer.github.io/dragSelect/typewriter.gif)](http://thibaultjanbeyer.com/)
