@@ -76,14 +76,16 @@ var dragSelect = function(options) {
   // Errors
   if(!options) {
     console.log('ERROR: dragSelect: please provide an options object to the function. See reference at: https://github.com/ThibaultJanBeyer/dragSelect for more info');
+  } else if(options && !options.selectables) {
+    console.log('ERROR: dragSelect: please provide nodes that can be selected. See reference at: https://github.com/ThibaultJanBeyer/dragSelect for more info');
   }
 
   // Setup
   var selector = options.selector || document.getElementById("rectangle");
   var selectables = options.selectables;
-  var selectCallback = options.onElementSelect;
-  var UnselectCallback = options.onElementUnselect;
-  var callback = options.callback;
+  var selectCallback = options.onElementSelect || function() {};
+  var unselectCallback = options.onElementUnselect || function() {};
+  var callback = options.callback || function() {};
 
   var selected = [];
 
@@ -145,11 +147,13 @@ var dragSelect = function(options) {
         if(index < 0) {
           selected.push(selectable);
           addClass(selectable, 'selected');
+          selectCallback(selectable);
         }
       } else {
         if(index > -1) {
           selected.splice(selected.indexOf(selectable), 1);
           removeClass(selectable, 'selected');
+          unselectCallback(selectable);
         }
       }
     }
@@ -163,6 +167,8 @@ var dragSelect = function(options) {
 
     //document.removeEventListener('mousedown', mousedown);
     document.removeEventListener('mousemove', move);
+
+    callback(selected);
   }
 
   //- Is Element touching Selection? (and vice-versa)
