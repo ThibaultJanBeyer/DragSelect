@@ -62,7 +62,7 @@ The rectangle has to have a `position: fixed` attribute. The other ones have pur
             display:none;"></div>
 ```
 
-```JavaScript
+```javascript
 dragSelect({
   selectables: document.getElementsByClassName('selectable-node')
 });
@@ -70,7 +70,7 @@ dragSelect({
 
 ## complete
 
-```JavaScript
+```javascript
 var ds = dragSelect({
   selector: document.getElementById('rectangle'), // draggable element '#rectangle is default but can be set to anything'
   selectables: [ document.getElementById('selectable1') ], // nodes that can be selected as array
@@ -81,9 +81,10 @@ var ds = dragSelect({
 
 // if you add the function to a variable like we did, you have access to all its functions
 // and can now use start() and stop() like so:
+ds.getSelection();  // returns all currently selected nodes
+
 ds.stop();  // will teardown/stop the whole functionality
 ds.start();  // reset the functionality after a teardown
-ds.getSelection();  // returns all currently selected nodes
 ```
 
 ## Properties:
