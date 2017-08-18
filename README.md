@@ -16,6 +16,7 @@ https://thibaultjanbeyer.github.io/dragSelect/
 
 # Key-Features
 
+- No dependencies
 - Add drag selection.
 - Choose which elements can be selected.
 - Awesome browser support, works even on IE5

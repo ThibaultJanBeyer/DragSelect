@@ -11,6 +11,7 @@ v1.0.0
 
  Key-Features
 
+- No dependencies
 - Add drag selection.
 - Choose which elements can be selected.
 - Awesome browser support, works even on IE5
