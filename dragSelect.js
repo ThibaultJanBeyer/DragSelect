@@ -34,7 +34,8 @@
 ** .start             ()                    reset the functionality after a teardown
 ** .stop              ()                    will teardown/stop the whole functionality
 ** .getSelection      ()                    returns the current selection
-** .addSelectables    ([array of nodes])    adds elements that can be selected. Intelligent algorythm never adds elements twice.
+** .addSelectables    ([array of nodes])    add elements that can be selected. Intelligent algorythm never adds elements twice.
+** .removeSelectables ([array of nodes])    remove elements that can be selected. Also removes the 'selected' class from those elements.
 
 
 
@@ -92,6 +93,26 @@ var dragSelect = function(options) {
   var callback = options.callback || function() {};
 
   var selected = [];
+
+  //- Add/Remove Selectables
+  function addSelectables(nodes) {
+    for (var i  = 0, il = nodes.length; i < il; i++) {
+      var node = nodes[i];
+      if(selectables.indexOf(node) < 0) {
+        selectables.push(node);
+      }
+    }
+  }
+
+  function removeSelectables(nodes) {
+    for (var i  = 0, il = nodes.length; i < il; i++) {
+      var node = nodes[i];
+      if(selectables.indexOf(node) > 0) {
+        removeClass(node, 'selected');
+        selectables.splice(selectables.indexOf(node), 1);
+      }
+    }
+  }
 
   //- Start
   function start() {
@@ -266,7 +287,9 @@ var dragSelect = function(options) {
     move: move,
     startUp: startUp,
     start: start,
-    getSelection: getSelection
+    getSelection: getSelection,
+    removeSelectables: removeSelectables,
+    addSelectables: addSelectables
   };
   return DS;
 
