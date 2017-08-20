@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>dragSelect</title>
   <link rel="stylesheet" href="example.css">
-  <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+  <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 </head>
 <body>
 <div class="main-header">
@@ -74,7 +74,10 @@
         <a href="#three">3. Properties</a>
       </li>
       <li>
-        <a href="#five">4. Classes</a>
+        <a href="#four">4. Methods</a>
+      </li>
+      <li>
+        <a href="#five">5. Classes</a>
       </li>
     </ul>
   </nav>
@@ -111,7 +114,7 @@
 
   <h4 id="twob">2b. Extended</h4>
   <strong>If you add the function to a variable you get full controll over all its functions:</strong>
-  <pre><xmp class="prettyprint lang-js" contenteditable="true"
+  <pre><xmp class="prettyprint lang-javascript" contenteditable="true"
 >var ds = dragSelect({
   selector: document.getElementById('rectangle'), // draggable element '#rectangle is default but can be set to anything'
   selectables: [ document.getElementById('selectable1') ], // nodes that can be selected as array
@@ -124,7 +127,8 @@
 // and can now use start() and stop() like so:
 ds.stop();  // will teardown/stop the whole functionality
 ds.start();  // reset the functionality after a teardown
-ds.getSelection();  // returns all currently selected nodes</xmp></pre>
+ds.getSelection();  // returns all currently selected nodes
+ds.addSelectables([array of nodes]);  // adds elements that can be selected. Intelligent algorythm never adds elements twice.</xmp></pre>
 
 
 
@@ -175,7 +179,51 @@ ds.getSelection();  // returns all currently selected nodes</xmp></pre>
 
 
 
-  <h4 id="five">4. Classes</h4>
+  <h4 id="four">4. Methods</h4>
+
+  <p>When the function is saved into a variable (var foo = dragSelect({...})) you have access to all its inner functions. There are way more than listed here. Here are just the most usable:</p>
+  <strong>Reference:</strong>
+  <table>
+    <thead>
+      <tr>
+        <th>Method</th>
+        <th>Properties</th>
+        <th>Use</th>
+      </tr>
+    </thead>
+    <tr>
+      <td><span class="str">stop</span></td>
+      <td>/</td>
+      <td>will teardown/stop the whole functionality</td>
+    </tr>
+    <tr>
+      <td><span class="str">start</span></td>
+      <td>/</td>
+      <td>reset the functionality after a teardown</td>
+    </tr>
+    <tr>
+      <td><span class="str">getSelection</span></td>
+      <td>/</td>
+      <td>returns all currently selected nodes</td>
+    </tr>
+    <tr>
+      <td><span class="str">addSelectables</span></td>
+      <td>array of nodes</td>
+      <td>adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice</td>
+    </tr>
+    <tr>
+      <td><span class="str">removeSelectables</span></td>
+      <td>array of nodes</td>
+      <td>remove elements that can be selected. Also removes the 'selected' class from those elements.</td>
+    </tr>
+  </table>
+
+
+
+
+
+
+  <h4 id="five">5. Classes</h4>
 
   <strong>Reference:</strong>
   <table>

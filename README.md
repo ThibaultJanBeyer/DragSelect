@@ -96,6 +96,17 @@ ds.start();  // reset the functionality after a teardown
 |onElementUnselect |function |this is optional, it is fired every time an element is de-selected. This callback gets a property which is the just de-selected node.|
 |callback |function |callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes|
 
+## Methods:
+When the function is saved into a variable `var foo = dragSelect({...}` you have access to all its inner functions. There are way more than listed here. Here are just the most usable:  
+
+| method | properties | usage |
+|--- |--- |--- |
+|stop |/ |will teardown/stop the whole functionality |
+|start |/ |reset the functionality after a teardown |
+|getSelection |/ |returns all currently selected nodes |
+|addSelectables |array of DOM elements (nodes) |adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice |
+|removeSelectables |array of DOM elements (nodes) |remove elements that can be selected. Also removes the 'selected' class from those elements. |
+
 ## Classes
 | name | trigger |
 |--- |--- |

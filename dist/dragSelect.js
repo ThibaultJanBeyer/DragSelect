@@ -30,6 +30,14 @@
 ** @onElementUnselect function        this is optional, it is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
 ** @callback          function        a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes
 
+ Methods
+** .start             ()                    reset the functionality after a teardown
+** .stop              ()                    will teardown/stop the whole functionality
+** .getSelection      ()                    returns the current selection
+** .addSelectables    ([array of nodes])    add elements that can be selected. Intelligent algorythm never adds elements twice.
+** .removeSelectables ([array of nodes])    remove elements that can be selected. Also removes the 'selected' class from those elements.
+
+
 
 
  STAR THIS PLUGIN ON GITHUB:
@@ -86,6 +94,26 @@ var dragSelect = function(options) {
 
   var selected = [];
 
+  //- Add/Remove Selectables
+  function addSelectables(nodes) {
+    for (var i  = 0, il = nodes.length; i < il; i++) {
+      var node = nodes[i];
+      if(selectables.indexOf(node) < 0) {
+        selectables.push(node);
+      }
+    }
+  }
+
+  function removeSelectables(nodes) {
+    for (var i  = 0, il = nodes.length; i < il; i++) {
+      var node = nodes[i];
+      if(selectables.indexOf(node) > 0) {
+        removeClass(node, 'selected');
+        selectables.splice(selectables.indexOf(node), 1);
+      }
+    }
+  }
+
   //- Start
   function start() {
     document.addEventListener('mousedown', startUp);
@@ -94,7 +122,6 @@ var dragSelect = function(options) {
 
   var cursorPos;
   function startUp(e) {
-    console.log('STARTUP');
     cursorPos = { // event.clientX/Y fallback for IE8-
       x: e.pageX || e.clientX,
       y: e.pageY || e.clientY
@@ -260,7 +287,9 @@ var dragSelect = function(options) {
     move: move,
     startUp: startUp,
     start: start,
-    getSelection: getSelection
+    getSelection: getSelection,
+    removeSelectables: removeSelectables,
+    addSelectables: addSelectables
   };
   return DS;
 
