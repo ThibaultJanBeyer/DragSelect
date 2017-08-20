@@ -86,8 +86,7 @@ var dragSelect = function(options) {
   }
 
   // Setup
-  var _selector = options.selector || document.getElementById("rectangle");
-  var selector = toArray(_selector);
+  var selector = options.selector || document.getElementById("rectangle");
   var selectables = toArray(options.selectables) || [];
   var selectCallback = options.onElementSelect || function() {};
   var unselectCallback = options.onElementUnselect || function() {};
