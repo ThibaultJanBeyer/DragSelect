@@ -74,6 +74,7 @@ dragSelect({
 var ds = dragSelect({
   selector: document.getElementById('rectangle'), // draggable element '#rectangle is default but can be set to anything'
   selectables: [ document.getElementById('selectable1') ], // nodes that can be selected as array
+  area: document.getElementById('area'), // area in which you can drag'
   onElementSelect: function(element) {}, // this is optional, it is fired every time an element is selected. (element) = just selected node
   onElementUnselect: function(element) {}, // this is optional, it is fired every time an element is de-selected. (element) = just de-selected node.
   callback: function(elements) {} // this is optional is fired once the user releases the mouse. (elements) = selected nodes.
@@ -92,6 +93,7 @@ ds.start();  // reset the functionality after a teardown
 |--- |--- |--- |
 |selector |single DOM element (node) |the square that will draw the selection. Default = #rectangle|
 |selectables |DOM elements (nodes) |the elements that can be selected|
+|area |single DOM element (node) |The square in which you are able to select |
 |onElementSelect |function |this is optional, it is fired every time an element is selected. This callback gets a property which is the just selected node|
 |onElementUnselect |function |this is optional, it is fired every time an element is de-selected. This callback gets a property which is the just de-selected node.|
 |callback |function |callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes|

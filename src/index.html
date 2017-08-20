@@ -112,12 +112,17 @@
   <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
   Don’t forget to add <strong>position: fixed/absolute</strong> attribute to the selection rectangle, otherwise you won’t see it.
 
-  <h4 id="twob">2b. Extended</h4>
+  <h4 id="twob">2b. Widthin an Area</h4>
+  <p data-height="326" data-theme-id="0" data-slug-hash="RZMRZw" data-default-tab="css,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="dragSelect with AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/RZMRZw/">dragSelect with AREA</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+  <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
+  <h4 id="twob">2c. Extended</h4>
   <strong>If you add the function to a variable you get full controll over all its functions:</strong>
   <pre><xmp class="prettyprint lang-javascript" contenteditable="true"
 >var ds = dragSelect({
   selector: document.getElementById('rectangle'), // draggable element '#rectangle is default but can be set to anything'
   selectables: document.getElementsByClassName('selectables'), // nodes that can be selected as array
+  area: document.getElementById('area'), // you can only drag within this area 
   onElementSelect: function(element) {}, // this is optional, it is fired every time an element is selected. (element) = just selected node
   onElementUnselect: function(element) {}, // this is optional, it is fired every time an element is de-selected. (element) = just de-selected node.
   callback: function(elements) {} // this is optional is fired once the user releases the mouse. (elements) = selected nodes.
@@ -155,6 +160,11 @@ ds.addSelectables([nodes]);  // adds elements that can be selected. Intelligent 
         <td><span class="str">selectables&nbsp;</span></td>
         <td>Nodes</td>
         <td>the elements that can be selected</td>
+      </tr>
+      <tr>
+        <td><span class="str">area&nbsp;</span></td>
+        <td>single DOM element (node)</td>
+        <td>The square in which you are able to select</td>
       </tr>
       <tr>
         <td><span class="str">onElementSelect&nbsp;</span></td>
