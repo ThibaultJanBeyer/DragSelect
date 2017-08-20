@@ -109,7 +109,7 @@ var dragSelect = function(options) {
   //- Start
   function start() {
     area.addEventListener('mousedown', startUp);
-    area.addEventListener('mouseout', reset);
+    area.addEventListener('mouseleave', reset);
   }
   start();
 
@@ -182,7 +182,7 @@ var dragSelect = function(options) {
     selector.style.height = '0';
     selector.style.display = 'none';
 
-    // area.removeEventListener('mouseout', reset);
+    // area.removeEventListener('mouseleave', reset);
     area.removeEventListener('mousemove', move);
 
     callback(selected);
@@ -268,7 +268,7 @@ var dragSelect = function(options) {
   function stop() {
     reset();
     area.removeEventListener('mousedown', startUp);
-    area.removeEventListener('mouseout', reset);
+    area.removeEventListener('mouseleave', reset);
   }
 
   /* * * * * *
