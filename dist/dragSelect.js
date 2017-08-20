@@ -310,6 +310,8 @@ var dragSelect = function(options) {
   //- Return
 
   var DS = {
+    isElement: isElement,
+    toArray: toArray,
     removeClass: removeClass,
     addClass: addClass,
     stop: stop,
