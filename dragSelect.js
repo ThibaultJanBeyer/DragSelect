@@ -280,6 +280,7 @@ var dragSelect = function(options) {
   }
 
   function toArray(obj) {
+    if(!obj) { return false; }
     if(!obj.length && isElement(obj)) { return [obj]; }
 
     var array = [];
