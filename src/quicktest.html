@@ -1,0 +1,116 @@
+<style>
+* {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+#rectangle {
+  position: fixed;
+  background: rgba(0, 0, 255, 0.5);
+  border: 1px solid blue;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  display: none;
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#container {
+  width: 50%;
+  height: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 25%;
+  left: 25%;
+}
+
+.item {
+  z-index: -1;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: white;
+}
+
+.item:nth-child(1) {
+  background: #0df2d4;
+  top: 69%;
+  left: 32%;
+}
+
+.item:nth-child(2) {
+  background: #f2200d;
+  top: 37%;
+  left: 67%;
+}
+
+.item:nth-child(3) {
+  background: #f20d93;
+  top: 69%;
+  left: 65%;
+}
+
+.item:nth-child(4) {
+  background: #0d18f2;
+  top: 12%;
+  left: 59%;
+}
+
+.item:nth-child(11) {
+  background: #f20dcc;
+  top: 71%;
+  left: 68%;
+}
+
+.item.selected {
+  outline: 3px solid black;
+  outline-offset: 3px;
+  color: black;
+  font-weight: bold;
+}
+</style>
+
+<div id="container">
+  <div id="rectangle"></div>
+</div>
+
+<div class="item one">1</div>
+<div class="item two">2</div>
+<div class="item three">3</div>
+<div class="item four">4</div>
+<div class="item five">5</div>
+<div class="item six">6</div>
+<div class="item seven">7</div>
+<div class="item eight">8</div>
+<div class="item nine">9</div>
+<div class="item ten">10</div>
+
+<script src="dragSelect.js"></script>
+<script>
+
+var ds = dragSelect({
+  selectables: document.getElementsByClassName('item')
+});
+
+
+</script>
+

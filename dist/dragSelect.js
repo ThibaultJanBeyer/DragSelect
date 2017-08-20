@@ -84,20 +84,29 @@ var dragSelect = function(options) {
   }
 
   // Setup
-  var selector = options.selector || document.getElementById("rectangle");
-  var _selectables = toArray(options.selectables);
-  var selectables = _selectables || [];
-  var selectCallback = options.onElementSelect || function() {};
-  var unselectCallback = options.onElementUnselect || function() {};
-  var callback = options.callback || function() {};
-  var area = options.area || document;
+  var selector,
+      selectables,
+      selectCallback,
+      unselectCallback,
+      callback,
+      area,
+      selected;
 
-  var selected = [];
+  function setup() {
+    selector = options.selector || document.getElementById("rectangle");
+    selectables = toArray(options.selectables) || [];
+    selectCallback = options.onElementSelect || function() {};
+    unselectCallback = options.onElementUnselect || function() {};
+    callback = options.callback || function() {};
+    area = options.area || document;
+    selected = [];
+  }
+  setup();
 
   //- Start
-  var start = function() {
+  function start() {
     area.addEventListener('mousedown', startUp);
-  };
+  }
   start();
 
   var cursorPos;
@@ -185,8 +194,8 @@ var dragSelect = function(options) {
      */
     var scroll = {
       // fallback for IE9-
-      x: area ? area.scrollTop : window.scrollY || document.documentElement.scrollTop,
-      y: area ? area.scrollLeft : window.scrollX || document.documentElement.scrollLeft
+      x: area && area.scrollTop ? area.scrollTop : window.scrollY || document.documentElement.scrollTop,
+      y: area && area.scrollLeft ? area.scrollLeft : window.scrollX || document.documentElement.scrollLeft
     };
     var containerRect = {
       y: container.getBoundingClientRect().top + scroll.y,
