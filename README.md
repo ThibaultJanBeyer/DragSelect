@@ -53,7 +53,7 @@ Now in your JavaScript you can simply pass elements to the function like so:
 
 ## simple
 
-The rectangle has to have a `position: fixed` attribute. The other ones have purely visual reasons.
+The rectangle has to have a `position: fixed/absolute` attribute. The other ones have purely visual reasons.
 ```html
 <div id="rectangle" 
      style="position: fixed;
