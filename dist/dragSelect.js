@@ -86,14 +86,14 @@ var dragSelect = function(options) {
   }
 
   // Setup
-  var selector = options.selector || document.getElementById("rectangle"),
-      selectables = toArray(options.selectables) || [],
-      selectCallback = options.onElementSelect || function() {},
-      unselectCallback = options.onElementUnselect || function() {},
-      callback = options.callback || function() {},
-      area = options.area || document,
+  var selector = options.selector || document.getElementById("rectangle");
+  var selectables = toArray(options.selectables) || [];
+  var selectCallback = options.onElementSelect || function() {};
+  var unselectCallback = options.onElementUnselect || function() {};
+  var callback = options.callback || function() {};
+  var area = options.area || document;
 
-      selected = [];
+  var selected = [];
 
   //- Start
   function start() {
