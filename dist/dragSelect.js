@@ -86,13 +86,25 @@ var dragSelect = function(options) {
   }
 
   // Setup
-  var selector = options.selector || document.getElementById("rectangle");
-  var selectables = toArray(options.selectables) || [];
-  var selectCallback = options.onElementSelect || function() {};
-  var unselectCallback = options.onElementUnselect || function() {};
-  var callback = options.callback || function() {};
+  var selector,
+      selectables,
+      selectCallback,
+      unselectCallback,
+      callback,
+      area,
+      selected;
 
-  var selected = [];
+  function setup() {
+    selector = options.selector || document.getElementById("rectangle");
+    selectables = toArray(options.selectables) || [];
+    selectCallback = options.onElementSelect || function() {};
+    unselectCallback = options.onElementUnselect || function() {};
+    callback = options.callback || function() {};
+    area = options.area || document;
+
+    selected = [];
+  }
+  setup();
 
   //- Add/Remove Selectables
   function addSelectables(_nodes) {
@@ -118,7 +130,7 @@ var dragSelect = function(options) {
 
   //- Start
   function start() {
-    document.addEventListener('mousedown', startUp);
+    area.addEventListener('mousedown', startUp);
   }
   start();
 
@@ -134,8 +146,8 @@ var dragSelect = function(options) {
     selector.style.left = cursorPos.x + 'px';
     checkIfInside();
     
-    document.addEventListener('mousemove', move);
-    document.addEventListener('mouseup', reset);
+    area.addEventListener('mousemove', move);
+    area.addEventListener('mouseup', reset);
   }
 
   // resize that div while mouse is pressed
@@ -191,8 +203,8 @@ var dragSelect = function(options) {
     selector.style.height = '0';
     selector.style.display = 'none';
 
-    //document.removeEventListener('mousedown', mousedown);
-    document.removeEventListener('mousemove', move);
+    //area.removeEventListener('mousedown', mousedown);
+    area.removeEventListener('mousemove', move);
 
     callback(selected);
   }
@@ -206,8 +218,8 @@ var dragSelect = function(options) {
      */
     var scroll = {
       // fallback for IE9-
-      x: window.scrollY || document.documentElement.scrollTop,
-      y: window.scrollX || document.documentElement.scrollLeft
+      x: area ? area.scrollTop : window.scrollY || document.documentElement.scrollTop,
+      y: area ? area.scrollLeft : window.scrollX || document.documentElement.scrollLeft
     };
     var containerRect = {
       y: container.getBoundingClientRect().top + scroll.y,
@@ -254,7 +266,7 @@ var dragSelect = function(options) {
   //- Stop
   function stop() {
     reset();
-    document.removeEventListener('mousedown', startUp);
+    area.removeEventListener('mousedown', startUp);
   }
 
   /* * * * * *
