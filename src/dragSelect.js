@@ -81,8 +81,6 @@ var dragSelect = function(options) {
   // Errors
   if(!options) {
     console.log('ERROR: dragSelect: please provide an options object to the function. See reference at: https://github.com/ThibaultJanBeyer/dragSelect for more info');
-  } else if(options && !options.selectables) {
-    console.log('ERROR: dragSelect: please provide nodes that can be selected. See reference at: https://github.com/ThibaultJanBeyer/dragSelect for more info');
   }
 
   // Setup
@@ -97,9 +95,9 @@ var dragSelect = function(options) {
   var selected = [];
 
   //- Start
-  function start() {
+  var start = function() {
     area.addEventListener('mousedown', startUp);
-  }
+  };
   start();
 
   var cursorPos;
