@@ -30,6 +30,13 @@
 ** @onElementUnselect function        this is optional, it is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
 ** @callback          function        a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes
 
+ Methods
+** .start             ()                    reset the functionality after a teardown
+** .stop              ()                    will teardown/stop the whole functionality
+** .getSelection      ()                    returns the current selection
+** .addSelectables    ([array of nodes])    adds elements that can be selected. Intelligent algorythm never adds elements twice.
+
+
 
 
  STAR THIS PLUGIN ON GITHUB:
