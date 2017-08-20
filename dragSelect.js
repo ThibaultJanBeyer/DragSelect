@@ -109,7 +109,6 @@ var dragSelect = function(options) {
   //- Start
   function start() {
     area.addEventListener('mousedown', startUp);
-    area.addEventListener('mouseout', reset);
   }
   start();
 
@@ -125,8 +124,9 @@ var dragSelect = function(options) {
     selector.style.left = cursorPos.x + 'px';
     checkIfInside();
     
+    area.removeEventListener('mousedown', startUp);
     area.addEventListener('mousemove', move);
-    area.addEventListener('mouseup', reset);
+    document.addEventListener('mouseup', reset);
   }
 
   // resize that div while mouse is pressed
@@ -181,11 +181,11 @@ var dragSelect = function(options) {
     selector.style.width = '0';
     selector.style.height = '0';
     selector.style.display = 'none';
-
-    // area.removeEventListener('mouseout', reset);
-    area.removeEventListener('mousemove', move);
-
+    
     callback(selected);
+    
+    area.removeEventListener('mousemove', move);
+    area.addEventListener('mousedown', startUp);
   }
 
   //- Is Element touching Selection? (and vice-versa)
@@ -268,7 +268,7 @@ var dragSelect = function(options) {
   function stop() {
     reset();
     area.removeEventListener('mousedown', startUp);
-    area.removeEventListener('mouseout', reset);
+    document.removeEventListener('mouseup', reset);
   }
 
   /* * * * * *
