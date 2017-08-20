@@ -106,31 +106,10 @@ var dragSelect = function(options) {
   }
   setup();
 
-  //- Add/Remove Selectables
-  function addSelectables(_nodes) {
-    var nodes = toArray(_nodes);
-    for (var i  = 0, il = nodes.length; i < il; i++) {
-      var node = nodes[i];
-      if(selectables.indexOf(node) < 0) {
-        selectables.push(node);
-      }
-    }
-  }
-
-  function removeSelectables(_nodes) {
-    var nodes = toArray(_nodes);
-    for (var i  = 0, il = nodes.length; i < il; i++) {
-      var node = nodes[i];
-      if(selectables.indexOf(node) > 0) {
-        removeClass(node, 'selected');
-        selectables.splice(selectables.indexOf(node), 1);
-      }
-    }
-  }
-
   //- Start
   function start() {
     area.addEventListener('mousedown', startUp);
+    area.addEventListener('mouseout', reset);
   }
   start();
 
@@ -203,7 +182,7 @@ var dragSelect = function(options) {
     selector.style.height = '0';
     selector.style.display = 'none';
 
-    //area.removeEventListener('mousedown', mousedown);
+    // area.removeEventListener('mouseout', reset);
     area.removeEventListener('mousemove', move);
 
     callback(selected);
@@ -259,6 +238,28 @@ var dragSelect = function(options) {
     }
   }
 
+  //- Add/Remove Selectables
+  function addSelectables(_nodes) {
+    var nodes = toArray(_nodes);
+    for (var i  = 0, il = nodes.length; i < il; i++) {
+      var node = nodes[i];
+      if(selectables.indexOf(node) < 0) {
+        selectables.push(node);
+      }
+    }
+  }
+
+  function removeSelectables(_nodes) {
+    var nodes = toArray(_nodes);
+    for (var i  = 0, il = nodes.length; i < il; i++) {
+      var node = nodes[i];
+      if(selectables.indexOf(node) > 0) {
+        removeClass(node, 'selected');
+        selectables.splice(selectables.indexOf(node), 1);
+      }
+    }
+  }
+
   function getSelection() {
     return selected;
   }
@@ -267,6 +268,7 @@ var dragSelect = function(options) {
   function stop() {
     reset();
     area.removeEventListener('mousedown', startUp);
+    area.removeEventListener('mouseout', reset);
   }
 
   /* * * * * *
