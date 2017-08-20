@@ -11,7 +11,7 @@
 - No dependencies
 - Add drag selection.
 - Choose which elements can be selected.
-- Awesome browser support, works even on IE5
+- Awesome browser support, works even on IE7
 - Ease of use
 - Lightweight, only 1KB gzipped
 - Free & open source under MIT License
@@ -25,7 +25,7 @@
  Properties
 
 ** @selector          node            the square that will draw the selection
-** @selectables       array of nodes  the elements that can be selected
+** @selectables       nodes           the elements that can be selected
 ** @onElementSelect   function        this is optional, it is fired every time an element is selected. This callback gets a property which is the just selected node
 ** @onElementUnselect function        this is optional, it is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
 ** @callback          function        a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes
@@ -34,8 +34,8 @@
 ** .start             ()                    reset the functionality after a teardown
 ** .stop              ()                    will teardown/stop the whole functionality
 ** .getSelection      ()                    returns the current selection
-** .addSelectables    ([array of nodes])    add elements that can be selected. Intelligent algorythm never adds elements twice.
-** .removeSelectables ([array of nodes])    remove elements that can be selected. Also removes the 'selected' class from those elements.
+** .addSelectables    ([nodes])             add elements that can be selected. Intelligent algorythm never adds elements twice.
+** .removeSelectables ([nodes])             remove elements that can be selected. Also removes the 'selected' class from those elements.
 
 
 
