@@ -36,7 +36,7 @@
     <div class="benefits">
       <div class="benefit">
         <h2 class="benefit-title">Browser Support</h2>
-        <p class="benefit-text">dragSelect was successfully tested on a wide range of browsers, it even works on ie5.</p>
+        <p class="benefit-text">dragSelect was successfully tested on a wide range of browsers, it even works on ie7.</p>
       </div>
       <div class="benefit">
         <h2 class="benefit-title">Ease of use</h2>
@@ -117,10 +117,10 @@
   <pre><xmp class="prettyprint lang-javascript" contenteditable="true"
 >var ds = dragSelect({
   selector: document.getElementById('rectangle'), // draggable element '#rectangle is default but can be set to anything'
-  selectables: [ document.getElementById('selectable1') ], // nodes that can be selected as array
+  selectables: document.getElementsByClassName('selectables'), // nodes that can be selected as array
   onElementSelect: function(element) {}, // this is optional, it is fired every time an element is selected. (element) = just selected node
   onElementUnselect: function(element) {}, // this is optional, it is fired every time an element is de-selected. (element) = just de-selected node.
-  callback: function(elements) {} // this is optional is fired once the user releases the mouse. (elements) = array of selected nodes.
+  callback: function(elements) {} // this is optional is fired once the user releases the mouse. (elements) = selected nodes.
 });
 
 // if you add the function to a variable like we did, you have access to all its functions
@@ -128,7 +128,7 @@
 ds.stop();  // will teardown/stop the whole functionality
 ds.start();  // reset the functionality after a teardown
 ds.getSelection();  // returns all currently selected nodes
-ds.addSelectables([array of nodes]);  // adds elements that can be selected. Intelligent algorythm never adds elements twice.</xmp></pre>
+ds.addSelectables([nodes]);  // adds elements that can be selected. Intelligent algorythm never adds elements twice.</xmp></pre>
 
 
 
@@ -153,7 +153,7 @@ ds.addSelectables([array of nodes]);  // adds elements that can be selected. Int
       </tr>
       <tr>
         <td><span class="str">selectables&nbsp;</span></td>
-        <td>Array of Nodes</td>
+        <td>Nodes</td>
         <td>the elements that can be selected</td>
       </tr>
       <tr>
@@ -208,12 +208,12 @@ ds.addSelectables([array of nodes]);  // adds elements that can be selected. Int
     </tr>
     <tr>
       <td><span class="str">addSelectables</span></td>
-      <td>array of nodes</td>
+      <td>nodes</td>
       <td>adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice</td>
     </tr>
     <tr>
       <td><span class="str">removeSelectables</span></td>
-      <td>array of nodes</td>
+      <td>nodes</td>
       <td>remove elements that can be selected. Also removes the 'selected' class from those elements.</td>
     </tr>
   </table>
