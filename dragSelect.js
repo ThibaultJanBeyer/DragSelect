@@ -86,8 +86,9 @@ var dragSelect = function(options) {
   }
 
   // Setup
-  var selector = options.selector || document.getElementById("rectangle");
-  var selectables = options.selectables;
+  var _selector = options.selector || document.getElementById("rectangle");
+  var selector = toArray(_selector);
+  var selectables = toArray(options.selectables) || [];
   var selectCallback = options.onElementSelect || function() {};
   var unselectCallback = options.onElementUnselect || function() {};
   var callback = options.callback || function() {};
@@ -95,7 +96,8 @@ var dragSelect = function(options) {
   var selected = [];
 
   //- Add/Remove Selectables
-  function addSelectables(nodes) {
+  function addSelectables(_nodes) {
+    var nodes = toArray(_nodes);
     for (var i  = 0, il = nodes.length; i < il; i++) {
       var node = nodes[i];
       if(selectables.indexOf(node) < 0) {
@@ -104,7 +106,8 @@ var dragSelect = function(options) {
     }
   }
 
-  function removeSelectables(nodes) {
+  function removeSelectables(_nodes) {
+    var nodes = toArray(_nodes);
     for (var i  = 0, il = nodes.length; i < il; i++) {
       var node = nodes[i];
       if(selectables.indexOf(node) > 0) {
@@ -276,6 +279,36 @@ var dragSelect = function(options) {
     cn = cn.replace( classname, '' );
     element.className = cn;
   }
+
+  function toArray(obj) {
+    if(!obj.length && isElement(obj)) { return [obj]; }
+
+    var array = [];
+    // iterate backwards ensuring that length is an UInt32
+    for (var i = obj.length; i > 0; i--) { 
+      array[i] = obj[i];
+    }
+
+    return array;
+  }
+
+  function isElement(obj) {
+    try {
+      //Using W3 DOM2 (works for FF, Opera and Chrom)
+      return obj instanceof HTMLElement;
+    }
+    catch(e){
+      //Browsers not supporting W3 DOM2 don't have HTMLElement and
+      //an exception is thrown and we end up here. Testing some
+      //properties that all elements have. (works on IE7)
+      return (typeof obj==="object") &&
+        (obj.nodeType===1) && (typeof obj.style === "object") &&
+        (typeof obj.ownerDocument ==="object");
+    }
+  }
+
+
+  //- Return
 
   var DS = {
     removeClass: removeClass,
