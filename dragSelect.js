@@ -101,7 +101,6 @@ var dragSelect = function(options) {
 
   var cursorPos;
   function startUp(e) {
-    console.log('STARTUP');
     cursorPos = { // event.clientX/Y fallback for IE8-
       x: e.pageX || e.clientX,
       y: e.pageY || e.clientY
