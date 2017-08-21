@@ -240,7 +240,7 @@ var dragSelect = function(options) {
   // Scroll the area by selecting
   var additionalTop = 0;
   function selectorScroll() {
-    var edge = isSelectorNearEdge();
+    var edge = isCursorNearEdge();
     if(edge === 'top') {
       area.scrollTop -= 1;
     } else if(edge === 'bottom') {
@@ -253,7 +253,7 @@ var dragSelect = function(options) {
   }
 
   // Check if the selector is near an edge of the area
-  function isSelectorNearEdge() {
+  function isCursorNearEdge() {
     if(!area) { return false; }
     var cursorPosition = cursorPos2 || cursorPos;
     var parent = area.parentElement;
