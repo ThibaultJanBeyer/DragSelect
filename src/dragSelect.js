@@ -1,7 +1,6 @@
 /* 
 
-@TODO: // how to do https://stackoverflow.com/questions/14651306/get-mouse-position-within-div without jquery ?
-@TODO: Get this AREARECT working: add scroll handling to it
+@TODO: get the scroll down working!!!
 
        __                 _____      __          __ 
   ____/ /________ _____ _/ ___/___  / /__  _____/ /_
@@ -195,8 +194,8 @@ var dragSelect = function(options) {
      */
     var scroll = {
       // fallback for IE9-
-      x: area && area.scrollTop >= 0 ? area.scrollTop : window.scrollY || document.documentElement.scrollTop,
-      y: area && area.scrollLeft >= 0 ? area.scrollLeft : window.scrollX || document.documentElement.scrollLeft
+      y: area && area.scrollTop >= 0 ? area.scrollTop : window.scrollY || document.documentElement.scrollTop,
+      x: area && area.scrollLeft >= 0 ? area.scrollLeft : window.scrollX || document.documentElement.scrollLeft
     };
     var containerRect = {
       y: container.getBoundingClientRect().top + scroll.y,
@@ -210,8 +209,6 @@ var dragSelect = function(options) {
       h: element.offsetHeight,
       w: element.offsetWidth    
     };
-
-    if(area && area.scrollTop >= 0) { selectorScroll(); }
 
     // Axis-Aligned Bounding Box Colision Detection.
     // Imagine following Example:
@@ -262,8 +259,8 @@ var dragSelect = function(options) {
 
     var scroll = {
       // fallback for IE9-
-      x: parent && parent.scrollTop >= 0 ? parent.scrollTop : window.scrollY || document.documentElement.scrollTop,
-      y: parent && parent.scrollLeft >= 0 ? parent.scrollLeft : window.scrollX || document.documentElement.scrollLeft
+      y: parent && parent.scrollTop >= 0 ? parent.scrollTop : window.scrollY || document.documentElement.scrollTop,
+      x: parent && parent.scrollLeft >= 0 ? parent.scrollLeft : window.scrollX || document.documentElement.scrollLeft
     };
 
     var containerRect = {
