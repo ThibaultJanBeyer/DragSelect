@@ -4,6 +4,9 @@
   "description": "easy javascript drag select functionality to your projects",
   "main": "./dist/ds.min.js",
   "dependencies": {},
+  "scripts": {
+    "test": "open src/quicktest.html -a 'Google Chrome'"
+  },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.1",

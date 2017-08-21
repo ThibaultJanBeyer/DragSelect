@@ -134,16 +134,16 @@ var dragSelect = function(options) {
       y: e.pageY || e.clientY
     };
     // check for direction
-    if(cursorPos2.x > cursorPos.x) {
+    if(cursorPos2.x > cursorPos.x) {  // right
       selector.style.width = cursorPos2.x - cursorPos.x + 'px';
-    } else {
+    } else {  // left
       selector.style.left = cursorPos2.x + 'px';
       selector.style.width = cursorPos.x - cursorPos2.x + 'px';
     }
 
-    if(cursorPos2.y > cursorPos.y) {
+    if(cursorPos2.y > cursorPos.y) {  // bottom
       selector.style.height = cursorPos2.y - cursorPos.y + 'px';
-    } else {
+    } else {  // top
       selector.style.top = cursorPos2.y + 'px';
       selector.style.height = cursorPos.y - cursorPos2.y + 'px';
     }
@@ -194,8 +194,8 @@ var dragSelect = function(options) {
      */
     var scroll = {
       // fallback for IE9-
-      x: area && area.scrollTop ? area.scrollTop : window.scrollY || document.documentElement.scrollTop,
-      y: area && area.scrollLeft ? area.scrollLeft : window.scrollX || document.documentElement.scrollLeft
+      x: area && area.scrollTop >= 0 ? area.scrollTop : window.scrollY || document.documentElement.scrollTop,
+      y: area && area.scrollLeft >= 0 ? area.scrollLeft : window.scrollX || document.documentElement.scrollLeft
     };
     var containerRect = {
       y: container.getBoundingClientRect().top + scroll.y,
@@ -209,6 +209,8 @@ var dragSelect = function(options) {
       h: element.offsetHeight,
       w: element.offsetWidth    
     };
+
+    if(area && area.scrollTop >= 0) { selectorScroll(); }
 
     // Axis-Aligned Bounding Box Colision Detection.
     // Imagine following Example:
@@ -232,6 +234,54 @@ var dragSelect = function(options) {
       return true; // collision detected!
     } else {
       return false;
+    }
+  }
+  
+  // Scroll the area by selecting
+  var additionalTop = 0;
+  function selectorScroll() {
+    var edge = isSelectorNearEdge();
+    if(edge === 'top') {
+      area.scrollTop -= 1;
+    } else if(edge === 'bottom') {
+      area.scrollTop += 1;
+    } else if(edge === 'left') {
+      area.scrollLeft -= 1;
+    } else if(edge === 'right') {
+      area.scrollLeft += 1;
+    }
+  }
+
+  // Check if the selector is near an edge of the area
+  function isSelectorNearEdge() {
+    if(!area) { return false; }
+    var cursorPosition = cursorPos2 || cursorPos;
+    var parent = area.parentElement;
+    var container = area;
+
+    var scroll = {
+      // fallback for IE9-
+      x: parent && parent.scrollTop >= 0 ? parent.scrollTop : window.scrollY || document.documentElement.scrollTop,
+      y: parent && parent.scrollLeft >= 0 ? parent.scrollLeft : window.scrollX || document.documentElement.scrollLeft
+    };
+
+    var containerRect = {
+      top: container.getBoundingClientRect().top + scroll.y,
+      left: container.getBoundingClientRect().left + scroll.x,
+      bottom: container.getBoundingClientRect().bottom - scroll.y,
+      right: container.getBoundingClientRect().right - scroll.x
+    };
+
+    var sides = ['top', 'left', 'bottom', 'right'];
+    var cSides = ['y', 'x', 'y', 'x'];
+    for (var i = 0, il = sides.length; i < il; i++) {
+      var side = sides[i];
+
+      if(i < 2 && cursorPosition[cSides[i]] - containerRect[side] < 15) {
+        return side;
+      } else if(i >= 2 && containerRect[side] - cursorPosition[cSides[i]] < 15) {
+        return side;
+      }
     }
   }
 
