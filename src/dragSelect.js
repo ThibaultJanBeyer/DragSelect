@@ -93,6 +93,7 @@ var dragSelect = function(options) {
       unselectCallback,
       callback,
       area,
+      areaRect,
       selected;
 
   function setup() {
@@ -147,7 +148,9 @@ var dragSelect = function(options) {
       selector.style.top = cursorPos2.y + 'px';
       selector.style.height = cursorPos.y - cursorPos2.y + 'px';
     }
-    
+
+    if(options.area) { selectorScroll(); }
+
     checkIfInside();
   }
   
@@ -239,6 +242,7 @@ var dragSelect = function(options) {
   var additionalTop = 0;
   function selectorScroll() {
     var edge = isCursorNearEdge();
+    console.log('YOLO', edge);
     if(edge === 'top') {
       area.scrollTop -= 1;
     } else if(edge === 'bottom') {
@@ -254,32 +258,15 @@ var dragSelect = function(options) {
   function isCursorNearEdge() {
     if(!area) { return false; }
     var cursorPosition = cursorPos2 || cursorPos;
-    var parent = area.parentElement;
-    var container = area;
 
-    var scroll = {
-      // fallback for IE9-
-      y: parent && parent.scrollTop >= 0 ? parent.scrollTop : window.scrollY || document.documentElement.scrollTop,
-      x: parent && parent.scrollLeft >= 0 ? parent.scrollLeft : window.scrollX || document.documentElement.scrollLeft
-    };
-
-    var containerRect = {
-      top: container.getBoundingClientRect().top + scroll.y,
-      left: container.getBoundingClientRect().left + scroll.x,
-      bottom: container.getBoundingClientRect().bottom - scroll.y,
-      right: container.getBoundingClientRect().right - scroll.x
-    };
-
-    var sides = ['top', 'left', 'bottom', 'right'];
-    var cSides = ['y', 'x', 'y', 'x'];
-    for (var i = 0, il = sides.length; i < il; i++) {
-      var side = sides[i];
-
-      if(i < 2 && cursorPosition[cSides[i]] - containerRect[side] < 15) {
-        return side;
-      } else if(i >= 2 && containerRect[side] - cursorPosition[cSides[i]] < 15) {
-        return side;
-      }
+    if(cursorPosition.y < 15) {
+      return 'top';
+    } else if(areaRect.height - cursorPosition.y < 15) {
+      return 'bottom';
+    } else if(areaRect.width - cursorPosition.x < 15) {
+      return 'right';
+    } else if(cursorPosition.x < 15) {
+      return 'left';
     }
   }
 
@@ -382,14 +369,16 @@ var dragSelect = function(options) {
   }
 
   function getAreaRect() {
-    var areaRect = { top: 0, left: 0, bottom: 0, right: 0 };
+    areaRect = { top: 0, left: 0, bottom: 0, right: 0 };
 
     if(options.area) {
       areaRect = {
         top: area.getBoundingClientRect().top,
         left: area.getBoundingClientRect().left,
         bottom: area.getBoundingClientRect().bottom,
-        right: area.getBoundingClientRect().right
+        right: area.getBoundingClientRect().right,
+        width: area.offsetWidth,
+        height: area.offsetHeight,
       };
     }
 
