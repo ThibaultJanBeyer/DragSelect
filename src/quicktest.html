@@ -7,7 +7,7 @@
 }
 
 #rectangle {
-  position: fixed;
+  position: absolute;
   background: rgba(0, 0, 255, 0.5);
   border: 1px solid blue;
   top: 0;
@@ -25,7 +25,8 @@ html, body {
   overflow: hidden;
 }
 
-#container {
+#container,
+.container {
   width: 50%;
   height: 20%;
   background: rgba(0, 0, 0, 0.2);
@@ -33,6 +34,10 @@ html, body {
   overflow: scroll;
   top: 25%;
   left: 25%;
+}
+
+#container {
+  margin-left: 300px;
 }
 
 .item {
@@ -50,6 +55,7 @@ html, body {
 }
 </style>
 
+<div class="container">
 <div id="container">
   <div id="rectangle"></div>
 
@@ -64,6 +70,7 @@ html, body {
 <div class="item nine">9</div>
 <div class="item ten">10</div>
 
+</div>
 </div>
 
 <script src="dragSelect.js"></script>

@@ -1,4 +1,8 @@
 /* 
+
+@TODO: // how to do https://stackoverflow.com/questions/14651306/get-mouse-position-within-div without jquery ?
+@TODO: Get this AREARECT working: add scroll handling to it
+
        __                 _____      __          __ 
   ____/ /________ _____ _/ ___/___  / /__  _____/ /_
  / __  / ___/ __ `/ __ `/\__ \/ _ \/ / _ \/ ___/ __/
@@ -99,6 +103,7 @@ var dragSelect = function(options) {
     unselectCallback = options.onElementUnselect || function() {};
     callback = options.callback || function() {};
     area = options.area || document;
+
     selected = [];
   }
   setup();
@@ -111,10 +116,8 @@ var dragSelect = function(options) {
 
   var cursorPos;
   function startUp(e) {
-    cursorPos = { // event.clientX/Y fallback for IE8-
-      x: e.pageX || e.clientX,
-      y: e.pageY || e.clientY
-    };
+    cursorPos = getCursorPos(e);
+
     // move element on location
     selector.style.display = 'block';
     selector.style.top = cursorPos.y + 'px';
@@ -129,10 +132,8 @@ var dragSelect = function(options) {
   // resize that div while mouse is pressed
   var cursorPos2;
   function move(e) {
-    cursorPos2 = { // event.clientX/Y fallback for IE8-
-      x: e.pageX || e.clientX,
-      y: e.pageY || e.clientY
-    };
+    cursorPos2 = getCursorPos(e);
+
     // check for direction
     if(cursorPos2.x > cursorPos.x) {  // right
       selector.style.width = cursorPos2.x - cursorPos.x + 'px';
@@ -365,6 +366,37 @@ var dragSelect = function(options) {
         (obj.nodeType===1) && (typeof obj.style === "object") &&
         (typeof obj.ownerDocument ==="object");
     }
+  }
+
+  function getCursorPos(e) {
+    var cPos = { // event.clientX/Y fallback for IE8-
+      x: e.pageX || e.clientX,
+      y: e.pageY || e.clientY
+    };
+
+    var areaRect = getAreaRect();
+
+    var cursorPos = {
+      x: cPos.x - areaRect.left,
+      y: cPos.y - areaRect.top
+    };
+
+    return cursorPos;
+  }
+
+  function getAreaRect() {
+    var areaRect = { top: 0, left: 0, bottom: 0, right: 0 };
+
+    if(options.area) {
+      areaRect = {
+        top: area.getBoundingClientRect().top,
+        left: area.getBoundingClientRect().left,
+        bottom: area.getBoundingClientRect().bottom,
+        right: area.getBoundingClientRect().right
+      };
+    }
+
+    return areaRect;
   }
 
 
