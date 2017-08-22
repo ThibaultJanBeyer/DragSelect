@@ -5,6 +5,8 @@
   "main": "./dist/ds.min.js",
   "dependencies": {},
   "scripts": {
+    "gulp": "gulp",
+    "deploy": "gulp; gulp deploy;",
     "test": "open src/quicktest.html -a 'Google Chrome'"
   },
   "devDependencies": {
