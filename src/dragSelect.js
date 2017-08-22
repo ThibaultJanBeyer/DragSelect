@@ -1,6 +1,7 @@
 /* 
 
 @TODO: move the selector based on his previous position not always a new one
+maybe use something like var savedAmount = { x: 0, y: 0 }; ??
 
        __                 _____      __          __ 
   ____/ /________ _____ _/ ___/___  / /__  _____/ /_
@@ -88,14 +89,16 @@ var dragSelect = function(options) {
 
   // Setup
   var selector,
+      selectorPos = {},
       selectables,
       selectCallback,
       unselectCallback,
       callback,
+      cursorPos,
+      cursorPos2,
       area,
       selected,
       areaRect,
-      scrolling,
       initialScroll,
       scroll;
 
@@ -117,34 +120,51 @@ var dragSelect = function(options) {
   }
   start();
 
-  var cursorPos;
   function startUp(e) {
     initialScroll = false;
-    cursorPos = getCursorPos(e);
+
+    selector.style.display = 'block';
 
     // move element on location
-    selector.style.display = 'block';
-    selector.style.top = cursorPos.y + scroll.y + 'px';
-    selector.style.left = cursorPos.x + scroll.x + 'px';
-    selector.style.height = '0px';
-    selector.style.width = '0px';
+    getStartingPositions(e);
     checkIfInside();
     
     area.removeEventListener('mousedown', startUp);
-    area.addEventListener('mousemove', move);
+    area.addEventListener('mousemove', handleMove);
     document.addEventListener('mouseup', reset);
   }
 
+  function getStartingPositions(event) {
+    cursorPos = getCursorPos(event);
+    
+    selectorPos.x = cursorPos.x + scroll.x;
+    selector.style.left = selectorPos.x + 'px';
+    
+    selectorPos.y = cursorPos.y + scroll.y;
+    selector.style.top = selectorPos.y + 'px';
+    
+    selectorPos.w = 0;
+    selector.style.width = selectorPos.w + 'px';
+
+    selectorPos.h = 0;
+    selector.style.height = selectorPos.h + 'px';
+  }
+
   // resize that div while mouse is pressed
-  var cursorPos2;
-  function move(e) {
+  function handleMove(e) {
     cursorPos2 = getCursorPos(e);
+
+    var posistion = {
+      x: cursorPos2.x - cursorPos.x,
+      y: cursorPos2.y - cursorPos.y
+    };
 
     // if area or document is scrolled those values have to be included aswell
     var scrollAmount = {
       x: scroll.x - initialScroll.x,
       y: scroll.y - initialScroll.y
     };
+
     if(options.area) { selectorScroll(); }
 
     // check for direction
@@ -156,12 +176,14 @@ var dragSelect = function(options) {
     }
 
     if(cursorPos2.y > cursorPos.y) {  // bottom
-      console.log(selector.style.height);
-      selector.style.height = selector.style.height + cursorPos2.y - cursorPos.y + scrollAmount.y + 'px';
+      selector.style.height = cursorPos2.y - cursorPos.y + scrollAmount.y + 'px';
     } else {  // top
       selector.style.top = cursorPos2.y + scroll.y + 'px';
       selector.style.height = cursorPos.y - cursorPos2.y - scrollAmount.y + 'px';
     }
+
+    // savedAmount.x += scrollAmount.x;
+    
 
     checkIfInside();
   }
@@ -196,7 +218,7 @@ var dragSelect = function(options) {
     
     callback(selected);
     
-    area.removeEventListener('mousemove', move);
+    area.removeEventListener('mousemove', handleMove);
     area.addEventListener('mousedown', startUp);
   }
 
@@ -256,14 +278,16 @@ var dragSelect = function(options) {
     scrolling = edge ? true : false;
 
     console.log('YOLO', edge);
-    if(edge === 'top') {
+    if(edge === 'top' && area.scrollTop > 0) {
       area.scrollTop -= 1;
     } else if(edge === 'bottom') {
       area.scrollTop += 1;
-    } else if(edge === 'left') {
+    } else if(edge === 'left' && area.scrollLeft > 0) {
       area.scrollLeft -= 1;
+      savedAmount.x -= 1;
     } else if(edge === 'right') {
       area.scrollLeft += 1;
+      savedAmount.x += 1;
     }
   }
 
@@ -421,7 +445,7 @@ var dragSelect = function(options) {
     isElementTouching: isElementTouching,
     reset: reset,
     checkIfInside: checkIfInside,
-    move: move,
+    handleMove: handleMove,
     startUp: startUp,
     start: start,
     getSelection: getSelection,
