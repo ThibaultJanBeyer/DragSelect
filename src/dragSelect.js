@@ -1,6 +1,6 @@
 /* 
 
-@TODO: get the scroll down working!!!
+@TODO: move the selector based on his previous position not always a new one
 
        __                 _____      __          __ 
   ____/ /________ _____ _/ ___/___  / /__  _____/ /_
@@ -93,8 +93,11 @@ var dragSelect = function(options) {
       unselectCallback,
       callback,
       area,
+      selected,
       areaRect,
-      selected;
+      scrolling,
+      initialScroll,
+      scroll;
 
   function setup() {
     selector = options.selector || document.getElementById("rectangle");
@@ -116,12 +119,15 @@ var dragSelect = function(options) {
 
   var cursorPos;
   function startUp(e) {
+    initialScroll = false;
     cursorPos = getCursorPos(e);
 
     // move element on location
     selector.style.display = 'block';
-    selector.style.top = cursorPos.y + 'px';
-    selector.style.left = cursorPos.x + 'px';
+    selector.style.top = cursorPos.y + scroll.y + 'px';
+    selector.style.left = cursorPos.x + scroll.x + 'px';
+    selector.style.height = '0px';
+    selector.style.width = '0px';
     checkIfInside();
     
     area.removeEventListener('mousedown', startUp);
@@ -134,22 +140,28 @@ var dragSelect = function(options) {
   function move(e) {
     cursorPos2 = getCursorPos(e);
 
+    // if area or document is scrolled those values have to be included aswell
+    var scrollAmount = {
+      x: scroll.x - initialScroll.x,
+      y: scroll.y - initialScroll.y
+    };
+    if(options.area) { selectorScroll(); }
+
     // check for direction
     if(cursorPos2.x > cursorPos.x) {  // right
-      selector.style.width = cursorPos2.x - cursorPos.x + 'px';
+      selector.style.width = cursorPos2.x - cursorPos.x + scrollAmount.x + 'px';
     } else {  // left
-      selector.style.left = cursorPos2.x + 'px';
-      selector.style.width = cursorPos.x - cursorPos2.x + 'px';
+      selector.style.left = cursorPos2.x + scroll.x + 'px';
+      selector.style.width = cursorPos.x - cursorPos2.x - scrollAmount.x + 'px';
     }
 
     if(cursorPos2.y > cursorPos.y) {  // bottom
-      selector.style.height = cursorPos2.y - cursorPos.y + 'px';
+      console.log(selector.style.height);
+      selector.style.height = selector.style.height + cursorPos2.y - cursorPos.y + scrollAmount.y + 'px';
     } else {  // top
-      selector.style.top = cursorPos2.y + 'px';
-      selector.style.height = cursorPos.y - cursorPos2.y + 'px';
+      selector.style.top = cursorPos2.y + scroll.y + 'px';
+      selector.style.height = cursorPos.y - cursorPos2.y - scrollAmount.y + 'px';
     }
-
-    if(options.area) { selectorScroll(); }
 
     checkIfInside();
   }
@@ -239,9 +251,10 @@ var dragSelect = function(options) {
   }
   
   // Scroll the area by selecting
-  var additionalTop = 0;
   function selectorScroll() {
     var edge = isCursorNearEdge();
+    scrolling = edge ? true : false;
+
     console.log('YOLO', edge);
     if(edge === 'top') {
       area.scrollTop -= 1;
@@ -268,6 +281,8 @@ var dragSelect = function(options) {
     } else if(cursorPosition.x < 15) {
       return 'left';
     }
+
+    return false;
   }
 
   //- Add/Remove Selectables
@@ -369,7 +384,16 @@ var dragSelect = function(options) {
   }
 
   function getAreaRect() {
-    areaRect = { top: 0, left: 0, bottom: 0, right: 0 };
+    areaRect = { top: 0, left: 0, bottom: 0, right: 0, width: 0, height: 0 };
+
+    scroll = {
+      // fallback for IE9-
+      y: area && area.scrollTop >= 0 ? area.scrollTop : window.scrollY || document.documentElement.scrollTop,
+      x: area && area.scrollLeft >= 0 ? area.scrollLeft : window.scrollX || document.documentElement.scrollLeft
+    };
+
+    // initial
+    if(!initialScroll) { initialScroll = scroll; }
 
     if(options.area) {
       areaRect = {
@@ -378,7 +402,7 @@ var dragSelect = function(options) {
         bottom: area.getBoundingClientRect().bottom,
         right: area.getBoundingClientRect().right,
         width: area.offsetWidth,
-        height: area.offsetHeight,
+        height: area.offsetHeight
       };
     }
 
