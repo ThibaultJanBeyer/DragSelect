@@ -15,7 +15,7 @@ maybe use something like var savedAmount = { x: 0, y: 0 }; ??
 - No dependencies
 - Add drag selection.
 - Choose which elements can be selected.
-- Awesome browser support, works even on IE7
+- Awesome browser support, works even on IE9
 - Ease of use
 - Lightweight, only 1KB gzipped
 - Free & open source under MIT License
@@ -89,18 +89,16 @@ var dragSelect = function(options) {
 
   // Setup
   var selector,
-      selectorPos = {},
+      selectorPos,
       selectables,
       selectCallback,
       unselectCallback,
       callback,
-      cursorPos,
-      cursorPos2,
       area,
       selected,
-      areaRect,
-      initialScroll,
-      scroll;
+      cursorPos,
+      scrollPos,
+      initPos;
 
   function setup() {
     selector = options.selector || document.getElementById("rectangle");
@@ -121,8 +119,6 @@ var dragSelect = function(options) {
   start();
 
   function startUp(e) {
-    initialScroll = false;
-
     selector.style.display = 'block';
 
     // move element on location
@@ -134,58 +130,81 @@ var dragSelect = function(options) {
     document.addEventListener('mouseup', reset);
   }
 
+  // 1. GET STARTING COORDINATES
   function getStartingPositions(event) {
     cursorPos = getCursorPos(event);
+    scrollPos = getScroll(area);
     
-    selectorPos.x = cursorPos.x + scroll.x;
-    selector.style.left = selectorPos.x + 'px';
-    
-    selectorPos.y = cursorPos.y + scroll.y;
-    selector.style.top = selectorPos.y + 'px';
-    
-    selectorPos.w = 0;
-    selector.style.width = selectorPos.w + 'px';
+    initPos = {
+      x: cursorPos.x + scrollPos.x,
+      y: cursorPos.y + scrollPos.y
+    };
 
-    selectorPos.h = 0;
-    selector.style.height = selectorPos.h + 'px';
+    selectorPos = {};
+    selectorPos.x = initPos.x;
+    selectorPos.y = initPos.y;
+    selectorPos.w = 1;
+    selectorPos.h = 1;
+    updateSelector();
+  }
+
+  // 2. GET MOVEMENT COORDINATES (difference)
+  function getPositionDifference(event) {
+    var newCursorPos = getCursorPos(event);
+    var newScrollPos = getScroll(area);
+    var oldCursorPos = cursorPos;
+    var oldScrollPos = scrollPos;
+    
+    // let’s say I move the mouse down (y) by 10px and scroll (y) down by 5px
+    // 1. get the difference between the old mouse position and the new one
+    //    in our example that would be y: 10 - 0 = 5
+    var cursorPosDiff = {
+      x: newCursorPos.x - oldCursorPos.x,
+      y: newCursorPos.y - oldCursorPos.y
+    };
+
+    // 2. get the difference amount between the old scroll and the new one
+    //    in our example that is y: 5 - 0 = 5
+    var scrollPosDiff = {
+      x: newScrollPos.x - oldScrollPos.x,
+      y: newScrollPos.y - oldScrollPos.y,
+    };
+
+    // 3. Calculate the grand total
+    //    so we moved the mouse down by y: 10 + 5 = 15 from its original position
+    var newPos = {
+      x: cursorPosDiff.x + scrollPosDiff.x,
+      y: cursorPosDiff.y + scrollPosDiff.y
+    };
+
+    // 4. Am I above the starting point or below, left or right?
+    var direction = {
+      x: newCursorPos.x - initPos.x > 0 ? true : false,  // true = moving to left
+      y: newCursorPos.y - initPos.y > 0 ? true : false   // true = (below) = moving down
+    };
+    newPos.direction = direction;
+
+    cursorPos = newCursorPos;
+    scrollPos = newScrollPos;
+
+    return newPos;
   }
 
   // resize that div while mouse is pressed
-  function handleMove(e) {
-    cursorPos2 = getCursorPos(e);
-
-    var posistion = {
-      x: cursorPos2.x - cursorPos.x,
-      y: cursorPos2.y - cursorPos.y
-    };
-
-    // if area or document is scrolled those values have to be included aswell
-    var scrollAmount = {
-      x: scroll.x - initialScroll.x,
-      y: scroll.y - initialScroll.y
-    };
-
-    if(options.area) { selectorScroll(); }
-
-    // check for direction
-    if(cursorPos2.x > cursorPos.x) {  // right
-      selector.style.width = cursorPos2.x - cursorPos.x + scrollAmount.x + 'px';
-    } else {  // left
-      selector.style.left = cursorPos2.x + scroll.x + 'px';
-      selector.style.width = cursorPos.x - cursorPos2.x - scrollAmount.x + 'px';
-    }
-
-    if(cursorPos2.y > cursorPos.y) {  // bottom
-      selector.style.height = cursorPos2.y - cursorPos.y + scrollAmount.y + 'px';
-    } else {  // top
-      selector.style.top = cursorPos2.y + scroll.y + 'px';
-      selector.style.height = cursorPos.y - cursorPos2.y - scrollAmount.y + 'px';
-    }
-
-    // savedAmount.x += scrollAmount.x;
-    
-
+  function handleMove(event) {
+    // if(options.area) { autoScroll(event); }  // scroll container while dragging
+    resizeSelector();
     checkIfInside();
+  }
+
+  var goingUp = false;
+  function resizeSelector() {
+    var posDiff = getPositionDifference(event);
+
+    selectorPos.w += posDiff.x;
+    selectorPos.h += posDiff.y;
+
+    updateSelector();
   }
   
   function checkIfInside() {
@@ -229,11 +248,8 @@ var dragSelect = function(options) {
      * but makes sure to get the right positions even if the containers are
      * resized or moved on the fly. This also makes the function kinda context independant.
      */
-    var scroll = {
-      // fallback for IE9-
-      y: area && area.scrollTop >= 0 ? area.scrollTop : window.scrollY || document.documentElement.scrollTop,
-      x: area && area.scrollLeft >= 0 ? area.scrollLeft : window.scrollX || document.documentElement.scrollLeft
-    };
+    var scroll = getScroll();
+
     var containerRect = {
       y: container.getBoundingClientRect().top + scroll.y,
       x: container.getBoundingClientRect().left + scroll.x,
@@ -273,8 +289,8 @@ var dragSelect = function(options) {
   }
   
   // Scroll the area by selecting
-  function selectorScroll() {
-    var edge = isCursorNearEdge();
+  function autoScroll(e) {
+    var edge = isCursorNearEdge(e);
     scrolling = edge ? true : false;
 
     console.log('YOLO', edge);
@@ -284,17 +300,15 @@ var dragSelect = function(options) {
       area.scrollTop += 1;
     } else if(edge === 'left' && area.scrollLeft > 0) {
       area.scrollLeft -= 1;
-      savedAmount.x -= 1;
     } else if(edge === 'right') {
       area.scrollLeft += 1;
-      savedAmount.x += 1;
     }
   }
 
   // Check if the selector is near an edge of the area
-  function isCursorNearEdge() {
-    if(!area) { return false; }
-    var cursorPosition = cursorPos2 || cursorPos;
+  function isCursorNearEdge(e) {
+    var cursorPosition = getCursorPos(e);
+    var areaRect = getAreaRect(area);
 
     if(cursorPosition.y < 15) {
       return 'top';
@@ -342,9 +356,10 @@ var dragSelect = function(options) {
     document.removeEventListener('mouseup', reset);
   }
 
-  /* * * * * *
-  * HELPERS *
-  * * * * * */
+
+  // Helpers
+  ////////////////////////////////////////////////////////////////////////
+
   // sadly old phones/browsers do not support the quite new .classlist
   // so we have to use this workaround to add/remove classes
   // all credits to http://clubmate.fi/javascript-adding-and-removing-class-names-from-elements/
@@ -391,13 +406,37 @@ var dragSelect = function(options) {
     }
   }
 
+
+  // Node handling
+  ////////////////////////////////////////////////////////////////////////
+
+  function updateSelector() {
+    selector.style.left = selectorPos.x + 'px';
+    selector.style.top = selectorPos.y + 'px';
+
+    // selector.style.width = selectorPos.w + 'px';
+    // selector.style.height = selectorPos.h + 'px';
+    selector.style.width = '1px';
+    selector.style.height = '1px';
+
+    selector.style.transformOrigin = 'top left';
+    selector.style.transform = 'scaleX(' + selectorPos.w / selector.offsetWidth + ')' +
+                               'scaleY(' + selectorPos.h / selector.offsetHeight + ')';
+
+    console.log(selector.style.transform);
+  }
+
+
+  // Position determination logic
+  ////////////////////////////////////////////////////////////////////////
+
   function getCursorPos(e) {
     var cPos = { // event.clientX/Y fallback for IE8-
       x: e.pageX || e.clientX,
       y: e.pageY || e.clientY
     };
 
-    var areaRect = getAreaRect();
+    var areaRect = getAreaRect(area);
 
     var cursorPos = {
       x: cPos.x - areaRect.left,
@@ -407,19 +446,10 @@ var dragSelect = function(options) {
     return cursorPos;
   }
 
-  function getAreaRect() {
-    areaRect = { top: 0, left: 0, bottom: 0, right: 0, width: 0, height: 0 };
-
-    scroll = {
-      // fallback for IE9-
-      y: area && area.scrollTop >= 0 ? area.scrollTop : window.scrollY || document.documentElement.scrollTop,
-      x: area && area.scrollLeft >= 0 ? area.scrollLeft : window.scrollX || document.documentElement.scrollLeft
-    };
-
-    // initial
-    if(!initialScroll) { initialScroll = scroll; }
-
-    if(options.area) {
+  function getAreaRect(area) {
+    var areaRect = { top: 0, left: 0, bottom: 0, right: 0, width: 0, height: 0 };
+    
+    if(area) {
       areaRect = {
         top: area.getBoundingClientRect().top,
         left: area.getBoundingClientRect().left,
@@ -429,12 +459,21 @@ var dragSelect = function(options) {
         height: area.offsetHeight
       };
     }
-
+    
     return areaRect;
   }
 
+  function getScroll(area) {
+    return {
+      // fallback for IE9-
+      y: area && area.scrollTop >= 0 ? area.scrollTop : window.scrollY || document.documentElement.scrollTop,
+      x: area && area.scrollLeft >= 0 ? area.scrollLeft : window.scrollX || document.documentElement.scrollLeft
+    };
+  }
 
-  //- Return
+
+  // Return
+  ////////////////////////////////////////////////////////////////////////
 
   var DS = {
     isElement: isElement,
@@ -456,7 +495,10 @@ var dragSelect = function(options) {
 
 };
 
-// make exportable
+
+// Make Exportable
+////////////////////////////////////////////////////////////////////////
+
 if (typeof module !== 'undefined' && module !== null) {
   module.exports = dragSelect;
 } else {
