@@ -18,8 +18,6 @@
 html, body {
   padding: 0;
   margin: 0;
-  width: 100%;
-  height: 100%;
 }
 
 #container {
@@ -65,11 +63,9 @@ html, body {
 
 <script src="dragSelect.js"></script>
 <script>
-var area = document.querySelector('#container');
-
 var ds = dragSelect({
   selectables: document.getElementsByClassName('item'),
-  area
+  area: document.getElementById('container')
 });
 
 

@@ -1,4 +1,6 @@
 /* 
+@TODO: rewrite it in a OOP manner so that people can extend/mixin the dragselect
+
        __                 _____      __          __ 
   ____/ /________ _____ _/ ___/___  / /__  _____/ /_
  / __  / ___/ __ `/ __ `/\__ \/ _ \/ / _ \/ ___/ __/
@@ -195,6 +197,7 @@ var dragSelect = function(options) {
      */
     var selectorPos = {};
 
+    // console.log('yala', cursorPosNew.y, initialCursorPos.y, scrollAmount.y, initialScroll.y);
     // right
     if(cursorPosNew.x > initialCursorPos.x - scrollAmount.x) {  // 1.
       selectorPos.x = initialCursorPos.x + initialScroll.x;  // 2.
