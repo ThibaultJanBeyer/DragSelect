@@ -506,7 +506,11 @@ var dragSelect = function(options) {
    */
   function getAreaRect( area ) {
     if(area === document) {
-      return { top: 0, left: 0, bottom: 0, right: 0, width: area.body.offsetWidth, height: area.body.offsetHeight };
+      var size = {
+        y: area.documentElement.clientHeight > 0 ? area.documentElement.clientHeight : window.innerHeight,
+        x: area.documentElement.clientWidth > 0 ? area.documentElement.clientWidth : window.innerWidth,
+      };
+      return { top: 0, left: 0, bottom: 0, right: 0, width: size.x, height: size.y };
     }
 
     return {
