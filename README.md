@@ -75,7 +75,7 @@ dragSelect({
 ```javascript
 var ds = dragSelect({
   selector: document.getElementById('rectangle'), // draggable element '#rectangle is default but can be set to anything'
-  selectables: [ document.getElementById('selectable1') ], // nodes that can be selected as array
+  selectables: document.getElementById('selectable1'), // nodes that can be selected as array
   area: document.getElementById('area'), // area in which you can drag'
   onElementSelect: function(element) {}, // this is optional, it is fired every time an element is selected. (element) = just selected node
   onElementUnselect: function(element) {}, // this is optional, it is fired every time an element is de-selected. (element) = just de-selected node.
@@ -85,7 +85,7 @@ var ds = dragSelect({
 // if you add the function to a variable like we did, you have access to all its functions
 // and can now use start() and stop() like so:
 ds.getSelection();  // returns all currently selected nodes
-
+ds.addSelectables(document.getElementsByClassName('selectable-node'));  // adds elements that can be selected. Intelligent algorythm never adds elements twice.
 ds.stop();  // will teardown/stop the whole functionality
 ds.start();  // reset the functionality after a teardown
 ```
