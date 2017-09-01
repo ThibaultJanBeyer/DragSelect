@@ -34,7 +34,9 @@ Because aparently there is nothing that does not require jquery out there yet.
 
 Just download the file (minified) and add it to your document:
 
+```html
 <script src="https://thibaultjanbeyer.github.io/dragSelect/ds.min.js"></script>
+```
 
 ## npm
 
@@ -53,10 +55,10 @@ Now in your JavaScript you can simply pass elements to the function like so:
 
 ## simple
 
-The rectangle has to have a `position: fixed/absolute` attribute. The other ones have purely visual reasons.
+The rectangle has to have a `position: absolute` attribute. The other ones have purely visual reasons.
 ```html
 <div id="rectangle" 
-     style="position: fixed;
+     style="position: absolute;
             background-color: blue;
             border: 1px solid blue;
             display:none;"></div>
