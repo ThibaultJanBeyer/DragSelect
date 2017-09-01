@@ -7,13 +7,11 @@
 }
 
 #rectangle {
-  position: fixed;
-  background: rgba(0, 0, 255, 0.5);
-  border: 1px solid blue;
-  top: 0;
-  left: 0;
-  width: 10px;
-  height: 10px;
+  position: absolute;
+  background: rgba(0, 0, 255, 0.2);
+  border: 1px solid rgba(0, 0, 255, 0.5);
+  width: 0;
+  height: 0;
   display: none;
 }
 
@@ -22,7 +20,6 @@ html, body {
   margin: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
 }
 
 #container {
@@ -30,55 +27,16 @@ html, body {
   height: 50%;
   background: rgba(0, 0, 0, 0.2);
   position: absolute;
+  overflow: scroll;
   top: 25%;
-  left: 25%;
+  left: 15%;
 }
 
 .item {
-  z-index: -1;
   width: 50px;
   height: 50px;
-  position: absolute;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
   color: white;
-}
-
-.item:nth-child(1) {
-  background: #0df2d4;
-  top: 69%;
-  left: 32%;
-}
-
-.item:nth-child(2) {
-  background: #f2200d;
-  top: 37%;
-  left: 67%;
-}
-
-.item:nth-child(3) {
-  background: #f20d93;
-  top: 69%;
-  left: 65%;
-}
-
-.item:nth-child(4) {
-  background: #0d18f2;
-  top: 12%;
-  left: 59%;
-}
-
-.item:nth-child(11) {
-  background: #f20dcc;
-  top: 71%;
-  left: 68%;
+  background: red;
 }
 
 .item.selected {
@@ -91,7 +49,6 @@ html, body {
 
 <div id="container">
   <div id="rectangle"></div>
-</div>
 
 <div class="item one">1</div>
 <div class="item two">2</div>
@@ -104,11 +61,15 @@ html, body {
 <div class="item nine">9</div>
 <div class="item ten">10</div>
 
+</div>
+
 <script src="dragSelect.js"></script>
 <script>
+var area = document.querySelector('#container');
 
 var ds = dragSelect({
-  selectables: document.getElementsByClassName('item')
+  selectables: document.getElementsByClassName('item'),
+  area
 });
 
 
