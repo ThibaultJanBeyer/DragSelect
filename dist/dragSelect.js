@@ -1,6 +1,4 @@
 /* 
-@TODO?: rewrite it in a OOP manner?? With a "mainclass"
-
        __                 _____      __          __ 
   ____/ /________ _____ _/ ___/___  / /__  _____/ /_
  / __  / ___/ __ `/ __ `/\__ \/ _ \/ / _ \/ ___/ __/
@@ -15,7 +13,7 @@ Key-Features
   - Choose which elements can be selected.
   - Awesome browser support, works even on IE7
   - Ease of use
-  - Lightweight, only 1KB gzipped
+  - Lightweight, only ~1KB gzipped
   - Free & open source under MIT License
 
  Classes
@@ -141,7 +139,7 @@ var dragSelect = function(options) {
     checkIfInsideSelection();
 
     // scroll area if area is 
-    if(options.area) { autoScroll(event); }
+    autoScroll(event);
   }
 
   function getPosition(event) {
@@ -305,25 +303,33 @@ var dragSelect = function(options) {
   //- Scroll the area by selecting
   function autoScroll(event) {
     var edge = isCursorNearEdge(event);
-    if( edge === 'top' && area.scrollTop > 0 ) { area.scrollTop -= 1; }
-    else if( edge === 'bottom' ) { area.scrollTop += 1; }
-    else if( edge === 'left' && area.scrollLeft > 0 ) { area.scrollLeft -= 1; }
-    else if( edge === 'right' ) { area.scrollLeft += 1; }
+
+    var _area = area === document ? area.body : area;
+
+    if( edge === 'top' && _area.scrollTop > 0 ) { _area.scrollTop -= 1; }
+    else if( edge === 'bottom' ) { _area.scrollTop += 1; }
+    else if( edge === 'left' && _area.scrollLeft > 0 ) { _area.scrollLeft -= 1; }
+    else if( edge === 'right' ) { _area.scrollLeft += 1; }
   }
 
   // Check if the selector is near an edge of the area
   function isCursorNearEdge(event) {
     var cursorPosition = getCursorPos(event);
     var areaRect = getAreaRect(area);
+
     var tolerance = {
       x: Math.max(areaRect.width / 10, 20),
       y: Math.max(areaRect.height / 10, 20)
     };
 
-    if(cursorPosition.y < tolerance.y) { return 'top'; }
-    else if(areaRect.height - cursorPosition.y < tolerance.y) { return 'bottom'; }
-    else if(areaRect.width - cursorPosition.x < tolerance.x) { return 'right'; }
-    else if(cursorPosition.x < tolerance.x) { return 'left'; }
+    // document body also changes the cursor position values so we have to take
+    // the scroll amount into consideration for these calculations
+    var scroll = area === document ? getScroll(document.body) : { x: 0, y: 0 };
+
+    if(cursorPosition.y < tolerance.y + scroll.y) { return 'top'; }
+    else if(areaRect.height - cursorPosition.y + scroll.y < tolerance.y) { return 'bottom'; }
+    else if(areaRect.width - cursorPosition.x + scroll.x < tolerance.x) { return 'right'; }
+    else if(cursorPosition.x < tolerance.x + scroll.x) { return 'left'; }
 
     return false;
   }
@@ -465,7 +471,8 @@ var dragSelect = function(options) {
       y: event.pageY || event.clientY
     };
 
-    var areaRect = getAreaRect(area);
+    var areaRect = getAreaRect( area );
+
     return {  // if it’s constrained in an area the area should be substracted calculate 
       x: cPos.x - areaRect.left,
       y: cPos.y - areaRect.top
@@ -480,10 +487,12 @@ var dragSelect = function(options) {
    * @return {obj} scroll X/Y
    */
   function getScroll( area ) {
-    return { // document.documentElement fallback for <IE9
-      y: area && area.scrollTop >= 0 ? area.scrollTop : window.scrollY || document.documentElement.scrollTop,
-      x: area && area.scrollLeft >= 0 ? area.scrollLeft : window.scrollX || document.documentElement.scrollLeft
+    var scroll = {  // when the rectangle is bound to the document, no scroll is needed
+      y: area && area.scrollTop >= 0 ? area.scrollTop : 0,
+      x: area && area.scrollLeft >= 0 ? area.scrollLeft : 0
     };
+
+    return scroll;
   }
 
   /**
@@ -493,6 +502,10 @@ var dragSelect = function(options) {
    * @return {object}
    */
   function getAreaRect( area ) {
+    if(area === document) {
+      return { top: 0, left: 0, bottom: 0, right: 0, width: area.body.offsetWidth, height: area.body.offsetHeight };
+    }
+
     return {
       top: area.getBoundingClientRect().top,
       left: area.getBoundingClientRect().left,
