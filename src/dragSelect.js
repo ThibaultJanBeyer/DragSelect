@@ -76,21 +76,26 @@ var dragSelect = function(options) {
 
   var selector,
       selectables,
+      multiSelectKeys,
+      multiSelectKeyPressed,
       selectCallback,
       unselectCallback,
       callback,
       initialCursorPos,
       area,
       selected,
+      customStyles,
       initialScroll;
 
   function _setup() {
     selectables = toArray(options.selectables) || [];
+    multiSelectKeys = options.multiSelectKeys || ['ctrlKey', 'shiftKey', 'metaKey'];
     selectCallback = options.onElementSelect || function() {};
     unselectCallback = options.onElementUnselect || function() {};
     callback = options.callback || function() {};
     area = options.area || document;
-
+    customStyles = options.customStyles || false;
+    
     selector = options.selector || _createSelection();
     addClass(selector, 'ds-selector');
 
@@ -101,7 +106,7 @@ var dragSelect = function(options) {
     var selector = document.createElement('div');
 
     selector.style.position = 'absolute';
-    if(!options.customStyles) {
+    if(!customStyles) {
       selector.style.background = 'rgba(0, 0, 255, 0.2)';
       selector.style.border = '1px solid rgba(0, 0, 255, 0.5)';
       selector.style.display = 'none';
@@ -124,8 +129,15 @@ var dragSelect = function(options) {
   // Startups
   //////////////////////////////////////////////////////////////////////////////////////
 
-  function _startUp(event) {
+  function _startUp( event ) {
     selector.style.display = 'block';
+
+    // check if some multiselection modifier key is pressed
+    multiSelectKeyPressed = false;
+    for (var index = 0; index < multiSelectKeys.length; index++) {
+      var mKey = multiSelectKeys[index];
+      if(event[mKey]) { multiSelectKeyPressed = true; }
+    }
 
     // move element on location
     _getStartingPositions(event);
@@ -216,7 +228,6 @@ var dragSelect = function(options) {
      */
     var selectorPos = {};
 
-    // console.log('yala', cursorPosNew.y, initialCursorPos.y, scrollAmount.y, initialScroll.y);
     // right
     if(cursorPosNew.x > initialCursorPos.x - scrollAmount.x) {  // 1.
       selectorPos.x = initialCursorPos.x + initialScroll.x;  // 2.
@@ -252,22 +263,31 @@ var dragSelect = function(options) {
       if( isElementTouching(selectable, selector) ) {
 
         if( posInSelectedArray < 0 ) {
-          selected.push(selectable);
-          addClass(selectable, 'selected');
-          selectCallback(selectable);
+          _select(selectable);
         }
 
       } else {
 
-        if( posInSelectedArray > -1 ) {
-          selected.splice(posInSelectedArray, 1);
-          removeClass(selectable, 'selected');
-          unselectCallback(selectable);
+        // @TODO: this is not very clean (once selected elements cannot be de-selected)
+        if( posInSelectedArray > -1 && !multiSelectKeyPressed ) {
+          _unselect(selectable);
         }
 
       }
 
     }
+  }
+
+  function _select( item ) {
+    selected.push(item);
+    addClass(item, 'selected');
+    selectCallback(item);
+  }
+
+  function _unselect( item ) {
+    selected.splice(selected.indexOf(item), 1);
+    removeClass(item, 'selected');
+    unselectCallback(item);
   }
 
   //- Is Element touching Selection? (and vice-versa)
