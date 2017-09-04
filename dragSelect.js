@@ -128,15 +128,15 @@ var dragSelect = function(options) {
     selector.style.display = 'block';
 
     // move element on location
-    getStartingPositions(event);
+    _getStartingPositions(event);
     checkIfInsideSelection();
 
     area.removeEventListener('mousedown', _startUp);
-    area.addEventListener('mousemove', handleMove);
+    area.addEventListener('mousemove', _handleMove);
     document.addEventListener('mouseup', reset);
   }
 
-  function getStartingPositions(event) {
+  function _getStartingPositions(event) {
     initialCursorPos = getCursorPos(event);
     initialScroll = getScroll(area);
 
@@ -153,7 +153,7 @@ var dragSelect = function(options) {
   //////////////////////////////////////////////////////////////////////////////////////
 
   // resize that div while mouse is pressed
-  function handleMove(event) {
+  function _handleMove(event) {
     // move element on location
     var selectorPos = getPosition(event);
     _updatePos(selector, selectorPos);
@@ -365,7 +365,7 @@ var dragSelect = function(options) {
 
     callback(selected);
 
-    area.removeEventListener('mousemove', handleMove);
+    area.removeEventListener('mousemove', _handleMove);
     area.addEventListener('mousedown', _startUp);
   }
 
@@ -562,21 +562,30 @@ var dragSelect = function(options) {
   //////////////////////////////////////////////////////////////////////////////////////
 
   var DS = {
-    _updatePos: _updatePos,
-    isElement: isElement,
-    toArray: toArray,
-    removeClass: removeClass,
-    addClass: addClass,
-    stop: stop,
-    isElementTouching: isElementTouching,
-    reset: reset,
-    checkIfInsideSelection: checkIfInsideSelection,
-    handleMove: handleMove,
-    _startUp: _startUp,
+    _setup: _setup,
+    _createSelection: _createSelection,
     start: start,
+    _startUp: _startUp,
+    _getStartingPositions: _getStartingPositions,
+    _handleMove: _handleMove,
+    getPosition: getPosition,
+    checkIfInsideSelection: checkIfInsideSelection,
+    isElementTouching: isElementTouching,
+    autoScroll: autoScroll,
+    isCursorNearEdge: isCursorNearEdge,
+    reset: reset,
+    stop: stop,
     getSelection: getSelection,
+    addSelectables: addSelectables,
     removeSelectables: removeSelectables,
-    addSelectables: addSelectables
+    addClass: addClass,
+    removeClass: removeClass,
+    toArray: toArray,
+    isElement: isElement,
+    getCursorPos: getCursorPos,
+    getScroll: getScroll,
+    getAreaRect: getAreaRect,
+    _updatePos: _updatePos,
   };
   return DS;
 
