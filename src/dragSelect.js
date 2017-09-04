@@ -22,12 +22,14 @@ Key-Features
 
 .ds-selected                   on elements that are selected
  Properties
-  ** @selector          node            the square that will draw the selection
   ** @selectables       nodes           the elements that can be selected
+  ** @selector          node            the square that will draw the selection
+  ** @area              node            area in which you can drag. If not provided it will be the whole document
+  ** @customStyles      boolean         if set to true, no styles (except for position absolute) will be applied by default
   ** @onElementSelect   function        this is optional, it is fired every time an element is selected. This callback gets a property which is the just selected node
   ** @onElementUnselect function        this is optional, it is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
   ** @callback          function        a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes
- 
+
  Methods
 
   ** .start             ()                    reset the functionality after a teardown
@@ -83,16 +85,33 @@ var dragSelect = function(options) {
       initialScroll;
 
   function _setup() {
-    selector = options.selector || document.getElementById('rectangle');
     selectables = toArray(options.selectables) || [];
     selectCallback = options.onElementSelect || function() {};
     unselectCallback = options.onElementUnselect || function() {};
     callback = options.callback || function() {};
     area = options.area || document;
 
+    selector = options.selector || _createSelection();
+    addClass(selector, 'ds-selector');
+
     selected = [];
   } _setup();
 
+  function _createSelection() {
+    var selector = document.createElement('div');
+
+    selector.style.position = 'absolute';
+    if(!options.customStyles) {
+      selector.style.background = 'rgba(0, 0, 255, 0.2)';
+      selector.style.border = '1px solid rgba(0, 0, 255, 0.5)';
+      selector.style.display = 'none';
+    }
+
+    var _area = area === document ? document.body : area;
+    _area.appendChild(selector);
+
+    return selector;
+  }
 
   // Start
   //////////////////////////////////////////////////////////////////////////////////////
