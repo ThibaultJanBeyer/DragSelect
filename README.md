@@ -21,7 +21,7 @@ https://thibaultjanbeyer.github.io/dragSelect/
 - Choose which elements can be selected.
 - Awesome browser support, works even on IE7
 - Ease of use
-- Lightweight, only 1KB gzipped
+- Lightweight, only ~1KB gzipped
 - DragSelect was written with Performance in mind.
 - Free & open source under MIT License
 
@@ -55,31 +55,27 @@ Now in your JavaScript you can simply pass elements to the function like so:
 
 ## simple
 
-The rectangle has to have a `position: absolute` attribute. The other ones have purely visual reasons.
-```html
-<div id="rectangle" 
-     style="position: absolute;
-            background-color: blue;
-            border: 1px solid blue;
-            display:none;"></div>
-```
+Choose which elements can be selected:
 
 ```javascript
 dragSelect({
-  selectables: document.getElementsByClassName('selectable-node')
+  selectables: document.getElementsByClassName('selectable-nodes')
 });
 ```
 
 ## complete
 
+All options are optional. You could also just initiate the dragselect by `var ds = dragSelect();` without any option.
+
 ```javascript
 var ds = dragSelect({
-  selector: document.getElementById('rectangle'), // draggable element '#rectangle is default but can be set to anything'
-  selectables: document.getElementById('selectable1'), // nodes that can be selected as array
-  area: document.getElementById('area'), // area in which you can drag'
-  onElementSelect: function(element) {}, // this is optional, it is fired every time an element is selected. (element) = just selected node
-  onElementUnselect: function(element) {}, // this is optional, it is fired every time an element is de-selected. (element) = just de-selected node.
-  callback: function(elements) {} // this is optional is fired once the user releases the mouse. (elements) = selected nodes.
+  selectables: document.getElementsByClassName('selectable-nodes'), // node/nodes that can be selected. This is also optional, you could just add them later with .addSelectables.
+  selector: document.getElementById('rectangle'), // draggable element. By default one will be created.
+  area: document.getElementById('area'), // area in which you can drag. If not provided it will be the whole document.
+  customStyles: false,  // If set to true, no styles (except for position absolute) will be applied by default.
+  onElementSelect: function(element) {}, // fired every time an element is selected. (element) = just selected node
+  onElementUnselect: function(element) {}, // fired every time an element is de-selected. (element) = just de-selected node.
+  callback: function(elements) {} // fired once the user releases the mouse. (elements) = selected nodes.
 });
 
 // if you add the function to a variable like we did, you have access to all its functions
@@ -93,28 +89,30 @@ ds.start();  // reset the functionality after a teardown
 ## Properties:
 | property | type | usage |
 |--- |--- |--- |
-|selector |single DOM element (node) |the square that will draw the selection. Default = #rectangle|
-|selectables |DOM elements (nodes) |the elements that can be selected|
-|area |single DOM element (node) |The square in which you are able to select |
-|onElementSelect |function |this is optional, it is fired every time an element is selected. This callback gets a property which is the just selected node|
-|onElementUnselect |function |this is optional, it is fired every time an element is de-selected. This callback gets a property which is the just de-selected node.|
-|callback |function |callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes|
+|selectables |DOM elements (nodes) |OPTIONAL. The elements that can be selected |
+|selector |single DOM element (node) |OPTIONAL. The square that will draw the selection. Autocreated by default |
+|area |single DOM element (node) |OPTIONAL. The square in which you are able to select |
+|customStyles |boolean |OPTIONAL. If true, no styles will be automatically applied (except position: absolute). Default: false |
+|onElementSelect |function |OPTIONAL. Fired every time an element is selected. This callback gets a property which is the selected node |
+|onElementUnselect |function |OPTIONAL. Fired every time an element is de-selected. This callback gets a property which is the de-selected node |
+|callback |function |OPTIONAL. Callback function that gets fired when the selection is released. This callback gets a property which is an array that holds all selected nodes |
 
 ## Methods:
-When the function is saved into a variable `var foo = dragSelect({...}` you have access to all its inner functions. There are way more than listed here. Here are just the most usable:  
+When the function is saved into a variable `var foo = dragSelect()` you have access to all its inner functions. There are way more than listed here. Here are just the most usable:  
 
 | method | properties | usage |
 |--- |--- |--- |
-|stop |/ |will teardown/stop the whole functionality |
-|start |/ |reset the functionality after a teardown |
-|getSelection |/ |returns all currently selected nodes |
-|addSelectables |DOM elements (nodes) |adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice |
-|removeSelectables |DOM elements (nodes) |remove elements that can be selected. Also removes the 'selected' class from those elements. |
+|stop |/ |Will teardown/stop the whole functionality |
+|start |/ |Reset the functionality after a teardown |
+|getSelection |/ |Returns all currently selected nodes |
+|addSelectables |DOM elements (nodes) |Adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice |
+|removeSelectables |DOM elements (nodes) |Remove elements that can be selected. Also removes the 'selected' class from those elements. |
 
 ## Classes
 | name | trigger |
 |--- |--- |
-|.ds-selected | on elements that are selected
+|.ds-selected |On elements that are selected
+|.ds-selector |On the selector element
 
 # Have Fun!
 
