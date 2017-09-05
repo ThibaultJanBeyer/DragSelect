@@ -36,7 +36,7 @@
     <div class="benefits">
       <div class="benefit">
         <h2 class="benefit-title">Browser Support</h2>
-        <p class="benefit-text">dragSelect was successfully tested on a wide range of browsers, it even works on ie7.</p>
+        <p class="benefit-text">dragSelect was successfully tested on all modern browsers and a wide range of legacy browsers, it even works perfectly on ie9.</p>
       </div>
       <div class="benefit">
         <h2 class="benefit-title">Ease of use</h2>
@@ -67,7 +67,10 @@
       <li>
         <a href="#two">2. Simple Usage</a>
         <li>
-          <a href="#twob">2b. Extended</a>
+          <a href="#twob">2b. Within Area</a>
+        </li>
+        <li>
+          <a href="#twoc">2c. Extended</a>
         </li>
       </li>
       <li>
@@ -108,32 +111,36 @@
 
 
   <h4 id="two">2. Simple Usage</h4>
+  <p>The simplest possible usage:</p>
   <p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="prpwYG" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">prpwYG</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p>
   <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
-  Don’t forget to add <strong>position: fixed/absolute</strong> attribute to the selection rectangle, otherwise you won’t see it.
+  You can also use the "shift", "ctrl" or "command" key to make multiple independent selections. Try it out!
 
-  <h4 id="twob">2b. Widthin an Area</h4>
-  <p data-height="326" data-theme-id="0" data-slug-hash="RZMRZw" data-default-tab="css,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="dragSelect with AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/RZMRZw/">dragSelect with AREA</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+  <h4 id="twob">2b. Widthin a scrollable area</h4>
+  <p>Here the selection is constrained. You can only use the selection inside of the container with the red border:</p>
+  <p data-height="265" data-theme-id="0" data-slug-hash="Nvobgq" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="dragSelect with Scrollable AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">dragSelect with Scrollable AREA</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p>
   <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 
-  <h4 id="twob">2c. Extended</h4>
-  <strong>If you add the function to a variable you get full controll over all its functions:</strong>
+  <h4 id="twoc">2c. Extended</h4>
+  <strong>All options are optional. You could also just initiate the dragselect by `var ds = dragSelect();` without any option. If you add the function to a variable you get full controll over all its functions:</strong>
   <pre><xmp class="prettyprint lang-javascript" contenteditable="true"
 >var ds = dragSelect({
-  selector: document.getElementById('rectangle'), // draggable element '#rectangle is default but can be set to anything'
-  selectables: document.getElementsByClassName('selectables'), // nodes that can be selected as array
-  area: document.getElementById('area'), // you can only drag within this area 
-  onElementSelect: function(element) {}, // this is optional, it is fired every time an element is selected. (element) = just selected node
-  onElementUnselect: function(element) {}, // this is optional, it is fired every time an element is de-selected. (element) = just de-selected node.
-  callback: function(elements) {} // this is optional is fired once the user releases the mouse. (elements) = selected nodes.
+  selectables: document.getElementsByClassName('selectable-nodes'), // node/nodes that can be selected. This is also optional, you could just add them later with .addSelectables.
+  selector: document.getElementById('rectangle'), // draggable element. By default one will be created.
+  area: document.getElementById('area'), // area in which you can drag. If not provided it will be the whole document.
+  customStyles: false,  // If set to true, no styles (except for position absolute) will be applied by default.
+  multiSelectKeys: ['ctrlKey', 'shiftKey', 'metaKey'],  // special keys that allow multiselection. These key will allow the user add more elements to the selection instead of clearing the selection. The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array [] if you want to turn off the funcionality. Default: ['ctrlKey', 'shiftKey', 'metaKey']
+  onElementSelect: function(element) {}, // fired every time an element is selected. (element) = just selected node
+  onElementUnselect: function(element) {}, // fired every time an element is de-selected. (element) = just de-selected node.
+  callback: function(elements) {} // fired once the user releases the mouse. (elements) = selected nodes.
 });
 
 // if you add the function to a variable like we did, you have access to all its functions
 // and can now use start() and stop() like so:
-ds.stop();  // will teardown/stop the whole functionality
-ds.start();  // reset the functionality after a teardown
 ds.getSelection();  // returns all currently selected nodes
-ds.addSelectables([nodes]);  // adds elements that can be selected. Intelligent algorythm never adds elements twice.</xmp></pre>
+ds.addSelectables(document.getElementsByClassName('selectable-node'));  // adds elements that can be selected. Intelligent algorythm never adds elements twice.
+ds.stop();  // will teardown/stop the whole functionality
+ds.start();  // reset the functionality after a teardown</xmp></pre>
 
 
 
@@ -152,34 +159,44 @@ ds.addSelectables([nodes]);  // adds elements that can be selected. Intelligent 
     </thead>
     <tbody>
       <tr>
-        <td><span class="str">selector&nbsp;</span></td>
-        <td>single DOM element (node)</td>
-        <td>The square that will draw the selection. Default = #rectangle</td>
-      </tr>
-      <tr>
         <td><span class="str">selectables&nbsp;</span></td>
         <td>Nodes</td>
-        <td>the elements that can be selected</td>
+        <td>OPTIONAL. The elements that can be selected</td>
+      </tr>
+      <tr>
+        <td><span class="str">selector&nbsp;</span></td>
+        <td>single DOM element (node)</td>
+        <td>OPTIONAL. The square that will draw the selection. Autocreated by default</td>
       </tr>
       <tr>
         <td><span class="str">area&nbsp;</span></td>
         <td>single DOM element (node)</td>
-        <td>The square in which you are able to select</td>
+        <td>OPTIONAL. The square in which you are able to select</td>
+      </tr>
+      <tr>
+        <td><span class="str">customStyles&nbsp;</span></td>
+        <td>boolean</td>
+        <td>OPTIONAL. If true, no styles will be automatically applied (except position: absolute). Default: false</td>
+      </tr>
+      <tr>
+        <td><span class="str">multiSelectKeys&nbsp;</span></td>
+        <td>array</td>
+        <td>OPTIONAL. These key will allow the user add more elements to the selection instead of clearing the selection. The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array [] if you want to turn off the funcionality. Default: ['ctrlKey', 'shiftKey', 'metaKey']</td>
       </tr>
       <tr>
         <td><span class="str">onElementSelect&nbsp;</span></td>
         <td>function</td>
-        <td>Optional, it is fired every time an element is selected. This callback gets a property which is the just selected node</td>
+        <td>OPTIONAL. Fired every time an element is selected. This callback gets a property which is the selected node</td>
       </tr>
       <tr>
         <td><span class="str">onElementUnselect&nbsp;</span></td>
         <td>function</td>
-        <td>Optional, it is fired every time an element is de-selected. This callback gets a property which is the just de-selected node.</td>
+        <td>OPTIONAL. Fired every time an element is de-selected. This callback gets a property which is the de-selected node</td>
       </tr>
       <tr>
         <td><span class="str">callback&nbsp;</span></td>
         <td>function</td>
-        <td>callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes.</td>
+        <td>OPTIONAL. Callback function that gets fired when the selection is released. This callback gets a property which is an array that holds all selected nodes</td>
       </tr>
     </tbody>
   </table>
@@ -238,8 +255,16 @@ ds.addSelectables([nodes]);  // adds elements that can be selected. Intelligent 
   <strong>Reference:</strong>
   <table>
     <tr>
+      <td><span class="str">.ds-hover</span></td>
+      <td>on elements that are currently hovered</td>
+    </tr>
+    <tr>
       <td><span class="str">.ds-selected</span></td>
       <td>on elements that are selected</td>
+    </tr>
+    <tr>
+      <td><span class="str">.ds-selector</span></td>
+      <td>on the selector element</td>
     </tr>
   </table>
 
