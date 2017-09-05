@@ -85,7 +85,10 @@ ds.getSelection();  // returns all currently selected nodes
 ds.addSelectables(document.getElementsByClassName('selectable-node'));  // adds elements that can be selected. Intelligent algorythm never adds elements twice.
 ds.stop();  // will teardown/stop the whole functionality
 ds.start();  // reset the functionality after a teardown
-```
+```  
+
+You can also use the "shift", "ctrl" or "command" key to make multiple independent selections.
+
 
 ## Properties:
 | property | type | usage |
@@ -114,6 +117,7 @@ When the function is saved into a variable `var foo = dragSelect()` you have acc
 | name | trigger |
 |--- |--- |
 |.ds-selected |On elements that are selected
+|.ds-hover |On elements that are currently hovered
 |.ds-selector |On the selector element
 
 # Have Fun!

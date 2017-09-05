@@ -1,5 +1,6 @@
 /* 
 @TODO: rewrite it in a OOP manner so that people can extend/mixin the dragselect
+@TODO: test in older browsers
 
        __                 _____      __          __ 
   ____/ /________ _____ _/ ___/___  / /__  _____/ /_
@@ -26,6 +27,7 @@ Key-Features
   ** @selector          node            the square that will draw the selection
   ** @area              node            area in which you can drag. If not provided it will be the whole document
   ** @customStyles      boolean         if set to true, no styles (except for position absolute) will be applied by default
+  ** @multiSelectKeys   array           These key will allow the user add more elements to the selection instead of clearing the selection. The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the funcionality. Default: `['ctrlKey', 'shiftKey', 'metaKey']` |
   ** @onElementSelect   function        this is optional, it is fired every time an element is selected. This callback gets a property which is the just selected node
   ** @onElementUnselect function        this is optional, it is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
   ** @callback          function        a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes
@@ -141,7 +143,7 @@ var dragSelect = function(options) {
 
     // move element on location
     _getStartingPositions(event);
-    checkIfInsideSelection();
+    checkIfInsideSelection(true);
 
     area.removeEventListener('mousedown', _startUp);
     area.addEventListener('mousemove', _handleMove);
@@ -255,38 +257,55 @@ var dragSelect = function(options) {
   // Colision detection
   //////////////////////////////////////////////////////////////////////////////////////
 
-  function checkIfInsideSelection() {
+  /* startup handles first clicks. Here is user is clicking directly onto
+   * some element at start, (contrary to later hovers) we can assume that he
+   * really wants to select/deselect that item. So we force it through. */
+  function checkIfInsideSelection( startup ) {
     for(var i = 0, il = selectables.length; i < il; i++) {
       var selectable = selectables[i];
-      var posInSelectedArray = selected.indexOf(selectable);
 
       if( isElementTouching(selectable, selector) ) {
-
-        if( posInSelectedArray < 0 ) {
-          _select(selectable);
-        }
-
+        _handleSelection( selectable, startup );
       } else {
-
-        // @TODO: this is not very clean (once selected elements cannot be de-selected)
-        if( posInSelectedArray > -1 && !multiSelectKeyPressed ) {
-          _unselect(selectable);
-        }
-
+        _handleUnselection( selectable, startup );
       }
 
     }
   }
 
+  function _handleSelection( item, startup ) {
+    if( hasClass( item, 'ds-hover' ) && !startup ) { return false; }
+    var posInSelectedArray = selected.indexOf( item );
+
+    if( posInSelectedArray < 0 ) {
+      _select( item );
+    } else if( posInSelectedArray > -1 && multiSelectKeyPressed ) {
+      _unselect( item );
+    }
+
+    addClass( item, 'ds-hover' );
+  }
+
+  function _handleUnselection( item, startup ) {
+    if( !hasClass( item, 'ds-hover' ) && !startup ) { return false; }
+    var posInSelectedArray = selected.indexOf( item );
+
+    if( posInSelectedArray > -1 && !multiSelectKeyPressed ) {
+      _unselect( item );
+    }
+
+    removeClass( item, 'ds-hover' );
+  }
+
   function _select( item ) {
     selected.push(item);
-    addClass(item, 'selected');
+    addClass(item, 'ds-selected');
     selectCallback(item);
   }
 
   function _unselect( item ) {
     selected.splice(selected.indexOf(item), 1);
-    removeClass(item, 'selected');
+    removeClass(item, 'ds-selected');
     unselectCallback(item);
   }
 
@@ -463,6 +482,19 @@ var dragSelect = function(options) {
   }
 
   /**
+   * Checks if an element has a class
+   * sadly legacy phones/browsers don’t support .classlist so we use this workaround
+   * @param {*} element 
+   * @param {*} classname 
+   * @return {node} element
+   */
+  function hasClass( element, classname ) {
+    var cn = element.className;
+    if( cn.indexOf( classname ) > -1 ) { return true; }
+    else { return false; }
+  }
+
+  /**
    * Transforms an Object to an array
    * this is mainly used to transform Nodelists
    * into arrays of nodes. So user doesn’t have to care
@@ -578,6 +610,24 @@ var dragSelect = function(options) {
   }
 
 
+  // Polyfills
+  //////////////////////////////////////////////////////////////////////////////////////
+
+  // indexOf polyfill for <IE9 all credits to https://stackoverflow.com/a/9768663/3712591
+  if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function (elt /*, from*/) {
+      var len = this.length >>> 0;
+      var from = Number(arguments[1]) || 0;
+      from = (from < 0) ? Math.ceil(from) : Math.floor(from);
+      if (from < 0) { from += len; }
+
+      for (; from < len; from++) {
+        if (from in this && this[from] === elt) { return from; }
+      }
+      return -1;
+    };
+  }
+
   // Return
   //////////////////////////////////////////////////////////////////////////////////////
 
@@ -590,6 +640,10 @@ var dragSelect = function(options) {
     _handleMove: _handleMove,
     getPosition: getPosition,
     checkIfInsideSelection: checkIfInsideSelection,
+    _handleSelection: _handleSelection,
+    _handleUnselection: _handleUnselection,
+    _select: _select,
+    _unselect: _unselect,
     isElementTouching: isElementTouching,
     autoScroll: autoScroll,
     isCursorNearEdge: isCursorNearEdge,
@@ -598,6 +652,7 @@ var dragSelect = function(options) {
     getSelection: getSelection,
     addSelectables: addSelectables,
     removeSelectables: removeSelectables,
+    hasClass: hasClass,
     addClass: addClass,
     removeClass: removeClass,
     toArray: toArray,
