@@ -10,7 +10,6 @@
                 /____/                              
 
 Key-Features
-
   - No dependencies
   - Add drag selection.
   - Choose which elements can be selected.
@@ -20,8 +19,10 @@ Key-Features
   - Free & open source under MIT License
 
  Classes
+  ** .ds-selected       On elements that are selected
+  ** .ds-hover          On elements that are currently hovered
+  ** .ds-selector       On the selector element
 
-.ds-selected                   on elements that are selected
  Properties
   ** @selectables       nodes           the elements that can be selected
   ** @selector          node            the square that will draw the selection
@@ -33,7 +34,6 @@ Key-Features
   ** @callback          function        a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes
 
  Methods
-
   ** .start             ()                    reset the functionality after a teardown
   ** .stop              ()                    will teardown/stop the whole functionality
   ** .getSelection      ()                    returns the current selection
