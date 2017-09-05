@@ -114,7 +114,7 @@
   <p>The simplest possible usage:</p>
   <p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="prpwYG" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">prpwYG</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p>
   <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
-  Don’t forget to add <strong>position: fixed/absolute</strong> attribute to the selection rectangle, otherwise you won’t see it.
+  You can also use the "shift", "ctrl" or "command" key to make multiple independent selections. Try it out!
 
   <h4 id="twob">2b. Widthin a scrollable area</h4>
   <p>Here the selection is constrained. You can only use the selection inside of the container with the red border:</p>
@@ -129,6 +129,7 @@
   selector: document.getElementById('rectangle'), // draggable element. By default one will be created.
   area: document.getElementById('area'), // area in which you can drag. If not provided it will be the whole document.
   customStyles: false,  // If set to true, no styles (except for position absolute) will be applied by default.
+  multiSelectKeys: ['ctrlKey', 'shiftKey', 'metaKey'],  // special keys that allow multiselection. These key will allow the user add more elements to the selection instead of clearing the selection. The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array [] if you want to turn off the funcionality. Default: ['ctrlKey', 'shiftKey', 'metaKey']
   onElementSelect: function(element) {}, // fired every time an element is selected. (element) = just selected node
   onElementUnselect: function(element) {}, // fired every time an element is de-selected. (element) = just de-selected node.
   callback: function(elements) {} // fired once the user releases the mouse. (elements) = selected nodes.
@@ -176,6 +177,11 @@ ds.start();  // reset the functionality after a teardown</xmp></pre>
         <td><span class="str">customStyles&nbsp;</span></td>
         <td>boolean</td>
         <td>OPTIONAL. If true, no styles will be automatically applied (except position: absolute). Default: false</td>
+      </tr>
+      <tr>
+        <td><span class="str">multiSelectKeys&nbsp;</span></td>
+        <td>array</td>
+        <td>OPTIONAL. These key will allow the user add more elements to the selection instead of clearing the selection. The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array [] if you want to turn off the funcionality. Default: ['ctrlKey', 'shiftKey', 'metaKey']</td>
       </tr>
       <tr>
         <td><span class="str">onElementSelect&nbsp;</span></td>
@@ -249,8 +255,16 @@ ds.start();  // reset the functionality after a teardown</xmp></pre>
   <strong>Reference:</strong>
   <table>
     <tr>
+      <td><span class="str">.ds-hover</span></td>
+      <td>on elements that are currently hovered</td>
+    </tr>
+    <tr>
       <td><span class="str">.ds-selected</span></td>
       <td>on elements that are selected</td>
+    </tr>
+    <tr>
+      <td><span class="str">.ds-selector</span></td>
+      <td>on the selector element</td>
     </tr>
   </table>
 

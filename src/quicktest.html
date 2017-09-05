@@ -6,15 +6,6 @@
           user-select: none;
 }
 
-#rectangle {
-  position: absolute;
-  background: rgba(0, 0, 255, 0.2);
-  border: 1px solid rgba(0, 0, 255, 0.5);
-  width: 0;
-  height: 0;
-  display: none;
-}
-
 html, body {
   padding: 0;
   margin: 0;
@@ -37,7 +28,7 @@ html, body {
   background: red;
 }
 
-.item.selected {
+.ds-selected {
   outline: 3px solid black;
   outline-offset: 3px;
   color: black;
@@ -46,8 +37,6 @@ html, body {
 </style>
 
 <div id="container">
-  <div id="rectangle"></div>
-
 <div class="item one">1</div>
 <div class="item two">2</div>
 <div class="item three">3</div>
@@ -58,16 +47,14 @@ html, body {
 <div class="item eight">8</div>
 <div class="item nine">9</div>
 <div class="item ten">10</div>
-
 </div>
 
 <script src="dragSelect.js"></script>
 <script>
 var ds = dragSelect({
   selectables: document.getElementsByClassName('item'),
-  area: document.getElementById('container')
+  area: document.getElementById('container'),
+  callback: e => console.log(e)
 });
-
-
 </script>
 
