@@ -41,10 +41,6 @@
       color: black;
       font-weight: bold;
     }
-
-    .ds-selector {
-      background: yellow;
-    }
   </style>
 </head>
 <body>
@@ -63,24 +59,10 @@
   
   <script src="dragSelect.js"></script>
   <script>
-    // IE6 fixes
-    if(!document.getElementsByClassName) {
-      document.getElementsByClassName = function(cl) {
-        var retnode = [];
-        var elem = this.getElementsByTagName('*');
-        for (var i = 0; i < elem.length; i++) {
-          if((' ' + elem[i].className + ' ').indexOf(' ' + cl + ' ') > -1) retnode.push(elem[i]);
-        }
-        return retnode;
-      };
-    }
-  </script>
-  <script>
   var ds = dragSelect({
     selectables: document.getElementsByClassName('item'),
     area: document.getElementById('container'),
-    callback: function(e) { console.log(e) },
-    customStyles: true
+    callback: function(e) { console.log(e) }
   });
   </script>
 </body>
