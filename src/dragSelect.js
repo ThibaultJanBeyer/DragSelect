@@ -1,6 +1,5 @@
 /* 
 @TODO: rewrite it in a OOP manner so that people can extend/mixin the dragselect
-@TODO: test in older browsers
 
        __                 _____      __          __ 
   ____/ /________ _____ _/ ___/___  / /__  _____/ /_
@@ -10,18 +9,19 @@
                 /____/                              
 
 Key-Features
-
   - No dependencies
   - Add drag selection.
   - Choose which elements can be selected.
-  - Awesome browser support, works even on IE7
+  - Great browser support, works perfectly on IE9
   - Ease of use
   - Lightweight, only ~1KB gzipped
   - Free & open source under MIT License
 
  Classes
+  ** .ds-selected       On elements that are selected
+  ** .ds-hover          On elements that are currently hovered
+  ** .ds-selector       On the selector element
 
-.ds-selected                   on elements that are selected
  Properties
   ** @selectables       nodes           the elements that can be selected
   ** @selector          node            the square that will draw the selection
@@ -33,7 +33,6 @@ Key-Features
   ** @callback          function        a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes
 
  Methods
-
   ** .start             ()                    reset the functionality after a teardown
   ** .stop              ()                    will teardown/stop the whole functionality
   ** .getSelection      ()                    returns the current selection
@@ -526,7 +525,7 @@ var dragSelect = function(options) {
     catch( e ){
       // Browsers not supporting W3 DOM2 don't have HTMLElement and
       // an exception is thrown and we end up here. Testing some
-      // properties that all elements have. (works on IE7)
+      // properties that all elements have. (works even on IE7)
       return ( typeof obj === 'object' ) &&
              ( obj.nodeType === 1 ) &&
              ( typeof obj.style === 'object' ) &&

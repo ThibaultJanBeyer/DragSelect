@@ -32,9 +32,14 @@ gulp.task('html', function () {
     .pipe(gulp.dest('./dist/'));
 });
 
+gulp.task('quicktest', function () {
+  gulp.src('./src/quicktest.html')
+    .pipe(gulp.dest('./dist/'));
+});
+
 gulp.task('deploy', function () {
   return gulp.src('./dist/**/*')
     .pipe(ghPages());
 });
 
-gulp.task('default', ['js', 'html', 'css']);
+gulp.task('default', ['js', 'html', 'css', 'quicktest']);

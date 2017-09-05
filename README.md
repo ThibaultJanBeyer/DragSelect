@@ -19,7 +19,7 @@ https://thibaultjanbeyer.github.io/dragSelect/
 - No dependencies
 - Add drag selection.
 - Choose which elements can be selected.
-- Awesome browser support, works even on IE7
+- Great browser support, works even like a charm on IE9
 - Ease of use
 - Lightweight, only ~1KB gzipped
 - DragSelect was written with Performance in mind.
