@@ -46,8 +46,8 @@ npm install --save-dev npm-dragselect
 
 bower install --save-dev dragselect
 
-That's it, you're ready to rock!
-Of course you can also just include the function within your code to save a request.
+That's it, you're ready to rock!  
+Of course you can also just include the code within your code to save a request.
 
 # Usage
 
