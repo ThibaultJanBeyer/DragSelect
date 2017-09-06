@@ -1,18 +1,18 @@
 ```
-       __                 _____      __          __ 
-  ____/ /________ _____ _/ ___/___  / /__  _____/ /_
- / __  / ___/ __ `/ __ `/\__ \/ _ \/ / _ \/ ___/ __/
-/ /_/ / /  / /_/ / /_/ /___/ /  __/ /  __/ /__/ /_  
-\__,_/_/   \__,_/\__, //____/\___/_/\___/\___/\__/  
-                /____/                              
+    ____                   _____      __          __ 
+   / __ \_________ _____ _/ ___/___  / /__  _____/ /_
+  / / / / ___/ __ `/ __ `/\__ \/ _ \/ / _ \/ ___/ __/
+ / /_/ / /  / /_/ / /_/ /___/ /  __/ /  __/ /__/ /_  
+/_____/_/   \__,_/\__, //____/\___/_/\___/\___/\__/  
+                 /____/                              
 ```
 
-# dragSelect
+# DragSelect
 easily add a selection algorythm to your application/website.
 
 # Project Page: Demo & Info
 
-https://thibaultjanbeyer.github.io/dragSelect/
+https://thibaultjanbeyer.github.io/DragSelect/
 
 # Key-Features
 
@@ -35,7 +35,7 @@ Because aparently there is nothing that does not require jquery out there yet.
 Just download the file (minified) and add it to your document:
 
 ```html
-<script src="https://thibaultjanbeyer.github.io/dragSelect/ds.min.js"></script>
+<script src="https://thibaultjanbeyer.github.io/DragSelect/ds.min.js"></script>
 ```
 
 ## npm
@@ -58,17 +58,17 @@ Now in your JavaScript you can simply pass elements to the function like so:
 Choose which elements can be selected:
 
 ```javascript
-dragSelect({
+new DragSelect({
   selectables: document.getElementsByClassName('selectable-nodes')
 });
 ```
 
 ## complete
 
-All options are optional. You could also just initiate the dragselect by `var ds = dragSelect();` without any option.
+All options are optional. You could also just initiate the Dragselect by `new DragSelect();` without any option.
 
 ```javascript
-var ds = dragSelect({
+var ds = new DragSelect({
   selectables: document.getElementsByClassName('selectable-nodes'), // node/nodes that can be selected. This is also optional, you could just add them later with .addSelectables.
   selector: document.getElementById('rectangle'), // draggable element. By default one will be created.
   area: document.getElementById('area'), // area in which you can drag. If not provided it will be the whole document.
@@ -103,7 +103,7 @@ You can also use the "shift", "ctrl" or "command" key to make multiple independe
 |callback |function |OPTIONAL. Callback function that gets fired when the selection is released. This callback gets a property which is an array that holds all selected nodes |
 
 ## Methods:
-When the function is saved into a variable `var foo = dragSelect()` you have access to all its inner functions. There are way more than listed here. Here are just the most usable:  
+When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions. There are way more than listed here. Here are just the most usable:  
 
 | method | properties | usage |
 |--- |--- |--- |
@@ -112,6 +112,7 @@ When the function is saved into a variable `var foo = dragSelect()` you have acc
 |getSelection |/ |Returns all currently selected nodes |
 |addSelectables |DOM elements (nodes) |Adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice |
 |removeSelectables |DOM elements (nodes) |Remove elements that can be selected. Also removes the 'selected' class from those elements. |
+|getSelectables |/ |Returns array with all nodes that can be selected. |
 
 ## Classes
 | name | trigger |
@@ -119,7 +120,8 @@ When the function is saved into a variable `var foo = dragSelect()` you have acc
 |.ds-selected |On elements that are selected
 |.ds-hover |On elements that are currently hovered
 |.ds-selector |On the selector element
+|.ds-selectable |On elements that can be selected
 
 # Have Fun!
 
-[![Typewriter Gif](https://thibaultjanbeyer.github.io/dragSelect/typewriter.gif)](http://thibaultjanbeyer.com/)
+[![Typewriter Gif](https://thibaultjanbeyer.github.io/DragSelect/typewriter.gif)](http://thibaultjanbeyer.com/)
