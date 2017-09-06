@@ -835,11 +835,3 @@ if ( typeof module !== 'undefined' && module !== null ) {
   window.DragSelect = DragSelect;
 
 }
-
-
-// Relevant Discussions:
-// https://stackoverflow.com/questions/11979586/select-and-drag-to-get-selected-elements
-// https://stackoverflow.com/questions/5851156/javascript-drag-select-functionality-done-right
-// https://plainjs.com/
-// http://youmightnotneedjqueryplugins.com/
-// https://codecanyon.net/item/grapesheadlines-animated-headers/19715814?s_rank=1 ???
