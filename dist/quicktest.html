@@ -59,7 +59,7 @@
   
   <script src="dragSelect.js"></script>
   <script>
-  var ds = dragSelect({
+  var ds = new DragSelect({
     selectables: document.getElementsByClassName('item'),
     area: document.getElementById('container'),
     callback: function(e) { console.log(e) }

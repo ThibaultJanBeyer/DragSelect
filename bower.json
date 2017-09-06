@@ -14,7 +14,7 @@
     "javascript",
     "vanillajs"
   ],
-  "homepage": "https://github.com/ThibaultJanBeyer/dragSelect",
+  "homepage": "https://github.com/ThibaultJanBeyer/DragSelect",
   "ignore": [
     "**/.*",
     "node_modules",
