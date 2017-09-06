@@ -9,7 +9,7 @@ var csso = require('gulp-csso');
 var ghPages = require('gulp-gh-pages');
 
 gulp.task('js', function () {
-  gulp.src('./src/dragSelect.js')
+  gulp.src('./src/DragSelect.js')
     .pipe(jshint())
     .pipe(jshint.reporter('default'))
     .pipe(gulp.dest('./dist/'))
