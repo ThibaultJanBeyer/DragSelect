@@ -19,6 +19,7 @@ Key-Features
   ** .ds-selected       On elements that are selected
   ** .ds-hover          On elements that are currently hovered
   ** .ds-selector       On the selector element
+  ** .ds-selectable     On elements that can be selected
 
  Properties
   ** @selectables       nodes           the elements that can be selected
@@ -30,12 +31,13 @@ Key-Features
   ** @onElementUnselect function        this is optional, it is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
   ** @callback          function        a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes
 
- Methods
-  ** .start             ()                    reset the functionality after a teardown
-  ** .stop              ()                    will teardown/stop the whole functionality
-  ** .getSelection      ()                    returns the current selection
-  ** .addSelectables    ([nodes])             add elements that can be selected. Intelligent algorythm never adds elements twice.
-  ** .removeSelectables ([nodes])             remove elements that can be selected. Also removes the 'selected' class from those elements.
+ Usefull Methods
+  ** .start             ()              reset the functionality after a teardown
+  ** .stop              ()              will teardown/stop the whole functionality
+  ** .getSelection      ()              returns the current selection
+  ** .addSelectables    ([nodes])       add elements that can be selected. Intelligent algorythm never adds elements twice.
+  ** .removeSelectables ([nodes])       remove elements that can be selected. Also removes the 'selected' class from those elements.
+  ** .getSelectables    ()              returns all nodes that can be selected.
   ** and everything else
 
 
@@ -96,6 +98,11 @@ function DragSelect( options ) {
 DragSelect.prototype._setupOptions = function( options ) {
 
   this.selectables = this.toArray( options.selectables ) || [];
+  for (var index = 0; index < this.selectables.length; index++) {
+    var selectable = this.selectables[index];
+    this.addClass( selectable, 'ds-selectable' );
+  }
+
   this.multiSelectKeys = options.multiSelectKeys || ['ctrlKey', 'shiftKey', 'metaKey'];
   this.selectCallback = options.onElementSelect || function() {};
   this.unselectCallback = options.onElementUnselect || function() {};
@@ -569,7 +576,7 @@ DragSelect.prototype.getSelection = function() {
  * The algorythm makes sure that no node is added twice
  * 
  * @param {Nodes} _nodes – dom nodes
- * @return {Nodes} this.selectables – all selectable nodes
+ * @return {Nodes} _nodes – the added node(s)
  */
 DragSelect.prototype.addSelectables = function( _nodes ) {
 
@@ -579,8 +586,20 @@ DragSelect.prototype.addSelectables = function( _nodes ) {
     var node = nodes[i];
     if( this.selectables.indexOf( node ) < 0) {
       this.selectables.push( node );
+      this.addClass( node, 'ds-selectable' );
     }
   }
+
+  return _nodes;
+
+};
+
+/**
+ * Gets all nodes that can be selected
+ * 
+ * @return {Nodes} this.selectables
+ */
+DragSelect.prototype.getSelectables = function() {
 
   return this.selectables;
 
@@ -590,7 +609,7 @@ DragSelect.prototype.addSelectables = function( _nodes ) {
  * Remove nodes from the nodes that can be selected.
  * 
  * @param {Nodes} _nodes – dom nodes
- * @return {Nodes} this.selectables – all selectable nodes
+ * @return {Nodes} _nodes – the removed node(s)
  */
 DragSelect.prototype.removeSelectables = function( _nodes ) {
 
@@ -599,13 +618,15 @@ DragSelect.prototype.removeSelectables = function( _nodes ) {
   for (var i  = 0, il = nodes.length; i < il; i++) {
     var node = nodes[i];
     var index = this.selectables.indexOf( node );
-    if( index > 0 ) {
-      this.removeClass( node, 'selected' );
+    if( index > -1 ) {
+      this.removeClass( node, 'ds-hover' );
+      this.removeClass( node, 'ds-selected' );
+      this.removeClass( node, 'ds-selectable' );
       this.selectables.splice( index, 1 );
     }
   }
 
-  return this.selectables;
+  return _nodes;
 
 };
 
