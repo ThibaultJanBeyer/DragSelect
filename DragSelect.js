@@ -189,6 +189,7 @@ DragSelect.prototype._handleSelectables = function( selectables, remove, fromSel
  * @param {Boolean} remove - if elements were removed.
  */
 DragSelect.prototype._onClick = function( event ) {
+  if( this.mouseInteraction ) { return; }  // fix firefox doubleclick issue
 
   var node = event.target;
 
@@ -244,6 +245,7 @@ DragSelect.prototype.start = function() {
  */
 DragSelect.prototype._startUp = function( event ) {
 
+  this.mouseInteraction = true;
   this.selector.style.display = 'block';
 
   this.isMultiSelectKeyPressed( event );
@@ -263,14 +265,18 @@ DragSelect.prototype._startUp = function( event ) {
  * Check if some multiselection modifier key is pressed
  * 
  * @param {Object} event - The event object.
+ * @return {Boolean} this.isMultiSelectKeyPressed
  */
 DragSelect.prototype.isMultiSelectKeyPressed = function( event ) {
 
   this.multiSelectKeyPressed = false;
+
   for ( var index = 0; index < this.multiSelectKeys.length; index++ ) {
     var mKey = this.multiSelectKeys[index];
     if( event[mKey] ) { this.multiSelectKeyPressed = true; }
   }
+
+  return this.multiSelectKeyPressed;
 
 };
 
@@ -654,6 +660,10 @@ DragSelect.prototype.reset = function() {
 
   this.area.removeEventListener( 'mousemove', this._handleMove );
   this.area.addEventListener( 'mousedown', this._startUp );
+
+  setTimeout(function() {  // debounce in order "onClick" to work
+    this.mouseInteraction = false;
+  }.bind(this), 100);
 
 };
 
