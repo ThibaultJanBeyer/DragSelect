@@ -257,7 +257,7 @@ DragSelect.prototype._startUp = function( event ) {
   // event listeners
   this.area.removeEventListener( 'mousedown', this._startUp );
   this.area.addEventListener( 'mousemove', this._handleMove );
-  document.addEventListener( 'mouseup', this.reset );
+  this.area.addEventListener( 'mouseup', this.reset );
 
 };
 
@@ -674,7 +674,7 @@ DragSelect.prototype.stop = function() {
 
   this.reset();
   this.area.removeEventListener( 'mousedown', this._startUp );
-  document.removeEventListener( 'mouseup', this.reset );
+  this.area.removeEventListener( 'mouseup', this.reset );
 
 };
 
