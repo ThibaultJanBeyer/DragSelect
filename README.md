@@ -40,7 +40,7 @@ Just download the file (minified) and add it to your document:
 
 ## npm
 
-npm install --save-dev npm-dragselect
+npm install --save-dev dragselect
 
 ## bower
 
