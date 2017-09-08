@@ -8,10 +8,11 @@
 
 Key-Features
   - No dependencies
-  - Add drag selection.
+  - Ease of use
+  - Add drag selection
+  - Accessibility (a11y)
   - Choose which elements can be selected.
   - Great browser support, works perfectly on IE9
-  - Ease of use
   - Lightweight, only ~2KB gzipped
   - Free & open source under MIT License
 
@@ -86,22 +87,31 @@ function DragSelect( options ) {
   this.initialScroll;
   this.selected = [];
 
-  this._setupOptions( options );
   this._createBindings();
+  this._setupOptions( options );
   this.start();
 
 }
+
+/**
+ * Binds the `this` to the event listener functions
+ */
+DragSelect.prototype._createBindings = function() {
+
+  this._startUp = this._startUp.bind(this);
+  this._handleMove = this._handleMove.bind(this);
+  this.reset = this.reset.bind(this);
+  this._onClick = this._onClick.bind(this);
+
+};
 
 /**
  * Setup the options
  */
 DragSelect.prototype._setupOptions = function( options ) {
 
-  this.selectables = this.toArray( options.selectables ) || [];
-  for (var index = 0; index < this.selectables.length; index++) {
-    var selectable = this.selectables[index];
-    this.addClass( selectable, 'ds-selectable' );
-  }
+  this.selectables = [];
+  this._handleSelectables( this.toArray( options.selectables ) );
 
   this.multiSelectKeys = options.multiSelectKeys || ['ctrlKey', 'shiftKey', 'metaKey'];
   this.selectCallback = options.onElementSelect || function() {};
@@ -117,13 +127,71 @@ DragSelect.prototype._setupOptions = function( options ) {
 };
 
 /**
- * Binds the `this` to the event listener functions
+ * Add/Remove Selectables also handles css classes and event listeners.
+ * 
+ * @param {Object} selectables - selectable elements.
+ * @param {Boolean} remove - if elements should be removed.
+ * @param {Boolean} fromSelection - if elements should also be added/removed to the selection.
  */
-DragSelect.prototype._createBindings = function() {
+DragSelect.prototype._handleSelectables = function( selectables, remove, fromSelection ) {
 
-  this._startUp = this._startUp.bind(this);
-  this._handleMove = this._handleMove.bind(this);
-  this.reset = this.reset.bind(this);
+  for ( var index = 0; index < selectables.length; index++ ) {
+    var selectable = selectables[index];
+    var indexOf = this.selectables.indexOf( selectable );
+
+    if( indexOf < 0 && !remove ) {  // add
+      
+      this.addClass( selectable, 'ds-selectable' );
+      selectable.addEventListener( 'click', this._onClick );
+      this.selectables.push( selectable );
+      
+      // also add to current selection
+      if( fromSelection && this.selected.indexOf( selectable ) < 0 ) {
+        this.addClass( selectable, 'ds-selected' );
+        this.selected.push( selectable );
+      }
+
+    }
+
+    else if( indexOf > -1 && remove ) {  // remove
+
+      this.removeClass( selectable, 'ds-hover' );
+      this.removeClass( selectable, 'ds-selectable' );
+      selectable.removeEventListener( 'click', this._onClick );
+      this.selectables.splice( indexOf, 1 );
+
+      // also remove from current selection
+      if( fromSelection && this.selected.indexOf( selectable ) > -1 ) {
+        this.removeClass( selectable, 'ds-selected' );
+        this.selected.splice( this.selected.indexOf( selectable ), 1 );
+      }
+
+    }
+  }
+
+};
+
+/**
+ * Triggers when a node is actively selected.
+ * 
+ * This might be an "onClick" method but it also triggers when
+ * <button> nodes are pressed via the keyboard.
+ * Making DragSelect accessible for everyone!
+ * 
+ * @param {Object} selectables - selectable elements.
+ * @param {Boolean} remove - if elements were removed.
+ */
+DragSelect.prototype._onClick = function( event ) {
+
+  var node = event.target;
+
+  this.isMultiSelectKeyPressed( event );
+  this.checkIfInsideSelection( true );  // reset selection if no multiselectionkeypressed
+
+  if( this.selectables.indexOf( node ) > -1 ) {
+    this.toggle( node );
+    this.reset();
+  }
 
 };
 
@@ -171,12 +239,7 @@ DragSelect.prototype._startUp = function( event ) {
 
   this.selector.style.display = 'block';
 
-  // check if some multiselection modifier key is pressed
-  this.multiSelectKeyPressed = false;
-  for ( var index = 0; index < this.multiSelectKeys.length; index++ ) {
-    var mKey = this.multiSelectKeys[index];
-    if( event[mKey] ) { this.multiSelectKeyPressed = true; }
-  }
+  this.isMultiSelectKeyPressed( event );
 
   // move element on location
   this._getStartingPositions( event );
@@ -186,6 +249,21 @@ DragSelect.prototype._startUp = function( event ) {
   this.area.removeEventListener( 'mousedown', this._startUp );
   this.area.addEventListener( 'mousemove', this._handleMove );
   document.addEventListener( 'mouseup', this.reset );
+
+};
+
+/**
+ * Check if some multiselection modifier key is pressed
+ * 
+ * @param {Object} event - The event object.
+ */
+DragSelect.prototype.isMultiSelectKeyPressed = function( event ) {
+
+  this.multiSelectKeyPressed = false;
+  for ( var index = 0; index < this.multiSelectKeys.length; index++ ) {
+    var mKey = this.multiSelectKeys[index];
+    if( event[mKey] ) { this.multiSelectKeyPressed = true; }
+  }
 
 };
 
@@ -319,24 +397,32 @@ DragSelect.prototype.getPosition = function( event ) {
 /**
  * Checks if element is inside selection and takes action based on that
  * 
- * startup handles first clicks. Here is user is clicking directly onto
+ * force handles first clicks and accessibility. Here is user is clicking directly onto
  * some element at start, (contrary to later hovers) we can assume that he
  * really wants to select/deselect that item.
  * 
- * @param {Boolean} startup – forces through.
+ * @param {Boolean} force – forces through.
+ * 
+ * @return {Boolean}
  */
-DragSelect.prototype.checkIfInsideSelection = function( startup ) {
+DragSelect.prototype.checkIfInsideSelection = function( force ) {
+
+  var anyInside = false;
 
   for( var i = 0, il = this.selectables.length; i < il; i++ ) {
+
     var selectable = this.selectables[i];
 
     if( this.isElementTouching( selectable, this.selector, this.area ) ) {
-      this._handleSelection( selectable, startup );
+      this._handleSelection( selectable, force );
+      anyInside = true;
     } else {
-      this._handleUnselection( selectable, startup );
+      this._handleUnselection( selectable, force );
     }
 
   }
+
+  return anyInside;
 
 };
 
@@ -344,11 +430,11 @@ DragSelect.prototype.checkIfInsideSelection = function( startup ) {
  * Logic when an item is selected
  * 
  * @param {Node} item – selected item.
- * @param {Boolean} startup – forces through.
+ * @param {Boolean} force – forces through.
  */
-DragSelect.prototype._handleSelection = function( item, startup ) {
+DragSelect.prototype._handleSelection = function( item, force ) {
 
-  if( this.hasClass( item, 'ds-hover' ) && !startup ) { return false; }
+  if( this.hasClass( item, 'ds-hover' ) && !force ) { return false; }
   var posInSelectedArray = this.selected.indexOf( item );
 
   if( posInSelectedArray < 0 ) {
@@ -365,11 +451,11 @@ DragSelect.prototype._handleSelection = function( item, startup ) {
  * Logic when an item is de-selected
  * 
  * @param {Node} item – selected item.
- * @param {Boolean} startup – forces through.
+ * @param {Boolean} force – forces through.
  */
-DragSelect.prototype._handleUnselection = function( item, startup ) {
+DragSelect.prototype._handleUnselection = function( item, force ) {
 
-  if( !this.hasClass( item, 'ds-hover' ) && !startup ) { return false; }
+  if( !this.hasClass( item, 'ds-hover' ) && !force ) { return false; }
   var posInSelectedArray = this.selected.indexOf( item );
 
   if( posInSelectedArray > -1 && !this.multiSelectKeyPressed ) {
@@ -415,6 +501,25 @@ DragSelect.prototype.unselect = function( item ) {
   return item;
 
 };
+
+/**
+ * Adds/Removes an item to the selection.
+ * If it is already selected = remove, if not = add.
+ * 
+ * @param {Node} item – item to select.
+ * @return {Node} item
+ */
+DragSelect.prototype.toggle = function( item ) {
+  
+    if( this.selected.indexOf( item ) > -1) {
+      this.unselect( item );
+    } else {
+      this.select( item );
+    }
+  
+    return item;
+  
+  };
 
 /**
  * Checks if element is touched by the selector (and vice-versa)
@@ -576,20 +681,13 @@ DragSelect.prototype.getSelection = function() {
  * The algorythm makes sure that no node is added twice
  * 
  * @param {Nodes} _nodes – dom nodes
+ * @param {Nodes} addToSelection – if elements should also be added to current selection
  * @return {Nodes} _nodes – the added node(s)
  */
-DragSelect.prototype.addSelectables = function( _nodes ) {
+DragSelect.prototype.addSelectables = function( _nodes, addToSelection ) {
 
   var nodes = this.toArray( _nodes );
-
-  for (var i  = 0, il = nodes.length; i < il; i++) {
-    var node = nodes[i];
-    if( this.selectables.indexOf( node ) < 0) {
-      this.selectables.push( node );
-      this.addClass( node, 'ds-selectable' );
-    }
-  }
-
+  this._handleSelectables( nodes, false, addToSelection );
   return _nodes;
 
 };
@@ -609,23 +707,13 @@ DragSelect.prototype.getSelectables = function() {
  * Remove nodes from the nodes that can be selected.
  * 
  * @param {Nodes} _nodes – dom nodes
+ * @param {Nodes} removeFromSelection – if elements should also be removed from current selection
  * @return {Nodes} _nodes – the removed node(s)
  */
-DragSelect.prototype.removeSelectables = function( _nodes ) {
+DragSelect.prototype.removeSelectables = function( _nodes, removeFromSelection ) {
 
   var nodes = this.toArray( _nodes );
-
-  for (var i  = 0, il = nodes.length; i < il; i++) {
-    var node = nodes[i];
-    var index = this.selectables.indexOf( node );
-    if( index > -1 ) {
-      this.removeClass( node, 'ds-hover' );
-      this.removeClass( node, 'ds-selected' );
-      this.removeClass( node, 'ds-selectable' );
-      this.selectables.splice( index, 1 );
-    }
-  }
-
+  this._handleSelectables( nodes, true, removeFromSelection );
   return _nodes;
 
 };

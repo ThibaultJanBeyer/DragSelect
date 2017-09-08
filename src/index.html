@@ -35,8 +35,8 @@
   <div class="main-info-content">
     <div class="benefits">
       <div class="benefit">
-        <h2 class="benefit-title">Browser Support</h2>
-        <p class="benefit-text">DragSelect was successfully tested on all modern browsers and a wide range of legacy browsers, it even works perfectly on ie9.</p>
+        <h2 class="benefit-title">Browser Support &amp; Accessibility</h2>
+        <p class="benefit-text">DragSelect was successfully tested on all modern browsers and a wide range of legacy browsers, it even works perfectly on ie9. Also, DragSelect is accessible by default.</p>
       </div>
       <div class="benefit">
         <h2 class="benefit-title">Ease of use</h2>
@@ -71,6 +71,9 @@
         </li>
         <li>
           <a href="#twoc">2c. Extended</a>
+        </li>
+        <li>
+          <a href="#twod">2d. Accessibility (a11y)</a>
         </li>
       </li>
       <li>
@@ -143,6 +146,18 @@ ds.removeSelectables(document.getElementsByClassName('selectable-node'));  // re
 ds.getSelectables();  // returns array of nodes that can be selected.
 ds.stop();  // will teardown/stop the whole functionality
 ds.start();  // reset the functionality after a teardown</xmp></pre>
+
+  <h4 id="twod">2d. Accessibility (a11y)</h4>
+  <strong>DragSelect is accessibly by default.</strong>
+
+  <p>
+    TLDR; => Your <strong>selectables</strong> should be buttons:
+    <xmp class="prettyprint lang-html" contenteditable="true"><button type="button"></button></xmp></pre>
+  </p>
+  
+  <p>
+    Obviously, keyboard users won’t get the full visual experience but it works similarely to the OS default behaviour. You can select items using the default select keys (usually space or enter) and also multiselect when using a modifier key at the same time. There is one little thing you have to do tho’: the <strong>selectables</strong> have to be pressable (clickable)! To achieve this, they should be buttons: <button type="button">I’m a button</button>.
+  </p>
 
 
 
@@ -237,13 +252,13 @@ ds.start();  // reset the functionality after a teardown</xmp></pre>
     </tr>
     <tr>
       <td><span class="str">addSelectables</span></td>
-      <td>nodes</td>
-      <td>adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice</td>
+      <td>nodes, boolean</td>
+      <td>adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice. If boolean is set to true: elements will also be added to current selection</td>
     </tr>
     <tr>
       <td><span class="str">removeSelectables</span></td>
-      <td>nodes</td>
-      <td>remove elements that can be selected. Also removes the 'selected' class from those elements.</td>
+      <td>nodes, boolean</td>
+      <td>remove elements that can be selected. If boolean is set to true: elements will also be removed from current selection.</td>
     </tr>
     <tr>
       <td><span class="str">getSelectables</span></td>

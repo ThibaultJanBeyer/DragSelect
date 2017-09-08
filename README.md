@@ -17,19 +17,20 @@ https://thibaultjanbeyer.github.io/DragSelect/
 # Key-Features
 
 - No dependencies
-- Add drag selection.
+- Accessibility (a11y)
+- Add drag selection
 - Choose which elements can be selected.
 - Great browser support, works even like a charm on IE9
-- Ease of use
 - Lightweight, only ~1KB gzipped
 - DragSelect was written with Performance in mind.
 - Free & open source under MIT License
+- Ease of use
 
 # Why?
 
 Because aparently there is nothing that does not require jquery out there yet.
 
-# 1. Installation
+# Installation
 ## easy
 
 Just download the file (minified) and add it to your document:
@@ -90,7 +91,17 @@ ds.start();  // reset the functionality after a teardown
 You can also use the "shift", "ctrl" or "command" key to make multiple independent selections.
 
 
-## Properties:
+## Accessibility (a11y)
+
+DragSelect is accessibly by default:  
+
+TLDR; => Your `selectables` should be buttons: `<button type="button"></button>`.  
+
+Obviously, keyboard users won’t get the full visual experience but it works similarely to the OS default behaviour. You can select items using the default select keys (usually space or enter) and also multiselect when using a modifier key at the same time. There is one little thing you have to do tho’: the `selectables` have to be pressable (clickable)! To achieve this, they should be of type `<button type="button"></button>`.  
+
+
+
+# Properties:
 | property | type | usage |
 |--- |--- |--- |
 |selectables |DOM elements (nodes) |OPTIONAL. The elements that can be selected |
@@ -102,7 +113,7 @@ You can also use the "shift", "ctrl" or "command" key to make multiple independe
 |onElementUnselect |function |OPTIONAL. Fired every time an element is de-selected. This callback gets a property which is the de-selected node |
 |callback |function |OPTIONAL. Callback function that gets fired when the selection is released. This callback gets a property which is an array that holds all selected nodes |
 
-## Methods:
+# Methods:
 When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions. There are way more than listed here. Here are just the most usable:  
 
 | method | properties | usage |
@@ -110,11 +121,11 @@ When the function is saved into a variable `var foo = new DragSelect()` you have
 |stop |/ |Will teardown/stop the whole functionality |
 |start |/ |Reset the functionality after a teardown |
 |getSelection |/ |Returns all currently selected nodes |
-|addSelectables |DOM elements (nodes) |Adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice |
-|removeSelectables |DOM elements (nodes) |Remove elements that can be selected. Also removes the 'selected' class from those elements. |
+|addSelectables |DOM elements (nodes), Boolean (addToSelection) |Adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice. If boolean is set to true: elements will also be added to current selection. |
+|removeSelectables |DOM elements (nodes), Boolean (removeFromSelection) |Remove elements that can be selected. If boolean is set to true: elements will also be removed from current selection. |
 |getSelectables |/ |Returns array with all nodes that can be selected. |
 
-## Classes
+# Classes
 | name | trigger |
 |--- |--- |
 |.ds-selected |On elements that are selected
