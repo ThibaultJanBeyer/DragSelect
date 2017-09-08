@@ -123,9 +123,8 @@ DragSelect.prototype._setupOptions = function( options ) {
   // Area has to have a special position attribute for calculations
   if( this.area !== document ) {
     var computedArea = getComputedStyle( this.area );
-    if( computedArea.position !== 'absolute' || computedArea.position !== 'relative' || computedArea.position !== 'fixed' ) {
-      this.area.style.position = 'relative';
-    }
+    var isPositioned = computedArea.position === 'absolute' || computedArea.position !== 'relative' || computedArea.position !== 'fixed';
+    if( !isPositioned ) { this.area.style.position = 'relative'; }
   }
 
   // Selector
