@@ -207,7 +207,7 @@ DragSelect.prototype._createSelector = function() {
   selector.style.position = 'absolute';
   if( !this.customStyles ) {
     selector.style.background = 'rgba(0, 0, 255, 0.1)';
-    selector.style.border = '1px solid rgba(0, 0, 255, 0.5)';
+    selector.style.border = '1px solid rgba(0, 0, 255, 0.45)';
     selector.style.display = 'none';
   }
 
