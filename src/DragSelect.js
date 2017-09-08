@@ -120,6 +120,13 @@ DragSelect.prototype._setupOptions = function( options ) {
   this.area = options.area || document;
   this.customStyles = options.customStyles;
 
+  // Area has to have a special position attribute for calculations
+  var computedArea = getComputedStyle(this.area);
+  var isAbsolute = computedArea.position === 'absolute' || computedArea.position === 'relative' || computedArea.position === 'fixed';
+  if(this.area !== document && !isAbsolute) {
+    this.area.style.position = 'relative';
+  }
+
   // Selector
   this.selector = options.selector || this._createSelector();
   this.addClass( this.selector, 'ds-selector' );
