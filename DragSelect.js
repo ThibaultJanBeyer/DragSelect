@@ -613,8 +613,8 @@ DragSelect.prototype.isCursorNearEdge = function( event, area ) {
   var areaRect = this.getAreaRect( area );
 
   var tolerance = {
-    x: Math.max(areaRect.width / 10, 20),
-    y: Math.max(areaRect.height / 10, 20)
+    x: Math.max(areaRect.width / 10, 25),
+    y: Math.max(areaRect.height / 10, 25)
   };
 
   // document body also changes the cursor position values so we have to take
