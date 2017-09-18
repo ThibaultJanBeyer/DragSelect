@@ -630,14 +630,10 @@ DragSelect.prototype.isCursorNearEdge = function( event, area ) {
     y: Math.max(areaRect.height / 10, 30)
   };
 
-  // document body also changes the cursor position values so we have to take
-  // the scroll amount into consideration for these calculations
-  var scroll = area === document ? this.getScroll( document.body ) : { x: 0, y: 0 };
-
-  if( cursorPosition.y < tolerance.y + scroll.y ) { return 'top'; }
-  else if( areaRect.height - cursorPosition.y + scroll.y < tolerance.y ) { return 'bottom'; }
-  else if( areaRect.width - cursorPosition.x + scroll.x < tolerance.x ) { return 'right'; }
-  else if( cursorPosition.x < tolerance.x + scroll.x ) { return 'left'; }
+  if( cursorPosition.y < tolerance.y ) { return 'top'; }
+  else if( areaRect.height - cursorPosition.y < tolerance.y ) { return 'bottom'; }
+  else if( areaRect.width - cursorPosition.x < tolerance.x ) { return 'right'; }
+  else if( cursorPosition.x < tolerance.x ) { return 'left'; }
 
   return false;
 
@@ -853,10 +849,11 @@ DragSelect.prototype.getCursorPos = function( event, area ) {
   };
 
   var areaRect = this.getAreaRect( area || document );
+  var docScroll = this.getScroll();
 
   return {  // if it’s constrained in an area the area should be substracted calculate 
-    x: cPos.x - areaRect.left,
-    y: cPos.y - areaRect.top
+    x: cPos.x - areaRect.left - docScroll.x,
+    y: cPos.y - areaRect.top - docScroll.y
   };
 
 };
@@ -871,8 +868,8 @@ DragSelect.prototype.getCursorPos = function( event, area ) {
 DragSelect.prototype.getScroll = function( area ) {
 
   var scroll = {  // when the rectangle is bound to the document, no scroll is needed
-    y: area && area.scrollTop >= 0 ? area.scrollTop : 0,
-    x: area && area.scrollLeft >= 0 ? area.scrollLeft : 0
+    y: area && area.scrollTop >= 0 ? area.scrollTop : document.body.scrollTop,
+    x: area && area.scrollLeft >= 0 ? area.scrollLeft : document.body.scrollLeft
   };
 
   return scroll;
@@ -892,7 +889,7 @@ DragSelect.prototype.getAreaRect = function( area ) {
   if(area === document) {
     var size = {
       y: area.documentElement.clientHeight > 0 ? area.documentElement.clientHeight : window.innerHeight,
-      x: area.documentElement.clientWidth > 0 ? area.documentElement.clientWidth : window.innerWidth,
+      x: area.documentElement.clientWidth > 0 ? area.documentElement.clientWidth : window.innerWidth
     };
     return { top: 0, left: 0, bottom: 0, right: 0, width: size.x, height: size.y };
   }
