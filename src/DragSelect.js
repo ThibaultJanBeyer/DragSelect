@@ -850,7 +850,6 @@ DragSelect.prototype.getCursorPos = function( event, area ) {
 
   var areaRect = this.getAreaRect( area || document );
   var docScroll = this.getScroll();
-  console.log(cPos.y - areaRect.top - docScroll.y);
 
   return {  // if it’s constrained in an area the area should be substracted calculate 
     x: cPos.x - areaRect.left - docScroll.x,
