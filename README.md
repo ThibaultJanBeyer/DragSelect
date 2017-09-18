@@ -28,7 +28,9 @@ https://thibaultjanbeyer.github.io/DragSelect/
 
 # Why?
 
-Because aparently there is nothing that does not require jquery out there yet.
+Because apparently there is nothing that does not require jquery out there yet.  
+This is better than https://jqueryui.com/selectable/ and has no dependencies.
+We use it currently in a professional rich interface application where we have a file management system. The user can select files to organize them and change their metadata, with this plugin our users are able to select multiple files and perform batch/bulk-operations (applying changes to multiple files at once). I can easily think of dozens other possibilites this can be used for. I’m really keen to know how you use it in your projects, please let me know.
 
 # Installation
 ## easy
