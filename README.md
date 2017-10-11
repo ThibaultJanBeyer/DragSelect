@@ -42,12 +42,14 @@ Just download the file (minified) and add it to your document:
 ```
 
 ## npm
-
+```console
 npm install --save-dev dragselect
+```
 
 ## bower
-
+```console
 bower install --save-dev dragselect
+```
 
 That's it, you're ready to rock!  
 Of course you can also just include the code within your code to save a request.
