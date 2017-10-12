@@ -217,6 +217,7 @@ DragSelect.prototype._createSelector = function() {
     selector.style.background = 'rgba(0, 0, 255, 0.1)';
     selector.style.border = '1px solid rgba(0, 0, 255, 0.45)';
     selector.style.display = 'none';
+    selector.style.pointerEvents = 'none';  // fix for issue #8 (ie11+)
   }
 
   var _area = this.area === document ? document.body : this.area;
@@ -258,6 +259,8 @@ DragSelect.prototype._startUp = function( event ) {
   this.area.removeEventListener( 'mousedown', this._startUp );
   this.area.addEventListener( 'mousemove', this._handleMove );
   this.area.addEventListener( 'mouseup', this.reset );
+
+  this.selector.style.display = 'none';  // hidden unless moved, fix for issue #8
 
 };
 
@@ -309,6 +312,8 @@ DragSelect.prototype._getStartingPositions = function( event ) {
  * @param {Object} event - The event object.
  */
 DragSelect.prototype._handleMove = function( event ) {
+
+  this.selector.style.display = 'block';  // hidden unless moved, fix for issue #8
 
   // move element on location
   var selectorPos = this.getPosition( event );
