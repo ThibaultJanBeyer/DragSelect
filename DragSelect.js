@@ -28,6 +28,7 @@ Key-Features
   ** @area              node            area in which you can drag. If not provided it will be the whole document
   ** @customStyles      boolean         if set to true, no styles (except for position absolute) will be applied by default
   ** @multiSelectKeys   array           These key will allow the user add more elements to the selection instead of clearing the selection. The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the funcionality. Default: `['ctrlKey', 'shiftKey', 'metaKey']` |
+  ** @autoScrollSpeed   integer         Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Set to 0.0001 to disable autoscrolling. Default = 1
   ** @onElementSelect   function        this is optional, it is fired every time an element is selected. This callback gets a property which is the just selected node
   ** @onElementUnselect function        this is optional, it is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
   ** @callback          function        a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes
@@ -114,6 +115,7 @@ DragSelect.prototype._setupOptions = function( options ) {
   this._handleSelectables( this.toArray( options.selectables ) );
 
   this.multiSelectKeys = options.multiSelectKeys || ['ctrlKey', 'shiftKey', 'metaKey'];
+  this.autoScrollSpeed = options.autoScrollSpeed || 1;
   this.selectCallback = options.onElementSelect || function() {};
   this.unselectCallback = options.onElementUnselect || function() {};
   this.callback = options.callback || function() {};
@@ -611,10 +613,10 @@ DragSelect.prototype._autoScroll = function( event ) {
 
   var _area = this.area === document ? this.area.body : this.area;
 
-  if( edge === 'top' && _area.scrollTop > 0 ) { _area.scrollTop -= 1; }
-  else if( edge === 'bottom' ) { _area.scrollTop += 1; }
-  else if( edge === 'left' && _area.scrollLeft > 0 ) { _area.scrollLeft -= 1; }
-  else if( edge === 'right' ) { _area.scrollLeft += 1; }
+  if( edge === 'top' && _area.scrollTop > 0 ) { _area.scrollTop -= 1 * this.autoScrollSpeed; }
+  else if( edge === 'bottom' ) { _area.scrollTop += 1 * this.autoScrollSpeed; }
+  else if( edge === 'left' && _area.scrollLeft > 0 ) { _area.scrollLeft -= 1 * this.autoScrollSpeed; }
+  else if( edge === 'right' ) { _area.scrollLeft += 1 * this.autoScrollSpeed; }
 
 };
 
