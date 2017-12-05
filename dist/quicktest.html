@@ -26,6 +26,7 @@
       overflow: scroll;
       top: 25%;
       left: 15%;
+      white-space: nowrap;
     }
     
     .item {
@@ -66,6 +67,7 @@
   var ds = new DragSelect({
     selectables: document.getElementsByClassName('item'),
     area: document.getElementById('container'),
+    // autoScrollSpeed: 0.0001,
     callback: function(e) { console.log(e) }
   });
   </script>

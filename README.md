@@ -79,6 +79,7 @@ var ds = new DragSelect({
   area: document.getElementById('area'), // area in which you can drag. If not provided it will be the whole document.
   customStyles: false,  // If set to true, no styles (except for position absolute) will be applied by default.
   multiSelectKeys: ['ctrlKey', 'shiftKey', 'metaKey'],  // special keys that allow multiselection.
+  autoScrollSpeed: 3,  // Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Set to 0.0001 to disable autoscrolling. Default = 1
   onElementSelect: function(element) {}, // fired every time an element is selected. (element) = just selected node
   onElementUnselect: function(element) {}, // fired every time an element is de-selected. (element) = just de-selected node.
   callback: function(elements) {} // fired once the user releases the mouse. (elements) = selected nodes.
@@ -113,6 +114,7 @@ Obviously, keyboard users won’t get the full visual experience but it works si
 |area |single DOM element (node) |OPTIONAL. The square in which you are able to select |
 |customStyles |boolean |OPTIONAL. If true, no styles will be automatically applied (except position: absolute). Default: `false` |
 |multiSelectKeys |array |OPTIONAL. These key will allow the user add more elements to the selection instead of clearing the selection. The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the funcionality. Default: `['ctrlKey', 'shiftKey', 'metaKey']` |
+|autoScrollSpeed |integer |OPTIONAL. The speed in which the area scrolls while selecting (if available). The unit is pixel per movement. Set to `0.0001` to disable autoscrolling. Default = `1` |
 |onElementSelect |function |OPTIONAL. Fired every time an element is selected. This callback gets a property which is the selected node |
 |onElementUnselect |function |OPTIONAL. Fired every time an element is de-selected. This callback gets a property which is the de-selected node |
 |callback |function |OPTIONAL. Callback function that gets fired when the selection is released. This callback gets a property which is an array that holds all selected nodes |
