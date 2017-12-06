@@ -1,3 +1,7 @@
+# 1.7.13
+
+- add AMD Modules support
+
 # 1.7.12
 
 - Add SVG Support

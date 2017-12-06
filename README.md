@@ -53,7 +53,9 @@ bower install --save-dev dragselect
 ```
 
 That's it, you're ready to rock!  
-Of course you can also just include the code within your code to save a request.
+Of course you can also just include the code within your code to save a request.  
+
+DragSelect supports `module.exports`, `AMD Modules` with `define` and has a fallback to global namespace for maximum out of the box support.
 
 # Usage
 

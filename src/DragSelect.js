@@ -1018,10 +1018,17 @@ DragSelect.prototype.updatePos = function( node, pos ) {
 
 // Make exportable
 //////////////////////////////////////////////////////////////////////////////////////
+// jshint -W117
 
+// Module exporting
 if ( typeof module !== 'undefined' && module !== null ) {
 
   module.exports = DragSelect;
+
+// AMD Modules
+} else if( typeof define !== 'undefined' && typeof define === 'function' && define ) {
+
+  define(function() { return DragSelect; });
 
 } else {
 
