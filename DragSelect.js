@@ -1,3 +1,4 @@
+// v 1.7.14
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -791,10 +792,10 @@ DragSelect.prototype.addClass = function( element, classname ) {
 
   if(element.classList) { return element.classList.add(classname); }
 
-  var cn = element.className;
+  var cn = element.getAttribute('class') || '';
   if( cn.indexOf(classname) !== -1 ) { return element; }  // test for existance
   if( cn !== '' ) { classname = ' ' + classname; }  // add a space if the element already has class
-  element.className = cn+classname;
+  element.setAttribute('class', cn+classname);
   return element;
 
 };
@@ -812,10 +813,10 @@ DragSelect.prototype.removeClass = function( element, classname ) {
 
   if(element.classList) { return element.classList.remove(classname); }
 
-  var cn = element.className;
+  var cn = element.getAttribute('class') || '';
   var rxp = new RegExp( classname + '\\b', 'g' );
   cn = cn.replace( rxp, '' );
-  element.className = cn;
+  element.setAttribute('class', cn);
   return element;
 
 };
@@ -832,7 +833,7 @@ DragSelect.prototype.hasClass = function( element, classname ) {
 
   if(element.classList) { return element.classList.contains(classname); }
 
-  var cn = element.className;
+  var cn = element.getAttribute('class') || '';
   if( cn.indexOf( classname ) > -1 ) { return true; }
   else { return false; }
 
