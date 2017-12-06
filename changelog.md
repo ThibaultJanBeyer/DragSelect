@@ -1,3 +1,7 @@
+# 1.7.14
+
+- Enhanced SVG support for legacy browsers
+
 # 1.7.13
 
 - add AMD Modules support
