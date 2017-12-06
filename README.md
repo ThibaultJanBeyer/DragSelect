@@ -19,10 +19,11 @@ https://thibaultjanbeyer.github.io/DragSelect/
 - No dependencies
 - Accessibility (a11y)
 - Add drag selection
-- Choose which elements can be selected.
+- Choose which elements can be selected
 - Great browser support, works even like a charm on IE9
-- Lightweight, only ~1KB gzipped
-- DragSelect was written with Performance in mind.
+- Lightweight, only ~3KB gzipped
+- DragSelect was written with Performance in mind
+- Supports SVG
 - Free & open source under MIT License
 - Ease of use
 
@@ -80,6 +81,8 @@ var ds = new DragSelect({
   customStyles: false,  // If set to true, no styles (except for position absolute) will be applied by default.
   multiSelectKeys: ['ctrlKey', 'shiftKey', 'metaKey'],  // special keys that allow multiselection.
   autoScrollSpeed: 3,  // Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Set to 0.0001 to disable autoscrolling. Default = 1
+  onDragStart: function(element) {}, // fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners.
+  onDragMove: function(element) {}, // fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
   onElementSelect: function(element) {}, // fired every time an element is selected. (element) = just selected node
   onElementUnselect: function(element) {}, // fired every time an element is de-selected. (element) = just de-selected node.
   callback: function(elements) {} // fired once the user releases the mouse. (elements) = selected nodes.
@@ -89,6 +92,7 @@ var ds = new DragSelect({
 // and can now use start() and stop() like so:
 ds.getSelection();  // returns all currently selected nodes
 ds.addSelectables(document.getElementsByClassName('selectable-node'));  // adds elements that can be selected. Intelligent algorythm never adds elements twice.
+ds.break();  // used in callbacks to disable the execution of the upcoming code. It will not teardown the functionality.
 ds.stop();  // will teardown/stop the whole functionality
 ds.start();  // reset the functionality after a teardown
 ```  
@@ -115,6 +119,8 @@ Obviously, keyboard users won’t get the full visual experience but it works si
 |customStyles |boolean |OPTIONAL. If true, no styles will be automatically applied (except position: absolute). Default: `false` |
 |multiSelectKeys |array |OPTIONAL. These key will allow the user add more elements to the selection instead of clearing the selection. The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the funcionality. Default: `['ctrlKey', 'shiftKey', 'metaKey']` |
 |autoScrollSpeed |integer |OPTIONAL. The speed in which the area scrolls while selecting (if available). The unit is pixel per movement. Set to `0.0001` to disable autoscrolling. Default = `1` |
+|onDragStart |function |OPTIONAL. Fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners |
+|onDragMove |function |OPTIONAL. Fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position |
 |onElementSelect |function |OPTIONAL. Fired every time an element is selected. This callback gets a property which is the selected node |
 |onElementUnselect |function |OPTIONAL. Fired every time an element is de-selected. This callback gets a property which is the de-selected node |
 |callback |function |OPTIONAL. Callback function that gets fired when the selection is released. This callback gets a property which is an array that holds all selected nodes |
@@ -126,10 +132,14 @@ When the function is saved into a variable `var foo = new DragSelect()` you have
 |--- |--- |--- |
 |stop |/ |Will teardown/stop the whole functionality |
 |start |/ |Reset the functionality after a teardown |
+|break |/ |Used in callbacks to disable the execution of the upcoming code. It will not teardown the functionality |
 |getSelection |/ |Returns all currently selected nodes |
 |addSelectables |DOM elements (nodes), Boolean (addToSelection) |Adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice. If boolean is set to true: elements will also be added to current selection. |
 |removeSelectables |DOM elements (nodes), Boolean (removeFromSelection) |Remove elements that can be selected. If boolean is set to true: elements will also be removed from current selection. |
 |getSelectables |/ |Returns array with all nodes that can be selected. |
+|getInitialCursorPosition |/ |Returns the x, y coordinates the cursor had when first clicked |
+|getCurrentCursorPosition |/ |Returns current/last x, y coordinates of the cursor |
+|getCursorPositionDifference |/ |Returns object with the x, y difference between the initial and the last cursor position |
 
 # Classes
 | name | trigger |

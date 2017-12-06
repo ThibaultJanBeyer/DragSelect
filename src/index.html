@@ -134,6 +134,8 @@
   customStyles: false,  // If set to true, no styles (except for position absolute) will be applied by default.
   multiSelectKeys: ['ctrlKey', 'shiftKey', 'metaKey'],  // special keys that allow multiselection. These key will allow the user add more elements to the selection instead of clearing the selection. The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array [] if you want to turn off the funcionality. Default: ['ctrlKey', 'shiftKey', 'metaKey']
   autoScrollSpeed: 3,  // Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Set to 0.0001 to disable autoscrolling. Default = 1
+  onDragStart: function(element) {}, // fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners.
+  onDragMove: function(element) {}, // fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
   onElementSelect: function(element) {}, // fired every time an element is selected. (element) = just selected node
   onElementUnselect: function(element) {}, // fired every time an element is de-selected. (element) = just de-selected node.
   callback: function(elements) {} // fired once the user releases the mouse. (elements) = selected nodes.
@@ -145,6 +147,7 @@ ds.getSelection();  // returns all currently selected nodes
 ds.addSelectables(document.getElementsByClassName('selectable-node'));  // adds elements that can be selected. Intelligent algorythm never adds elements twice.
 ds.removeSelectables(document.getElementsByClassName('selectable-node'));  // removes elements that can be selected.
 ds.getSelectables();  // returns array of nodes that can be selected.
+ds.break();  // used in callbacks to disable the execution of the upcoming code. It will not teardown the functionality.
 ds.stop();  // will teardown/stop the whole functionality
 ds.start();  // reset the functionality after a teardown</xmp></pre>
 
@@ -209,6 +212,16 @@ ds.start();  // reset the functionality after a teardown</xmp></pre>
         <td>OPTIONAL. Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Set to 0.0001 to disable autoscrolling. Default = 1</td>
       </tr>
       <tr>
+        <td><span class="str">onDragStart&nbsp;</span></td>
+        <td>function</td>
+        <td>OPTIONAL. Fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners</td>
+      </tr>
+      <tr>
+        <td><span class="str">onDragMove&nbsp;</span></td>
+        <td>function</td>
+        <td>OPTIONAL. Fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position</td>
+      </tr>
+      <tr>
         <td><span class="str">onElementSelect&nbsp;</span></td>
         <td>function</td>
         <td>OPTIONAL. Fired every time an element is selected. This callback gets a property which is the selected node</td>
@@ -254,6 +267,11 @@ ds.start();  // reset the functionality after a teardown</xmp></pre>
       <td>reset the functionality after a teardown</td>
     </tr>
     <tr>
+      <td><span class="str">break</span></td>
+      <td>/</td>
+      <td>used in callbacks to disable the execution of the upcoming code. It will not teardown the functionality</td>
+    </tr>
+    <tr>
       <td><span class="str">getSelection</span></td>
       <td>/</td>
       <td>returns all currently selected nodes</td>
@@ -272,6 +290,21 @@ ds.start();  // reset the functionality after a teardown</xmp></pre>
       <td><span class="str">getSelectables</span></td>
       <td>nodes</td>
       <td>returns array with all nodes that can be selected.</td>
+    </tr>
+    <tr>
+      <td><span class="str">getInitialCursorPosition</span></td>
+      <td>/</td>
+      <td>returns the x, y coordinates the cursor had when first clicked</td>
+    </tr>
+    <tr>
+      <td><span class="str">getCurrentCursorPosition</span></td>
+      <td>/</td>
+      <td>returns last x, y coordinates of the cursor</td>
+    </tr>
+    <tr>
+      <td><span class="str">getCursorPositionDifference</span></td>
+      <td>/</td>
+      <td>returns object with the x, y difference between the initial and the last cursor position</td>
     </tr>
   </table>
 
