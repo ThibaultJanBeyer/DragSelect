@@ -1,4 +1,4 @@
-// v 1.7.14
+// v 1.7.15
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -41,6 +41,10 @@ Key-Features
   ** .stop              ()              will teardown/stop the whole functionality
   ** .break             ()              used in callbacks to disable the execution of the upcoming code (in contrary to "stop", all callbacks are still working, cursor position calculations and event listeners will also continue)
   ** .getSelection      ()              returns the current selection
+  ** .addSelection      ([nodes], bool) adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards.
+  ** .removeSelection   ([nodes], bool) removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards.
+  ** .setSelection      ([nodes], bool) sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards.
+  ** .clearSelection    ([nodes], bool) remove all elements from the selection. If boolean is set to true: callback will be called afterwards.
   ** .addSelectables    ([nodes])       add elements that can be selected. Intelligent algorythm never adds elements twice.
   ** .removeSelectables ([nodes])       remove elements that can be selected. Also removes the 'selected' class from those elements.
   ** .getSelectables    ()              returns all nodes that can be selected.
@@ -728,6 +732,93 @@ DragSelect.prototype.stop = function() {
  * @return {Nodes}
  */
 DragSelect.prototype.getSelection = function() {
+
+  return this.selected;
+
+};
+
+/**
+ * Adds several items to the selection list
+ * also adds the specific classes and take into account
+ * all calculations.
+ * Does not clear the selection, in contrary to .setSelection
+ * Can add multiple nodes at once, in contrary to .select
+ * 
+ * @param {Nodes} _nodes one or multiple nodes
+ * @param {Boolean} _callback - if callback should be called
+ * @return {Array} all selected nodes
+ */
+DragSelect.prototype.addSelection = function( _nodes, _callback ) {
+  
+  var nodes = this.toArray( _nodes );
+
+  for (var index = 0, il = nodes.length; index < il; index++) {
+    var node = nodes[index];
+    this.select( node );
+  }
+
+  if( _callback ) { this.callback( this.selected, false ); }
+
+  return this.selected;
+  
+};
+
+/**
+ * Removes specific nodes from the selection
+ * Multiple nodes can be given at once, in contrary to unselect
+ * 
+ * @param {Nodes} _nodes one or multiple nodes
+ * @param {Boolean} _callback - if callback should be called
+ * @return {Array} all selected nodes
+ */
+DragSelect.prototype.removeSelection = function( _nodes, _callback ) {
+  
+  var nodes = this.toArray( _nodes );
+
+  for (var index = 0, il = nodes.length; index < il; index++) {
+    var node = nodes[index];
+    this.unselect( node );
+  }
+
+  if( _callback ) { this.callback( this.selected, false ); }
+
+  return this.selected;
+  
+};
+
+/**
+ * Sets the current selected nodes and optionally run the callback
+ * 
+ * @param {Nodes} _nodes – dom nodes
+ * @param {Boolean} _callback - if callback should be called
+ * @return {Nodes}
+ */
+DragSelect.prototype.setSelection = function( _nodes, _callback ) {
+
+  this.clearSelection();
+  this.addSelection( _nodes );
+
+  if( _callback ) { this.callback( this.selected, false ); }
+
+  return this.selected;
+
+};
+
+/**
+ * Unselect / Deselect all current selected Nodes
+ * 
+ * @param {Boolean} _callback - if callback should be called
+ * @return {Array} this.selected, should be empty
+ */
+DragSelect.prototype.clearSelection = function( _callback ) {
+
+  var selection = this.selected.slice();
+  for (var index = 0, il = selection.length; index < il; index++) {
+    var node = selection[index];
+    this.unselect( node );
+  }
+
+  if( _callback ) { this.callback( this.selected, false ); }
 
   return this.selected;
 
