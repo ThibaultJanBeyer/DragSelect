@@ -97,6 +97,7 @@ ds.addSelectables(document.getElementsByClassName('selectable-node'));  // adds 
 ds.break();  // used in callbacks to disable the execution of the upcoming code. It will not teardown the functionality.
 ds.stop();  // will teardown/stop the whole functionality
 ds.start();  // reset the functionality after a teardown
+// and many more, see "methods" section in documentation
 ```  
 
 You can also use the "shift", "ctrl" or "command" key to make multiple independent selections.
@@ -136,6 +137,10 @@ When the function is saved into a variable `var foo = new DragSelect()` you have
 |start |/ |Reset the functionality after a teardown |
 |break |/ |Used in callbacks to disable the execution of the upcoming code. It will not teardown the functionality |
 |getSelection |/ |Returns all currently selected nodes |
+|addSelection |DOM elements (nodes), Boolean (callback) |adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards.
+|removeSelection |DOM elements (nodes), Boolean (callback) |removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards.
+|setSelection |DOM elements (nodes), Boolean (callback) |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards.
+|clearSelection |DOM elements (nodes), Boolean (callback) |remove all elements from the selection. If boolean is set to true: callback will be called afterwards.
 |addSelectables |DOM elements (nodes), Boolean (addToSelection) |Adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice. If boolean is set to true: elements will also be added to current selection. |
 |removeSelectables |DOM elements (nodes), Boolean (removeFromSelection) |Remove elements that can be selected. If boolean is set to true: elements will also be removed from current selection. |
 |getSelectables |/ |Returns array with all nodes that can be selected. |

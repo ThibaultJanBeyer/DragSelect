@@ -150,7 +150,8 @@ ds.removeSelectables(document.getElementsByClassName('selectable-node'));  // re
 ds.getSelectables();  // returns array of nodes that can be selected.
 ds.break();  // used in callbacks to disable the execution of the upcoming code. It will not teardown the functionality.
 ds.stop();  // will teardown/stop the whole functionality
-ds.start();  // reset the functionality after a teardown</xmp></pre>
+ds.start();  // reset the functionality after a teardown
+// and many more, see "methods" section in documentation</xmp></pre>
 
   <h4 id="twod">2d. Accessibility (a11y)</h4>
   <strong>DragSelect is accessibly by default.</strong>
@@ -276,6 +277,26 @@ ds.start();  // reset the functionality after a teardown</xmp></pre>
       <td><span class="str">getSelection</span></td>
       <td>/</td>
       <td>returns all currently selected nodes</td>
+    </tr>
+    <tr>
+      <td><span class="str">addSelection</span></td>
+      <td>nodes, boolean</td>
+      <td>adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards</td>
+    </tr>
+    <tr>
+      <td><span class="str">removeSelection</span></td>
+      <td>nodes, boolean</td>
+      <td>removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards</td>
+    </tr>
+    <tr>
+      <td><span class="str">setSelection</span></td>
+      <td>nodes, boolean</td>
+      <td>sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards</td>
+    </tr>
+    <tr>
+      <td><span class="str">clearSelection</span></td>
+      <td>nodes, boolean</td>
+      <td>remove all elements from the selection. If boolean is set to true: callback will be called afterwards</td>
     </tr>
     <tr>
       <td><span class="str">addSelectables</span></td>
