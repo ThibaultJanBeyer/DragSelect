@@ -1,3 +1,7 @@
+# 1.7.16
+
+- Improve `.addSelection`, `.removeSelection` and `.setSelection` by adding a third option (see docs).
+
 # 1.7.15
 
 - Add several new methods, helpful for user: `.addSelection`, `.removeSelection`, `.setSelection`, `.clearSelection`.

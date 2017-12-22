@@ -137,10 +137,10 @@ When the function is saved into a variable `var foo = new DragSelect()` you have
 |start |/ |Reset the functionality after a teardown |
 |break |/ |Used in callbacks to disable the execution of the upcoming code. It will not teardown the functionality |
 |getSelection |/ |Returns all currently selected nodes |
-|addSelection |DOM elements (nodes), Boolean (callback) |adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards.
-|removeSelection |DOM elements (nodes), Boolean (callback) |removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards.
-|setSelection |DOM elements (nodes), Boolean (callback) |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards.
-|clearSelection |DOM elements (nodes), Boolean (callback) |remove all elements from the selection. If boolean is set to true: callback will be called afterwards.
+|addSelection |DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables) |adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. By default, it checks if all elements ere alos in the list of selectables and adds them if not (can be turned off by setting the last boolean to true) |
+|removeSelection |DOM elements (nodes), Boolean (callback), Boolean (removeFromSelectables) |removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last bolean is set to true, it also removes them from the possible selectable nodes if they were. |
+|setSelection |DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables) |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. By default, it checks if all elements ere alos in the list of selectables and adds them if not (can be turned off by setting the last boolean to true) |
+|clearSelection |DOM elements (nodes), Boolean (callback) |remove all elements from the selection. If boolean is set to true: callback will be called afterwards. |
 |addSelectables |DOM elements (nodes), Boolean (addToSelection) |Adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice. If boolean is set to true: elements will also be added to current selection. |
 |removeSelectables |DOM elements (nodes), Boolean (removeFromSelection) |Remove elements that can be selected. If boolean is set to true: elements will also be removed from current selection. |
 |getSelectables |/ |Returns array with all nodes that can be selected. |
