@@ -1,4 +1,4 @@
-# 1.7.16
+# 1.7.16 + 1.7.17
 
 - Fix selection algorithm issue reported in issue #9
 - Improve `.addSelection`, `.removeSelection` and `.setSelection` by adding a third option (see docs).
