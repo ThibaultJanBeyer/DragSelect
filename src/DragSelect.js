@@ -45,7 +45,7 @@ Key-Features
   ** .removeSelection   ([nodes], bool, bool) removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last bolean is set to true, it also removes them from the possible selectable nodes if they were.
   ** .setSelection      ([nodes], bool, bool) sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. By default, adds new elements also to the list of selectables (can be turned off by setting the last boolean to true)
   ** .clearSelection    ([nodes], bool)       remove all elements from the selection. If boolean is set to true: callback will be called afterwards.
-  ** .addSelectables    ([nodes])             add elements that can be selected. Intelligent algorythm never adds elements twice.
+  ** .addSelectables    ([nodes])             add elements that can be selected. Intelligent algorithm never adds elements twice.
   ** .removeSelectables ([nodes])             remove elements that can be selected. Also removes the 'selected' class from those elements.
   ** .getSelectables    ()                    returns all nodes that can be selected.
   ** and everything else
@@ -95,6 +95,7 @@ function DragSelect( options ) {
   this.initialCursorPos;
   this.initialScroll;
   this.selected = [];
+  this._prevSelected = [];  // memory to fix #9
 
   this._createBindings();
   this._setupOptions( options );
@@ -205,7 +206,9 @@ DragSelect.prototype._onClick = function( event ) {
 
   var node = event.target;
 
-  this.isMultiSelectKeyPressed( event );
+  if(this.isMultiSelectKeyPressed( event )) { this._prevSelected = this.selected.slice(); }  // #9
+  else { this._prevSelected = []; }  // #9
+
   this.checkIfInsideSelection( true );  // reset selection if no multiselectionkeypressed
 
   if( this.selectables.indexOf( node ) > -1 ) {
@@ -261,7 +264,8 @@ DragSelect.prototype._startUp = function( event ) {
   this.mouseInteraction = true;
   this.selector.style.display = 'block';
 
-  this.isMultiSelectKeyPressed( event );
+  if(this.isMultiSelectKeyPressed( event )) { this._prevSelected = this.selected.slice(); }  // #9
+  else { this._prevSelected = []; }  // #9
 
   // move element on location
   this._getStartingPositions( event );
@@ -499,9 +503,19 @@ DragSelect.prototype._handleUnselection = function( item, force ) {
 
   if( !this.hasClass( item, 'ds-hover' ) && !force ) { return false; }
   var posInSelectedArray = this.selected.indexOf( item );
+  var isInPrevSelection = this._prevSelected.indexOf( item );  // #9
 
-  if( posInSelectedArray > -1 && !this.multiSelectKeyPressed ) {
+  /**
+   * Special algorithm for issue #9.
+   * if a multiselectkey is pressed, ds 'remembers' the last selection and reverts
+   * to that state if the selection is not kept, to mimic the natural OS behaviour
+   * = if item was selected and is not in selection anymore, reselect it
+   * = if item was not selected and is not in selection anymore, unselect it
+   */
+  if( posInSelectedArray > -1 && isInPrevSelection < 0 ) {
     this.unselect( item );
+  } else if ( posInSelectedArray < 0 && isInPrevSelection > -1 ) {
+    this.select( item );
   }
 
   this.removeClass( item, 'ds-hover' );
@@ -829,7 +843,7 @@ DragSelect.prototype.clearSelection = function( _callback ) {
 
 /**
  * Add nodes that can be selected.
- * The algorythm makes sure that no node is added twice
+ * The algorithm makes sure that no node is added twice
  * 
  * @param {Nodes} _nodes – dom nodes
  * @param {Nodes} addToSelection – if elements should also be added to current selection

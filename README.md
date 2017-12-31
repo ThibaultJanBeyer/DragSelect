@@ -8,7 +8,7 @@
 ```
 
 # DragSelect
-easily add a selection algorythm to your application/website.
+easily add a selection algorithm to your application/website.
 
 # Project Page: Demo & Info
 
@@ -93,7 +93,7 @@ var ds = new DragSelect({
 // if you add the function to a variable like we did, you have access to all its functions
 // and can now use start() and stop() like so:
 ds.getSelection();  // returns all currently selected nodes
-ds.addSelectables(document.getElementsByClassName('selectable-node'));  // adds elements that can be selected. Intelligent algorythm never adds elements twice.
+ds.addSelectables(document.getElementsByClassName('selectable-node'));  // adds elements that can be selected. Intelligent algorithm never adds elements twice.
 ds.break();  // used in callbacks to disable the execution of the upcoming code. It will not teardown the functionality.
 ds.stop();  // will teardown/stop the whole functionality
 ds.start();  // reset the functionality after a teardown
@@ -109,7 +109,7 @@ DragSelect is accessibly by default:
 
 TLDR; => Your `selectables` should be buttons: `<button type="button"></button>`.  
 
-Obviously, keyboard users won’t get the full visual experience but it works similarely to the OS default behaviour. You can select items using the default select keys (usually space or enter) and also multiselect when using a modifier key at the same time. There is one little thing you have to do tho’: the `selectables` have to be pressable (clickable)! To achieve this, they should be of type `<button type="button"></button>`.  
+Obviously, keyboard users won’t get the full visual experience but it works similarely to the OS default behaviour. You can select items using the default select keys (usually space or enter) and also multiselect when using a modifier key at the same time (unfortunately this does not work in firefox for now since FF doesn’t add the modifier key in the event object when using the keyboard). There is one little thing you have to do tho’: the `selectables` have to be pressable (clickable)! To achieve this, they should be of type `<button type="button"></button>`.  
 
 
 
@@ -141,7 +141,7 @@ When the function is saved into a variable `var foo = new DragSelect()` you have
 |removeSelection |DOM elements (nodes), Boolean (callback), Boolean (removeFromSelectables) |removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last bolean is set to true, it also removes them from the possible selectable nodes if they were. |
 |setSelection |DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables) |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. By default, it checks if all elements ere alos in the list of selectables and adds them if not (can be turned off by setting the last boolean to true) |
 |clearSelection |DOM elements (nodes), Boolean (callback) |remove all elements from the selection. If boolean is set to true: callback will be called afterwards. |
-|addSelectables |DOM elements (nodes), Boolean (addToSelection) |Adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice. If boolean is set to true: elements will also be added to current selection. |
+|addSelectables |DOM elements (nodes), Boolean (addToSelection) |Adds elements that can be selected. Don’t worry, a smart algorithm makes sure that nodes are never added twice. If boolean is set to true: elements will also be added to current selection. |
 |removeSelectables |DOM elements (nodes), Boolean (removeFromSelection) |Remove elements that can be selected. If boolean is set to true: elements will also be removed from current selection. |
 |getSelectables |/ |Returns array with all nodes that can be selected. |
 |getInitialCursorPosition |/ |Returns the x, y coordinates the cursor had when first clicked |

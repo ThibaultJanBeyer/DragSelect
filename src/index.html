@@ -145,7 +145,7 @@
 // if you add the function to a variable like we did, you have access to all its functions
 // and can now use start() and stop() like so:
 ds.getSelection();  // returns all currently selected nodes
-ds.addSelectables(document.getElementsByClassName('selectable-node'));  // adds elements that can be selected. Intelligent algorythm never adds elements twice.
+ds.addSelectables(document.getElementsByClassName('selectable-node'));  // adds elements that can be selected. Intelligent algorithm never adds elements twice.
 ds.removeSelectables(document.getElementsByClassName('selectable-node'));  // removes elements that can be selected.
 ds.getSelectables();  // returns array of nodes that can be selected.
 ds.break();  // used in callbacks to disable the execution of the upcoming code. It will not teardown the functionality.
@@ -162,7 +162,7 @@ ds.start();  // reset the functionality after a teardown
   </p>
   
   <p>
-    Obviously, keyboard users won’t get the full visual experience but it works similarely to the OS default behaviour. You can select items using the default select keys (usually space or enter) and also multiselect when using a modifier key at the same time. There is one little thing you have to do tho’: the <strong>selectables</strong> have to be pressable (clickable)! To achieve this, they should be buttons: <button type="button">I’m a button</button>. Try it out:
+    Obviously, keyboard users won’t get the full visual experience but it works similarely to the OS default behaviour. You can select items using the default select keys (usually space or enter) and also multiselect when using a modifier key at the same time (unfortunately this does not work in firefox for now since FF doesn’t add the modifier key in the event object when using the keyboard). There is one little thing you have to do tho’: the <strong>selectables</strong> have to be pressable (clickable)! To achieve this, they should be buttons: <button type="button">I’m a button</button>. Try it out:
   </p>
   <p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="html,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">DragSelect</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p>
   <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
@@ -301,7 +301,7 @@ ds.start();  // reset the functionality after a teardown
     <tr>
       <td><span class="str">addSelectables</span></td>
       <td>nodes, boolean</td>
-      <td>adds elements that can be selected. Don’t worry, a smart algorythm makes sure that nodes are never added twice. If boolean is set to true: elements will also be added to current selection</td>
+      <td>adds elements that can be selected. Don’t worry, a smart algorithm makes sure that nodes are never added twice. If boolean is set to true: elements will also be added to current selection</td>
     </tr>
     <tr>
       <td><span class="str">removeSelectables</span></td>
