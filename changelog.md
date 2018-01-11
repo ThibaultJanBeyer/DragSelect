@@ -1,3 +1,7 @@
+# 1.7.18
+
+- Prevent rightclick from triggering a selection.
+
 # 1.7.16 + 1.7.17
 
 - Fix selection algorithm issue reported in issue #9

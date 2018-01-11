@@ -1,4 +1,4 @@
-// v 1.7.17
+// v 1.7.18
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -203,6 +203,7 @@ DragSelect.prototype._handleSelectables = function( selectables, remove, fromSel
  */
 DragSelect.prototype._onClick = function( event ) {
   if( this.mouseInteraction ) { return; }  // fix firefox doubleclick issue
+  if( this.isRightClick( event ) ) { return; }
 
   var node = event.target;
 
@@ -260,6 +261,8 @@ DragSelect.prototype.start = function() {
  * @param {Object} event - The event object.
  */
 DragSelect.prototype._startUp = function( event ) {
+
+  if( this.isRightClick( event ) ) { return; }
 
   this.mouseInteraction = true;
   this.selector.style.display = 'block';
@@ -886,6 +889,31 @@ DragSelect.prototype.removeSelectables = function( _nodes, removeFromSelection )
 
 // Helpers
 //////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Based on a click event object,
+ * checks if the right mouse button was pressed.
+ * (found @ https://stackoverflow.com/a/2405835)
+ * 
+ * @param {Object} event 
+ * @return {Boolean}
+ */
+DragSelect.prototype.isRightClick = function( event ) {
+
+  if( !event ) { return false; }
+
+  var isRightMB = false;
+
+  if ('which' in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+      isRightMB = event.which === 3;
+  } else if ('button' in event) { // IE, Opera 
+      isRightMB = event.button === 2;
+  }
+
+  return isRightMB;
+
+};
+
 
 /**
  * Adds a class to an element
