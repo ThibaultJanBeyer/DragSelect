@@ -283,7 +283,7 @@ DragSelect.prototype._startUp = function( event ) {
   // event listeners
   this.area.removeEventListener( 'mousedown', this._startUp );
   this.area.addEventListener( 'mousemove', this._handleMove );
-  this.area.addEventListener( 'mouseup', this.reset );
+  document.addEventListener( 'mouseup', this.reset );
 
 };
 

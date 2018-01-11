@@ -1,6 +1,7 @@
 # 1.7.18
 
 - Prevent rightclick from triggering a selection.
+- Add release event to the document not the area. (makes more sense, as a user, when I release the mouse click I want to release selection as well)
 
 # 1.7.16 + 1.7.17
 
