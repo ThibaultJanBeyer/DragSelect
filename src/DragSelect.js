@@ -314,6 +314,7 @@ DragSelect.prototype.isMultiSelectKeyPressed = function( event ) {
 DragSelect.prototype._getStartingPositions = function( event ) {
 
   this.initialCursorPos = this.getCursorPos( event, this.area );
+  this.newCursorPos = this.getCursorPos( event, this.area );
   this.initialScroll = this.getScroll( this.area );
 
   var selectorPos = {};
