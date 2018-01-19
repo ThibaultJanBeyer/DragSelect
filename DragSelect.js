@@ -1,4 +1,4 @@
-// v 1.7.18
+// v 1.7.19
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -48,6 +48,10 @@ Key-Features
   ** .addSelectables    ([nodes])             add elements that can be selected. Intelligent algorithm never adds elements twice.
   ** .removeSelectables ([nodes])             remove elements that can be selected. Also removes the 'selected' class from those elements.
   ** .getSelectables    ()                    returns all nodes that can be selected.
+  ** .getCurrentCursorPosition    ()          returns the last seen position of the cursor/selector
+  ** .getInitialCursorPosition    ()          returns the first position of the cursor/selector
+  ** .getCursorPositionDifference ()          returns the cursor position difference between start and now
+  ** .getCursorPos      (event, node, bool)   returns the cursor x, y coordinates based on a click event object. The click event object is required. By default, takes scroll and area into consideration. Area is this.area by default and can be fully ignored by setting the second argument explicitely to false. Scroll can be ignored by setting the third argument to true.
   ** and everything else
 
 
@@ -92,7 +96,8 @@ Key-Features
 function DragSelect( options ) {
 
   this.multiSelectKeyPressed;
-  this.initialCursorPos;
+  this.initialCursorPos = {x: 0, y: 0};
+  this.newCursorPos = {x: 0, y: 0};
   this.initialScroll;
   this.selected = [];
   this._prevSelected = [];  // memory to fix #9
@@ -313,7 +318,7 @@ DragSelect.prototype.isMultiSelectKeyPressed = function( event ) {
  */
 DragSelect.prototype._getStartingPositions = function( event ) {
 
-  this.initialCursorPos = this.getCursorPos( event, this.area );
+  this.initialCursorPos = this._getCursorPos( event, this.area );
   this.initialScroll = this.getScroll( this.area );
 
   var selectorPos = {};
@@ -360,7 +365,7 @@ DragSelect.prototype._handleMove = function( event ) {
  */
 DragSelect.prototype.getPosition = function( event ) {
 
-  var cursorPosNew = this.getCursorPos( event, this.area );
+  var cursorPosNew = this._getCursorPos( event, this.area );
   var scrollNew = this.getScroll( this.area );
 
   // save for later retrieval
@@ -672,7 +677,7 @@ DragSelect.prototype._autoScroll = function( event ) {
  */
 DragSelect.prototype.isCursorNearEdge = function( event, area ) {
 
-  var cursorPosition = this.getCursorPos( event, area );
+  var cursorPosition = this._getCursorPos( event, area );
   var areaRect = this.getAreaRect( area );
 
   var tolerance = {
@@ -752,6 +757,28 @@ DragSelect.prototype.getSelection = function() {
 
   return this.selected;
 
+};
+
+/**
+ * Returns cursor x, y position based on event object
+ * Will be relative to an area including the scroll unless advised otherwise
+ * 
+ * @param {Object} event
+ * @param {Node} _area – containing area / this.area if none / document if === false
+ * @param {Node} ignoreScroll – if true, the scroll will be ignored
+ * @return {Object} cursor { x/y }
+ */
+DragSelect.prototype.getCursorPos = function( event, _area, ignoreScroll ) {
+  if(!event) { return false; }
+
+  var area = _area || _area !== false && this.area;
+  var pos = this._getCursorPos( event, area );
+  var scroll = ignoreScroll ? { x: 0, y: 0 } : this.getScroll( area );
+
+  return {
+    x: pos.x + scroll.x,
+    y: pos.y + scroll.y
+  };
 };
 
 /**
@@ -1022,12 +1049,15 @@ DragSelect.prototype.isElement = function( node ) {
 
 /**
  * Returns cursor x, y position based on event object
+ * /!\ for internal calculation reasons it does _not_ take
+ * the AREA scroll into consideration unless it’s the outer Document.
+ * Use the public .getCursorPos() from outside, it’s more flexible
  * 
  * @param {Object} event
  * @param {Node} area – containing area / document if none
  * @return {Object} cursor X/Y
  */
-DragSelect.prototype.getCursorPos = function( event, area ) {
+DragSelect.prototype._getCursorPos = function( event, area ) {
 
   var cPos = {  // event.clientX/Y fallback for <IE8
     x: event.pageX || event.clientX,
@@ -1035,7 +1065,7 @@ DragSelect.prototype.getCursorPos = function( event, area ) {
   };
 
   var areaRect = this.getAreaRect( area || document );
-  var docScroll = this.getScroll();
+  var docScroll = this.getScroll();  // needed when document is scrollable but area is not
 
   return {  // if it’s constrained in an area the area should be substracted calculate 
     x: cPos.x - areaRect.left - docScroll.x,
@@ -1054,7 +1084,7 @@ DragSelect.prototype.getInitialCursorPosition = function() {
 };
 
 /**
- * Returns the starting/initial position of the cursor/selector
+ * Returns the last seen position of the cursor/selector
  * 
  * @return {Object} initialPos.
  */
