@@ -1,0 +1,32 @@
+# Don‘t do this if you are not project owner!
+
+This information is just for reference for the project owner,
+if you are a regular contributor, see [contibuting](CONTRIBUTING.md) and make a pull request instead.
+
+-
+-
+-
+-
+-
+
+## Deploying
+
+Tipically you don’t have to do this, since you most likely are not the project owner.  
+But if you are, after thorough testings, you can deploy a new version using:
+
+```
+npm run deploy
+```
+
+This will build the package and push the changes to `github pages`. Thus also updating the online html and the examples.  
+If this was successful, the next step is to publish the new version on `npm`:
+
+```
+npm version patch
+npm publish
+```
+
+versions are either `patch` wich changes 0.0.x, `minor` wich changes 0.x.0 or `major` for x.0.0.  
+See [npm docs](https://docs.npmjs.com/getting-started/publishing-npm-packages)  
+
+After that run `npm run deploy` again, just to make sure
