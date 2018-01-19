@@ -2,6 +2,7 @@
 
 - Solve issue [#10](https://github.com/ThibaultJanBeyer/DragSelect/issues/10)
 - Improve public .getCursorPos() method and made initial one private
+- Add more local tests representing different scenarios for proper manual testing
 
 # 1.7.18
 

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>General &amp; Accessible</title>
+  <style>
+    * {
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+    }
+    
+    html, body {
+      padding: 0;
+      margin: 0;
+    }
+    
+    #container {
+      width: 50%;
+      height: 50%;
+      background: rgba(0, 0, 0, 0.05);
+      border: 5px solid red;
+      position: absolute;
+      top: 25%;
+      left: 25%;
+    }
+    
+    .item {
+      z-index: -1;
+      width: 50px;
+      height: 50px;
+      position: fixed;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      color: white;
+    }
+    
+    .item:nth-child(1) {
+      background: #f20ddf;
+      top: 68%;
+      left: 20%;
+    }
+    
+    .item:nth-child(2) {
+      background: #0df28b;
+      top: 14%;
+      left: 49%;
+    }
+    
+    .item:nth-child(3) {
+      background: #d7f20d;
+      top: 33%;
+      left: 61%;
+    }
+    
+    .item:nth-child(4) {
+      background: #f20d6c;
+      top: 33%;
+      left: 40%;
+    }
+    
+    .item:nth-child(5) {
+      background: #960df2;
+      top: 12%;
+      left: 65%;
+    }
+    
+    .item:nth-child(6) {
+      background: #0d6cf2;
+      top: 75%;
+      left: 81%;
+    }
+    
+    .item:nth-child(7) {
+      background: #f20d4e;
+      top: 5%;
+      left: 40%;
+    }
+    
+    .item:nth-child(8) {
+      background: #74f20d;
+      top: 54%;
+      left: 52%;
+    }
+    
+    .item:nth-child(9) {
+      background: #1cf20d;
+      top: 43%;
+      left: 55%;
+    }
+    
+    .item:nth-child(10) {
+      background: #f20d1c;
+      top: 16%;
+      left: 44%;
+    }
+    
+    .item:nth-child(11) {
+      background: #f2c40d;
+      top: 66%;
+      left: 17%;
+    }
+    
+    .ds-selected {
+      outline: 3px solid black;
+      outline-offset: 3px;
+      color: black;
+      font-weight: bold;
+    }
+    
+  </style>
+</head>
+<body>
+  <p>
+    General &amp; Accessible.<br>
+    <strong>What to test here?</strong><br>
+    <ol>
+      <li>Before clicking anywhere, check Keyboard selection is working</li>
+      <li>Check if the selection is working</li>
+      <li>Check if multi-selection is working with modifier keys</li>
+    </ol>
+  </p>
+  <button type="button" class="item one">1</button>
+  <button type="button" class="item two">2</button>
+  <button type="button" class="item three">3</button>
+  <button type="button" class="item four">4</button>
+  <button type="button" class="item five">5</button>
+  <button type="button" class="item six">6</button>
+
+
+      
+  
+  <script src="../src/DragSelect.js"></script>
+  <script>
+new DragSelect({
+  selectables: document.querySelectorAll('.item')
+});
+  </script>
+</body>
+</html>
