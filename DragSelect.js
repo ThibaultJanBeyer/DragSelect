@@ -1,4 +1,4 @@
-// v 1.7.19
+// v 1.7.20
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -42,7 +42,8 @@ Key-Features
   ** .break             ()                    used in callbacks to disable the execution of the upcoming code (in contrary to "stop", all callbacks are still working, cursor position calculations and event listeners will also continue)
   ** .getSelection      ()                    returns the current selection
   ** .addSelection      ([nodes], bool, bool) adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. By default, adds new elements also to the list of selectables (can be turned off by setting the last boolean to true)
-  ** .removeSelection   ([nodes], bool, bool) removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last bolean is set to true, it also removes them from the possible selectable nodes if they were.
+  ** .removeSelection   ([nodes], bool, bool) removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last boolean is set to true, it also removes them from the possible selectable nodes if they were.
+  ** .toggleSelection   ([nodes], bool, bool) toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If boolean is set to true: callback will be called afterward. If last boolean is set to true, it also removes selected elements from possible selectable nodes & doesn’t add them to selectables if they are not.
   ** .setSelection      ([nodes], bool, bool) sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. By default, adds new elements also to the list of selectables (can be turned off by setting the last boolean to true)
   ** .clearSelection    ([nodes], bool)       remove all elements from the selection. If boolean is set to true: callback will be called afterwards.
   ** .addSelectables    ([nodes])             add elements that can be selected. Intelligent algorithm never adds elements twice.
@@ -829,6 +830,39 @@ DragSelect.prototype.removeSelection = function( _nodes, _callback, removeFromSe
 
   if( removeFromSelectables ) { this.removeSelectables( nodes ); }
   if( _callback ) { this.callback( this.selected, false ); }
+
+  return this.selected;
+  
+};
+
+/**
+ * Toggles specific nodes from the selection:
+ * If element is not in selection it will be added, if it is already selected, it will be removed.
+ * Multiple nodes can be given at once.
+ * 
+ * @param {Nodes} _nodes one or multiple nodes
+ * @param {Boolean} _callback - if callback should be called
+ * @param {Boolean} _special - if true, it also removes selected elements from possible selectable nodes & don’t add them to selectables if they are not
+ * @return {Array} all selected nodes
+ */
+DragSelect.prototype.toggleSelection = function( _nodes, _callback, _special ) {
+  
+  var nodes = this.toArray( _nodes );
+
+  for (var index = 0, il = nodes.length; index < il; index++) {
+    var node = nodes[index];
+    
+    if( this.selected.indexOf( node ) < 0 ) {
+
+      this.addSelection( node, _callback, _special );
+
+    } else {
+
+      this.removeSelection( node, _callback, _special );
+
+    }
+
+  }
 
   return this.selected;
   
