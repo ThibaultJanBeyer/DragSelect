@@ -289,6 +289,11 @@ ds.start();  // reset the functionality after a teardown
       <td>removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last bolean is set to true, it also removes them from the possible selectable nodes if they were.</td>
     </tr>
     <tr>
+      <td><span class="str">toggleSelection</span></td>
+      <td>nodes, boolean, boolean</td>
+      <td>toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If boolean is set to true: callback will be called afterward. If last boolean is set to true, it also removes selected elements from possible selectable nodes &amp; doesn’t add them to selectables if they are not.</td>
+    </tr>
+    <tr>
       <td><span class="str">setSelection</span></td>
       <td>nodes, boolean, boolean</td>
       <td>sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. By default, it checks if all elements ere alos in the list of selectables and adds them if not (can be turned off by setting the last boolean to true)</td>

@@ -1,3 +1,7 @@
+# 1.7.20
+
+- Add new `.toggleSelection` public method
+
 # 1.7.19
 
 - Solve issue [#10](https://github.com/ThibaultJanBeyer/DragSelect/issues/10)
