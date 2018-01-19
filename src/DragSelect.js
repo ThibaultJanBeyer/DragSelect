@@ -92,7 +92,8 @@ Key-Features
 function DragSelect( options ) {
 
   this.multiSelectKeyPressed;
-  this.initialCursorPos;
+  this.initialCursorPos = {x: 0, y: 0};
+  this.newCursorPos = {x: 0, y: 0};
   this.initialScroll;
   this.selected = [];
   this._prevSelected = [];  // memory to fix #9
@@ -314,7 +315,6 @@ DragSelect.prototype.isMultiSelectKeyPressed = function( event ) {
 DragSelect.prototype._getStartingPositions = function( event ) {
 
   this.initialCursorPos = this.getCursorPos( event, this.area );
-  this.newCursorPos = this.getCursorPos( event, this.area );
   this.initialScroll = this.getScroll( this.area );
 
   var selectorPos = {};
