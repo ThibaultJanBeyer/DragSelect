@@ -139,14 +139,17 @@ When the function is saved into a variable `var foo = new DragSelect()` you have
 |getSelection |/ |Returns all currently selected nodes |
 |addSelection |DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables) |adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. By default, it checks if all elements ere alos in the list of selectables and adds them if not (can be turned off by setting the last boolean to true) |
 |removeSelection |DOM elements (nodes), Boolean (callback), Boolean (removeFromSelectables) |removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last bolean is set to true, it also removes them from the possible selectable nodes if they were. |
+|toggleSelection |DOM elements (nodes), Boolean (callback), Boolean (special) |toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If boolean is set to true: callback will be called afterward. If last boolean is set to true, it also removes selected elements from possible selectable nodes & doesn’t add them to selectables if they are not. |
 |setSelection |DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables) |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. By default, it checks if all elements ere alos in the list of selectables and adds them if not (can be turned off by setting the last boolean to true) |
 |clearSelection |DOM elements (nodes), Boolean (callback) |remove all elements from the selection. If boolean is set to true: callback will be called afterwards. |
 |addSelectables |DOM elements (nodes), Boolean (addToSelection) |Adds elements that can be selected. Don’t worry, a smart algorithm makes sure that nodes are never added twice. If boolean is set to true: elements will also be added to current selection. |
 |removeSelectables |DOM elements (nodes), Boolean (removeFromSelection) |Remove elements that can be selected. If boolean is set to true: elements will also be removed from current selection. |
+|removeSelectables |DOM elements (nodes), Boolean (removeFromSelection) |Remove elements that can be selected. If boolean is set to true: elements will also be removed from current selection. |
 |getSelectables |/ |Returns array with all nodes that can be selected. |
-|getInitialCursorPosition |/ |Returns the x, y coordinates the cursor had when first clicked |
-|getCurrentCursorPosition |/ |Returns current/last x, y coordinates of the cursor |
+|getInitialCursorPosition |/ |Returns the registered x, y coordinates the cursor had when first clicked |
+|getCurrentCursorPosition |/ |Returns current/last registered x, y coordinates of the cursor |
 |getCursorPositionDifference |/ |Returns object with the x, y difference between the initial and the last cursor position |
+|getCursorPos |Event, Node (_area), Boolean (ignoreScroll) |Returns the cursor x, y coordinates *based on a click event object*. The click event object is required. By default, takes scroll and area into consideration. Area is this.area by default and can be fully ignored by setting the second argument explicitely to false. Scroll can be ignored by setting the third argument to true. |
 
 # Classes
 | name | trigger |

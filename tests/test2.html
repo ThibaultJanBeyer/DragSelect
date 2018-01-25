@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Constrained Scroll</title>
+  <style>
+    * {
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+    }
+    
+    html, body {
+      padding: 0;
+      margin: 0;
+    }
+    
+    #container {
+      width: 300px;
+      height: 300px;
+      background: rgba(0, 0, 0, 0.05);
+      border: 5px solid red;
+      position: absolute;
+      overflow: auto;
+      top: 15%;
+      left: 15%;
+    }
+    
+    .item {
+      z-index: -1;
+      width: 50px;
+      height: 50px;
+      position: absolute;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      color: white;
+      border: 0;
+    }
+    
+    .item:focus {
+      border: 1px solid blue;
+    }
+    
+    .item:nth-child(1) {
+      background: #0d52f2;
+      top: 68%;
+      left: 50%;
+    }
+    
+    .item:nth-child(2) {
+      background: #ccf20d;
+      top: 122%;
+      left: 159%;
+    }
+    
+    .item:nth-child(3) {
+      background: #9e0df2;
+      top: 27%;
+      left: 18%;
+    }
+    
+    .item:nth-child(4) {
+      background: #f2a60d;
+      top: 25%;
+      left: 93%;
+    }
+    
+    .item:nth-child(5) {
+      background: #0dd0f2;
+      top: 100%;
+      left: 100%;
+    }
+    
+    .item:nth-child(6) {
+      background: #0daaf2;
+      top: 93%;
+      left: 18%;
+    }
+    
+    .ds-selected {
+      outline: 3px solid black;
+      outline-offset: 3px;
+      color: black;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <p>
+    Constrained Scroll.<br>
+    <strong>What to test here?</strong><br>
+    Check if the area can be scrolled while selecting elements
+  </p>
+  <div id="container">
+    <button type="button" class="item one">1</button>
+    <button type="button" class="item two">2</button>
+    <button type="button" class="item three">3</button>
+    <button type="button" class="item four">4</button>
+    <button type="button" class="item five">5</button>
+    <button type="button" class="item six">6</button>
+  </div>
+      
+  
+  <script src="../src/DragSelect.js"></script>
+  <script>
+  // the dragSelect is constrained within the red border container in the middle of the screen. You can scroll the container
+    var ds = new DragSelect({
+      selectables: document.getElementsByClassName('item'),
+      area: document.getElementById('container')
+    });
+  </script>
+</body>
+</html>

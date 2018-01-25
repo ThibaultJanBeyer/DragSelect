@@ -1,3 +1,13 @@
+# 1.7.20
+
+- Add new `.toggleSelection` public method
+
+# 1.7.19
+
+- Solve issue [#10](https://github.com/ThibaultJanBeyer/DragSelect/issues/10)
+- Improve public .getCursorPos() method and made initial one private
+- Add more local tests representing different scenarios for proper manual testing
+
 # 1.7.18
 
 - Prevent rightclick from triggering a selection.
@@ -5,7 +15,7 @@
 
 # 1.7.16 + 1.7.17
 
-- Fix selection algorithm issue reported in issue #9
+- Fix selection algorithm issue reported in issue [#9](https://github.com/ThibaultJanBeyer/DragSelect/issues/9)
 - Improve `.addSelection`, `.removeSelection` and `.setSelection` by adding a third option (see docs).
 
 # 1.7.15

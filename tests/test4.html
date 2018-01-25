@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Callbacks</title>
+  <style>
+    * {
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+    }
+    
+    html, body {
+      padding: 0;
+      margin: 0;
+    }
+    
+    #container {
+      width: 50%;
+      height: 50%;
+      background: rgba(0, 0, 0, 0.05);
+      border: 5px solid red;
+      position: absolute;
+      top: 25%;
+      left: 25%;
+    }
+    
+    .item {
+      z-index: -1;
+      width: 50px;
+      height: 50px;
+      position: fixed;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      color: white;
+    }
+    
+    .item:nth-child(1) {
+      background: #f20ddf;
+      top: 68%;
+      left: 20%;
+    }
+    
+    .item:nth-child(2) {
+      background: #0df28b;
+      top: 14%;
+      left: 49%;
+    }
+    
+    .item:nth-child(3) {
+      background: #d7f20d;
+      top: 33%;
+      left: 61%;
+    }
+    
+    .item:nth-child(4) {
+      background: #f20d6c;
+      top: 33%;
+      left: 40%;
+    }
+    
+    .item:nth-child(5) {
+      background: #960df2;
+      top: 12%;
+      left: 65%;
+    }
+    
+    .item:nth-child(6) {
+      background: #0d6cf2;
+      top: 75%;
+      left: 81%;
+    }
+    
+    .item:nth-child(7) {
+      background: #f20d4e;
+      top: 5%;
+      left: 40%;
+    }
+    
+    .item:nth-child(8) {
+      background: #74f20d;
+      top: 54%;
+      left: 52%;
+    }
+    
+    .item:nth-child(9) {
+      background: #1cf20d;
+      top: 43%;
+      left: 55%;
+    }
+    
+    .item:nth-child(10) {
+      background: #f20d1c;
+      top: 16%;
+      left: 44%;
+    }
+    
+    .item:nth-child(11) {
+      background: #f2c40d;
+      top: 66%;
+      left: 17%;
+    }
+    
+    .ds-selected {
+      outline: 3px solid black;
+      outline-offset: 3px;
+      color: black;
+      font-weight: bold;
+    }
+    
+  </style>
+</head>
+<body>
+  <p>
+    Callbacks.<br>
+    <strong>What to test here?</strong><br>
+    See if all callbacks are correct (in console):
+    <ol>
+      <li>onDragStart: fired when the user clicks in the area. This callback gets the event object.</li>
+      <li>onDragMove: fired when the user drags. This callback gets the event object.</li>
+      <li>onElementSelect: fired every time an element is selected. This callback gets the selected node</li>
+      <li>onElementUnselect: fired every time an element is de-selected. This callback gets the de-selected node</li>
+      <li>callback: a callback function that gets fired when the element is dropped. This callback gets an array holding all selected nodes. The second property passed is the event object.</li>
+    </ol>
+  </p>
+  <button type="button" class="item one">1</button>
+  <button type="button" class="item two">2</button>
+  <button type="button" class="item three">3</button>
+  <button type="button" class="item four">4</button>
+  <button type="button" class="item five">5</button>
+  <button type="button" class="item six">6</button>
+
+
+      
+  
+  <script src="../src/DragSelect.js"></script>
+  <script>
+new DragSelect({
+  selectables: document.querySelectorAll('.item'),
+  onDragStart: e => console.log("onDragStart", e),
+  onDragMove: e => console.log("onDragMove", e),
+  onElementSelect: e => console.log("onElementSelect", e),
+  onElementUnselect: e => console.log("onElementUnselect", e),
+  callback: (n, e) => console.log("callback", n, e)
+});
+  </script>
+</body>
+</html>

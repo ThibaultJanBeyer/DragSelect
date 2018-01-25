@@ -1,6 +1,6 @@
 {
   "name": "dragselect",
-  "version": "1.7.17",
+  "version": "1.7.19",
   "description": "easy javascript drag select functionality for your projects",
   "main": "./dist/ds.min.js",
   "dependencies": {},
@@ -8,7 +8,7 @@
     "start": "npm install; npm test",
     "gulp": "gulp",
     "deploy": "gulp; gulp deploy;",
-    "test": "open src/quicktest.html -a 'Google Chrome'"
+    "test": "open tests/quicktest.html -a 'Google Chrome'"
   },
   "devDependencies": {
     "gulp": "^3.9.1",

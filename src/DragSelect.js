@@ -1,4 +1,4 @@
-// v 1.7.18
+// v 1.7.20
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -42,12 +42,17 @@ Key-Features
   ** .break             ()                    used in callbacks to disable the execution of the upcoming code (in contrary to "stop", all callbacks are still working, cursor position calculations and event listeners will also continue)
   ** .getSelection      ()                    returns the current selection
   ** .addSelection      ([nodes], bool, bool) adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. By default, adds new elements also to the list of selectables (can be turned off by setting the last boolean to true)
-  ** .removeSelection   ([nodes], bool, bool) removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last bolean is set to true, it also removes them from the possible selectable nodes if they were.
+  ** .removeSelection   ([nodes], bool, bool) removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last boolean is set to true, it also removes them from the possible selectable nodes if they were.
+  ** .toggleSelection   ([nodes], bool, bool) toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If boolean is set to true: callback will be called afterward. If last boolean is set to true, it also removes selected elements from possible selectable nodes & doesn’t add them to selectables if they are not.
   ** .setSelection      ([nodes], bool, bool) sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. By default, adds new elements also to the list of selectables (can be turned off by setting the last boolean to true)
   ** .clearSelection    ([nodes], bool)       remove all elements from the selection. If boolean is set to true: callback will be called afterwards.
   ** .addSelectables    ([nodes])             add elements that can be selected. Intelligent algorithm never adds elements twice.
   ** .removeSelectables ([nodes])             remove elements that can be selected. Also removes the 'selected' class from those elements.
   ** .getSelectables    ()                    returns all nodes that can be selected.
+  ** .getCurrentCursorPosition    ()          returns the last seen position of the cursor/selector
+  ** .getInitialCursorPosition    ()          returns the first position of the cursor/selector
+  ** .getCursorPositionDifference ()          returns the cursor position difference between start and now
+  ** .getCursorPos      (event, node, bool)   returns the cursor x, y coordinates based on a click event object. The click event object is required. By default, takes scroll and area into consideration. Area is this.area by default and can be fully ignored by setting the second argument explicitely to false. Scroll can be ignored by setting the third argument to true.
   ** and everything else
 
 
@@ -92,7 +97,8 @@ Key-Features
 function DragSelect( options ) {
 
   this.multiSelectKeyPressed;
-  this.initialCursorPos;
+  this.initialCursorPos = {x: 0, y: 0};
+  this.newCursorPos = {x: 0, y: 0};
   this.initialScroll;
   this.selected = [];
   this._prevSelected = [];  // memory to fix #9
@@ -313,8 +319,7 @@ DragSelect.prototype.isMultiSelectKeyPressed = function( event ) {
  */
 DragSelect.prototype._getStartingPositions = function( event ) {
 
-  this.initialCursorPos = this.getCursorPos( event, this.area );
-  this.newCursorPos = this.getCursorPos( event, this.area );
+  this.initialCursorPos = this._getCursorPos( event, this.area );
   this.initialScroll = this.getScroll( this.area );
 
   var selectorPos = {};
@@ -361,7 +366,7 @@ DragSelect.prototype._handleMove = function( event ) {
  */
 DragSelect.prototype.getPosition = function( event ) {
 
-  var cursorPosNew = this.getCursorPos( event, this.area );
+  var cursorPosNew = this._getCursorPos( event, this.area );
   var scrollNew = this.getScroll( this.area );
 
   // save for later retrieval
@@ -673,7 +678,7 @@ DragSelect.prototype._autoScroll = function( event ) {
  */
 DragSelect.prototype.isCursorNearEdge = function( event, area ) {
 
-  var cursorPosition = this.getCursorPos( event, area );
+  var cursorPosition = this._getCursorPos( event, area );
   var areaRect = this.getAreaRect( area );
 
   var tolerance = {
@@ -756,6 +761,28 @@ DragSelect.prototype.getSelection = function() {
 };
 
 /**
+ * Returns cursor x, y position based on event object
+ * Will be relative to an area including the scroll unless advised otherwise
+ * 
+ * @param {Object} event
+ * @param {Node} _area – containing area / this.area if none / document if === false
+ * @param {Node} ignoreScroll – if true, the scroll will be ignored
+ * @return {Object} cursor { x/y }
+ */
+DragSelect.prototype.getCursorPos = function( event, _area, ignoreScroll ) {
+  if(!event) { return false; }
+
+  var area = _area || _area !== false && this.area;
+  var pos = this._getCursorPos( event, area );
+  var scroll = ignoreScroll ? { x: 0, y: 0 } : this.getScroll( area );
+
+  return {
+    x: pos.x + scroll.x,
+    y: pos.y + scroll.y
+  };
+};
+
+/**
  * Adds several items to the selection list
  * also adds the specific classes and take into account
  * all calculations.
@@ -803,6 +830,39 @@ DragSelect.prototype.removeSelection = function( _nodes, _callback, removeFromSe
 
   if( removeFromSelectables ) { this.removeSelectables( nodes ); }
   if( _callback ) { this.callback( this.selected, false ); }
+
+  return this.selected;
+  
+};
+
+/**
+ * Toggles specific nodes from the selection:
+ * If element is not in selection it will be added, if it is already selected, it will be removed.
+ * Multiple nodes can be given at once.
+ * 
+ * @param {Nodes} _nodes one or multiple nodes
+ * @param {Boolean} _callback - if callback should be called
+ * @param {Boolean} _special - if true, it also removes selected elements from possible selectable nodes & don’t add them to selectables if they are not
+ * @return {Array} all selected nodes
+ */
+DragSelect.prototype.toggleSelection = function( _nodes, _callback, _special ) {
+  
+  var nodes = this.toArray( _nodes );
+
+  for (var index = 0, il = nodes.length; index < il; index++) {
+    var node = nodes[index];
+    
+    if( this.selected.indexOf( node ) < 0 ) {
+
+      this.addSelection( node, _callback, _special );
+
+    } else {
+
+      this.removeSelection( node, _callback, _special );
+
+    }
+
+  }
 
   return this.selected;
   
@@ -1023,12 +1083,15 @@ DragSelect.prototype.isElement = function( node ) {
 
 /**
  * Returns cursor x, y position based on event object
+ * /!\ for internal calculation reasons it does _not_ take
+ * the AREA scroll into consideration unless it’s the outer Document.
+ * Use the public .getCursorPos() from outside, it’s more flexible
  * 
  * @param {Object} event
  * @param {Node} area – containing area / document if none
  * @return {Object} cursor X/Y
  */
-DragSelect.prototype.getCursorPos = function( event, area ) {
+DragSelect.prototype._getCursorPos = function( event, area ) {
 
   var cPos = {  // event.clientX/Y fallback for <IE8
     x: event.pageX || event.clientX,
@@ -1036,7 +1099,7 @@ DragSelect.prototype.getCursorPos = function( event, area ) {
   };
 
   var areaRect = this.getAreaRect( area || document );
-  var docScroll = this.getScroll();
+  var docScroll = this.getScroll();  // needed when document is scrollable but area is not
 
   return {  // if it’s constrained in an area the area should be substracted calculate 
     x: cPos.x - areaRect.left - docScroll.x,
@@ -1055,7 +1118,7 @@ DragSelect.prototype.getInitialCursorPosition = function() {
 };
 
 /**
- * Returns the starting/initial position of the cursor/selector
+ * Returns the last seen position of the cursor/selector
  * 
  * @return {Object} initialPos.
  */
