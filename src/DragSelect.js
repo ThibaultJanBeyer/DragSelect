@@ -1,4 +1,4 @@
-// v 1.7.20
+// v 1.7.21
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -703,7 +703,8 @@ DragSelect.prototype.isCursorNearEdge = function( event, area ) {
  * Unbind functions when mouse click is released
  */
 DragSelect.prototype.reset = function( event ) {
-  
+
+  document.removeEventListener( 'mouseup', this.reset );
   this.area.removeEventListener( 'mousemove', this._handleMove );
   this.area.addEventListener( 'mousedown', this._startUp );
 
@@ -741,7 +742,7 @@ DragSelect.prototype.stop = function() {
 
   this.reset();
   this.area.removeEventListener( 'mousedown', this._startUp );
-  this.area.removeEventListener( 'mouseup', this.reset );
+  document.removeEventListener( 'mouseup', this.reset );
 
 };
 
