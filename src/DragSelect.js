@@ -99,6 +99,7 @@ function DragSelect( options ) {
   this.multiSelectKeyPressed;
   this.initialCursorPos = {x: 0, y: 0};
   this.newCursorPos = {x: 0, y: 0};
+  this.lastCursorPos = {x: 0, y: 0};
   this.initialScroll;
   this.selected = [];
   this._prevSelected = [];  // memory to fix #9
@@ -703,7 +704,8 @@ DragSelect.prototype.isCursorNearEdge = function( event, area ) {
  * Unbind functions when mouse click is released
  */
 DragSelect.prototype.reset = function( event ) {
-  
+
+  this.lastCursorPos = this._getCursorPos( event, this.area );
   this.area.removeEventListener( 'mousemove', this._handleMove );
   this.area.addEventListener( 'mousedown', this._startUp );
 
@@ -1127,17 +1129,26 @@ DragSelect.prototype.getCurrentCursorPosition = function() {
 };
 
 /**
+ * Returns the last position of the cursor/selector from the previous selection
+ *
+ * @return {Object} initialPos.
+ */
+DragSelect.prototype.getLastCursorPosition = function() {
+    return this.lastCursorPos;
+};
+
+/**
  * Returns the cursor position difference between start and now
  * 
  * @return {Object} initialPos.
  */
 DragSelect.prototype.getCursorPositionDifference = function() {
-  var initialPos = this.getInitialCursorPosition();
+  var lastPos = this.getLastCursorPosition();
   var pos = this.getCurrentCursorPosition();
 
   var difference = {
-    x: initialPos.x - pos.x,
-    y: initialPos.y - pos.y
+    x: lastPos.x - pos.x,
+    y: lastPos.y - pos.y
   };
 
   return difference;
