@@ -707,7 +707,6 @@ DragSelect.prototype.isCursorNearEdge = function( event, area ) {
 DragSelect.prototype.reset = function( event ) {
 
   this.previousCursorPos = this._getCursorPos( event, this.area );
-
   document.removeEventListener( 'mouseup', this.reset );
   this.area.removeEventListener( 'mousemove', this._handleMove );
   this.area.addEventListener( 'mousedown', this._startUp );
@@ -775,6 +774,7 @@ DragSelect.prototype.getSelection = function() {
  * @return {Object} cursor { x/y }
  */
 DragSelect.prototype.getCursorPos = function( event, _area, ignoreScroll ) {
+
   if(!event) { return false; }
 
   var area = _area || _area !== false && this.area;
@@ -1149,6 +1149,7 @@ DragSelect.prototype.getPreviousCursorPosition = function() {
  * @return {Object} initialPos.
  */
 DragSelect.prototype.getCursorPositionDifference = function( previousCursorDifference ) {
+
     var difference, initialPos, pos, previousPos;
 
     if (!previousCursorDifference) {
@@ -1171,8 +1172,6 @@ DragSelect.prototype.getCursorPositionDifference = function( previousCursorDiffe
 
   return difference;
 };
-
-
 
 /**
  * Returns the current x, y scroll value of a container
