@@ -1,6 +1,6 @@
 {
   "name": "dragselect",
-  "version": "1.7.19",
+  "version": "1.7.21",
   "description": "easy javascript drag select functionality for your projects",
   "main": "./dist/ds.min.js",
   "dependencies": {},
