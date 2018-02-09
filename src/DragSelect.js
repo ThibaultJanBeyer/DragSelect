@@ -99,7 +99,7 @@ function DragSelect( options ) {
   this.multiSelectKeyPressed;
   this.initialCursorPos = {x: 0, y: 0};
   this.newCursorPos = {x: 0, y: 0};
-  this.lastCursorPos = {x: 0, y: 0};
+  this.previousCursorPos = {x: 0, y: 0};
   this.initialScroll;
   this.selected = [];
   this._prevSelected = [];  // memory to fix #9
@@ -209,6 +209,7 @@ DragSelect.prototype._handleSelectables = function( selectables, remove, fromSel
  * @param {Boolean} remove - if elements were removed.
  */
 DragSelect.prototype._onClick = function( event ) {
+
   if( this.mouseInteraction ) { return; }  // fix firefox doubleclick issue
   if( this.isRightClick( event ) ) { return; }
 
@@ -705,7 +706,7 @@ DragSelect.prototype.isCursorNearEdge = function( event, area ) {
  */
 DragSelect.prototype.reset = function( event ) {
 
-  this.lastCursorPos = this._getCursorPos( event, this.area );
+  this.previousCursorPos = this._getCursorPos( event, this.area );
 
   document.removeEventListener( 'mouseup', this.reset );
   this.area.removeEventListener( 'mousemove', this._handleMove );
@@ -1131,38 +1132,43 @@ DragSelect.prototype.getCurrentCursorPosition = function() {
 };
 
 /**
- * Returns the last position of the cursor/selector from the previous selection
+ * Returns the previous position of the cursor/selector
  *
  * @return {Object} initialPos.
  */
-DragSelect.prototype.getLastCursorPosition = function() {
-    return this.lastCursorPos;
+DragSelect.prototype.getPreviousCursorPosition = function() {
+    return this.previousCursorPos;
 };
 
 /**
  * Returns the cursor position difference between start and now
- * 
+ * If previousCursorDifference is passed,
+ * it will output the cursor position difference between the previous selection and now
+ *
+ * @param {boolean} previousCursorDifference
  * @return {Object} initialPos.
  */
-DragSelect.prototype.getCursorPositionDifference = function() {
-  var initialPos = this.getInitialCursorPosition();
-  var pos = this.getCurrentCursorPosition();
+DragSelect.prototype.getCursorPositionDifference = function( previousCursorDifference ) {
+    var difference, initialPos, pos, previousPos;
 
-  var difference = {
-    x: initialPos.x - pos.x,
-    y: initialPos.y - pos.y
-  };
+    if (!previousCursorDifference) {
+      initialPos = this.getInitialCursorPosition();
+      pos = this.getCurrentCursorPosition();
 
+      difference = {
+          x: initialPos.x - pos.x,
+          y: initialPos.y - pos.y
+      };
+  } else {
+      previousPos = this.getPreviousCursorPosition();
+      pos = this.getCurrentCursorPosition();
 
-    var lastPos = this.getLastCursorPosition();
-    var pos = this.getCurrentCursorPosition();
+      difference = {
+          x: previousPos.x - pos.x,
+          y: previousPos.y - pos.y
+      };
+  }
 
-    var difference = {
-        x: lastPos.x - pos.x,
-        y: lastPos.y - pos.y
-    };
-
-    return difference;
   return difference;
 };
 
