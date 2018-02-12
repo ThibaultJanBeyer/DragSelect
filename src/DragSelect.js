@@ -99,6 +99,7 @@ function DragSelect( options ) {
   this.multiSelectKeyPressed;
   this.initialCursorPos = {x: 0, y: 0};
   this.newCursorPos = {x: 0, y: 0};
+  this.previousCursorPos = {x: 0, y: 0};
   this.initialScroll;
   this.selected = [];
   this._prevSelected = [];  // memory to fix #9
@@ -208,6 +209,7 @@ DragSelect.prototype._handleSelectables = function( selectables, remove, fromSel
  * @param {Boolean} remove - if elements were removed.
  */
 DragSelect.prototype._onClick = function( event ) {
+
   if( this.mouseInteraction ) { return; }  // fix firefox doubleclick issue
   if( this.isRightClick( event ) ) { return; }
 
@@ -704,6 +706,7 @@ DragSelect.prototype.isCursorNearEdge = function( event, area ) {
  */
 DragSelect.prototype.reset = function( event ) {
 
+  this.previousCursorPos = this._getCursorPos( event, this.area );
   document.removeEventListener( 'mouseup', this.reset );
   this.area.removeEventListener( 'mousemove', this._handleMove );
   this.area.addEventListener( 'mousedown', this._startUp );
@@ -771,6 +774,7 @@ DragSelect.prototype.getSelection = function() {
  * @return {Object} cursor { x/y }
  */
 DragSelect.prototype.getCursorPos = function( event, _area, ignoreScroll ) {
+
   if(!event) { return false; }
 
   var area = _area || _area !== false && this.area;
@@ -1128,23 +1132,46 @@ DragSelect.prototype.getCurrentCursorPosition = function() {
 };
 
 /**
- * Returns the cursor position difference between start and now
- * 
+ * Returns the previous position of the cursor/selector
+ *
  * @return {Object} initialPos.
  */
-DragSelect.prototype.getCursorPositionDifference = function() {
-  var initialPos = this.getInitialCursorPosition();
-  var pos = this.getCurrentCursorPosition();
+DragSelect.prototype.getPreviousCursorPosition = function() {
+    return this.previousCursorPos;
+};
 
-  var difference = {
-    x: initialPos.x - pos.x,
-    y: initialPos.y - pos.y
-  };
+/**
+ * Returns the cursor position difference between start and now
+ * If previousCursorDifference is passed,
+ * it will output the cursor position difference between the previous selection and now
+ *
+ * @param {boolean} previousCursorDifference
+ * @return {Object} initialPos.
+ */
+DragSelect.prototype.getCursorPositionDifference = function( previousCursorDifference ) {
+
+    var difference, initialPos, pos, previousPos;
+
+    if (!previousCursorDifference) {
+      initialPos = this.getInitialCursorPosition();
+      pos = this.getCurrentCursorPosition();
+
+      difference = {
+          x: initialPos.x - pos.x,
+          y: initialPos.y - pos.y
+      };
+  } else {
+      previousPos = this.getPreviousCursorPosition();
+      pos = this.getCurrentCursorPosition();
+
+      difference = {
+          x: previousPos.x - pos.x,
+          y: previousPos.y - pos.y
+      };
+  }
 
   return difference;
 };
-
-
 
 /**
  * Returns the current x, y scroll value of a container
