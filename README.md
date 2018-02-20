@@ -148,7 +148,7 @@ When the function is saved into a variable `var foo = new DragSelect()` you have
 |getSelectables |/ |Returns array with all nodes that can be selected. |
 |getInitialCursorPosition |/ |Returns the registered x, y coordinates the cursor had when first clicked |
 |getCurrentCursorPosition |/ |Returns current/last registered x, y coordinates of the cursor |
-|getCursorPositionDifference |/ |Returns object with the x, y difference between the initial and the last cursor position |
+|getCursorPositionDifference |Boolean (usePreviousCursorDifference) |Returns object with the x, y difference between the initial and the last cursor position. If the argument is set to true, it will instead return the x, y difference to the previous selection |
 |getCursorPos |Event, Node (_area), Boolean (ignoreScroll) |Returns the cursor x, y coordinates *based on a click event object*. The click event object is required. By default, takes scroll and area into consideration. Area is this.area by default and can be fully ignored by setting the second argument explicitely to false. Scroll can be ignored by setting the third argument to true. |
 
 # Classes

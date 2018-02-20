@@ -71,8 +71,8 @@
   var ds = new DragSelect({
     selectables: document.getElementsByClassName('item'),
     area: document.getElementById('container'),
-    // autoScrollSpeed: 0.0001,
-    callback: function(e) { console.log(e) }
+    onDragStart: function(e) { console.log("onStart", this.getCursorPositionDifference( true )); },
+    onDragMove: function(e) { console.log("onMove", this.getCursorPositionDifference( )); }
   });
   </script>
 </body>
