@@ -12,7 +12,14 @@ if you are a regular contributor, see [contibuting](CONTRIBUTING.md) and make a 
 ## Deploying
 
 Tipically you don’t have to do this, since you most likely are not the project owner.  
-But if you are the project owner, after thorough testings & having pushed everything, you can deploy a new version using:
+But if you are the project owner:
+
+1. do thorough testing
+2. bump version in .js file
+3. run `gulp`
+4. pushed everything
+
+5. you can deploy a new version using:
 
 ```
 npm run deploy
