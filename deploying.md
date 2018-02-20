@@ -12,7 +12,7 @@ if you are a regular contributor, see [contibuting](CONTRIBUTING.md) and make a 
 ## Deploying
 
 Tipically you don’t have to do this, since you most likely are not the project owner.  
-But if you are, after thorough testings & having pushed everything, you can deploy a new version using:
+But if you are the project owner, after thorough testings & having pushed everything, you can deploy a new version using:
 
 ```
 npm run deploy
