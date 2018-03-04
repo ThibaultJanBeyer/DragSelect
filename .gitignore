@@ -1,5 +1,1 @@
-node_modules
-.DS_Store
-.publish
-package-lock.json
-npm-debug.log
+.idea
