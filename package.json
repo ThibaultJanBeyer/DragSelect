@@ -8,9 +8,10 @@
     "start": "npm install; npm test",
     "gulp": "gulp",
     "deploy": "gulp; gulp deploy;",
-    "test": "npm-run-all --parallel -c test-webserver test-jest",
+    "test": "npm-run-all test-copy-source --parallel --race test-webserver test-jest",
     "test-jest": "jest",
-    "test-webserver": "node node_modules/http-server/bin/http-server ./tests"
+    "test-webserver": "node node_modules/http-server/bin/http-server ./tests",
+    "test-copy-source": "node copy_source_to_tests.js"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
