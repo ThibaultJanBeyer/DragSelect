@@ -21,7 +21,7 @@ npm start
 
 it will install `gulp` for later building & open `tests/quicktest.html` for your convenience.  
 
-*Note: this will fail on other operating systems than Mac because I’m using the mac specific `open` command to open the file*
+*Note: opening quicktest will fail on other operating systems than Mac because I’m using the mac specific `open` command to open the file. However, that is not an issue and you can go on opening the file manually.*
 
 ## Testing
 
