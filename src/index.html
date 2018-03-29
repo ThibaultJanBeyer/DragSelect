@@ -206,7 +206,12 @@ ds.start();  // reset the functionality after a teardown
       <tr>
         <td><span class="str">multiSelectKeys&nbsp;</span></td>
         <td>array</td>
-        <td>OPTIONAL. These key will allow the user add more elements to the selection instead of clearing the selection. The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array [] if you want to turn off the funcionality. Default: ['ctrlKey', 'shiftKey', 'metaKey']</td>
+        <td>OPTIONAL. An array of keys that allows switching to the multi-select mode (see the multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array [] if you want to turn off the funcionality. Default: ['ctrlKey', 'shiftKey', 'metaKey']</td>
+      </tr>
+      <tr>
+        <td><span class="str">multiSelectMode&nbsp;</span></td>
+        <td>boolean</td>
+        <td>OPTIONAL. Add newly selected elements to the selection instead of replacing them. Default = false</td>
       </tr>
       <tr>
         <td><span class="str">autoScrollSpeed&nbsp;</span></td>

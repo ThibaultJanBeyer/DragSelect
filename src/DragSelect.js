@@ -28,7 +28,8 @@ Key-Features
   ** @selector          node            the square that will draw the selection
   ** @area              node            area in which you can drag. If not provided it will be the whole document
   ** @customStyles      boolean         if set to true, no styles (except for position absolute) will be applied by default
-  ** @multiSelectKeys   array           These key will allow the user add more elements to the selection instead of clearing the selection. The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the funcionality. Default: `['ctrlKey', 'shiftKey', 'metaKey']`
+  ** @multiSelectKeys   array           An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality. Default: `['ctrlKey', 'shiftKey', 'metaKey']`
+  ** @multiSelectMode   boolean         Add newly selected elements to the selection instead of replacing them. Default = false
   ** @autoScrollSpeed   integer         Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Default = 1
   ** @onDragStart       function        this is optional, it is fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners.
   ** @onDragMove        function        this is optional, it is fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
