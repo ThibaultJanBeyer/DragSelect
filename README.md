@@ -120,7 +120,8 @@ Obviously, keyboard users won’t get the full visual experience but it works si
 |selector |single DOM element (node) |OPTIONAL. The square that will draw the selection. Autocreated by default |
 |area |single DOM element (node) |OPTIONAL. The square in which you are able to select |
 |customStyles |boolean |OPTIONAL. If true, no styles will be automatically applied (except position: absolute). Default: `false` |
-|multiSelectKeys |array |OPTIONAL. These key will allow the user add more elements to the selection instead of clearing the selection. The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the funcionality. Default: `['ctrlKey', 'shiftKey', 'metaKey']` |
+|multiSelectKeys |array |OPTIONAL. An array of keys that allows switching to the multi-select mode (see the multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the funcionality. Default: `['ctrlKey', 'shiftKey', 'metaKey']` |
+|multiSelectMode |boolean |OPTIONAL. Add newly selected elements to the selection instead of replacing them. Default = false |
 |autoScrollSpeed |integer |OPTIONAL. The speed in which the area scrolls while selecting (if available). The unit is pixel per movement. Set to `0.0001` to disable autoscrolling. Default = `1` |
 |onDragStart |function |OPTIONAL. Fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners |
 |onDragMove |function |OPTIONAL. Fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position |
