@@ -131,6 +131,7 @@ DragSelect.prototype._setupOptions = function( options ) {
   this._handleSelectables( this.toArray( options.selectables ) );
 
   this.multiSelectKeys = options.multiSelectKeys || ['ctrlKey', 'shiftKey', 'metaKey'];
+  this.multiSelectMode = options.multiSelectMode || false;
   this.autoScrollSpeed = options.autoScrollSpeed || 1;
   this.selectCallback = options.onElementSelect || function() {};
   this.unselectCallback = options.onElementUnselect || function() {};
@@ -304,9 +305,13 @@ DragSelect.prototype.isMultiSelectKeyPressed = function( event ) {
 
   this.multiSelectKeyPressed = false;
 
-  for ( var index = 0; index < this.multiSelectKeys.length; index++ ) {
-    var mKey = this.multiSelectKeys[index];
-    if( event[mKey] ) { this.multiSelectKeyPressed = true; }
+  if (this.multiSelectMode){
+    this.multiSelectKeyPressed = true;
+  } else {
+    for ( var index = 0; index < this.multiSelectKeys.length; index++ ) {
+      var mKey = this.multiSelectKeys[index];
+      if( event[mKey] ) { this.multiSelectKeyPressed = true; }
+    }
   }
 
   return this.multiSelectKeyPressed;
