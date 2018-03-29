@@ -1,3 +1,7 @@
+# 1.7.24
+
+- add `multiSelectMode` to set the multi-selection as default behavior. See [#19](https://github.com/ThibaultJanBeyer/DragSelect/issues/19). Thanks to [@riless](https://github.com/riless) for the contribution!
+
 # 1.7.21-23
 
 - fix issue with getCursorPositionDifference for single clicks. See [#13](https://github.com/ThibaultJanBeyer/DragSelect/issues/13). Big thanks to [@RealTJ](https://github.com/RealTJ) for the help
