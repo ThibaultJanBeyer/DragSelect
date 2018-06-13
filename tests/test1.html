@@ -5,91 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Scrollable Body</title>
-  <style>
-    * {
-      -webkit-user-select: none;
-         -moz-user-select: none;
-          -ms-user-select: none;
-              user-select: none;
-    }
-    
-    #lel {
-      background: yellow;
-      width: 200px;
-      height: 1200px;
-      position: relative;
-    }
-    
-    html, body {
-      padding: 0;
-      margin: 0;
-    }
-    
-    .item {
-      width: 50px;
-      height: 50px;
-      position: relative;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-pack: center;
-          -ms-flex-pack: center;
-              justify-content: center;
-      -webkit-box-align: center;
-          -ms-flex-align: center;
-              align-items: center;
-      color: white;
-      border: 0;
-    }
-    
-    .item:focus {
-      border: 1px solid blue;
-    }
-    
-    .item:nth-child(1) {
-      background: #f25d0d;
-      top: 4%;
-      left: 6%;
-    }
-    
-    .item:nth-child(2) {
-      background: #0df20d;
-      top: 31%;
-      left: 28%;
-    }
-    
-    .item:nth-child(3) {
-      background: #f20d11;
-      top: 45%;
-      left: 9%;
-    }
-    
-    .item:nth-child(4) {
-      background: #f2700d;
-      top: 23%;
-      left: 4%;
-    }
-    
-    .item:nth-child(5) {
-      background: #f20dbd;
-      top: 44%;
-      left: 19%;
-    }
-    
-    .item:nth-child(6) {
-      background: #e30df2;
-      top: 39%;
-      left: 30%;
-    }
-    
-    .ds-selected {
-      outline: 3px solid black;
-      outline-offset: 3px;
-      color: black;
-      font-weight: bold;
-    }
-        
-  </style>
+  <link rel="stylesheet" href="test-styles.css">
 </head>
 <body>
   <p>
@@ -106,7 +22,6 @@
     <button type="button" class="item five">5</button>
     <button type="button" class="item six">6</button>
   </div>
-  
   <script src="../src/DragSelect.js"></script>
   <script>
   var ds = new DragSelect({

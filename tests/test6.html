@@ -1,33 +1,30 @@
-<!-- USE THIS FILE to quickly test things, you can modify it as much as you want -->
-<!-- when you feel that your testcase should always be tested, feel free to create a test#.html file -->
-<!-- where # is the next available number -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Quick ’n Dirty Test</title>
+  <title>multiSelectMode</title>
   <link rel="stylesheet" href="test-styles.css">
 </head>
 <body>
-  <div id="container">
+  <p>
+    multiSelectMode.<br>
+    <strong>What to test here?</strong><br>
+    multiselection should be the default behavior.
+  </p>
   <button type="button" class="item one">1</button>
   <button type="button" class="item two">2</button>
   <button type="button" class="item three">3</button>
   <button type="button" class="item four">4</button>
   <button type="button" class="item five">5</button>
   <button type="button" class="item six">6</button>
-  </div>
-
   <script src="../src/DragSelect.js"></script>
   <script>
-  var ds = new DragSelect({
-    selectables: document.getElementsByClassName('item'),
-    area: document.getElementById('container'),
-    onDragStart: function(e) { console.log("onStart", this.getCursorPositionDifference( true )); },
-    onDragMove: function(e) { console.log("onMove", this.getCursorPositionDifference( )); }
-  });
+new DragSelect({
+  selectables: document.querySelectorAll('.item'),
+  multiSelectMode: true
+});
   </script>
 </body>
 </html>
