@@ -17,7 +17,7 @@ Key-Features
   - Lightweight, only ~2KB gzipped
   - Free & open source under MIT License
 
- Classes
+ Default classes
   ** .ds-selected       On elements that are selected
   ** .ds-hover          On elements that are currently hovered
   ** .ds-selector       On the selector element
@@ -31,6 +31,10 @@ Key-Features
   ** @multiSelectKeys   array           An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality. Default: `['ctrlKey', 'shiftKey', 'metaKey']`
   ** @multiSelectMode   boolean         Add newly selected elements to the selection instead of replacing them. Default = false
   ** @autoScrollSpeed   integer         Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Default = 1
+  ** @selectedClass     string          the class assigned to the selected items
+  ** @hoverClass        string          the class assigned to the mouse hovered items
+  ** @selectorClass     string          the class assigned to the square selector helper
+  ** @selectableClass   string          the class assigned to the elements that can be selected
   ** @onDragStart       function        this is optional, it is fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners.
   ** @onDragMove        function        this is optional, it is fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
   ** @onElementSelect   function        this is optional, it is fired every time an element is selected. This callback gets a property which is the just selected node
@@ -128,6 +132,11 @@ DragSelect.prototype._createBindings = function() {
  */
 DragSelect.prototype._setupOptions = function( options ) {
 
+  this.selectedClass = options.selectedClass || 'ds-selected';
+  this.hoverClass = options.hoverClass || 'ds-hover';
+  this.selectorClass = options.selectorClass || 'ds-selector';
+  this.selectableClass = options.selectableClass || 'ds-selectable';
+
   this.selectables = [];
   this._handleSelectables( this.toArray( options.selectables ) );
 
@@ -151,7 +160,7 @@ DragSelect.prototype._setupOptions = function( options ) {
 
   // Selector
   this.selector = options.selector || this._createSelector();
-  this.addClass( this.selector, 'ds-selector' );
+  this.addClass( this.selector, this.selectorClass );
 
 };
 
@@ -170,13 +179,13 @@ DragSelect.prototype._handleSelectables = function( selectables, remove, fromSel
 
     if( indexOf < 0 && !remove ) {  // add
       
-      this.addClass( selectable, 'ds-selectable' );
+      this.addClass( selectable, this.selectableClass );
       selectable.addEventListener( 'click', this._onClick );
       this.selectables.push( selectable );
       
       // also add to current selection
       if( fromSelection && this.selected.indexOf( selectable ) < 0 ) {
-        this.addClass( selectable, 'ds-selected' );
+        this.addClass( selectable, this.selectedClass );
         this.selected.push( selectable );
       }
 
@@ -184,14 +193,14 @@ DragSelect.prototype._handleSelectables = function( selectables, remove, fromSel
 
     else if( indexOf > -1 && remove ) {  // remove
 
-      this.removeClass( selectable, 'ds-hover' );
-      this.removeClass( selectable, 'ds-selectable' );
+      this.removeClass( selectable, this.hoverClass );
+      this.removeClass( selectable, this.selectableClass );
       selectable.removeEventListener( 'click', this._onClick );
       this.selectables.splice( indexOf, 1 );
 
       // also remove from current selection
       if( fromSelection && this.selected.indexOf( selectable ) > -1 ) {
-        this.removeClass( selectable, 'ds-selected' );
+        this.removeClass( selectable, this.selectedClass );
         this.selected.splice( this.selected.indexOf( selectable ), 1 );
       }
 
@@ -496,7 +505,7 @@ DragSelect.prototype.checkIfInsideSelection = function( force ) {
  */
 DragSelect.prototype._handleSelection = function( item, force ) {
 
-  if( this.hasClass( item, 'ds-hover' ) && !force ) { return false; }
+  if( this.hasClass( item, this.hoverClass ) && !force ) { return false; }
   var posInSelectedArray = this.selected.indexOf( item );
 
   if( posInSelectedArray < 0 ) {
@@ -505,7 +514,7 @@ DragSelect.prototype._handleSelection = function( item, force ) {
     this.unselect( item );
   }
 
-  this.addClass( item, 'ds-hover' );
+  this.addClass( item, this.hoverClass );
 
 };
 
@@ -517,7 +526,7 @@ DragSelect.prototype._handleSelection = function( item, force ) {
  */
 DragSelect.prototype._handleUnselection = function( item, force ) {
 
-  if( !this.hasClass( item, 'ds-hover' ) && !force ) { return false; }
+  if( !this.hasClass( item, this.hoverClass ) && !force ) { return false; }
   var posInSelectedArray = this.selected.indexOf( item );
   var isInPrevSelection = this._prevSelected.indexOf( item );  // #9
 
@@ -534,7 +543,7 @@ DragSelect.prototype._handleUnselection = function( item, force ) {
     this.select( item );
   }
 
-  this.removeClass( item, 'ds-hover' );
+  this.removeClass( item, this.hoverClass );
 
 };
 
@@ -549,7 +558,7 @@ DragSelect.prototype.select = function( item ) {
   if( this.selected.indexOf(item) > -1) { return false; }
 
   this.selected.push( item );
-  this.addClass( item, 'ds-selected' );
+  this.addClass( item, this.selectedClass );
 
   this.selectCallback( item );
   if( this._breaked ) { return false; }
@@ -569,7 +578,7 @@ DragSelect.prototype.unselect = function( item ) {
   if( this.selected.indexOf(item) < 0) { return false; }
 
   this.selected.splice( this.selected.indexOf(item), 1 );
-  this.removeClass( item, 'ds-selected' );
+  this.removeClass( item, this.selectedClass );
   
   this.unselectCallback( item );
   if( this._breaked ) { return false; }
