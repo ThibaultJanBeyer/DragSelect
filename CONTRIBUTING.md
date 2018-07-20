@@ -27,15 +27,26 @@ it will install `gulp` for later building & open `tests/quicktest.html` for your
 
 ## Testing
 
+- You will want to see if your changes work, use `tests/quicktest.html`. Modify that file as much as you want to match your test cases.  
+
+### Automatic
+
 For the testing puppeteer and jest is used. Puppeteer will be installed locally, but can be a bit heavy (~200mb) you can use the [Environment Variables](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#environment-variables) if you have puppeteer installed already.
 
-If you have not jest installed globally yet, install it:
-```
-npm i -g jest
-```
-
-Now you can run the tests:
+Automated tests are run via:
 
 ```
-npm run test
+npm test
 ```
+
+There aren’t many automated tests yet. So please also test manually:
+
+### Manual
+
+- If you feel like your test case should be permanently tested before each release, just extract it to a new file in the `tests` folder.  
+
+- Write what to test & name it `test#.html` where `#` is the next available number.  
+
+- Once you are happy with your changes, **always test all test scenarios in `tests/`**. I.e. `tests/test1.html`,  `tests/test2.html` etc.  
+
+- Unfortunately, this has to be done manually at the moment.  
