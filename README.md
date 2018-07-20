@@ -165,7 +165,7 @@ When the function is saved into a variable `var foo = new DragSelect()` you have
 |.ds-selector |On the selector element
 |.ds-selectable |On elements that can be selected
 
-*note: you can change the class names setting the respective property on the constructor, see [Properties](#Properties) section.*
+*note: you can change the class names setting the respective property on the constructor, see [Properties](#properties) section.*
 
 # Have Fun!
 
