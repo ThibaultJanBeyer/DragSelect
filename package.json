@@ -5,12 +5,19 @@
   "main": "./dist/ds.min.js",
   "dependencies": {},
   "scripts": {
-    "start": "npm install; npm test",
+    "start": "npm install; npm run open",
+    "open": "open tests/quicktest.html -a 'Google Chrome'",
     "gulp": "gulp",
     "deploy": "gulp && bash deploy.sh",
-    "test": "open tests/quicktest.html -a 'Google Chrome'"
+    "test": "npm-run-all test-copy-source --parallel --race test-webserver test-jest",
+    "test-jest": "jest",
+    "test-webserver": "node node_modules/http-server/bin/http-server ./tests",
+    "test-copy-source": "node copy_source_to_tests.js"
   },
   "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^3.19.0",
+    "eslint-plugin-jest": "^21.12.3",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.1",
     "gulp-csso": "^2.0.0",
@@ -18,7 +25,13 @@
     "gulp-htmlmin": "^3.0.0",
     "gulp-jshint": "^2.0.4",
     "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^2.0.0"
+    "gulp-uglify": "^2.0.0",
+    "http-server": "^0.11.1",
+    "jest": "^22.4.2",
+    "jest-environment-node": "^22.4.1",
+    "npm-run-all": "^4.1.2",
+    "puppeteer": "^1.1.1",
+    "rimraf": "^2.6.2"
   },
   "repository": {
     "type": "git",
