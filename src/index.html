@@ -62,34 +62,34 @@
   <nav class="doc-navigation sticky">
     <ul>
       <li>
-        <a href="#one">1. Installation</a>
+        <a href="#installation">1. Installation</a>
       </li>
       <li>
-        <a href="#two">2. Simple Usage</a>
+        <a href="#usage">2. Simple Usage</a>
         <li>
-          <a href="#twob">2b. Within Area</a>
+          <a href="#usage-b">2b. Within Area</a>
         </li>
         <li>
-          <a href="#twoc">2c. Extended</a>
+          <a href="#usage-c">2c. Extended</a>
         </li>
         <li>
-          <a href="#twod">2d. Accessibility (a11y)</a>
+          <a href="#usage-d">2d. Accessibility (a11y)</a>
         </li>
       </li>
       <li>
-        <a href="#three">3. Properties</a>
+        <a href="#properties">3. Properties</a>
       </li>
       <li>
-        <a href="#four">4. Methods</a>
+        <a href="#methods">4. Methods</a>
       </li>
       <li>
-        <a href="#five">5. Classes</a>
+        <a href="#classes">5. Classes</a>
       </li>
     </ul>
   </nav>
 
 
-  <h4 id="one">1. Installation</h4>
+  <h4 id="installation">1. Installation</h4>
   <strong>Regular: </strong>
   <p><a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/dist/DragSelect.js">Download DragSelect</a> (<a
     href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/dist/ds.min.js">minified</a>) and add it to your document:</p>
@@ -114,18 +114,18 @@
 
 
 
-  <h4 id="two">2. Simple Usage</h4>
+  <h4 id="usage">2. Simple Usage</h4>
   <p>The simplest possible usage:</p>
   <p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="prpwYG" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">prpwYG</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p>
   <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
   You can also use the "shift", "ctrl" or "command" key to make multiple independent selections. Try it out!
 
-  <h4 id="twob">2b. Widthin a scrollable area</h4>
+  <h4 id="usage-b">2b. Widthin a scrollable area</h4>
   <p>Here the selection is constrained. You can only use the selection inside of the container with the red border:</p>
   <p data-height="265" data-theme-id="0" data-slug-hash="Nvobgq" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect with Scrollable AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p>
   <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 
-  <h4 id="twoc">2c. Extended</h4>
+  <h4 id="usage-c">2c. Extended</h4>
   <strong>All options are optional. You could also just initiate the Dragselect by `new DragSelect();` without any option. If you add the function to a variable you get full controll over all its functions:</strong>
   <pre><xmp class="prettyprint lang-javascript" contenteditable="true"
 >var ds = new DragSelect({
@@ -154,7 +154,7 @@ ds.stop();  // will teardown/stop the whole functionality
 ds.start();  // reset the functionality after a teardown
 // and many more, see "methods" section in documentation</xmp></pre>
 
-  <h4 id="twod">2d. Accessibility (a11y)</h4>
+  <h4 id="usage-d">2d. Accessibility (a11y)</h4>
   <strong>DragSelect is accessibly by default.</strong>
 
   <p>
@@ -172,7 +172,7 @@ ds.start();  // reset the functionality after a teardown
 
 
 
-  <h4 id="three">3. Properties:</h4>
+  <h4 id="properties">3. Properties:</h4>
 
   <strong>Reference:</strong>
   <table>
@@ -220,6 +220,26 @@ ds.start();  // reset the functionality after a teardown
         <td>OPTIONAL. Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Set to 0.0001 to disable autoscrolling. Default = 1</td>
       </tr>
       <tr>
+        <td><span class="str">selectedClass&nbsp;</span></td>
+        <td>string</td>
+        <td>OPTIONAL. The class name assigned to the selected items. Default = <a href="#classes">see classes</a></td>
+      </tr>
+      <tr>
+        <td><span class="str">hoverClass&nbsp;</span></td>
+        <td>string</td>
+        <td>OPTIONAL. The class name assigned to the mouse hovered items. Default = <a href="#classes">see classes</a></td>
+      </tr>
+      <tr>
+        <td><span class="str">selectorClass&nbsp;</span></td>
+        <td>string</td>
+        <td>OPTIONAL. The class name assigned to the square selector helper. Default = <a href="#classes">see classes</a></td>
+      </tr>
+      <tr>
+        <td><span class="str">selectableClass&nbsp;</span></td>
+        <td>string</td>
+        <td>OPTIONAL. The class name assigned to the elements that can be selected. Default = <a href="#classes">see classes</a></td>
+      </tr>
+      <tr>
         <td><span class="str">onDragStart&nbsp;</span></td>
         <td>function</td>
         <td>OPTIONAL. Fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners</td>
@@ -252,7 +272,7 @@ ds.start();  // reset the functionality after a teardown
 
 
 
-  <h4 id="four">4. Methods</h4>
+  <h4 id="methods">4. Methods</h4>
 
   <p>When the function is saved into a variable (var foo = new DragSelect({...})) you have access to all its inner functions. There are way more than listed here. Here are just the most usable:</p>
   <strong>Reference:</strong>
@@ -351,7 +371,7 @@ ds.start();  // reset the functionality after a teardown
 
 
 
-  <h4 id="five">5. Classes</h4>
+  <h4 id="classes">5. Classes</h4>
 
   <strong>Reference:</strong>
   <table>
@@ -372,6 +392,8 @@ ds.start();  // reset the functionality after a teardown
       <td>on elements that can be selected</td>
     </tr>
   </table>
+
+  Note: note that you can change the class names by providing special properties to the constructor. See <a href="#properties">Properties</a>
 
 
 

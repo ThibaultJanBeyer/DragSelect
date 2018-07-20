@@ -1,4 +1,4 @@
-// v 1.7.24
+// v 1.8.0
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -35,10 +35,10 @@ Key-Features
   ** @hoverClass        string          the class assigned to the mouse hovered items
   ** @selectorClass     string          the class assigned to the square selector helper
   ** @selectableClass   string          the class assigned to the elements that can be selected
-  ** @onDragStart       function        this is optional, it is fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners.
-  ** @onDragMove        function        this is optional, it is fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
-  ** @onElementSelect   function        this is optional, it is fired every time an element is selected. This callback gets a property which is the just selected node
-  ** @onElementUnselect function        this is optional, it is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
+  ** @onDragStart       function        It is fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners.
+  ** @onDragMove        function        It is fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
+  ** @onElementSelect   function        It is fired every time an element is selected. This callback gets a property which is the just selected node
+  ** @onElementUnselect function        It is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
   ** @callback          function        a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes. The second property passed is the event object.
 
  Usefull Methods
@@ -132,6 +132,11 @@ DragSelect.prototype._createBindings = function() {
  */
 DragSelect.prototype._setupOptions = function( options ) {
 
+  this.selectedClass = options.selectedClass || 'ds-selected';
+  this.hoverClass = options.hoverClass || 'ds-hover';
+  this.selectorClass = options.selectorClass || 'ds-selector';
+  this.selectableClass = options.selectableClass || 'ds-selectable';
+
   this.selectables = [];
   this._handleSelectables( this.toArray( options.selectables ) );
 
@@ -145,11 +150,6 @@ DragSelect.prototype._setupOptions = function( options ) {
   this.callback = options.callback || function() {};
   this.area = options.area || document;
   this.customStyles = options.customStyles;
-
-  this.selectedClass = options.selectedClass || 'ds-selected';
-  this.hoverClass = options.hoverClass || 'ds-hover';
-  this.selectorClass = options.selectorClass || 'ds-selector';
-  this.selectableClass = options.selectableClass || 'ds-selectable';
 
   // Area has to have a special position attribute for calculations
   if( this.area !== document ) {

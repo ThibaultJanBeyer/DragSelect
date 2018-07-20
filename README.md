@@ -124,6 +124,10 @@ Obviously, keyboard users won’t get the full visual experience but it works si
 |multiSelectKeys |array |OPTIONAL. An array of keys that allows switching to the multi-select mode (see the multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the funcionality. Default: `['ctrlKey', 'shiftKey', 'metaKey']` |
 |multiSelectMode |boolean |OPTIONAL. Add newly selected elements to the selection instead of replacing them. Default = `false` |
 |autoScrollSpeed |integer |OPTIONAL. The speed in which the area scrolls while selecting (if available). The unit is pixel per movement. Set to `0.0001` to disable autoscrolling. Default = `1` |
+|selectedClass |string |OPTIONAL. The class name assigned to the selected items. Default = [see classes](#classes) |
+|hoverClass |string |OPTIONAL. The class name assigned to the mouse hovered items. Default = [see classes](#classes) |
+|selectorClass |string |OPTIONAL. The class name assigned to the square selector helper. Default = [see classes](#classes) |
+|selectableClass |string |OPTIONAL. The class name assigned to the elements that can be selected. Default = [see classes](#classes) |
 |onDragStart |function |OPTIONAL. Fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners |
 |onDragMove |function |OPTIONAL. Fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position |
 |onElementSelect |function |OPTIONAL. Fired every time an element is selected. This callback gets a property which is the selected node |
@@ -160,6 +164,8 @@ When the function is saved into a variable `var foo = new DragSelect()` you have
 |.ds-hover |On elements that are currently hovered
 |.ds-selector |On the selector element
 |.ds-selectable |On elements that can be selected
+
+*note: you can change the class names setting the respective property on the constructor, see [Properties](#Properties) section.*
 
 # Have Fun!
 
