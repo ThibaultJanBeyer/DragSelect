@@ -6,7 +6,6 @@ var htmlhint = require('gulp-htmlhint');
 var htmlmin = require('gulp-htmlmin');
 var autoprefixer = require('gulp-autoprefixer');
 var csso = require('gulp-csso');
-var ghPages = require('gulp-gh-pages');
 
 gulp.task('js', function () {
   gulp.src('./src/DragSelect.js')
@@ -35,11 +34,6 @@ gulp.task('html', function () {
 gulp.task('quicktest', function () {
   gulp.src('./src/quicktest.html')
     .pipe(gulp.dest('./dist/'));
-});
-
-gulp.task('deploy', function () {
-  return gulp.src('./dist/**/*')
-    .pipe(ghPages());
 });
 
 gulp.task('default', ['js', 'html', 'css', 'quicktest']);

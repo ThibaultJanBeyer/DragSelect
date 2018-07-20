@@ -7,14 +7,13 @@
   "scripts": {
     "start": "npm install; npm test",
     "gulp": "gulp",
-    "deploy": "gulp; gulp deploy;",
+    "deploy": "gulp && git checkout gh-pages && git checkout master dist/ && git reset && mv dist/* . && rm -r dist && git add . && git commit -m 'update' && git push && git checkout master",
     "test": "open tests/quicktest.html -a 'Google Chrome'"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.1",
     "gulp-csso": "^2.0.0",
-    "gulp-gh-pages": "^0.5.4",
     "gulp-htmlhint": "^0.3.1",
     "gulp-htmlmin": "^3.0.0",
     "gulp-jshint": "^2.0.4",
