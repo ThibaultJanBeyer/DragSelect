@@ -7,7 +7,7 @@
   "scripts": {
     "start": "npm install; npm test",
     "gulp": "gulp",
-    "deploy": "gulp && git checkout gh-pages && git checkout master dist/ && git reset && mv dist/* . && rm -r dist && git add . && git commit -m 'update' && git push && git checkout master",
+    "deploy": "gulp && bash deploy.sh",
     "test": "open tests/quicktest.html -a 'Google Chrome'"
   },
   "devDependencies": {
