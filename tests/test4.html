@@ -28,14 +28,14 @@
   <button type="button" class="item six">6</button>
   <script src="../src/DragSelect.js"></script>
   <script>
-new DragSelect({
-  selectables: document.querySelectorAll('.item'),
-  onDragStart: e => console.log("onDragStart", e),
-  onDragMove: e => console.log("onDragMove", e),
-  onElementSelect: e => console.log("onElementSelect", e),
-  onElementUnselect: e => console.log("onElementUnselect", e),
-  callback: (n, e) => console.log("callback", n, e)
-});
+    new DragSelect({
+      selectables: document.querySelectorAll('.item'),
+      onDragStart: e => console.log("onDragStart", e),
+      onDragMove: e => console.log("onDragMove", e),
+      onElementSelect: e => console.log("onElementSelect", e),
+      onElementUnselect: e => console.log("onElementUnselect", e),
+      callback: (n, e) => console.log("callback", n, e)
+    });
   </script>
 </body>
 </html>

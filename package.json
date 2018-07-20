@@ -5,12 +5,16 @@
   "main": "./dist/ds.min.js",
   "dependencies": {},
   "scripts": {
-    "start": "npm install; npm test",
+    "start": "npm install; npm run open",
+    "open": "open tests/quicktest.html -a 'Google Chrome'",
     "gulp": "gulp",
     "deploy": "gulp && bash deploy.sh",
-    "test": "open tests/quicktest.html -a 'Google Chrome'"
+    "test": "jest"
   },
   "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-jest": "^23.4.0",
+    "babel-preset-env": "^1.7.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.1",
     "gulp-csso": "^2.0.0",
@@ -18,7 +22,9 @@
     "gulp-htmlmin": "^3.0.0",
     "gulp-jshint": "^2.0.4",
     "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^2.0.0"
+    "gulp-uglify": "^2.0.0",
+    "jest": "^23.4.1",
+    "puppeteer": "^1.6.0"
   },
   "repository": {
     "type": "git",

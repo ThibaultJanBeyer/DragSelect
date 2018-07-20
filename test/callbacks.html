@@ -1,0 +1,63 @@
+<link rel="stylesheet" href="basics.css">
+<style>
+.item.one {
+  background: #f25d0d;
+  top: 0;
+  left: 0;
+}
+
+.item.two {
+  background: #0df20d;
+  top: 50px;
+  left: 50px;
+}
+
+.item.three {
+  background: #f20d11;
+  top: 100px;
+  left: 100px;
+}
+
+.item.four {
+  background: #f2700d;
+  top: 150px;
+  left: 150px;
+}
+
+.item.five {
+  background: #f20dbd;
+  top: 200px;
+  left: 200px;
+}
+
+.item.six {
+  background: #e30df2;
+  top: 250px;
+  left: 250px;
+}
+</style>
+
+<button type="button" class="item one">1</button>
+<button type="button" class="item two">2</button>
+<button type="button" class="item three">3</button>
+<button type="button" class="item four">4</button>
+<button type="button" class="item five">5</button>
+<button type="button" class="item six">6</button>
+
+<script src="../src/DragSelect.js"></script>
+<script>
+    window.onDragStartCalls = [];
+    window.onDragMoveCalls = [];
+    window.onElementSelectCalls = [];
+    window.onElementUnselectCalls = [];
+    window.callbackCalls = [];
+
+    new DragSelect({
+        selectables: document.querySelectorAll('.item'),
+        onDragStart: e => window.onDragStartCalls.push({element: e}),
+        onDragMove: e => window.onDragMoveCalls.push({element: e}),
+        onElementSelect: e => window.onElementSelectCalls.push({element: e}),
+        onElementUnselect: e => window.onElementUnselectCalls.push({element: e}),
+        callback: (n, e) => window.callbackCalls.push({elements: n, event: e})
+    });
+</script>
