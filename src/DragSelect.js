@@ -270,6 +270,7 @@ DragSelect.prototype._createSelector = function() {
 DragSelect.prototype.start = function() {
 
   this.area.addEventListener( 'mousedown', this._startUp );
+  this.area.addEventListener( 'touchstart', this._startUp );
 
 };
 
@@ -300,8 +301,11 @@ DragSelect.prototype._startUp = function( event ) {
 
   // event listeners
   this.area.removeEventListener( 'mousedown', this._startUp );
+  this.area.removeEventListener( 'touchstart', this._startUp );
   this.area.addEventListener( 'mousemove', this._handleMove );
+  this.area.addEventListener( 'touchmove', this._handleMove );
   document.addEventListener( 'mouseup', this.reset );
+  document.addEventListener( 'touchend', this.reset );
 
 };
 
@@ -722,8 +726,11 @@ DragSelect.prototype.reset = function( event ) {
 
   this.previousCursorPos = this._getCursorPos( event, this.area );
   document.removeEventListener( 'mouseup', this.reset );
+  document.removeEventListener( 'touchend', this.reset );
   this.area.removeEventListener( 'mousemove', this._handleMove );
+  this.area.removeEventListener( 'touchmove', this._handleMove );
   this.area.addEventListener( 'mousedown', this._startUp );
+  this.area.addEventListener( 'touchstart', this._startUp );
 
   this.callback( this.selected, event );
   if( this._breaked ) { return false; }
@@ -759,7 +766,9 @@ DragSelect.prototype.stop = function() {
 
   this.reset();
   this.area.removeEventListener( 'mousedown', this._startUp );
+  this.area.removeEventListener( 'touchstart', this._startUp );
   document.removeEventListener( 'mouseup', this.reset );
+  document.removeEventListener( 'touchend', this.reset );
 
 };
 
@@ -1112,6 +1121,14 @@ DragSelect.prototype.isElement = function( node ) {
  */
 DragSelect.prototype._getCursorPos = function( event, area ) {
   if(!event) { return { x: 0, y: 0 }; }
+
+  //if a touchevent, we need to store the positions on the prototype
+  if (event instanceof TouchEvent && event.type !== 'touchend') {
+    DragSelect.prototype.lastTouch = event
+  }
+  //if a touchevent, return the last touch rather than the regular event
+  // we need .touches[0] from that event instead
+  event = (event instanceof TouchEvent) ? DragSelect.prototype.lastTouch.touches[0] : event
 
   var cPos = {  // event.clientX/Y fallback for <IE8
     x: event.pageX || event.clientX,
