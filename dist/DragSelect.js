@@ -1123,12 +1123,12 @@ DragSelect.prototype._getCursorPos = function( event, area ) {
   if(!event) { return { x: 0, y: 0 }; }
 
   //if a touchevent, we need to store the positions on the prototype
-  if (event.hasOwnProperty('touches') && event.type !== 'touchend') {
+  if (event.touches && event.type !== 'touchend') {
     DragSelect.prototype.lastTouch = event
   }
   //if a touchevent, return the last touch rather than the regular event
   // we need .touches[0] from that event instead
-  event = (event.hasOwnProperty('touches')) ? DragSelect.prototype.lastTouch.touches[0] : event
+  event = (event.touches) ? DragSelect.prototype.lastTouch.touches[0] : event
 
   var cPos = {  // event.clientX/Y fallback for <IE8
     x: event.pageX || event.clientX,
