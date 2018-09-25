@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
-var htmlhint = require('gulp-htmlhint');
 var htmlmin = require('gulp-htmlmin');
 var autoprefixer = require('gulp-autoprefixer');
 var csso = require('gulp-csso');
@@ -26,7 +25,6 @@ gulp.task('css', function () {
 
 gulp.task('html', function () {
   gulp.src('./src/index.html')
-    .pipe(htmlhint())
     .pipe(htmlmin({collapseWhitespace: true}))
     .pipe(gulp.dest('./dist/'));
 });
