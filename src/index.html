@@ -345,6 +345,11 @@ ds.start();  // reset the functionality after a teardown
       <td>returns array with all nodes that can be selected.</td>
     </tr>
     <tr>
+      <td><span class="str">setSelectables</span></td>
+      <td>nodes, boolean, boolean</td>
+      <td>sets all elements that can be selected. Removes all current selectables (& their respective applied classes). Adds the new set to the selectables set. Thus, replacing the original set. First boolean if old elements should be removed from the selection. Second boolean if new elements should be added to the selection.</td>
+    </tr>
+    <tr>
       <td><span class="str">getInitialCursorPosition</span></td>
       <td>/</td>
       <td>returns the x, y coordinates the cursor had when the first click was registered</td>

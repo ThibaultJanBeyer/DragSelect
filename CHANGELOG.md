@@ -1,3 +1,8 @@
+# 1.8.1
+
+- add `setSelectables()` method. Based on request from @n1crack. See issue [#30](https://github.com/ThibaultJanBeyer/DragSelect/issues/30)
+- [local tests] replace manual `test3` with an automated test for constrained selection
+
 # 1.8.0
 
 - CSS Classes naming is now customizable. See PR [#27](https://github.com/ThibaultJanBeyer/DragSelect/pull/27). Thanks to [@ant1ucem](https://github.com/ant1ucem) for the contribution!

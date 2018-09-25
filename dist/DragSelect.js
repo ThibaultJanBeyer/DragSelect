@@ -1,4 +1,4 @@
-// v 1.8.0
+// v 1.8.1
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -51,9 +51,10 @@ Key-Features
   ** .toggleSelection   ([nodes], bool, bool) toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If boolean is set to true: callback will be called afterward. If last boolean is set to true, it also removes selected elements from possible selectable nodes & doesn’t add them to selectables if they are not.
   ** .setSelection      ([nodes], bool, bool) sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. By default, adds new elements also to the list of selectables (can be turned off by setting the last boolean to true)
   ** .clearSelection    ([nodes], bool)       remove all elements from the selection. If boolean is set to true: callback will be called afterwards.
-  ** .addSelectables    ([nodes])             add elements that can be selected. Intelligent algorithm never adds elements twice.
-  ** .removeSelectables ([nodes])             remove elements that can be selected. Also removes the 'selected' class from those elements.
+  ** .addSelectables    ([nodes], bool)       add elements that can be selected. Intelligent algorithm never adds elements twice. If set to true: will also add them to the current selection
+  ** .removeSelectables ([nodes], bool)       remove elements that can be selected. Also removes the 'selected' class from those elements if boolean is set to true.
   ** .getSelectables    ()                    returns all nodes that can be selected.
+  ** .setSelectables    ([nodes], bool, bool) sets all elements that can be selected. Removes all current selectables (& their respective applied classes). Adds the new set to the selectables set. Thus, replacing the original set. First boolean if old elements should be removed from the selection. Second boolean if new elements should be added to the selection.
   ** .getCurrentCursorPosition    ()          returns the last seen position of the cursor/selector
   ** .getInitialCursorPosition    ()          returns the first position of the cursor/selector
   ** .getCursorPositionDifference (bool)      returns object with the x, y difference between the initial and the last cursor position. If the first argument is set to true, it will instead return the x, y difference to the previous selection
@@ -891,14 +892,14 @@ DragSelect.prototype.toggleSelection = function( _nodes, _callback, _special ) {
  * Sets the current selected nodes and optionally run the callback
  * 
  * @param {Nodes} _nodes – dom nodes
- * @param {Boolean} _callback - if callback should be called
+ * @param {Boolean} runCallback - if callback should be called
  * @param {Boolean} dontAddToSelectables - if element should not be added to the list of selectable nodes
  * @return {Nodes}
  */
-DragSelect.prototype.setSelection = function( _nodes, _callback, dontAddToSelectables ) {
+DragSelect.prototype.setSelection = function( _nodes, runCallback, dontAddToSelectables ) {
 
   this.clearSelection();
-  this.addSelection( _nodes, _callback, dontAddToSelectables );
+  this.addSelection( _nodes, runCallback, dontAddToSelectables );
 
   return this.selected;
 
@@ -907,10 +908,10 @@ DragSelect.prototype.setSelection = function( _nodes, _callback, dontAddToSelect
 /**
  * Unselect / Deselect all current selected Nodes
  * 
- * @param {Boolean} _callback - if callback should be called
+ * @param {Boolean} runCallback - if callback should be called
  * @return {Array} this.selected, should be empty
  */
-DragSelect.prototype.clearSelection = function( _callback ) {
+DragSelect.prototype.clearSelection = function( runCallback ) {
 
   var selection = this.selected.slice();
   for (var index = 0, il = selection.length; index < il; index++) {
@@ -918,7 +919,7 @@ DragSelect.prototype.clearSelection = function( _callback ) {
     this.unselect( node );
   }
 
-  if( _callback ) { this.callback( this.selected, false ); }
+  if( runCallback ) { this.callback( this.selected, false ); }
 
   return this.selected;
 
@@ -929,7 +930,7 @@ DragSelect.prototype.clearSelection = function( _callback ) {
  * The algorithm makes sure that no node is added twice
  * 
  * @param {Nodes} _nodes – dom nodes
- * @param {Nodes} addToSelection – if elements should also be added to current selection
+ * @param {Boolean} addToSelection – if elements should also be added to current selection
  * @return {Nodes} _nodes – the added node(s)
  */
 DragSelect.prototype.addSelectables = function( _nodes, addToSelection ) {
@@ -952,10 +953,28 @@ DragSelect.prototype.getSelectables = function() {
 };
 
 /**
+ * Sets all elements that can be selected.
+ * Removes all current selectables (& their respective classes).
+ * Adds the new set to the selectables set,
+ * thus replacing the original set.
+ * 
+ * @param {Nodes} _nodes – dom nodes
+ * @param {Boolean} removeFromSelection – if elements should also be removed from current selection
+ * @param {Boolean} addToSelection – if elements should also be added to current selection
+ * @return {Nodes} _nodes – the added node(s)
+ */
+DragSelect.prototype.setSelectables = function( _nodes, removeFromSelection, addToSelection ) {
+
+  this.removeSelectables( this.getSelectables(), removeFromSelection );
+  return this.addSelectables( _nodes, addToSelection );
+
+};
+
+/**
  * Remove nodes from the nodes that can be selected.
  * 
  * @param {Nodes} _nodes – dom nodes
- * @param {Nodes} removeFromSelection – if elements should also be removed from current selection
+ * @param {Boolean} removeFromSelection – if elements should also be removed from current selection
  * @return {Nodes} _nodes – the removed node(s)
  */
 DragSelect.prototype.removeSelectables = function( _nodes, removeFromSelection ) {
