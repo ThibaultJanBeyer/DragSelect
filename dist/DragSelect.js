@@ -143,7 +143,7 @@ DragSelect.prototype._setupOptions = function(options) {
     'metaKey'
   ];
   this.multiSelectMode = options.multiSelectMode || false;
-  this.autoScrollSpeed = options.autoScrollSpeed || 1;
+  this.autoScrollSpeed = options.autoScrollSpeed === 0 ? 0 : options.autoScrollSpeed || 1;
   this.selectCallback = options.onElementSelect || function() {};
   this.unselectCallback = options.onElementUnselect || function() {};
   this.onDragStartBegin = options.onDragStartBegin || function() {};
@@ -690,7 +690,7 @@ DragSelect.prototype._isElementTouching = function(
 DragSelect.prototype._autoScroll = function(event) {
   var edge = this.isCursorNearEdge(event, this.area);
 
-  var _area = this.area === document ? this.area.body : this.area;
+  var _area = this.area === document ? document.documentElement || document.body : this.area;
 
   if (edge === 'top' && _area.scrollTop > 0) {
     _area.scrollTop -= 1 * this.autoScrollSpeed;
