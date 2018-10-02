@@ -1,3 +1,8 @@
+# 1.9.1
+
+- Dropped IE9 support. Oldest browser is now IE10
+- Fix IE `document.documentElement` scrolling bug
+
 # 1.9.0
 
 - Fix non scrollable document element issue. See [#35](https://github.com/ThibaultJanBeyer/DragSelect/issues/35)

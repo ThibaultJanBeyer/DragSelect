@@ -30,11 +30,11 @@
   <script>
     new DragSelect({
       selectables: document.querySelectorAll('.item'),
-      onDragStart: e => console.log("onDragStart", e),
-      onDragMove: e => console.log("onDragMove", e),
-      onElementSelect: e => console.log("onElementSelect", e),
-      onElementUnselect: e => console.log("onElementUnselect", e),
-      callback: (n, e) => console.log("callback", n, e)
+      onDragStart: function(e) { console.log("onDragStart", e) },
+      onDragMove: function(e) { console.log("onDragMove", e) },
+      onElementSelect: function(e) { console.log("onElementSelect", e) },
+      onElementUnselect: function(e) { console.log("onElementUnselect", e) },
+      callback: function(n, e) { console.log("callback", n, e) }
     });
   </script>
 </body>

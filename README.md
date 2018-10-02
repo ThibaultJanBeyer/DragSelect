@@ -20,7 +20,7 @@ https://thibaultjanbeyer.github.io/DragSelect/
 - Accessibility (a11y)
 - Add drag selection
 - Choose which elements can be selected
-- Great browser support, works even like a charm on IE9
+- Great browser support, works even like a charm on IE10
 - Lightweight, only ~3KB gzipped
 - DragSelect was written with Performance in mind
 - Supports SVG

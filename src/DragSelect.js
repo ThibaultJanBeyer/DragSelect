@@ -690,7 +690,8 @@ DragSelect.prototype._isElementTouching = function(
 DragSelect.prototype._autoScroll = function(event) {
   var edge = this.isCursorNearEdge(event, this.area);
 
-  var _area = this.area === document ? document.documentElement || document.body : this.area;
+  var docEl = document && document.documentElement && document.documentElement.scrollTop && document.documentElement;
+  var _area = this.area === document ? docEl || document.body : this.area;
 
   if (edge === 'top' && _area.scrollTop > 0) {
     _area.scrollTop -= 1 * this.autoScrollSpeed;
