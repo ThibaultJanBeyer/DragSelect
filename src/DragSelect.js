@@ -35,7 +35,8 @@ Key-Features
   ** @hoverClass        string          the class assigned to the mouse hovered items
   ** @selectorClass     string          the class assigned to the square selector helper
   ** @selectableClass   string          the class assigned to the elements that can be selected
-  ** @onDragStart       function        It is fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners.
+  ** @onDragStartBegin  function        Is fired when the user clicks in the area. This callback gets the event object. Executed *before* DragSelect function code ran.
+  ** @onDragStart       function        It is fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, before the setup of event listeners.
   ** @onDragMove        function        It is fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
   ** @onElementSelect   function        It is fired every time an element is selected. This callback gets a property which is the just selected node
   ** @onElementUnselect function        It is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
@@ -145,6 +146,7 @@ DragSelect.prototype._setupOptions = function(options) {
   this.autoScrollSpeed = options.autoScrollSpeed || 1;
   this.selectCallback = options.onElementSelect || function() {};
   this.unselectCallback = options.onElementUnselect || function() {};
+  this.onDragStartBegin = options.onDragStartBegin || function() {};
   this.moveStartCallback = options.onDragStart || function() {};
   this.moveCallback = options.onDragMove || function() {};
   this.callback = options.callback || function() {};
@@ -288,6 +290,11 @@ DragSelect.prototype.start = function() {
  * @param {Object} event - The event object.
  */
 DragSelect.prototype._startUp = function(event) {
+
+  // callback
+  this.onDragStartBegin(event);
+  if (this._breaked) { return false; }
+
   if (this.isRightClick(event)) {
     return;
   }
@@ -310,9 +317,7 @@ DragSelect.prototype._startUp = function(event) {
 
   // callback
   this.moveStartCallback(event);
-  if (this._breaked) {
-    return false;
-  }
+  if (this._breaked) { return false; }
 
   // event listeners
   this.area.removeEventListener('mousedown', this._startUp);
@@ -642,11 +647,6 @@ DragSelect.prototype._isElementTouching = function(
   selectionRect,
   scroll
 ) {
-  /**
-   * calculating everything here on every move consumes more performance
-   * but makes sure to get the right positions even if the containers are
-   * resized or moved on the fly. This also makes the function kinda context independant.
-   */
   var elementRect = {
     y: element.getBoundingClientRect().top + scroll.y,
     x: element.getBoundingClientRect().left + scroll.x,

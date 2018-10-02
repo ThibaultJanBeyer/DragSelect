@@ -128,6 +128,7 @@ Obviously, keyboard users won’t get the full visual experience but it works si
 |hoverClass |string |OPTIONAL. The class name assigned to the mouse hovered items. Default = [see classes](#classes) |
 |selectorClass |string |OPTIONAL. The class name assigned to the square selector helper. Default = [see classes](#classes) |
 |selectableClass |string |OPTIONAL. The class name assigned to the elements that can be selected. Default = [see classes](#classes) |
+|onDragStartBegin |function |OPTIONAL. Fired when the user clicks in the area. This callback gets the event object. Executed **before** DragSelect function code runs |
 |onDragStart |function |OPTIONAL. Fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners |
 |onDragMove |function |OPTIONAL. Fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position |
 |onElementSelect |function |OPTIONAL. Fired every time an element is selected. This callback gets a property which is the selected node |

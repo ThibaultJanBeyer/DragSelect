@@ -1,7 +1,9 @@
 # 1.9.0
 
 - 
-- Rename `isElementTouching` to private `_isElementTouching`. You also have to pass a `selectionRect` as second argument now instead of just passing the container node
+- Added `onDragStartBegin` callback. Helpful for my friends at issue [#24](https://github.com/ThibaultJanBeyer/DragSelect/issues/24)
+- Increase performance by calculating the selection rectangle outside of the `_isElementTouching` function. Tested on 30.000 Nodes. The selection is still usable although a bit laggy on 30k nodes.
+- Rename `isElementTouching` to private `_isElementTouching`. You also have to pass a `selectionRect` as second argument now instead of just passing the container node. This is not considered a breaking change because that function was not exposed before.
 - Add prettier & eslint + prettify code
 
 # 1.8.1

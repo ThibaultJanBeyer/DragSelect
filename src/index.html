@@ -240,6 +240,11 @@ ds.start();  // reset the functionality after a teardown
         <td>OPTIONAL. The class name assigned to the elements that can be selected. Default = <a href="#classes">see classes</a></td>
       </tr>
       <tr>
+        <td><span class="str">onDragStartBegin&nbsp;</span></td>
+        <td>function</td>
+        <td>OPTIONAL. Fired when the user clicks in the area. This callback gets the event object. Executed **before** DragSelect function code runs</td>
+      </tr>
+      <tr>
         <td><span class="str">onDragStart&nbsp;</span></td>
         <td>function</td>
         <td>OPTIONAL. Fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners</td>
