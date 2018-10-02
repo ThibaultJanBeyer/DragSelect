@@ -107,9 +107,32 @@ html, body {
   left: 100%;
 }
 
-.ds-selected {
+.item.ds-selected,
+.generated-item.ds-selected {
   outline: 3px solid black;
   outline-offset: 3px;
   color: black;
   font-weight: bold;
+}
+
+.generated-item {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  background: #0dd0f2;
+  -webkit-box-pack: center;
+     -ms-flex-pack: center;
+   justify-content: center;
+  -webkit-box-align: center;
+     -ms-flex-align: center;
+        align-items: center;
+  border: 0;
+  outline: 3px solid transparent;
+  outline-offset: 3px;
+  color: white;
+  margin: 6px;
+}
+
+.generated-item:focus {
+  border: 1px solid blue;
 }
