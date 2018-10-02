@@ -151,6 +151,7 @@ DragSelect.prototype._setupOptions = function( options ) {
   this.callback = options.callback || function() {};
   this.area = options.area || document;
   this.customStyles = options.customStyles;
+  this.debounce = options.debounce || 0;
 
   // Area has to have a special position attribute for calculations
   if( this.area !== document ) {
@@ -360,6 +361,7 @@ DragSelect.prototype._getStartingPositions = function( event ) {
 DragSelect.prototype._handleMove = function( event ) {
 
   var selectorPos = this.getPosition( event );
+  this._isMoving = true;
 
   // callback
   this.moveCallback( event );
@@ -474,27 +476,52 @@ DragSelect.prototype.getPosition = function( event ) {
  * really wants to select/deselect that item.
  * 
  * @param {Boolean} force – forces through.
- * 
- * @return {Boolean}
  */
 DragSelect.prototype.checkIfInsideSelection = function( force ) {
 
-  var anyInside = false;
-
-  for( var i = 0, il = this.selectables.length; i < il; i++ ) {
-
-    var selectable = this.selectables[i];
-
-    if( this.isElementTouching( selectable, this.selector, this.area ) ) {
-      this._handleSelection( selectable, force );
-      anyInside = true;
-    } else {
-      this._handleUnselection( selectable, force );
+  var that = this;
+  if( !force ) {
+    if( this._skipCheck ) {
+      return;
     }
-
   }
 
-  return anyInside;
+  var scroll = this.getScroll(this.area);
+  var containerRect = {
+    y: this.selector.getBoundingClientRect().top + scroll.y,
+    x: this.selector.getBoundingClientRect().left + scroll.x,
+    h: this.selector.offsetHeight,
+    w: this.selector.offsetWidth
+  };
+
+  var promises = this.selectables.map(function(selectable) {
+    return new Promise(function( resolve ) {
+      resolve({
+        value: that.isElementTouching(selectable, containerRect, scroll),
+        selectable: selectable
+      });
+    });
+  });
+
+  Promise.all(promises)
+    .then(function( values ) {
+      values.forEach(function( data ) {
+        if (data.value) {
+          that._handleSelection(data.selectable, force);
+        } else {
+          that._handleUnselection(data.selectable, force);
+        }
+      });
+    })
+    .then(function() {
+
+      if( !this._skipCheck && this.debounce ) {
+        setTimeout(function() {
+          this._skipCheck = false;
+        }, this.debounce);
+        this._skipCheck = true;
+      }
+    });
 
 };
 
@@ -611,25 +638,17 @@ DragSelect.prototype.toggle = function( item ) {
  * Checks if element is touched by the selector (and vice-versa)
  * 
  * @param {Node} element – item.
- * @param {Node} container – selector.
- * @param {Node} area – surrounding area.
+ * @param {Object} containerRect – Container bounds.
+ * @param {Object} scroll – Scroll x, y values.
  * @return {Boolean}
  */
-DragSelect.prototype.isElementTouching = function( element, container, area ) {
+DragSelect.prototype.isElementTouching = function( element, containerRect, scroll ) {
 
   /**
    * calculating everything here on every move consumes more performance
    * but makes sure to get the right positions even if the containers are
    * resized or moved on the fly. This also makes the function kinda context independant.
    */
-  var scroll = this.getScroll( area );
-
-  var containerRect = {
-    y: container.getBoundingClientRect().top + scroll.y,
-    x: container.getBoundingClientRect().left + scroll.x,
-    h: container.offsetHeight || element.getBoundingClientRect().height,
-    w: container.offsetWidth || element.getBoundingClientRect().width
-  };
   var elementRect = {
     y: element.getBoundingClientRect().top + scroll.y,
     x: element.getBoundingClientRect().left + scroll.x,
@@ -726,6 +745,10 @@ DragSelect.prototype.reset = function( event ) {
   this.area.removeEventListener( 'mousemove', this._handleMove );
   this.area.addEventListener( 'mousedown', this._startUp );
 
+  if( this._isMoving && this._skipCheck ) {
+    this.checkIfInsideSelection( true );
+  }
+
   this.callback( this.selected, event );
   if( this._breaked ) { return false; }
 
@@ -735,6 +758,7 @@ DragSelect.prototype.reset = function( event ) {
 
   setTimeout(function() {  // debounce in order "onClick" to work
     this.mouseInteraction = false;
+    this._isMoving = false;
   }.bind(this), 100);
 
 };
