@@ -1,4 +1,4 @@
-// v 1.8.2
+// v 1.9.0
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -150,7 +150,6 @@ DragSelect.prototype._setupOptions = function(options) {
   this.callback = options.callback || function() {};
   this.area = options.area || document;
   this.customStyles = options.customStyles;
-  this.debounce = options.debounce || 0;
 
   // Area has to have a special position attribute for calculations
   if (this.area !== document) {
@@ -225,6 +224,7 @@ DragSelect.prototype._handleSelectables = function(
  * @param {Boolean} remove - if elements were removed.
  */
 DragSelect.prototype._onClick = function(event) {
+
   if (this.mouseInteraction) {
     return;
   } // fix firefox doubleclick issue
@@ -373,7 +373,6 @@ DragSelect.prototype._getStartingPositions = function(event) {
  */
 DragSelect.prototype._handleMove = function(event) {
   var selectorPos = this.getPosition(event);
-  this._isMoving = true;
 
   // callback
   this.moveCallback(event);
@@ -488,50 +487,29 @@ DragSelect.prototype.getPosition = function(event) {
  * really wants to select/deselect that item.
  *
  * @param {Boolean} force – forces through.
+ * @return {Boolean}
  */
 DragSelect.prototype.checkIfInsideSelection = function(force) {
-  var that = this;
-  if (!force) {
-    if (this._skipCheck) {
-      return;
+  var anyInside = false;
+  for( var i = 0, il = this.selectables.length; i < il; i++ ) {
+    var selectable = this.selectables[i];
+
+    var scroll = this.getScroll(this.area);
+    var selectionRect = {
+      y: this.selector.getBoundingClientRect().top + scroll.y,
+      x: this.selector.getBoundingClientRect().left + scroll.x,
+      h: this.selector.offsetHeight,
+      w: this.selector.offsetWidth
+    };
+
+    if( this._isElementTouching( selectable, selectionRect, scroll ) ) {
+      this._handleSelection( selectable, force );
+      anyInside = true;
+    } else {
+      this._handleUnselection( selectable, force );
     }
   }
-
-  var scroll = this.getScroll(this.area);
-  var containerRect = {
-    y: this.selector.getBoundingClientRect().top + scroll.y,
-    x: this.selector.getBoundingClientRect().left + scroll.x,
-    h: this.selector.offsetHeight,
-    w: this.selector.offsetWidth
-  };
-
-  var promises = this.selectables.map(function(selectable) {
-    return new Promise(function(resolve) {
-      resolve({
-        value: that.isElementTouching(selectable, containerRect, scroll),
-        selectable: selectable
-      });
-    });
-  });
-
-  Promise.all(promises)
-    .then(function(values) {
-      values.forEach(function(data) {
-        if (data.value) {
-          that._handleSelection(data.selectable, force);
-        } else {
-          that._handleUnselection(data.selectable, force);
-        }
-      });
-    })
-    .then(function() {
-      if (!this._skipCheck && this.debounce) {
-        setTimeout(function() {
-          this._skipCheck = false;
-        }, this.debounce);
-        this._skipCheck = true;
-      }
-    });
+  return anyInside;
 };
 
 /**
@@ -649,13 +627,19 @@ DragSelect.prototype.toggle = function(item) {
  * Checks if element is touched by the selector (and vice-versa)
  *
  * @param {Node} element – item.
- * @param {Object} containerRect – Container bounds.
+ * @param {Object} selectionRect – Container bounds:
+   Example: {
+    y: this.selector.getBoundingClientRect().top + scroll.y,
+    x: this.selector.getBoundingClientRect().left + scroll.x,
+    h: this.selector.offsetHeight,
+    w: this.selector.offsetWidth
+  };
  * @param {Object} scroll – Scroll x, y values.
  * @return {Boolean}
  */
-DragSelect.prototype.isElementTouching = function(
+DragSelect.prototype._isElementTouching = function(
   element,
-  containerRect,
+  selectionRect,
   scroll
 ) {
   /**
@@ -684,10 +668,10 @@ DragSelect.prototype.isElementTouching = function(
   //& b02 > b11 (bottom border pos box1 larger than top border pos box2)
   // See: https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box and https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
   if (
-    containerRect.x < elementRect.x + elementRect.w &&
-    containerRect.x + containerRect.w > elementRect.x &&
-    containerRect.y < elementRect.y + elementRect.h &&
-    containerRect.h + containerRect.y > elementRect.y
+    selectionRect.x < elementRect.x + elementRect.w &&
+    selectionRect.x + selectionRect.w > elementRect.x &&
+    selectionRect.y < elementRect.y + elementRect.h &&
+    selectionRect.h + selectionRect.y > elementRect.y
   ) {
     return true; // collision detected!
   } else {
@@ -760,10 +744,6 @@ DragSelect.prototype.reset = function(event) {
   this.area.removeEventListener('mousemove', this._handleMove);
   this.area.addEventListener('mousedown', this._startUp);
 
-  if (this._isMoving && this._skipCheck) {
-    this.checkIfInsideSelection(true);
-  }
-
   this.callback(this.selected, event);
   if (this._breaked) {
     return false;
@@ -777,7 +757,6 @@ DragSelect.prototype.reset = function(event) {
     function() {
       // debounce in order "onClick" to work
       this.mouseInteraction = false;
-      this._isMoving = false;
     }.bind(this),
     100
   );

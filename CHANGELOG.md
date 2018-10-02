@@ -1,3 +1,9 @@
+# 1.9.0
+
+- 
+- Rename `isElementTouching` to private `_isElementTouching`. You also have to pass a `selectionRect` as second argument now instead of just passing the container node
+- Add prettier & eslint + prettify code
+
 # 1.8.1
 
 - add `setSelectables()` method. Based on request from @n1crack. See issue [#30](https://github.com/ThibaultJanBeyer/DragSelect/issues/30)
