@@ -25,8 +25,7 @@
   var ds = new DragSelect({
     selectables: document.getElementsByClassName('item'),
     area: document.getElementById('container'),
-    onDragStart: function(e) { console.log("onStart", this.getCursorPositionDifference( true )); },
-    onDragMove: function(e) { console.log("onMove", this.getCursorPositionDifference( )); }
+    callback: function(e) { console.log("selected", e); }
   });
   </script>
 </body>

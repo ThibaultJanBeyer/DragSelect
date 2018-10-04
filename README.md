@@ -27,6 +27,8 @@ https://thibaultjanbeyer.github.io/DragSelect/
 - Free & open source under MIT License
 - Ease of use
 
+![dragselect demo](dragselect.gif)
+
 # Why?
 
 Because apparently there is nothing that does not require jquery out there yet.  
