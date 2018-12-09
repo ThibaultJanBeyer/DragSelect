@@ -1,6 +1,12 @@
+# 1.10.0
+
+- Add touch device support (i.e. Mobile Phones)
+- Preparations for modern code. I.e. ES6:  
+Usind Babel to transpile downwards to ES5. This should not result in any changes on your side.
+
 # 1.9.1
 
-- Dropped IE9 support. Oldest browser is now IE10
+- Dropped IE9 support. Oldest browser is now IE10 (should still work on IE9. Just stopped testing that browser)
 - Fix IE `document.documentElement` scrolling bug
 
 # 1.9.0

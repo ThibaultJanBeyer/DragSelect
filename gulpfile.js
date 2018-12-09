@@ -3,15 +3,13 @@ var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var autoprefixer = require('gulp-autoprefixer');
 var csso = require('gulp-csso');
-// var babel = require('gulp-babel');
-// var buble = require('gulp-buble');
+var babel = require('gulp-babel');
 
 gulp.task('js', function() {
   gulp
     .src('./src/DragSelect.js')
+    .pipe(babel({ presets: ['@babel/env'] }))
     .pipe(gulp.dest('./dist/'))
-    // .pipe(buble())
-    // .pipe(babel({ presets: ['@babel/env'] }))
     .pipe(uglify())
     .pipe(rename('ds.min.js'))
     .pipe(gulp.dest('./dist/'));
@@ -35,4 +33,11 @@ gulp.task('quicktest', function() {
   gulp.src('./src/quicktest.html').pipe(gulp.dest('./dist/'));
 });
 
+gulp.task('watch', function() {
+  gulp.watch('src/*.js', ['js']); 
+  gulp.watch('src/*.css', ['css']); 
+  gulp.watch('src/*.html', ['html']); 
+});
+
 gulp.task('default', ['js', 'html', 'css', 'quicktest']);
+gulp.task('devl', ['default', 'watch']);

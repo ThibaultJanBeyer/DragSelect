@@ -20,9 +20,11 @@ For your ease of mind, you can run:
 npm start
 ```
 
-it will install `gulp` for later building & open `tests/quicktest.html` for your convenience.  
+it will install `gulp` & run it in dev mode (& on osx open `tests/quicktest.html` for your convenience).  
 
 *Note: opening quicktest will fail on other operating systems than Mac because I’m using the mac specific `open` command to open the file. However, that is not an issue and you can go on opening the file manually.*
+
+Now whenever you make a change to the `DragSelect.js` in `/src` it will be transpiled and updated in `/dist` automatically. This is important since all test files use the `/dist` version.
 
 
 ## Testing
