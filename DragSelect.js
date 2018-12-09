@@ -1,4 +1,9 @@
-// v 1.9.1
+"use strict";
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+// v 1.10.0
+
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -91,7 +96,6 @@ Key-Features
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
 */
-
 // Setup
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -103,73 +107,85 @@ Key-Features
  */
 function DragSelect(options) {
   this.multiSelectKeyPressed;
-  this.initialCursorPos = { x: 0, y: 0 };
-  this.newCursorPos = { x: 0, y: 0 };
-  this.previousCursorPos = { x: 0, y: 0 };
+  this.initialCursorPos = {
+    x: 0,
+    y: 0
+  };
+  this.newCursorPos = {
+    x: 0,
+    y: 0
+  };
+  this.previousCursorPos = {
+    x: 0,
+    y: 0
+  };
   this.initialScroll;
   this.selected = [];
   this._prevSelected = []; // memory to fix #9
 
   this._createBindings();
+
   this._setupOptions(options);
+
   this.start();
 }
-
 /**
  * Binds the `this` to the event listener functions
  */
-DragSelect.prototype._createBindings = function() {
+
+
+DragSelect.prototype._createBindings = function () {
   this._startUp = this._startUp.bind(this);
   this._handleMove = this._handleMove.bind(this);
   this.reset = this.reset.bind(this);
   this._onClick = this._onClick.bind(this);
 };
-
 /**
  * Setup the options
  */
-DragSelect.prototype._setupOptions = function(options) {
+
+
+DragSelect.prototype._setupOptions = function (options) {
   this.selectedClass = options.selectedClass || 'ds-selected';
   this.hoverClass = options.hoverClass || 'ds-hover';
   this.selectorClass = options.selectorClass || 'ds-selector';
   this.selectableClass = options.selectableClass || 'ds-selectable';
-
   this.selectables = [];
+
   this._handleSelectables(this.toArray(options.selectables));
 
-  this.multiSelectKeys = options.multiSelectKeys || [
-    'ctrlKey',
-    'shiftKey',
-    'metaKey'
-  ];
+  this.multiSelectKeys = options.multiSelectKeys || ['ctrlKey', 'shiftKey', 'metaKey'];
   this.multiSelectMode = options.multiSelectMode || false;
   this.autoScrollSpeed = options.autoScrollSpeed === 0 ? 0 : options.autoScrollSpeed || 1;
-  this.selectCallback = options.onElementSelect || function() {};
-  this.unselectCallback = options.onElementUnselect || function() {};
-  this.onDragStartBegin = options.onDragStartBegin || function() {};
-  this.moveStartCallback = options.onDragStart || function() {};
-  this.moveCallback = options.onDragMove || function() {};
-  this.callback = options.callback || function() {};
-  this.area = options.area || document;
-  this.customStyles = options.customStyles;
 
-  // Area has to have a special position attribute for calculations
+  this.selectCallback = options.onElementSelect || function () {};
+
+  this.unselectCallback = options.onElementUnselect || function () {};
+
+  this.onDragStartBegin = options.onDragStartBegin || function () {};
+
+  this.moveStartCallback = options.onDragStart || function () {};
+
+  this.moveCallback = options.onDragMove || function () {};
+
+  this.callback = options.callback || function () {};
+
+  this.area = options.area || document;
+  this.customStyles = options.customStyles; // Area has to have a special position attribute for calculations
+
   if (this.area !== document) {
     var computedArea = getComputedStyle(this.area);
-    var isPositioned =
-      computedArea.position === 'absolute' ||
-      computedArea.position === 'relative' ||
-      computedArea.position === 'fixed';
+    var isPositioned = computedArea.position === 'absolute' || computedArea.position === 'relative' || computedArea.position === 'fixed';
+
     if (!isPositioned) {
       this.area.style.position = 'relative';
     }
-  }
+  } // Selector
 
-  // Selector
+
   this.selector = options.selector || this._createSelector();
   this.addClass(this.selector, this.selectorClass);
 };
-
 /**
  * Add/Remove Selectables also handles css classes and event listeners.
  *
@@ -177,36 +193,30 @@ DragSelect.prototype._setupOptions = function(options) {
  * @param {Boolean} remove - if elements should be removed.
  * @param {Boolean} fromSelection - if elements should also be added/removed to the selection.
  */
-DragSelect.prototype._handleSelectables = function(
-  selectables,
-  remove,
-  fromSelection
-) {
+
+
+DragSelect.prototype._handleSelectables = function (selectables, remove, fromSelection) {
   for (var index = 0; index < selectables.length; index++) {
     var selectable = selectables[index];
     var indexOf = this.selectables.indexOf(selectable);
 
     if (indexOf < 0 && !remove) {
       // add
-
       this.addClass(selectable, this.selectableClass);
       selectable.addEventListener('click', this._onClick);
-      this.selectables.push(selectable);
+      this.selectables.push(selectable); // also add to current selection
 
-      // also add to current selection
       if (fromSelection && this.selected.indexOf(selectable) < 0) {
         this.addClass(selectable, this.selectedClass);
         this.selected.push(selectable);
       }
     } else if (indexOf > -1 && remove) {
       // remove
-
       this.removeClass(selectable, this.hoverClass);
       this.removeClass(selectable, this.selectableClass);
       selectable.removeEventListener('click', this._onClick);
-      this.selectables.splice(indexOf, 1);
+      this.selectables.splice(indexOf, 1); // also remove from current selection
 
-      // also remove from current selection
       if (fromSelection && this.selected.indexOf(selectable) > -1) {
         this.removeClass(selectable, this.selectedClass);
         this.selected.splice(this.selected.indexOf(selectable), 1);
@@ -214,7 +224,6 @@ DragSelect.prototype._handleSelectables = function(
     }
   }
 };
-
 /**
  * Triggers when a node is actively selected.
  *
@@ -225,11 +234,14 @@ DragSelect.prototype._handleSelectables = function(
  * @param {Object} selectables - selectable elements.
  * @param {Boolean} remove - if elements were removed.
  */
-DragSelect.prototype._onClick = function(event) {
 
+
+DragSelect.prototype._onClick = function (event) {
   if (this.mouseInteraction) {
     return;
   } // fix firefox doubleclick issue
+
+
   if (this.isRightClick(event)) {
     return;
   }
@@ -240,8 +252,9 @@ DragSelect.prototype._onClick = function(event) {
     this._prevSelected = this.selected.slice();
   } // #9
   else {
-    this._prevSelected = [];
-  } // #9
+      this._prevSelected = [];
+    } // #9
+
 
   this.checkIfInsideSelection(true); // reset selection if no multiselectionkeypressed
 
@@ -251,16 +264,17 @@ DragSelect.prototype._onClick = function(event) {
 
   this.reset();
 };
-
 /**
  * Create the selector node when not provided by options object.
  *
  * @return {Node}
  */
-DragSelect.prototype._createSelector = function() {
-  var selector = document.createElement('div');
 
+
+DragSelect.prototype._createSelector = function () {
+  var selector = document.createElement('div');
   selector.style.position = 'absolute';
+
   if (!this.customStyles) {
     selector.style.background = 'rgba(0, 0, 255, 0.1)';
     selector.style.border = '1px solid rgba(0, 0, 255, 0.45)';
@@ -269,31 +283,41 @@ DragSelect.prototype._createSelector = function() {
   }
 
   var _area = this.area === document ? document.body : this.area;
+
   _area.appendChild(selector);
 
   return selector;
-};
-
-// Start
+}; // Start
 //////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Starts the functionality. Automatically triggered when created.
  */
-DragSelect.prototype.start = function() {
-  this.area.addEventListener('mousedown', this._startUp);
-};
 
+
+DragSelect.prototype.start = function () {
+  this.area.addEventListener('mousedown', this._startUp);
+  this.area.addEventListener('touchstart', this._startUp, {
+    passive: false
+  });
+};
 /**
  * Startup when the area is clicked.
  *
  * @param {Object} event - The event object.
  */
-DragSelect.prototype._startUp = function(event) {
 
-  // callback
+
+DragSelect.prototype._startUp = function (event) {
+  // touchmove handler
+  if (event.type === 'touchstart') // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
+    event.preventDefault(); // callback
+
   this.onDragStartBegin(event);
-  if (this._breaked) { return false; }
+
+  if (this._breaked) {
+    return false;
+  }
 
   if (this.isRightClick(event)) {
     return;
@@ -306,32 +330,42 @@ DragSelect.prototype._startUp = function(event) {
     this._prevSelected = this.selected.slice();
   } // #9
   else {
-    this._prevSelected = [];
-  } // #9
-
+      this._prevSelected = [];
+    } // #9
   // move element on location
+
+
   this._getStartingPositions(event);
+
   this.checkIfInsideSelection(true);
-
   this.selector.style.display = 'none'; // hidden unless moved, fix for issue #8
-
   // callback
+
   this.moveStartCallback(event);
-  if (this._breaked) { return false; }
 
-  // event listeners
+  if (this._breaked) {
+    return false;
+  } // event listeners
+
+
   this.area.removeEventListener('mousedown', this._startUp);
+  this.area.removeEventListener('touchstart', this._startUp, {
+    passive: false
+  });
   this.area.addEventListener('mousemove', this._handleMove);
+  this.area.addEventListener('touchmove', this._handleMove);
   document.addEventListener('mouseup', this.reset);
+  document.addEventListener('touchend', this.reset);
 };
-
 /**
  * Check if some multiselection modifier key is pressed
  *
  * @param {Object} event - The event object.
  * @return {Boolean} this.isMultiSelectKeyPressed
  */
-DragSelect.prototype.isMultiSelectKeyPressed = function(event) {
+
+
+DragSelect.prototype.isMultiSelectKeyPressed = function (event) {
   this.multiSelectKeyPressed = false;
 
   if (this.multiSelectMode) {
@@ -339,6 +373,7 @@ DragSelect.prototype.isMultiSelectKeyPressed = function(event) {
   } else {
     for (var index = 0; index < this.multiSelectKeys.length; index++) {
       var mKey = this.multiSelectKeys[index];
+
       if (event[mKey]) {
         this.multiSelectKeyPressed = true;
       }
@@ -347,28 +382,23 @@ DragSelect.prototype.isMultiSelectKeyPressed = function(event) {
 
   return this.multiSelectKeyPressed;
 };
-
 /**
  * Grabs the starting position of all needed elements
  *
  * @param {Object} event - The event object.
  */
-DragSelect.prototype._getStartingPositions = function(event) {
-  this.initialCursorPos = this.newCursorPos = this._getCursorPos(
-    event,
-    this.area
-  );
-  this.initialScroll = this.getScroll(this.area);
 
+
+DragSelect.prototype._getStartingPositions = function (event) {
+  this.initialCursorPos = this.newCursorPos = this._getCursorPos(event, this.area);
+  this.initialScroll = this.getScroll(this.area);
   var selectorPos = {};
   selectorPos.x = this.initialCursorPos.x + this.initialScroll.x;
   selectorPos.y = this.initialCursorPos.y + this.initialScroll.y;
   selectorPos.w = 0;
   selectorPos.h = 0;
   this.updatePos(this.selector, selectorPos);
-};
-
-// Movements/Sizing of selection
+}; // Movements/Sizing of selection
 //////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -376,43 +406,43 @@ DragSelect.prototype._getStartingPositions = function(event) {
  *
  * @param {Object} event - The event object.
  */
-DragSelect.prototype._handleMove = function(event) {
-  var selectorPos = this.getPosition(event);
 
-  // callback
+
+DragSelect.prototype._handleMove = function (event) {
+  var selectorPos = this.getPosition(event); // callback
+
   this.moveCallback(event);
+
   if (this._breaked) {
     return false;
   }
 
   this.selector.style.display = 'block'; // hidden unless moved, fix for issue #8
-
   // move element on location
-  this.updatePos(this.selector, selectorPos);
-  this.checkIfInsideSelection();
 
-  // scroll area if area is scrollable
+  this.updatePos(this.selector, selectorPos);
+  this.checkIfInsideSelection(); // scroll area if area is scrollable
+
   this._autoScroll(event);
 };
-
 /**
  * Calculates and returns the exact x,y w,h positions of the selector element
  *
  * @param {Object} event - The event object.
  */
-DragSelect.prototype.getPosition = function(event) {
+
+
+DragSelect.prototype.getPosition = function (event) {
   var cursorPosNew = this._getCursorPos(event, this.area);
-  var scrollNew = this.getScroll(this.area);
 
-  // save for later retrieval
-  this.newCursorPos = cursorPosNew;
+  var scrollNew = this.getScroll(this.area); // save for later retrieval
 
-  // if area or document is scrolled those values have to be included aswell
+  this.newCursorPos = cursorPosNew; // if area or document is scrolled those values have to be included aswell
+
   var scrollAmount = {
     x: scrollNew.x - this.initialScroll.x,
     y: scrollNew.y - this.initialScroll.y
   };
-
   /** check for direction
    *
    * This is quite complicated math, so also quite complicated to explain. Lemme’ try:
@@ -454,34 +484,33 @@ DragSelect.prototype.getPosition = function(event) {
    *
    * I hope that makes sence, try stuff out and play around with variables to get a hang of it.
    */
-  var selectorPos = {};
 
-  // right
+  var selectorPos = {}; // right
+
   if (cursorPosNew.x > this.initialCursorPos.x - scrollAmount.x) {
     // 1.
     selectorPos.x = this.initialCursorPos.x + this.initialScroll.x; // 2.
+
     selectorPos.w = cursorPosNew.x - this.initialCursorPos.x + scrollAmount.x; // 3.
     // left
   } else {
     // 1b.
     selectorPos.x = cursorPosNew.x + scrollNew.x; // 2b.
-    selectorPos.w = this.initialCursorPos.x - cursorPosNew.x - scrollAmount.x; // 3b.
-  }
 
-  // bottom
+    selectorPos.w = this.initialCursorPos.x - cursorPosNew.x - scrollAmount.x; // 3b.
+  } // bottom
+
+
   if (cursorPosNew.y > this.initialCursorPos.y - scrollAmount.y) {
     selectorPos.y = this.initialCursorPos.y + this.initialScroll.y;
-    selectorPos.h = cursorPosNew.y - this.initialCursorPos.y + scrollAmount.y;
-    // top
+    selectorPos.h = cursorPosNew.y - this.initialCursorPos.y + scrollAmount.y; // top
   } else {
     selectorPos.y = cursorPosNew.y + scrollNew.y;
     selectorPos.h = this.initialCursorPos.y - cursorPosNew.y - scrollAmount.y;
   }
 
   return selectorPos;
-};
-
-// Colision detection
+}; // Colision detection
 //////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -494,11 +523,13 @@ DragSelect.prototype.getPosition = function(event) {
  * @param {Boolean} force – forces through.
  * @return {Boolean}
  */
-DragSelect.prototype.checkIfInsideSelection = function(force) {
-  var anyInside = false;
-  for( var i = 0, il = this.selectables.length; i < il; i++ ) {
-    var selectable = this.selectables[i];
 
+
+DragSelect.prototype.checkIfInsideSelection = function (force) {
+  var anyInside = false;
+
+  for (var i = 0, il = this.selectables.length; i < il; i++) {
+    var selectable = this.selectables[i];
     var scroll = this.getScroll(this.area);
     var selectionRect = {
       y: this.selector.getBoundingClientRect().top + scroll.y,
@@ -507,26 +538,30 @@ DragSelect.prototype.checkIfInsideSelection = function(force) {
       w: this.selector.offsetWidth
     };
 
-    if( this._isElementTouching( selectable, selectionRect, scroll ) ) {
-      this._handleSelection( selectable, force );
+    if (this._isElementTouching(selectable, selectionRect, scroll)) {
+      this._handleSelection(selectable, force);
+
       anyInside = true;
     } else {
-      this._handleUnselection( selectable, force );
+      this._handleUnselection(selectable, force);
     }
   }
+
   return anyInside;
 };
-
 /**
  * Logic when an item is selected
  *
  * @param {Node} item – selected item.
  * @param {Boolean} force – forces through.
  */
-DragSelect.prototype._handleSelection = function(item, force) {
+
+
+DragSelect.prototype._handleSelection = function (item, force) {
   if (this.hasClass(item, this.hoverClass) && !force) {
     return false;
   }
+
   var posInSelectedArray = this.selected.indexOf(item);
 
   if (posInSelectedArray < 0) {
@@ -537,18 +572,21 @@ DragSelect.prototype._handleSelection = function(item, force) {
 
   this.addClass(item, this.hoverClass);
 };
-
 /**
  * Logic when an item is de-selected
  *
  * @param {Node} item – selected item.
  * @param {Boolean} force – forces through.
  */
-DragSelect.prototype._handleUnselection = function(item, force) {
+
+
+DragSelect.prototype._handleUnselection = function (item, force) {
   if (!this.hasClass(item, this.hoverClass) && !force) {
     return false;
   }
+
   var posInSelectedArray = this.selected.indexOf(item);
+
   var isInPrevSelection = this._prevSelected.indexOf(item); // #9
 
   /**
@@ -558,6 +596,8 @@ DragSelect.prototype._handleUnselection = function(item, force) {
    * = if item was selected and is not in selection anymore, reselect it
    * = if item was not selected and is not in selection anymore, unselect it
    */
+
+
   if (posInSelectedArray > -1 && isInPrevSelection < 0) {
     this.unselect(item);
   } else if (posInSelectedArray < 0 && isInPrevSelection > -1) {
@@ -566,51 +606,52 @@ DragSelect.prototype._handleUnselection = function(item, force) {
 
   this.removeClass(item, this.hoverClass);
 };
-
 /**
  * Adds an item to the selection.
  *
  * @param {Node} item – item to select.
  * @return {Node} item
  */
-DragSelect.prototype.select = function(item) {
+
+
+DragSelect.prototype.select = function (item) {
   if (this.selected.indexOf(item) > -1) {
     return false;
   }
 
   this.selected.push(item);
   this.addClass(item, this.selectedClass);
-
   this.selectCallback(item);
+
   if (this._breaked) {
     return false;
   }
 
   return item;
 };
-
 /**
  * Removes an item from the selection.
  *
  * @param {Node} item – item to select.
  * @return {Node} item
  */
-DragSelect.prototype.unselect = function(item) {
+
+
+DragSelect.prototype.unselect = function (item) {
   if (this.selected.indexOf(item) < 0) {
     return false;
   }
 
   this.selected.splice(this.selected.indexOf(item), 1);
   this.removeClass(item, this.selectedClass);
-
   this.unselectCallback(item);
+
   if (this._breaked) {
     return false;
   }
 
   return item;
 };
-
 /**
  * Adds/Removes an item to the selection.
  * If it is already selected = remove, if not = add.
@@ -618,7 +659,9 @@ DragSelect.prototype.unselect = function(item) {
  * @param {Node} item – item to select.
  * @return {Node} item
  */
-DragSelect.prototype.toggle = function(item) {
+
+
+DragSelect.prototype.toggle = function (item) {
   if (this.selected.indexOf(item) > -1) {
     this.unselect(item);
   } else {
@@ -627,7 +670,6 @@ DragSelect.prototype.toggle = function(item) {
 
   return item;
 };
-
 /**
  * Checks if element is touched by the selector (and vice-versa)
  *
@@ -642,19 +684,15 @@ DragSelect.prototype.toggle = function(item) {
  * @param {Object} scroll – Scroll x, y values.
  * @return {Boolean}
  */
-DragSelect.prototype._isElementTouching = function(
-  element,
-  selectionRect,
-  scroll
-) {
+
+
+DragSelect.prototype._isElementTouching = function (element, selectionRect, scroll) {
   var elementRect = {
     y: element.getBoundingClientRect().top + scroll.y,
     x: element.getBoundingClientRect().left + scroll.x,
     h: element.offsetHeight || element.getBoundingClientRect().height,
     w: element.offsetWidth || element.getBoundingClientRect().width
-  };
-
-  // Axis-Aligned Bounding Box Colision Detection.
+  }; // Axis-Aligned Bounding Box Colision Detection.
   // Imagine following Example:
   //    b01
   // a01[1]a02
@@ -667,19 +705,13 @@ DragSelect.prototype._isElementTouching = function(
   //& b01 < b12 (top border pos box1 smaller than bottom border pos box2)
   //& b02 > b11 (bottom border pos box1 larger than top border pos box2)
   // See: https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box and https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
-  if (
-    selectionRect.x < elementRect.x + elementRect.w &&
-    selectionRect.x + selectionRect.w > elementRect.x &&
-    selectionRect.y < elementRect.y + elementRect.h &&
-    selectionRect.h + selectionRect.y > elementRect.y
-  ) {
+
+  if (selectionRect.x < elementRect.x + elementRect.w && selectionRect.x + selectionRect.w > elementRect.x && selectionRect.y < elementRect.y + elementRect.h && selectionRect.h + selectionRect.y > elementRect.y) {
     return true; // collision detected!
   } else {
     return false;
   }
-};
-
-// Autoscroll
+}; // Autoscroll
 //////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -687,10 +719,12 @@ DragSelect.prototype._isElementTouching = function(
  *
  * @param {Object} event – event object.
  */
-DragSelect.prototype._autoScroll = function(event) {
-  var edge = this.isCursorNearEdge(event, this.area);
 
+
+DragSelect.prototype._autoScroll = function (event) {
+  var edge = this.isCursorNearEdge(event, this.area);
   var docEl = document && document.documentElement && document.documentElement.scrollTop && document.documentElement;
+
   var _area = this.area === document ? docEl || document.body : this.area;
 
   if (edge === 'top' && _area.scrollTop > 0) {
@@ -703,7 +737,6 @@ DragSelect.prototype._autoScroll = function(event) {
     _area.scrollLeft += 1 * this.autoScrollSpeed;
   }
 };
-
 /**
  * Check if the selector is near an edge of the area
  *
@@ -711,10 +744,12 @@ DragSelect.prototype._autoScroll = function(event) {
  * @param {Node} area – the area.
  * @return {String} top / bottom / left / right / false
  */
-DragSelect.prototype.isCursorNearEdge = function(event, area) {
-  var cursorPosition = this._getCursorPos(event, area);
-  var areaRect = this.getAreaRect(area);
 
+
+DragSelect.prototype.isCursorNearEdge = function (event, area) {
+  var cursorPosition = this._getCursorPos(event, area);
+
+  var areaRect = this.getAreaRect(area);
   var tolerance = {
     x: Math.max(areaRect.width / 10, 30),
     y: Math.max(areaRect.height / 10, 30)
@@ -731,21 +766,26 @@ DragSelect.prototype.isCursorNearEdge = function(event, area) {
   }
 
   return false;
-};
-
-// Ending
+}; // Ending
 //////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Unbind functions when mouse click is released
  */
-DragSelect.prototype.reset = function(event) {
+
+
+DragSelect.prototype.reset = function (event) {
   this.previousCursorPos = this._getCursorPos(event, this.area);
   document.removeEventListener('mouseup', this.reset);
+  document.removeEventListener('touchend', this.reset);
   this.area.removeEventListener('mousemove', this._handleMove);
+  this.area.removeEventListener('touchmove', this._handleMove);
   this.area.addEventListener('mousedown', this._startUp);
-
+  this.area.addEventListener('touchstart', this._startUp, {
+    passive: false
+  });
   this.callback(this.selected, event);
+
   if (this._breaked) {
     return false;
   }
@@ -753,42 +793,39 @@ DragSelect.prototype.reset = function(event) {
   this.selector.style.width = '0';
   this.selector.style.height = '0';
   this.selector.style.display = 'none';
-
-  setTimeout(
-    function() {
-      // debounce in order "onClick" to work
-      this.mouseInteraction = false;
-    }.bind(this),
-    100
-  );
+  setTimeout(function () {
+    // debounce in order "onClick" to work
+    this.mouseInteraction = false;
+  }.bind(this), 100);
 };
-
 /**
  * Function break: used in callbacks to stop break the code at the specific moment
  * - Event listeners and calculation will continue working
  * - Selector won’t display and will not select
  */
-DragSelect.prototype.break = function() {
-  this._breaked = true;
-  setTimeout(
-    function() {
-      // debounce the break should only break once instantly after call
-      this._breaked = false;
-    }.bind(this),
-    100
-  );
-};
 
+
+DragSelect.prototype.break = function () {
+  this._breaked = true;
+  setTimeout(function () {
+    // debounce the break should only break once instantly after call
+    this._breaked = false;
+  }.bind(this), 100);
+};
 /**
  * Complete function teardown
  */
-DragSelect.prototype.stop = function() {
+
+
+DragSelect.prototype.stop = function () {
   this.reset();
   this.area.removeEventListener('mousedown', this._startUp);
+  this.area.removeEventListener('touchstart', this._startUp, {
+    passive: false
+  });
   document.removeEventListener('mouseup', this.reset);
-};
-
-// Usefull methods for user
+  document.removeEventListener('touchend', this.reset);
+}; // Usefull methods for user
 //////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -796,10 +833,11 @@ DragSelect.prototype.stop = function() {
  *
  * @return {Nodes}
  */
-DragSelect.prototype.getSelection = function() {
+
+
+DragSelect.prototype.getSelection = function () {
   return this.selected;
 };
-
 /**
  * Returns cursor x, y position based on event object
  * Will be relative to an area including the scroll unless advised otherwise
@@ -809,21 +847,26 @@ DragSelect.prototype.getSelection = function() {
  * @param {Node} ignoreScroll – if true, the scroll will be ignored
  * @return {Object} cursor { x/y }
  */
-DragSelect.prototype.getCursorPos = function(event, _area, ignoreScroll) {
+
+
+DragSelect.prototype.getCursorPos = function (event, _area, ignoreScroll) {
   if (!event) {
     return false;
   }
 
-  var area = _area || (_area !== false && this.area);
-  var pos = this._getCursorPos(event, area);
-  var scroll = ignoreScroll ? { x: 0, y: 0 } : this.getScroll(area);
+  var area = _area || _area !== false && this.area;
 
+  var pos = this._getCursorPos(event, area);
+
+  var scroll = ignoreScroll ? {
+    x: 0,
+    y: 0
+  } : this.getScroll(area);
   return {
     x: pos.x + scroll.x,
     y: pos.y + scroll.y
   };
 };
-
 /**
  * Adds several items to the selection list
  * also adds the specific classes and take into account
@@ -836,11 +879,9 @@ DragSelect.prototype.getCursorPos = function(event, _area, ignoreScroll) {
  * @param {Boolean} dontAddToSelectables - if element should not be added to the list of selectable nodes
  * @return {Array} all selected nodes
  */
-DragSelect.prototype.addSelection = function(
-  _nodes,
-  _callback,
-  dontAddToSelectables
-) {
+
+
+DragSelect.prototype.addSelection = function (_nodes, _callback, dontAddToSelectables) {
   var nodes = this.toArray(_nodes);
 
   for (var index = 0, il = nodes.length; index < il; index++) {
@@ -851,13 +892,13 @@ DragSelect.prototype.addSelection = function(
   if (!dontAddToSelectables) {
     this.addSelectables(nodes);
   }
+
   if (_callback) {
     this.callback(this.selected, false);
   }
 
   return this.selected;
 };
-
 /**
  * Removes specific nodes from the selection
  * Multiple nodes can be given at once, in contrary to unselect
@@ -867,11 +908,9 @@ DragSelect.prototype.addSelection = function(
  * @param {Boolean} removeFromSelectables - if element should be removed from the list of selectable nodes
  * @return {Array} all selected nodes
  */
-DragSelect.prototype.removeSelection = function(
-  _nodes,
-  _callback,
-  removeFromSelectables
-) {
+
+
+DragSelect.prototype.removeSelection = function (_nodes, _callback, removeFromSelectables) {
   var nodes = this.toArray(_nodes);
 
   for (var index = 0, il = nodes.length; index < il; index++) {
@@ -882,13 +921,13 @@ DragSelect.prototype.removeSelection = function(
   if (removeFromSelectables) {
     this.removeSelectables(nodes);
   }
+
   if (_callback) {
     this.callback(this.selected, false);
   }
 
   return this.selected;
 };
-
 /**
  * Toggles specific nodes from the selection:
  * If element is not in selection it will be added, if it is already selected, it will be removed.
@@ -899,7 +938,9 @@ DragSelect.prototype.removeSelection = function(
  * @param {Boolean} _special - if true, it also removes selected elements from possible selectable nodes & don’t add them to selectables if they are not
  * @return {Array} all selected nodes
  */
-DragSelect.prototype.toggleSelection = function(_nodes, _callback, _special) {
+
+
+DragSelect.prototype.toggleSelection = function (_nodes, _callback, _special) {
   var nodes = this.toArray(_nodes);
 
   for (var index = 0, il = nodes.length; index < il; index++) {
@@ -914,7 +955,6 @@ DragSelect.prototype.toggleSelection = function(_nodes, _callback, _special) {
 
   return this.selected;
 };
-
 /**
  * Sets the current selected nodes and optionally run the callback
  *
@@ -923,25 +963,24 @@ DragSelect.prototype.toggleSelection = function(_nodes, _callback, _special) {
  * @param {Boolean} dontAddToSelectables - if element should not be added to the list of selectable nodes
  * @return {Nodes}
  */
-DragSelect.prototype.setSelection = function(
-  _nodes,
-  runCallback,
-  dontAddToSelectables
-) {
+
+
+DragSelect.prototype.setSelection = function (_nodes, runCallback, dontAddToSelectables) {
   this.clearSelection();
   this.addSelection(_nodes, runCallback, dontAddToSelectables);
-
   return this.selected;
 };
-
 /**
  * Unselect / Deselect all current selected Nodes
  *
  * @param {Boolean} runCallback - if callback should be called
  * @return {Array} this.selected, should be empty
  */
-DragSelect.prototype.clearSelection = function(runCallback) {
+
+
+DragSelect.prototype.clearSelection = function (runCallback) {
   var selection = this.selected.slice();
+
   for (var index = 0, il = selection.length; index < il; index++) {
     var node = selection[index];
     this.unselect(node);
@@ -953,7 +992,6 @@ DragSelect.prototype.clearSelection = function(runCallback) {
 
   return this.selected;
 };
-
 /**
  * Add nodes that can be selected.
  * The algorithm makes sure that no node is added twice
@@ -962,21 +1000,25 @@ DragSelect.prototype.clearSelection = function(runCallback) {
  * @param {Boolean} addToSelection – if elements should also be added to current selection
  * @return {Nodes} _nodes – the added node(s)
  */
-DragSelect.prototype.addSelectables = function(_nodes, addToSelection) {
+
+
+DragSelect.prototype.addSelectables = function (_nodes, addToSelection) {
   var nodes = this.toArray(_nodes);
+
   this._handleSelectables(nodes, false, addToSelection);
+
   return _nodes;
 };
-
 /**
  * Gets all nodes that can be selected
  *
  * @return {Nodes} this.selectables
  */
-DragSelect.prototype.getSelectables = function() {
+
+
+DragSelect.prototype.getSelectables = function () {
   return this.selectables;
 };
-
 /**
  * Sets all elements that can be selected.
  * Removes all current selectables (& their respective classes).
@@ -988,15 +1030,12 @@ DragSelect.prototype.getSelectables = function() {
  * @param {Boolean} addToSelection – if elements should also be added to current selection
  * @return {Nodes} _nodes – the added node(s)
  */
-DragSelect.prototype.setSelectables = function(
-  _nodes,
-  removeFromSelection,
-  addToSelection
-) {
+
+
+DragSelect.prototype.setSelectables = function (_nodes, removeFromSelection, addToSelection) {
   this.removeSelectables(this.getSelectables(), removeFromSelection);
   return this.addSelectables(_nodes, addToSelection);
 };
-
 /**
  * Remove nodes from the nodes that can be selected.
  *
@@ -1004,13 +1043,15 @@ DragSelect.prototype.setSelectables = function(
  * @param {Boolean} removeFromSelection – if elements should also be removed from current selection
  * @return {Nodes} _nodes – the removed node(s)
  */
-DragSelect.prototype.removeSelectables = function(_nodes, removeFromSelection) {
-  var nodes = this.toArray(_nodes);
-  this._handleSelectables(nodes, true, removeFromSelection);
-  return _nodes;
-};
 
-// Helpers
+
+DragSelect.prototype.removeSelectables = function (_nodes, removeFromSelection) {
+  var nodes = this.toArray(_nodes);
+
+  this._handleSelectables(nodes, true, removeFromSelection);
+
+  return _nodes;
+}; // Helpers
 //////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -1021,7 +1062,9 @@ DragSelect.prototype.removeSelectables = function(_nodes, removeFromSelection) {
  * @param {Object} event
  * @return {Boolean}
  */
-DragSelect.prototype.isRightClick = function(event) {
+
+
+DragSelect.prototype.isRightClick = function (event) {
   if (!event) {
     return false;
   }
@@ -1038,7 +1081,6 @@ DragSelect.prototype.isRightClick = function(event) {
 
   return isRightMB;
 };
-
 /**
  * Adds a class to an element
  * sadly legacy phones/browsers don’t support .classlist so we use this workaround
@@ -1048,22 +1090,28 @@ DragSelect.prototype.isRightClick = function(event) {
  * @param {String} classname
  * @return {Node} element
  */
-DragSelect.prototype.addClass = function(element, classname) {
+
+
+DragSelect.prototype.addClass = function (element, classname) {
   if (element.classList) {
     return element.classList.add(classname);
   }
 
   var cn = element.getAttribute('class') || '';
+
   if (cn.indexOf(classname) !== -1) {
     return element;
   } // test for existance
+
+
   if (cn !== '') {
     classname = ' ' + classname;
   } // add a space if the element already has class
+
+
   element.setAttribute('class', cn + classname);
   return element;
 };
-
 /**
  * Removes a class of an element
  * sadly legacy phones/browsers don’t support .classlist so we use this workaround
@@ -1073,7 +1121,9 @@ DragSelect.prototype.addClass = function(element, classname) {
  * @param {String} classname
  * @return {Node} element
  */
-DragSelect.prototype.removeClass = function(element, classname) {
+
+
+DragSelect.prototype.removeClass = function (element, classname) {
   if (element.classList) {
     return element.classList.remove(classname);
   }
@@ -1084,7 +1134,6 @@ DragSelect.prototype.removeClass = function(element, classname) {
   element.setAttribute('class', cn);
   return element;
 };
-
 /**
  * Checks if an element has a class
  * sadly legacy phones/browsers don’t support .classlist so we use this workaround
@@ -1093,19 +1142,21 @@ DragSelect.prototype.removeClass = function(element, classname) {
  * @param {String} classname
  * @return {Boolean}
  */
-DragSelect.prototype.hasClass = function(element, classname) {
+
+
+DragSelect.prototype.hasClass = function (element, classname) {
   if (element.classList) {
     return element.classList.contains(classname);
   }
 
   var cn = element.getAttribute('class') || '';
+
   if (cn.indexOf(classname) > -1) {
     return true;
   } else {
     return false;
   }
 };
-
 /**
  * Transforms a nodelist or single node to an array
  * so user doesn’t have to care.
@@ -1113,22 +1164,25 @@ DragSelect.prototype.hasClass = function(element, classname) {
  * @param {Node} nodes
  * @return {array}
  */
-DragSelect.prototype.toArray = function(nodes) {
+
+
+DragSelect.prototype.toArray = function (nodes) {
   if (!nodes) {
     return false;
   }
+
   if (!nodes.length && this.isElement(nodes)) {
     return [nodes];
   }
 
   var array = [];
+
   for (var i = nodes.length - 1; i >= 0; i--) {
     array[i] = nodes[i];
   }
 
   return array;
 };
-
 /**
  * Checks if a node is of type element
  * all credits to vikynandha: https://gist.github.com/vikynandha/6539809
@@ -1136,7 +1190,9 @@ DragSelect.prototype.toArray = function(nodes) {
  * @param {Node} node
  * @return {Boolean}
  */
-DragSelect.prototype.isElement = function(node) {
+
+
+DragSelect.prototype.isElement = function (node) {
   try {
     // Using W3 DOM2 (works for FF, Opera and Chrome), also checking for SVGs
     return node instanceof HTMLElement || node instanceof SVGElement;
@@ -1144,15 +1200,9 @@ DragSelect.prototype.isElement = function(node) {
     // Browsers not supporting W3 DOM2 don't have HTMLElement and
     // an exception is thrown and we end up here. Testing some
     // properties that all elements have. (works even on IE7)
-    return (
-      typeof node === 'object' &&
-      node.nodeType === 1 &&
-      typeof node.style === 'object' &&
-      typeof node.ownerDocument === 'object'
-    );
+    return _typeof(node) === 'object' && node.nodeType === 1 && _typeof(node.style) === 'object' && _typeof(node.ownerDocument) === 'object';
   }
 };
-
 /**
  * Returns cursor x, y position based on event object
  * /!\ for internal calculation reasons it does _not_ take
@@ -1163,17 +1213,29 @@ DragSelect.prototype.isElement = function(node) {
  * @param {Node} area – containing area / document if none
  * @return {Object} cursor X/Y
  */
-DragSelect.prototype._getCursorPos = function(event, area) {
-  if (!event) {
-    return { x: 0, y: 0 };
-  }
 
+
+DragSelect.prototype._getCursorPos = function (event, area) {
+  if (!event) {
+    return {
+      x: 0,
+      y: 0
+    };
+  } // touchend has not touches. so we take the last toucb if a touchevent, we need to store the positions on the prototype
+
+
+  if (event.touches && event.type !== 'touchend') {
+    DragSelect.prototype.lastTouch = event;
+  } //if a touchevent, return the last touch rather than the regular event
+  // we need .touches[0] from that event instead
+
+
+  event = event.touches ? DragSelect.prototype.lastTouch.touches[0] : event;
   var cPos = {
     // event.clientX/Y fallback for <IE8
     x: event.pageX || event.clientX,
     y: event.pageY || event.clientY
   };
-
   var areaRect = this.getAreaRect(area || document);
   var docScroll = this.getScroll(); // needed when document is scrollable but area is not
 
@@ -1183,34 +1245,36 @@ DragSelect.prototype._getCursorPos = function(event, area) {
     y: cPos.y - areaRect.top - docScroll.y
   };
 };
-
 /**
  * Returns the starting/initial position of the cursor/selector
  *
  * @return {Object} initialPos.
  */
-DragSelect.prototype.getInitialCursorPosition = function() {
+
+
+DragSelect.prototype.getInitialCursorPosition = function () {
   return this.initialCursorPos;
 };
-
 /**
  * Returns the last seen position of the cursor/selector
  *
  * @return {Object} initialPos.
  */
-DragSelect.prototype.getCurrentCursorPosition = function() {
+
+
+DragSelect.prototype.getCurrentCursorPosition = function () {
   return this.newCursorPos;
 };
-
 /**
  * Returns the previous position of the cursor/selector
  *
  * @return {Object} initialPos.
  */
-DragSelect.prototype.getPreviousCursorPosition = function() {
+
+
+DragSelect.prototype.getPreviousCursorPosition = function () {
   return this.previousCursorPos;
 };
-
 /**
  * Returns the cursor position difference between start and now
  * If usePreviousCursorDifference is passed,
@@ -1219,20 +1283,16 @@ DragSelect.prototype.getPreviousCursorPosition = function() {
  * @param {boolean} usePreviousCursorDifference
  * @return {Object} initialPos.
  */
-DragSelect.prototype.getCursorPositionDifference = function(
-  usePreviousCursorDifference
-) {
-  var posA = this.getCurrentCursorPosition();
-  var posB = usePreviousCursorDifference
-    ? this.getPreviousCursorPosition()
-    : this.getInitialCursorPosition();
 
+
+DragSelect.prototype.getCursorPositionDifference = function (usePreviousCursorDifference) {
+  var posA = this.getCurrentCursorPosition();
+  var posB = usePreviousCursorDifference ? this.getPreviousCursorPosition() : this.getInitialCursorPosition();
   return {
     x: posA.x - posB.x,
     y: posA.y - posB.y
   };
 };
-
 /**
  * Returns the current x, y scroll value of a container
  * If container has no scroll it will return 0
@@ -1240,27 +1300,20 @@ DragSelect.prototype.getCursorPositionDifference = function(
  * @param {Node} area
  * @return {Object} scroll X/Y
  */
-DragSelect.prototype.getScroll = function(area) {
-  var body = {
-    top:
-      document.body.scrollTop > 0
-        ? document.body.scrollTop
-        : document.documentElement.scrollTop,
-    left:
-      document.body.scrollLeft > 0
-        ? document.body.scrollLeft
-        : document.documentElement.scrollLeft
-  };
 
+
+DragSelect.prototype.getScroll = function (area) {
+  var body = {
+    top: document.body.scrollTop > 0 ? document.body.scrollTop : document.documentElement.scrollTop,
+    left: document.body.scrollLeft > 0 ? document.body.scrollLeft : document.documentElement.scrollLeft
+  };
   var scroll = {
     // when the rectangle is bound to the document, no scroll is needed
     y: area && area.scrollTop >= 0 ? area.scrollTop : body.top,
     x: area && area.scrollLeft >= 0 ? area.scrollLeft : body.left
   };
-
   return scroll;
 };
-
 /**
  * Returns the top/left/bottom/right/width/height
  * values of a node. If Area is document then everything
@@ -1269,17 +1322,13 @@ DragSelect.prototype.getScroll = function(area) {
  * @param {Node} area
  * @return {Object}
  */
-DragSelect.prototype.getAreaRect = function(area) {
+
+
+DragSelect.prototype.getAreaRect = function (area) {
   if (area === document) {
     var size = {
-      y:
-        area.documentElement.clientHeight > 0
-          ? area.documentElement.clientHeight
-          : window.innerHeight,
-      x:
-        area.documentElement.clientWidth > 0
-          ? area.documentElement.clientWidth
-          : window.innerWidth
+      y: area.documentElement.clientHeight > 0 ? area.documentElement.clientHeight : window.innerHeight,
+      x: area.documentElement.clientWidth > 0 ? area.documentElement.clientWidth : window.innerWidth
     };
     return {
       top: 0,
@@ -1300,7 +1349,6 @@ DragSelect.prototype.getAreaRect = function(area) {
     height: area.offsetHeight
   };
 };
-
 /**
  * Updates the node style left, top, width,
  * height values accordingly.
@@ -1310,29 +1358,25 @@ DragSelect.prototype.getAreaRect = function(area) {
  *
  * @return {Node}
  */
-DragSelect.prototype.updatePos = function(node, pos) {
+
+
+DragSelect.prototype.updatePos = function (node, pos) {
   node.style.left = pos.x + 'px';
   node.style.top = pos.y + 'px';
   node.style.width = pos.w + 'px';
   node.style.height = pos.h + 'px';
   return node;
-};
-
-// Make exportable
+}; // Make exportable
 //////////////////////////////////////////////////////////////////////////////////////
+
 /* eslint-disable no-undef */
-
 // Module exporting
-if (typeof module !== 'undefined' && module !== null) {
-  module.exports = DragSelect;
 
-  // AMD Modules
-} else if (
-  typeof define !== 'undefined' &&
-  typeof define === 'function' &&
-  define
-) {
-  define(function() {
+
+if (typeof module !== 'undefined' && module !== null) {
+  module.exports = DragSelect; // AMD Modules
+} else if (typeof define !== 'undefined' && typeof define === 'function' && define) {
+  define(function () {
     return DragSelect;
   });
 } else {
