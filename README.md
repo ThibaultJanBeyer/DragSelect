@@ -24,6 +24,7 @@ https://thibaultjanbeyer.github.io/DragSelect/
 - Lightweight, only ~3KB gzipped
 - DragSelect was written with Performance in mind
 - Supports SVG
+- Supports mobile (touch interaction)
 - Free & open source under MIT License
 - Ease of use
 
@@ -105,6 +106,10 @@ ds.start();  // reset the functionality after a teardown
 
 You can also use the "shift", "ctrl" or "command" key to make multiple independent selections.
 
+## Mobile/Touch useage
+
+Keep in mind that using DragSelect on a mobile/touch device will also turn off the default scroll behaviour (on `click` + `drag` interaction).
+In 99% of the usecases, this is what you want. If DragSelect is only one part of a website, and you still want to be able to scroll the page on mobile, you can use an `area` [property](#properties). This way the scroll behaviour remains for all the rest of the page.
 
 ## Accessibility (a11y)
 
