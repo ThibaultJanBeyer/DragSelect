@@ -281,7 +281,10 @@ DragSelect.prototype._createSelector = function() {
  * Starts the functionality. Automatically triggered when created.
  */
 DragSelect.prototype.start = function() {
-  this.area.addEventListener('mousedown', this._startUp);
+
+  this.area.addEventListener( 'mousedown', this._startUp );
+  this.area.addEventListener( 'touchstart', this._startUp, { passive: false } );
+
 };
 
 /**
@@ -290,6 +293,11 @@ DragSelect.prototype.start = function() {
  * @param {Object} event - The event object.
  */
 DragSelect.prototype._startUp = function(event) {
+
+  // touchmove handler
+  if(event.type === 'touchstart')
+    // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
+    event.preventDefault();
 
   // callback
   this.onDragStartBegin(event);
@@ -320,9 +328,13 @@ DragSelect.prototype._startUp = function(event) {
   if (this._breaked) { return false; }
 
   // event listeners
-  this.area.removeEventListener('mousedown', this._startUp);
-  this.area.addEventListener('mousemove', this._handleMove);
-  document.addEventListener('mouseup', this.reset);
+  this.area.removeEventListener( 'mousedown', this._startUp );
+  this.area.removeEventListener( 'touchstart', this._startUp, { passive: false } );
+  this.area.addEventListener( 'mousemove', this._handleMove );
+  this.area.addEventListener( 'touchmove', this._handleMove );
+  document.addEventListener( 'mouseup', this.reset );
+  document.addEventListener( 'touchend', this.reset );
+
 };
 
 /**
@@ -739,16 +751,18 @@ DragSelect.prototype.isCursorNearEdge = function(event, area) {
 /**
  * Unbind functions when mouse click is released
  */
-DragSelect.prototype.reset = function(event) {
-  this.previousCursorPos = this._getCursorPos(event, this.area);
-  document.removeEventListener('mouseup', this.reset);
-  this.area.removeEventListener('mousemove', this._handleMove);
-  this.area.addEventListener('mousedown', this._startUp);
+DragSelect.prototype.reset = function( event ) {
 
-  this.callback(this.selected, event);
-  if (this._breaked) {
-    return false;
-  }
+  this.previousCursorPos = this._getCursorPos( event, this.area );
+  document.removeEventListener( 'mouseup', this.reset );
+  document.removeEventListener( 'touchend', this.reset );
+  this.area.removeEventListener( 'mousemove', this._handleMove );
+  this.area.removeEventListener( 'touchmove', this._handleMove );
+  this.area.addEventListener( 'mousedown', this._startUp );
+  this.area.addEventListener( 'touchstart', this._startUp, { passive: false } );
+
+  this.callback( this.selected, event );
+  if( this._breaked ) { return false; }
 
   this.selector.style.width = '0';
   this.selector.style.height = '0';
@@ -784,8 +798,11 @@ DragSelect.prototype.break = function() {
  */
 DragSelect.prototype.stop = function() {
   this.reset();
-  this.area.removeEventListener('mousedown', this._startUp);
-  document.removeEventListener('mouseup', this.reset);
+  this.area.removeEventListener( 'mousedown', this._startUp );
+  this.area.removeEventListener( 'touchstart', this._startUp, { passive: false } );
+  document.removeEventListener( 'mouseup', this.reset );
+  document.removeEventListener( 'touchend', this.reset );
+
 };
 
 // Usefull methods for user
@@ -1168,8 +1185,15 @@ DragSelect.prototype._getCursorPos = function(event, area) {
     return { x: 0, y: 0 };
   }
 
-  var cPos = {
-    // event.clientX/Y fallback for <IE8
+  // touchend has not touches. so we take the last toucb if a touchevent, we need to store the positions on the prototype
+  if (event.touches && event.type !== 'touchend') {
+    DragSelect.prototype.lastTouch = event
+  }
+  //if a touchevent, return the last touch rather than the regular event
+  // we need .touches[0] from that event instead
+  event = event.touches ? DragSelect.prototype.lastTouch.touches[0] : event
+
+  var cPos = {  // event.clientX/Y fallback for <IE8
     x: event.pageX || event.clientX,
     y: event.pageY || event.clientY
   };
