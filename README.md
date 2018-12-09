@@ -21,7 +21,7 @@ https://thibaultjanbeyer.github.io/DragSelect/
 - Add drag selection
 - Choose which elements can be selected
 - Great browser support, works even like a charm on IE10
-- Lightweight, only ~3KB gzipped
+- Lightweight, only ![gzip size](http://img.badgesize.io/https://thibaultjanbeyer.github.io/DragSelect/ds.min.js?compression=gzip)
 - DragSelect was written with Performance in mind
 - Supports SVG
 - Supports mobile (touch interaction)
