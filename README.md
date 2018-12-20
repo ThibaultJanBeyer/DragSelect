@@ -179,6 +179,6 @@ When the function is saved into a variable `var foo = new DragSelect()` you have
 
 Creating and maintaining useful tools is a lot of work. 
 So don’t forget to give this repository a star if you find it useful.
-Tell all your friends and start contributing or [donating 1$](https://paypal.me/kleinanzeigen3). Thank you :)
+Tell all your friends and start contributing or [donating 1$](https://paypal.me/kleinanzeigen3) to keep it running. Thank you :)
 
 [![Typewriter Gif](https://thibaultjanbeyer.github.io/DragSelect/typewriter.gif)](http://thibaultjanbeyer.com/)
