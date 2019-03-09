@@ -48,12 +48,12 @@ Just download the file (minified) and add it to your document:
 
 ## npm
 ```console
-npm install --save-dev dragselect
+npm install --save dragselect
 ```
 
 ## bower
 ```console
-bower install --save-dev dragselect
+bower install --save dragselect
 ```
 
 That's it, you're ready to rock!  
