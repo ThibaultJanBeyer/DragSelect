@@ -8,17 +8,24 @@
     "start": "npm install; npm run open & npm run watch",
     "open": "open tests/quicktest.html -a 'Google Chrome'",
     "watch": "babel ./src/DragSelect.js -w -o ./docs/DragSelect.js",
-    "build": "npm run transpile && npm run uglify",
+    "build": "npm run docs && npm run transpile && npm run uglify",
     "transpile": "babel ./src/DragSelect.js -o ./docs/DragSelect.js",
     "uglify": "uglifyjs ./docs/DragSelect.js -o ./docs/ds.min.js",
+    "docs": "jsdoc ./src/DragSelect.js ./README.md -t ./node_modules/minami -d ./docs",
     "test": "jest"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
+    "@babel/plugin-proposal-class-properties": "^7.3.4",
+    "@babel/plugin-transform-runtime": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
+    "@babel/runtime": "^7.3.4",
     "babel-jest": "^24.3.1",
+    "babel-polyfill": "^6.26.0",
     "jest": "^24.3.1",
+    "jsdoc": "^3.5.5",
+    "minami": "^1.2.3",
     "puppeteer": "^1.13.0"
   },
   "repository": {

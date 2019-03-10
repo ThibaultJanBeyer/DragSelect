@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer';
 
-const baseUrl = `file://${process.cwd()}/test`;
+const baseUrl = `file://${process.cwd()}/__tests__`;
 let page;
 let browser;
 
