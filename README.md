@@ -19,6 +19,7 @@ easily add a selection algorithm to your application/website.
 - No dependencies
 - Accessibility (a11y)
 - Add drag selection
+- Use modifier keys to make multiple independent selections
 - Choose which elements can be selected
 - Great browser support, works even like a charm on IE10
 - Lightweight, only ![gzip size](http://img.badgesize.io/https://thibaultjanbeyer.github.io/DragSelect/ds.min.js?compression=gzip)
@@ -86,9 +87,10 @@ Here the selection is constrained. You can only use the selection inside of the 
 <p data-height="265" data-theme-id="0" data-slug-hash="Nvobgq" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect with Scrollable AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 
-## complete
+## extended
 
-All options are optional. You could also just initiate the Dragselect by `new DragSelect();` without any option.
+All options are optional. You could also just initiate the Dragselect by `new DragSelect();` without any option.  
+Find all possible properties and methods in **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**  
 
 ```javascript
 var ds = new DragSelect({
@@ -116,7 +118,7 @@ ds.start();  // reset the functionality after a teardown
 // and many more, see "methods" section in documentation
 ```  
 
-You can also use the "shift", "ctrl" or "command" key to make multiple independent selections.
+*You can also use the "shift", "ctrl" or "command" key to make multiple independent selections.*
 
 ## Mobile/Touch useage
 
