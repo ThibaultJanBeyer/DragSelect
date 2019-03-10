@@ -80,12 +80,10 @@ We use it currently in a professional rich interface application where we have a
 <h2>simple</h2><p>The simplest possible usage.<br>Choose which elements can be selected:</p>
 <pre class="prettyprint source lang-javascript"><code>new DragSelect({
   selectables: document.getElementsByClassName('selectable-nodes')
-});</code></pre><p><p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="prpwYG" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">prpwYG</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p></p>
-<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+});</code></pre><p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="prpwYG" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">prpwYG</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 
 <h2>Within a scroll-able Area</h2><p>Here the selection is constrained. You can only use the selection inside of the container with the red border:</p>
-<p><p data-height="265" data-theme-id="0" data-slug-hash="Nvobgq" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect with Scrollable AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p></p>
-<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+<p data-height="265" data-theme-id="0" data-slug-hash="Nvobgq" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect with Scrollable AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 
 <h2>extended</h2><p>All options are optional. You could also just initiate the Dragselect by <code>new DragSelect();</code> without any option.<br>Find all possible properties and methods in <strong><a href="https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html">the docs</a></strong>  </p>
 <pre class="prettyprint source lang-javascript"><code>var ds = new DragSelect({
@@ -118,9 +116,7 @@ In 99% of the usecases, this is what you want. If DragSelect is only one part of
 <p>TLDR; =&gt; Your <code>selectables</code> should be buttons: <code>&lt;button type=&quot;button&quot;&gt;&lt;/button&gt;</code>.  </p>
 </blockquote>
 <p>Obviously, keyboard users won’t get the full visual experience but it works similarely to the OS default behaviour. You can select items using the default select keys (usually space or enter) and also multiselect when using a modifier key at the same time (unfortunately this does not work in firefox for now since FF doesn’t add the modifier key in the event object when using the keyboard). There is one little thing you have to do tho’: the <code>selectables</code> have to be pressable (clickable)! To achieve this, they should be of type <code>&lt;button type=&quot;button&quot;&gt;&lt;/button&gt;</code>.  </p>
-<p><p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="html,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">DragSelect</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p></p>
-<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
-
+<p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="html,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">DragSelect</a> by Thibault Jan Beyer (<a href="https://codepen.io/ThibaultJanBeyer">@ThibaultJanBeyer</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 
 <h1>Properties:</h1><p>Full list of properties is found in <strong><a href="https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html">the docs</a></strong><br>Here are some properties for your convenience (not all):  </p>
 <table>
@@ -347,7 +343,8 @@ In 99% of the usecases, this is what you want. If DragSelect is only one part of
 So don’t forget to give this repository a star if you find it useful.
 Tell all your friends and start contributing or <a href="https://paypal.me/kleinanzeigen3">donating 1$</a> to keep me running. Thank you :)</p>
 <p><a href="http://thibaultjanbeyer.com/"><img src="https://thibaultjanbeyer.github.io/DragSelect/typewriter.gif" alt="Typewriter Gif"></a></p>
-<p><br>
+<p>Codepen Script: <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+<br>
 <br>
 <br>
 <a href="https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html">Documentation</a></p></article>
@@ -363,7 +360,7 @@ Tell all your friends and start contributing or <a href="https://paypal.me/klein
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Mar 10 2019 19:00:15 GMT+0100 (Central European Standard Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Mar 10 2019 19:08:26 GMT+0100 (Central European Standard Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
