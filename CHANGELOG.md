@@ -1,3 +1,13 @@
+# 1.11.1
+
+- Add em6 moduled files that have native `module export DragSelect` that can be used in for example:
+```html
+<script type="module">
+  import DragSelect from "path/to/DragSelect.es6m.js"
+  new DragSelect({...});
+</script>
+```
+
 # 1.11.0
 
 - Improve code stability by enforcing typechecks via JS-Docs, inspired by [truckjs](https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76)  
