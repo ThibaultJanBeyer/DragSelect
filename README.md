@@ -1,5 +1,3 @@
-[GitHub](https://github.com/ThibaultJanBeyer/DragSelect/) | [NPM](https://www.npmjs.com/package/dragselect) | [Project-Page](https://thibaultjanbeyer.github.io/DragSelect/)
-
 ```
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -8,6 +6,8 @@
 /_____/_/   \__,_/\__, //____/\___/_/\___/\___/\__/  
                  /____/                              
 ```
+
+[GitHub](https://github.com/ThibaultJanBeyer/DragSelect/) | [NPM](https://www.npmjs.com/package/dragselect) | [Project-Page](https://thibaultjanbeyer.github.io/DragSelect/)  
 
 # DragSelect
 easily add a selection algorithm to your application/website.
