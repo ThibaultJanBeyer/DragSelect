@@ -30,6 +30,9 @@ Key-Features
  Please give it a like, this is what makes me happy :-)
  Thanks You
 
+ Checking types using JS-Docs inspired by this post:
+ https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76
+
  ******************************************
  ********* The MIT License (MIT) **********
  ******************************************
