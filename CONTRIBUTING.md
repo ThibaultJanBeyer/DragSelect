@@ -12,7 +12,7 @@ Thanks in advance!
 The project is kept as simple as possible, so it is very easy to set up.  
 Actually, you don’t need to do anything. You will find all work files under `src/`.  
 Regarding DragSelect, you should work on file `src/DragSelect.js`.
-Don’t touch the files in `dist/`. They are automatically generated.
+Don’t touch the files in `docs/`. They are automatically generated.
 
 For your ease of mind, you can run:
 
@@ -24,7 +24,7 @@ it will install `gulp` & run it in dev mode (& on osx open `tests/quicktest.html
 
 *Note: opening quicktest will fail on other operating systems than Mac because I’m using the mac specific `open` command to open the file. However, that is not an issue and you can go on opening the file manually.*
 
-Now whenever you make a change to the `DragSelect.js` in `/src` it will be transpiled and updated in `/dist` automatically. This is important since all test files use the `/dist` version.
+Now whenever you make a change to the `DragSelect.js` in `src/` it will be transpiled and updated in `docs/` automatically. This is important since all test files use the `docs/` version.
 
 
 ## Testing

@@ -9,10 +9,10 @@ gulp.task('js', function() {
   gulp
     .src('./src/DragSelect.js')
     .pipe(babel({ presets: ['@babel/env'] }))
-    .pipe(gulp.dest('./dist/'))
+    .pipe(gulp.dest('./docs/'))
     .pipe(uglify())
     .pipe(rename('ds.min.js'))
-    .pipe(gulp.dest('./dist/'));
+    .pipe(gulp.dest('./docs/'));
 });
 
 gulp.task('css', function() {
@@ -20,17 +20,17 @@ gulp.task('css', function() {
     .src('./src/example.css')
     .pipe(autoprefixer())
     .pipe(csso())
-    .pipe(gulp.dest('./dist/'));
+    .pipe(gulp.dest('./docs/'));
 });
 
 gulp.task('html', function() {
   gulp
     .src('./src/index.html')
-    .pipe(gulp.dest('./dist/'));
+    .pipe(gulp.dest('./docs/'));
 });
 
 gulp.task('quicktest', function() {
-  gulp.src('./src/quicktest.html').pipe(gulp.dest('./dist/'));
+  gulp.src('./src/quicktest.html').pipe(gulp.dest('./docs/'));
 });
 
 gulp.task('watch', function() {

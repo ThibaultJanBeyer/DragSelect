@@ -1,0 +1,235 @@
+@import url(https://fonts.googleapis.com/css?family=Fira+Sans:400,700,300);
+@import url(https://fonts.googleapis.com/css?family=Grand+Hotel);
+@import url(https://fonts.googleapis.com/css?family=Fira+Mono);
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #f6f6f6;
+  color: #333;
+  font-family: 'Fira Sans', sans-serif;
+  font-feature-settings: "liga", "kern";
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  text-rendering: optimizelegibility;
+}
+
+.navbar {
+  padding-top: 20px;
+}
+
+.navbar__link {
+  border-right: 1px solid rgba(255, 255, 255, .3);
+  padding: 0 15px;
+}
+
+.navbar__link:last-child {
+  border-right: 0;
+}
+
+.main-header__content {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media screen and (max-width: 400px) {
+  .navbar__link:nth-child(2) {
+    border-right: 0;
+  }
+
+  .navbar__link:last-child {
+    display: block;
+  }
+
+  .main-header__content {
+    left: 0;
+    margin-top: 50px;
+    position: relative;
+    top: 0;
+    transform: none;
+  }
+}
+
+.main-header {
+  background-color: #6885d0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
+  color: #f6f6f6;
+  height: 335px;
+  text-align: center;
+  width: 100%;
+}
+
+.main-header a {
+  color: #f6f6f6;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.main-header__btn {
+  background: linear-gradient(to bottom, #ffef5a, #d4cb72);
+  box-shadow: 0 0 1px #c6bd64, 0 1px 1px #aaa155,
+              0 1px 1px #c6bd64, 0 2px 1px #aaa155,
+              0 2px 1px #c6bd64, 0 3px 1px #aaa155,
+              0 3px 1px #c6bd64, 0 4px 1px #aaa155,
+              0 4px 1px #c6bd64, 0 5px 1px #aaa155,
+              0 5px 1px #c6bd64, 0 7px 0 rgba(0, 0, 0, .05),
+              0 8px 0 rgba(0, 0, 0, .05), 0 9px 0 rgba(0, 0, 0, .04),
+              0 10px 0 rgba(0, 0, 0, .04), 0 11px 0 rgba(0, 0, 0, .03),
+              0 12px 0 rgba(0, 0, 0, .03), 0 13px 0 rgba(0, 0, 0, .02),
+              0 14px 0 rgba(0, 0, 0, .02), 0 15px 0 rgba(0, 0, 0, .01),
+              0 16px 0 rgba(0, 0, 0, .01), 0 17px 0 rgba(0, 0, 0, .01),
+              0 18px 0 rgba(0, 0, 0, .01), inset 0 4px 5px -2px rgba(255, 255, 255, .5),
+              inset 0 1px 0 0 rgba(0, 0, 0, .3);
+  color: #6885d0;
+  display: inline-block;
+  font-weight: bold;
+  padding: 10px;
+  text-transform: uppercase;
+  transition: box-shadow .1s linear, transform .1s linear;
+}
+
+.main-header__btn:active {
+  box-shadow: inset 1px 2px 3px rgba(0, 0, 0, .2);
+  transform: translate3d(0, 6px, 0);
+}
+
+.main-info {
+  margin: 0 auto;
+  max-width: 1024px;
+  min-height: 400px;
+}
+
+.benefits {
+  padding: 0 50px 25px;
+}
+
+.benefit {
+  float: left;
+  height: 120px;
+  margin-right: 2%;
+  margin-top: 40px;
+  width: 47.5%;
+}
+
+.benefit:nth-child(2n) {
+  float: right;
+  margin-right: 0;
+}
+
+.benefit-text {
+  color: #7F8C8D;
+}
+
+@media screen and (max-width: 600px) {
+  .benefit {
+    float: none;
+    height: inherit;
+    margin: 0;
+    padding: 20px 0;
+    width: 100%;
+  }
+}
+
+.documentation {
+  margin: 0 auto;
+  max-width: 550px;
+  padding: 0 25px;
+}
+
+.documentation h3 {
+  font-size: 2.5em;
+  margin-bottom: 0;
+  margin-top:15px;
+  text-align: center;
+}
+
+.documentation h4 {
+  border-top: 1px dashed rgba(0, 0, 0, .1);
+  font-size: 1.5em;
+  margin-top: 1em;
+  padding-top: 1em;
+}
+
+.typewriter {
+  text-align: center;
+}
+
+.cp_embed_wrapper {
+  margin-left: -10%;
+  width: 120%;
+}
+
+@media screen and (max-width: 600px) {
+  .cp_embed_wrapper {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+.doc-navigation {
+  background: white;
+  font-size: .8em;
+  left: 0;
+  padding: 10px 5px;
+  position: fixed;
+  top: 0;
+  width: 135px;
+}
+
+.doc-navigation ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+table {
+  width: 100%;
+}
+
+td {
+  border-top: 1px solid rgba(0, 0, 0, .2);
+  padding:2% 1%;
+  vertical-align: top;
+}
+
+.prettyprint {
+  background: #fafafa;
+  display: block;
+  font-family: "Consolas", "Monaco", "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Courier New", monotype, sans-serif;
+  font-size: 12px;
+  overflow: auto;
+  padding: 10px;
+  tab-size: 2;
+  white-space: pre;
+  width: 95%;
+}
+
+pre {
+  margin: 0;
+}
+
+.footer {
+  background-color: #6885d0;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.3);
+  color: #f6f6f6;
+  height: 80px;
+  margin-top:50px;
+  text-align: center;
+  width: 100%;
+}
+
+.footer a {
+  color: #f6f6f6;
+  padding: 20px;
+}
