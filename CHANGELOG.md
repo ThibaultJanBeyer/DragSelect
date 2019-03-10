@@ -1,3 +1,7 @@
+# 1.11.2
+
+- Use `DragSelect.js` as `"main"` in `package.json` in order to get intellisense
+
 # 1.11.1
 
 - Add em6 moduled files that have native `module export DragSelect` that can be used in for example:

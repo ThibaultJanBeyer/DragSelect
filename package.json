@@ -2,7 +2,7 @@
   "name": "dragselect",
   "version": "1.11.1",
   "description": "easy javascript drag select functionality for your projects",
-  "main": "./docs/ds.min.js",
+  "main": "./docs/DragSelect.js",
   "dependencies": {},
   "scripts": {
     "start": "npm install; npm run open & npm run watch",
