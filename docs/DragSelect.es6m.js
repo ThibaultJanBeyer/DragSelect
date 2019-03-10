@@ -1377,3 +1377,4 @@ define) {
   // @ts-ignore
   window.DragSelect = DragSelect;
 }
+export default DragSelect;

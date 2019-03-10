@@ -8,9 +8,13 @@
     "start": "npm install; npm run open & npm run watch",
     "open": "open tests/quicktest.html -a 'Google Chrome'",
     "watch": "babel ./src/DragSelect.js -w -o ./docs/DragSelect.js",
+    "es6m": "cp ./docs/DragSelect.js ./docs/DragSelect.es6m.js && echo 'export default DragSelect;' >> ./docs/DragSelect.es6m.js",
+    "es6m-min": "cp ./docs/ds.min.js ./docs/ds.es6m.min.js && echo 'export default DragSelect;' >> ./docs/ds.es6m.min.js",
     "build": "npm run docs && npm run transpile && npm run uglify",
     "transpile": "babel ./src/DragSelect.js -o ./docs/DragSelect.js",
+    "posttranspile": "npm run es6m",
     "uglify": "uglifyjs ./docs/DragSelect.js -o ./docs/ds.min.js",
+    "postuglify": "npm run es6m-min",
     "docs": "jsdoc ./src/DragSelect.js ./README.md -t ./node_modules/minami -d ./docs",
     "test": "jest"
   },

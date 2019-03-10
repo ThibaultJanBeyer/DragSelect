@@ -49,6 +49,8 @@ Just [download the file](https://github.com/ThibaultJanBeyer/DragSelect/blob/mas
 <script src="https://thibaultjanbeyer.github.io/DragSelect/ds.min.js"></script>
 ```
 
+*Note: if you are using `<script type=module` you can use the `DragSelect.es6m.js` or `ds.es6m.min.js` files as they include `export default DragSelect`*
+
 ## npm
 ```console
 npm install --save dragselect
