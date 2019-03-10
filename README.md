@@ -7,6 +7,8 @@
                  /____/                              
 ```
 
+[GitHub](https://thibaultjanbeyer.github.io/DragSelect/) | [NPM](https://www.npmjs.com/package/dragselect) | [Project-Page](https://thibaultjanbeyer.github.io/DragSelect/)
+
 # DragSelect
 easily add a selection algorithm to your application/website.
 
