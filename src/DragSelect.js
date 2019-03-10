@@ -8,30 +8,13 @@
 /_____/_/   \__,_/\__, //____/\___/_/\___/\___/\__/  
                  /____/                              
 
-Key-Features
-  - No dependencies
-  - Ease of use
-  - Add drag selection
-  - Accessibility (a11y)
-  - Choose which elements can be selected.
-  - Great browser support, works perfectly on IE9
-  - Lightweight, only ~2KB gzipped
-  - Free & open source under MIT License
-
- Default CSS classes
-  ** .ds-selected       On elements that are selected
-  ** .ds-hover          On elements that are currently hovered
-  ** .ds-selector       On the selector element
-  ** .ds-selectable     On elements that can be selected
-
- STAR THIS PLUGIN ON GITHUB:
+ {*} {*} STAR THIS PLUGIN ON GITHUB: {*} {*}
 
  https://github.com/ThibaultJanBeyer/DragSelect
  Please give it a like, this is what makes me happy :-)
  Thanks You
 
- Checking types using JS-Docs inspired by this post:
- https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76
+ {*} {*} STAR THIS PLUGIN ON GITHUB: {*} {*}
 
  ******************************************
  ********* The MIT License (MIT) **********
@@ -54,6 +37,10 @@ Key-Features
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
+ --- Notes ---
+ Checking types using JS-Docs inspired by this post:
+ https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76
+ ---
 */
 
 // Setup
