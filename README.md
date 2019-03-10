@@ -22,6 +22,7 @@ https://thibaultjanbeyer.github.io/DragSelect/
 - Choose which elements can be selected
 - Great browser support, works even like a charm on IE10
 - Lightweight, only ![gzip size](http://img.badgesize.io/https://thibaultjanbeyer.github.io/DragSelect/ds.min.js?compression=gzip)
+- Popular: ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) on npm
 - DragSelect was written with Performance in mind
 - Supports SVG
 - Supports mobile (touch interaction)
@@ -47,12 +48,12 @@ Just download the file (minified) and add it to your document:
 
 ## npm
 ```console
-npm install --save-dev dragselect
+npm install --save dragselect
 ```
 
 ## bower
 ```console
-bower install --save-dev dragselect
+bower install --save dragselect
 ```
 
 That's it, you're ready to rock!  
