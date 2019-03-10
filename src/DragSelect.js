@@ -143,7 +143,8 @@ DragSelect.prototype._setupOptions = function(options) {
     'metaKey'
   ];
   this.multiSelectMode = options.multiSelectMode || false;
-  this.autoScrollSpeed = options.autoScrollSpeed === 0 ? 0 : options.autoScrollSpeed || 1;
+  this.autoScrollSpeed =
+    options.autoScrollSpeed === 0 ? 0 : options.autoScrollSpeed || 1;
   this.selectCallback = options.onElementSelect || function() {};
   this.unselectCallback = options.onElementUnselect || function() {};
   this.onDragStartBegin = options.onDragStartBegin || function() {};
@@ -226,7 +227,6 @@ DragSelect.prototype._handleSelectables = function(
  * @param {Boolean} remove - if elements were removed.
  */
 DragSelect.prototype._onClick = function(event) {
-
   if (this.mouseInteraction) {
     return;
   } // fix firefox doubleclick issue
@@ -281,10 +281,8 @@ DragSelect.prototype._createSelector = function() {
  * Starts the functionality. Automatically triggered when created.
  */
 DragSelect.prototype.start = function() {
-
-  this.area.addEventListener( 'mousedown', this._startUp );
-  this.area.addEventListener( 'touchstart', this._startUp, { passive: false } );
-
+  this.area.addEventListener('mousedown', this._startUp);
+  this.area.addEventListener('touchstart', this._startUp, { passive: false });
 };
 
 /**
@@ -293,15 +291,16 @@ DragSelect.prototype.start = function() {
  * @param {Object} event - The event object.
  */
 DragSelect.prototype._startUp = function(event) {
-
   // touchmove handler
-  if(event.type === 'touchstart')
+  if (event.type === 'touchstart')
     // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
     event.preventDefault();
 
   // callback
   this.onDragStartBegin(event);
-  if (this._breaked) { return false; }
+  if (this._breaked) {
+    return false;
+  }
 
   if (this.isRightClick(event)) {
     return;
@@ -325,16 +324,19 @@ DragSelect.prototype._startUp = function(event) {
 
   // callback
   this.moveStartCallback(event);
-  if (this._breaked) { return false; }
+  if (this._breaked) {
+    return false;
+  }
 
   // event listeners
-  this.area.removeEventListener( 'mousedown', this._startUp );
-  this.area.removeEventListener( 'touchstart', this._startUp, { passive: false } );
-  this.area.addEventListener( 'mousemove', this._handleMove );
-  this.area.addEventListener( 'touchmove', this._handleMove );
-  document.addEventListener( 'mouseup', this.reset );
-  document.addEventListener( 'touchend', this.reset );
-
+  this.area.removeEventListener('mousedown', this._startUp);
+  this.area.removeEventListener('touchstart', this._startUp, {
+    passive: false
+  });
+  this.area.addEventListener('mousemove', this._handleMove);
+  this.area.addEventListener('touchmove', this._handleMove);
+  document.addEventListener('mouseup', this.reset);
+  document.addEventListener('touchend', this.reset);
 };
 
 /**
@@ -508,7 +510,7 @@ DragSelect.prototype.getPosition = function(event) {
  */
 DragSelect.prototype.checkIfInsideSelection = function(force) {
   var anyInside = false;
-  for( var i = 0, il = this.selectables.length; i < il; i++ ) {
+  for (var i = 0, il = this.selectables.length; i < il; i++) {
     var selectable = this.selectables[i];
 
     var scroll = this.getScroll(this.area);
@@ -519,11 +521,11 @@ DragSelect.prototype.checkIfInsideSelection = function(force) {
       w: this.selector.offsetWidth
     };
 
-    if( this._isElementTouching( selectable, selectionRect, scroll ) ) {
-      this._handleSelection( selectable, force );
+    if (this._isElementTouching(selectable, selectionRect, scroll)) {
+      this._handleSelection(selectable, force);
       anyInside = true;
     } else {
-      this._handleUnselection( selectable, force );
+      this._handleUnselection(selectable, force);
     }
   }
   return anyInside;
@@ -702,7 +704,11 @@ DragSelect.prototype._isElementTouching = function(
 DragSelect.prototype._autoScroll = function(event) {
   var edge = this.isCursorNearEdge(event, this.area);
 
-  var docEl = document && document.documentElement && document.documentElement.scrollTop && document.documentElement;
+  var docEl =
+    document &&
+    document.documentElement &&
+    document.documentElement.scrollTop &&
+    document.documentElement;
   var _area = this.area === document ? docEl || document.body : this.area;
 
   if (edge === 'top' && _area.scrollTop > 0) {
@@ -751,18 +757,19 @@ DragSelect.prototype.isCursorNearEdge = function(event, area) {
 /**
  * Unbind functions when mouse click is released
  */
-DragSelect.prototype.reset = function( event ) {
+DragSelect.prototype.reset = function(event) {
+  this.previousCursorPos = this._getCursorPos(event, this.area);
+  document.removeEventListener('mouseup', this.reset);
+  document.removeEventListener('touchend', this.reset);
+  this.area.removeEventListener('mousemove', this._handleMove);
+  this.area.removeEventListener('touchmove', this._handleMove);
+  this.area.addEventListener('mousedown', this._startUp);
+  this.area.addEventListener('touchstart', this._startUp, { passive: false });
 
-  this.previousCursorPos = this._getCursorPos( event, this.area );
-  document.removeEventListener( 'mouseup', this.reset );
-  document.removeEventListener( 'touchend', this.reset );
-  this.area.removeEventListener( 'mousemove', this._handleMove );
-  this.area.removeEventListener( 'touchmove', this._handleMove );
-  this.area.addEventListener( 'mousedown', this._startUp );
-  this.area.addEventListener( 'touchstart', this._startUp, { passive: false } );
-
-  this.callback( this.selected, event );
-  if( this._breaked ) { return false; }
+  this.callback(this.selected, event);
+  if (this._breaked) {
+    return false;
+  }
 
   this.selector.style.width = '0';
   this.selector.style.height = '0';
@@ -798,11 +805,12 @@ DragSelect.prototype.break = function() {
  */
 DragSelect.prototype.stop = function() {
   this.reset();
-  this.area.removeEventListener( 'mousedown', this._startUp );
-  this.area.removeEventListener( 'touchstart', this._startUp, { passive: false } );
-  document.removeEventListener( 'mouseup', this.reset );
-  document.removeEventListener( 'touchend', this.reset );
-
+  this.area.removeEventListener('mousedown', this._startUp);
+  this.area.removeEventListener('touchstart', this._startUp, {
+    passive: false
+  });
+  document.removeEventListener('mouseup', this.reset);
+  document.removeEventListener('touchend', this.reset);
 };
 
 // Usefull methods for user
@@ -1187,13 +1195,14 @@ DragSelect.prototype._getCursorPos = function(event, area) {
 
   // touchend has not touches. so we take the last toucb if a touchevent, we need to store the positions on the prototype
   if (event.touches && event.type !== 'touchend') {
-    DragSelect.prototype.lastTouch = event
+    DragSelect.prototype.lastTouch = event;
   }
   //if a touchevent, return the last touch rather than the regular event
   // we need .touches[0] from that event instead
-  event = event.touches ? DragSelect.prototype.lastTouch.touches[0] : event
+  event = event.touches ? DragSelect.prototype.lastTouch.touches[0] : event;
 
-  var cPos = {  // event.clientX/Y fallback for <IE8
+  var cPos = {
+    // event.clientX/Y fallback for <IE8
     x: event.pageX || event.clientX,
     y: event.pageY || event.clientY
   };

@@ -20,7 +20,7 @@ For your ease of mind, you can run:
 npm start
 ```
 
-it will install `gulp` & run it in dev mode (& on osx open `tests/quicktest.html` for your convenience).  
+it will install dependencies & run the dev mode (& on osx open `tests/quicktest.html` for your convenience).  
 
 *Note: opening quicktest will fail on other operating systems than Mac because I’m using the mac specific `open` command to open the file. However, that is not an issue and you can go on opening the file manually.*
 

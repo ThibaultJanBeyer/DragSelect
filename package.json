@@ -5,26 +5,21 @@
   "main": "./docs/ds.min.js",
   "dependencies": {},
   "scripts": {
-    "start": "npm install; npm run open | gulp devl",
+    "start": "npm install; npm run open & npm run watch",
     "open": "open tests/quicktest.html -a 'Google Chrome'",
-    "gulp": "gulp",
-    "deploy": "gulp && bash deploy.sh",
+    "watch": "babel ./src/DragSelect.js -w -o ./docs/DragSelect.js",
+    "build": "npm run transpile && npm run uglify",
+    "transpile": "babel ./src/DragSelect.js -o ./docs/DragSelect.js",
+    "uglify": "uglifyjs ./docs/DragSelect.js -o ./docs/ds.min.js",
     "test": "jest"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-jest": "^23.6.0",
-    "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^3.1.1",
-    "gulp-babel": "^8.0.0",
-    "gulp-buble": "^0.9.0",
-    "gulp-csso": "^2.0.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^2.0.0",
-    "jest": "^23.4.1",
-    "puppeteer": "^1.6.0"
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "babel-jest": "^24.3.1",
+    "jest": "^24.3.1",
+    "puppeteer": "^1.13.0"
   },
   "repository": {
     "type": "git",
