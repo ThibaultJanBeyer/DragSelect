@@ -30,7 +30,7 @@ easily add a selection algorithm to your application/website.
 - Free & open source under MIT License
 - Ease of use
 
-![dragselect demo](https://thibaultjanbeyer.github.io/DragSelect/dragselect.gif)
+![demo-gif](https://thibaultjanbeyer.github.io/DragSelect/dragselect.gif)
 
 # Why?
 
@@ -208,4 +208,5 @@ Tell all your friends and start contributing or [donating 1$](https://paypal.me/
 <br>
 <br>
 <br>
-[Documentation](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)
+
+[documentation](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)
