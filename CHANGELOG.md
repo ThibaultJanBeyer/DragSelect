@@ -1,3 +1,7 @@
+# 1.11.3
+
+- Keep the `dist/` folder holding only the relevant files. In order to keep the repo clean and to not break standarts introduced earlier.
+
 # 1.11.2
 
 - Use `DragSelect.js` as `"main"` in `package.json` in order to get intellisense
