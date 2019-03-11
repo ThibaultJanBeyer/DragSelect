@@ -18,7 +18,7 @@
 
 # 1.11.0
 
-- **Moved the files from the `dist` folder to the `docs` folder to adhere to github pages standart**
+- Moved the files from the `dist` folder to the `docs` folder to adhere to github pages standart
 - Improve code stability by enforcing typechecks via JS-Docs, inspired by [truckjs](https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76)  
 - Partial rewrite using native ES6 classes transpiling down to ES5 using babel.  
   *Note: first I refactored the code to TypeScript but then rolled back because it might limit the ability of external people to contribute due to the new language*
