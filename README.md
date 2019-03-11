@@ -7,28 +7,32 @@
                  /____/                              
 ```
 
+[GitHub](https://github.com/ThibaultJanBeyer/DragSelect/) | [NPM](https://www.npmjs.com/package/dragselect) | [Project-Page](https://thibaultjanbeyer.github.io/DragSelect/)  
+
 # DragSelect
 easily add a selection algorithm to your application/website.
 
 # Project Page: Demo & Info
 
-https://thibaultjanbeyer.github.io/DragSelect/
+[https://thibaultjanbeyer.github.io/DragSelect/](https://thibaultjanbeyer.github.io/DragSelect/)
 
 # Key-Features
 
 - No dependencies
 - Accessibility (a11y)
 - Add drag selection
+- Use modifier keys to make multiple independent selections
 - Choose which elements can be selected
 - Great browser support, works even like a charm on IE10
 - Lightweight, only ![gzip size](http://img.badgesize.io/https://thibaultjanbeyer.github.io/DragSelect/ds.min.js?compression=gzip)
+- Popular: ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) on npm
 - DragSelect was written with Performance in mind
 - Supports SVG
 - Supports mobile (touch interaction)
 - Free & open source under MIT License
 - Ease of use
 
-![dragselect demo](dragselect.gif)
+![demo-gif](https://thibaultjanbeyer.github.io/DragSelect/dragselect.gif)
 
 # Why?
 
@@ -39,20 +43,22 @@ We use it currently in a professional rich interface application where we have a
 # Installation
 ## easy
 
-Just download the file (minified) and add it to your document:
+Just [download the file](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/docs/DragSelect.js) ([minified](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/docs/ds.min.js)) and add it to your document:
 
 ```html
 <script src="https://thibaultjanbeyer.github.io/DragSelect/ds.min.js"></script>
 ```
 
+*Note: if you are using `<script type=module` you can use the `DragSelect.es6m.js` or `ds.es6m.min.js` files as they include `export default DragSelect`*
+
 ## npm
 ```console
-npm install --save-dev dragselect
+npm install --save dragselect
 ```
 
 ## bower
 ```console
-bower install --save-dev dragselect
+bower install --save dragselect
 ```
 
 That's it, you're ready to rock!  
@@ -66,6 +72,7 @@ Now in your JavaScript you can simply pass elements to the function like so:
 
 ## simple
 
+The simplest possible usage.  
 Choose which elements can be selected:
 
 ```javascript
@@ -74,9 +81,18 @@ new DragSelect({
 });
 ```
 
-## complete
+<p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="prpwYG" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">prpwYG</a> on CodePen.</p>
 
-All options are optional. You could also just initiate the Dragselect by `new DragSelect();` without any option.
+## Within a scroll-able Area
+
+Here the selection is constrained. You can only use the selection inside of the container with the red border:
+
+<p data-height="265" data-theme-id="0" data-slug-hash="Nvobgq" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect with Scrollable AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a> on CodePen.</p>
+
+## extended
+
+All options are optional. You could also just initiate the Dragselect by `new DragSelect();` without any option.  
+Find all possible properties and methods in **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**  
 
 ```javascript
 var ds = new DragSelect({
@@ -104,7 +120,7 @@ ds.start();  // reset the functionality after a teardown
 // and many more, see "methods" section in documentation
 ```  
 
-You can also use the "shift", "ctrl" or "command" key to make multiple independent selections.
+*You can also use the "shift", "ctrl" or "command" key to make multiple independent selections.*
 
 ## Mobile/Touch useage
 
@@ -115,13 +131,17 @@ In 99% of the usecases, this is what you want. If DragSelect is only one part of
 
 DragSelect is accessibly by default:  
 
-TLDR; => Your `selectables` should be buttons: `<button type="button"></button>`.  
+> TLDR; => Your `selectables` should be buttons: `<button type="button"></button>`.  
 
 Obviously, keyboard users won’t get the full visual experience but it works similarely to the OS default behaviour. You can select items using the default select keys (usually space or enter) and also multiselect when using a modifier key at the same time (unfortunately this does not work in firefox for now since FF doesn’t add the modifier key in the event object when using the keyboard). There is one little thing you have to do tho’: the `selectables` have to be pressable (clickable)! To achieve this, they should be of type `<button type="button"></button>`.  
 
-
+<p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="html,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">DragSelect</a> on CodePen.</p>
 
 # Properties:
+
+Full list of properties is found in **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**  
+Here are some properties for your convenience (not all):  
+
 | property | type | usage |
 |--- |--- |--- |
 |selectables |DOM elements (nodes) |OPTIONAL. The elements that can be selected |
@@ -143,7 +163,8 @@ Obviously, keyboard users won’t get the full visual experience but it works si
 |callback |function |OPTIONAL. Callback function that gets fired when the selection is released. This callback gets a property which is an array that holds all selected nodes |
 
 # Methods:
-When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions. There are way more than listed here. Here are just the most usable:  
+When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions.  
+There are way more than listed here. You can find all in **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**. Here are just the most usable:  
 
 | method | properties | usage |
 |--- |--- |--- |
@@ -173,10 +194,20 @@ When the function is saved into a variable `var foo = new DragSelect()` you have
 |.ds-selector |On the selector element
 |.ds-selectable |On elements that can be selected
 
-*note: you can change the class names setting the respective property on the constructor, see [Properties](#properties) section.*
+*note: you can change the class names setting the respective property on the constructor, see **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)** properties section.*
 
 # Have Fun!
 
-Don’t forget to give this repository a star if you find it useful. Tell all your friends and start contributing. Thank you :)
+Creating and maintaining useful tools is a lot of work. 
+So don’t forget to give this repository a star if you find it useful.
+Tell all your friends and start contributing or [donating 1$](https://paypal.me/kleinanzeigen3) to keep me running. Thank you :)
 
 [![Typewriter Gif](https://thibaultjanbeyer.github.io/DragSelect/typewriter.gif)](http://thibaultjanbeyer.com/)
+
+
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+<br>
+<br>
+<br>
+
+[documentation](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)

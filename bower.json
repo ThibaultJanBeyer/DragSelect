@@ -1,7 +1,7 @@
 {
   "name": "dragselect",
   "description": "easy javascript drag select functionality to your projects",
-  "main": "./dist/ds.min.js",
+  "main": "./docs/ds.min.js",
   "authors": [
     "Thibault Jan Beyer"
   ],

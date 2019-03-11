@@ -16,16 +16,10 @@ But if you are the project owner:
 
 1. do thorough testing
 2. bump version in .js file
-3. run `gulp`
-4. pushed everything
+3. run `npm run build`
+4. you can deploy a new version by pushing to github
 
-5. you can deploy a new version using:
-
-```
-npm run deploy
-```
-
-This will build the package and push the changes to `github pages`. Thus also updating the online html and the examples.  
+Since it uses the `docs/` folder for hosting on `github pages`.
 If this was successful, the next step is to publish the new version on `npm`:
 
 ```
@@ -36,4 +30,4 @@ npm publish
 versions are either `patch` wich changes 0.0.x, `minor` wich changes 0.x.0 or `major` for x.0.0.  
 See [npm docs](https://docs.npmjs.com/getting-started/publishing-npm-packages)  
 
-After that run `npm run deploy` again, just to make sure
+After that push again, just to make sure
