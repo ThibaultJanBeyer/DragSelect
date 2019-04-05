@@ -247,8 +247,8 @@ function () {
 
       _this.area.addEventListener('touchmove', _this._handleMove);
 
-      document.addEventListener('mouseup', _this.reset);
-      document.addEventListener('touchend', _this.reset);
+      document.addEventListener('mouseup', _this.resetWithCallback);
+      document.addEventListener('touchend', _this.resetWithCallback);
     });
 
     _defineProperty(this, "_handleMove", function (event) {
@@ -272,10 +272,16 @@ function () {
       _this._autoScroll(event);
     });
 
+    _defineProperty(this, "resetWithCallback", function (event) {
+      _this.callback(_this._selected, event);
+
+      _this.reset();
+    });
+
     _defineProperty(this, "reset", function (event) {
       _this._previousCursorPos = _this._getCursorPos(event, _this.area);
-      document.removeEventListener('mouseup', _this.reset);
-      document.removeEventListener('touchend', _this.reset);
+      document.removeEventListener('mouseup', _this.resetWithCallback);
+      document.removeEventListener('touchend', _this.resetWithCallback);
 
       _this.area.removeEventListener('mousemove', _this._handleMove);
 
@@ -286,8 +292,6 @@ function () {
       _this.area.addEventListener('touchstart', _this._startUp, {
         passive: false
       });
-
-      _this.callback(_this._selected, event);
 
       if (_this._breaked) {
         return false;
@@ -365,6 +369,8 @@ function () {
           this._addSelectable(selectable, fromSelection);
         } else if (indexOf > -1 && remove) {
           this._removeSelectable(selectable, indexOf, fromSelection);
+
+          index--;
         }
       }
     }
@@ -855,10 +861,6 @@ function () {
     } // Ending
     //////////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Unbind functions when mouse click is released
-     */
-
   }, {
     key: "break",
 
@@ -890,8 +892,10 @@ function () {
       this.area.removeEventListener('touchstart', this._startUp, {
         passive: false
       });
-      document.removeEventListener('mouseup', this.reset);
-      document.removeEventListener('touchend', this.reset);
+      document.removeEventListener('mouseup', this.resetWithCallback);
+      document.removeEventListener('touchend', this.resetWithCallback);
+
+      this._handleSelectables(this.selectables, true, true);
     } // Usefull methods for user
     //////////////////////////////////////////////////////////////////////////////////////
 
