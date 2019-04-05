@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>.stop() Test</title>
+  <link rel="stylesheet" href="test-styles.css">
+</head>
+<body>
+  <h1>.stop() Test</h1>
+
+  <div id="selectionarea"></div>
+
+  <script src="../src/DragSelect.js"></script>
+
+  <script>
+    for (var i = 0 ; i < 5; i++) {
+      var child = document.createElement("button");
+      child.appendChild(document.createTextNode(i));
+      child.classList.add("generated-item");
+      document.getElementById('selectionarea').appendChild(child);
+    }
+    let ds = new DragSelect({
+      selectables: document.querySelectorAll('.generated-item'),
+      area: document.getElementById('selectionarea'),
+      callback: (elements) => {
+        console.log("highlevel callback fired");
+      },
+    });
+
+    function stop(){
+      ds.stop()
+    }
+
+  </script>
+
+  <div style="margin: 15px;">
+    <button onclick="stop()">Stop</button>
+  </div>
+</body>
+</html>
