@@ -1,0 +1,71 @@
+<link rel="stylesheet" href="basics.css">
+<style>
+.item.one {
+  background: #f25d0d;
+  top: 0;
+  left: 0;
+}
+
+.item.two {
+  background: #0df20d;
+  top: 50px;
+  left: 50px;
+}
+
+.item.three {
+  background: #f20d11;
+  top: 150px;
+  left: 100px;
+}
+
+.item.four {
+  background: #f2700d;
+  top: 150px;
+  left: 150px;
+}
+
+.item.five {
+  background: #f20dbd;
+  top: 200px;
+  left: 200px;
+}
+
+.item.six {
+  background: #e30df2;
+  top: 250px;
+  left: 250px;
+}
+
+.area {
+    background: grey;
+    height: 250px;
+    left: 100px;
+    position: absolute;
+    top: 100px;
+    width: 250px;
+    overflow: auto;
+}
+</style>
+
+<div class="area">
+  <button type="button" id="one" class="item one">1</button>
+  <button type="button" id="two" class="item two">2</button>
+  <button type="button" id="three" class="item three">3</button>
+  <button type="button" id="four" class="item four">4</button>
+  <button type="button" id="five" class="item five">5</button>
+  <button type="button" id="six" class="item six">6</button>
+</div>
+
+<script src="../docs/DragSelect.js"></script>
+<script>
+    window.callbackIds = [];
+    window.selectables = document.querySelectorAll('.item');
+    window.itemIds = [...selectables].map(item => item.id);
+
+    new DragSelect({
+        selectables,
+        area: document.querySelector('.area'),
+        autoScrollSpeed: 100,
+        callback: (n, e) => window.callbackIds = n.map(n => n.id)
+    });
+</script>
