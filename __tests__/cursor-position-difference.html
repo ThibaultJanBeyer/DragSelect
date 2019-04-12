@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="basics.css">
+<body></body>
+<script src="../docs/DragSelect.js"></script>
+<script>
+    window.cursorStartDiff = [];
+    window.cursorMoveDiff = [];
+    window.cursorPosMove = [];
+    window.cursorPosStart = [];
+
+    new DragSelect({
+      onDragStart: function(e) {
+        const diff = this.getCursorPositionDifference(true);
+        console.log("onStart ::: getCursorPositionDifference(true)", diff);
+        cursorStartDiff.push(diff);
+        cursorPosStart.push({ x: e.clientX, y: e.clientY });
+      },
+      onDragMove: function(e) {
+        const diff = this.getCursorPositionDifference();
+        console.log("onMove ::: getCursorPositionDifference()", diff);
+        cursorMoveDiff.push(diff);
+        cursorPosMove.push({ x: e.clientX, y: e.clientY });
+      },
+    });
+</script>
