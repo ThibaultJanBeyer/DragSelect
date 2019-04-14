@@ -162,7 +162,6 @@ class DragSelect {
         this._addSelectable(selectable, fromSelection);
       } else if (indexOf > -1 && remove) {
         this._removeSelectable(selectable, indexOf, fromSelection);
-        index--;
       }
     }
   }
@@ -728,9 +727,14 @@ class DragSelect {
   // Ending
   //////////////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Triggered on mouse click release (end of dragging a selection). 
+   * Calls the callback method & unbind functions.
+   * @param {Object} event - The event object.
+   */
   resetWithCallback = event => {
     this.callback(this._selected, event);
-    this.reset();
+    this.reset(event);
   };
 
   /**
@@ -790,7 +794,7 @@ class DragSelect {
     document.removeEventListener('mouseup', this.resetWithCallback);
     document.removeEventListener('touchend', this.resetWithCallback);
 
-    this._handleSelectables(this.selectables,true,true)
+    this._handleSelectables([...this.selectables],true,true)
   }
 
   // Usefull methods for user
