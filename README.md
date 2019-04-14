@@ -9,7 +9,7 @@
 
 [GitHub](https://github.com/ThibaultJanBeyer/DragSelect/) | [NPM](https://www.npmjs.com/package/dragselect) | [Project-Page](https://thibaultjanbeyer.github.io/DragSelect/)  
 
-[![Build Status](https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master)](https://travis-ci.com/ThibaultJanBeyer/DragSelect) ![gzip size](http://img.badgesize.io/https://thibaultjanbeyer.github.io/DragSelect/ds.min.js?compression=gzip) ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg)
+[![Build Status](https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master)](https://travis-ci.com/ThibaultJanBeyer/DragSelect) ![gzip size](http://img.badgesize.io/https://thibaultjanbeyer.github.io/DragSelect/ds.min.js?compression=gzip) ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) [![No Dependency](https://david-dm.org/ThibaultJanBeyer/DragSelect.svg)](https://david-dm.org/ThibaultJanBeyer/DragSelect)
 
 # DragSelect
 easily add a selection algorithm to your application/website.
@@ -20,7 +20,7 @@ easily add a selection algorithm to your application/website.
 
 # Key-Features
 
-- No dependencies
+- No dependencies 
 - Accessibility (a11y)
 - Add drag selection
 - Use modifier keys to make multiple independent selections
