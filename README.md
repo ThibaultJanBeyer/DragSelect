@@ -9,6 +9,8 @@
 
 [GitHub](https://github.com/ThibaultJanBeyer/DragSelect/) | [NPM](https://www.npmjs.com/package/dragselect) | [Project-Page](https://thibaultjanbeyer.github.io/DragSelect/)  
 
+[![Build Status](https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master)](https://travis-ci.com/ThibaultJanBeyer/DragSelect) ![gzip size](http://img.badgesize.io/https://thibaultjanbeyer.github.io/DragSelect/ds.min.js?compression=gzip) ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg)
+
 # DragSelect
 easily add a selection algorithm to your application/website.
 
