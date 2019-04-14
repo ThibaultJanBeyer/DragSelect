@@ -20,7 +20,7 @@ easily add a selection algorithm to your application/website.
 
 # Key-Features
 
-- No dependencies 
+- **No dependencies**
 - Accessibility (a11y)
 - Add drag selection
 - Use modifier keys to make multiple independent selections
