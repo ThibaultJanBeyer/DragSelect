@@ -6,3 +6,6 @@ jobs:
   include:
      after_success:
         - npm run build
+        - git add .
+        - git commit -m "autobuild"
+        - git push
