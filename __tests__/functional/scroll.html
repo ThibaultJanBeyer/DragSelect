@@ -2,9 +2,9 @@
 <style>
     #lel {
       overflow: auto;
-      top: 80%;
-      height: 100%;
-      width: 60%;
+      top: 100px;
+      height: 800px;
+      width: 500px;
       background-color: lightcoral;
     }
 
@@ -14,7 +14,7 @@
 
     .item.five {
       top: 1000px;
-      left: 100px;
+      left: 1000px;
     }
 </style>
 <div id="lel">
@@ -22,20 +22,14 @@
     <button type="button" id="five" class="item five">5</button>
 </div>
 
-<script src="../docs/DragSelect.js"></script>
+<script src="../../docs/DragSelect.js"></script>
 <script>
+    window.callback = [];
     window.ds = new DragSelect({
         selectables: document.getElementsByClassName('item'),
         customStyles: true,
         selectorClass: 'selectorrr',
         area: document.getElementById('lel'),
-    });
-
-    scroll({
-        top: 500
-    });
-
-    document.querySelector('#lel').scroll({
-        top: 150
+        callback: items => callback = items.map(item => item.id)
     });
 </script>

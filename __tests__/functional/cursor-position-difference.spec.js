@@ -1,7 +1,7 @@
 // Check if onStart ::: getCursorPositionDifference(true) and onMove ::: getCursorPositionDifference() return the correct values
 import puppeteer from 'puppeteer';
 
-const baseUrl = `file://${process.cwd()}/__tests__`;
+const baseUrl = `file://${process.cwd()}/__tests__/functional`;
 let page;
 let browser;
 
