@@ -1,3 +1,7 @@
+# 1.12.2
+
+- Keep selection when clicking on scrollbars. Fixes [#36](https://github.com/ThibaultJanBeyer/DragSelect/issues/36)
+
 # 1.12.1
 
 - Improve private event callbacks

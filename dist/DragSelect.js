@@ -18,7 +18,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// v 1.12.1
+// v 1.12.2
 // @ts-check
 
 /* 
@@ -221,8 +221,10 @@ function () {
     value: function _handleArea(area) {
       if (area === document) return area; // Area has to have a special position attribute for calculations
 
-      var computedArea = getComputedStyle(area);
-      var isPositioned = computedArea.position === 'absolute' || computedArea.position === 'relative' || computedArea.position === 'fixed';
+      var computedStyles = getComputedStyle(area);
+      area.computedBorder = parseInt(computedStyles.borderWidth);
+      var position = computedStyles.position;
+      var isPositioned = position === 'absolute' || position === 'relative' || position === 'fixed';
 
       if (!isPositioned) {
         area.style.position = 'relative';
@@ -398,11 +400,12 @@ function () {
     value: function startUp(event) {
       // touchmove handler
       if (event.type === 'touchstart') // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
-        event.preventDefault(); // callback
+        event.preventDefault();
+      if (this._isRightClick(event)) return;
+      if (this._isScrollbarClick(event, this.area)) return; // callback
 
       this.onDragStartBegin(event);
       if (this._breaked) return false;
-      if (this._isRightClick(event)) return;
       this.mouseInteraction = true;
       this.selector.style.display = 'block';
       if (this._isMultiSelectKeyPressed(event)) this._prevSelected = this._selected.slice(); // #9
@@ -423,7 +426,9 @@ function () {
         passive: false
       });
       this.area.addEventListener('mousemove', this._handleMove);
-      this.area.addEventListener('touchmove', this._handleMove);
+      this.area.addEventListener('touchmove', this._handleMove, {
+        passive: false
+      });
       document.addEventListener('mouseup', this._end);
       document.addEventListener('touchend', this._end);
     }
@@ -861,7 +866,9 @@ function () {
       document.removeEventListener('mouseup', this._end);
       document.removeEventListener('touchend', this._end);
       this.area.removeEventListener('mousemove', this._handleMove);
-      this.area.removeEventListener('touchmove', this._handleMove);
+      this.area.removeEventListener('touchmove', this._handleMove, {
+        passive: false
+      });
       this.area.addEventListener('mousedown', this._startUp);
       this.area.addEventListener('touchstart', this._startUp, {
         passive: false
@@ -1158,10 +1165,6 @@ function () {
   }, {
     key: "_isRightClick",
     value: function _isRightClick(event) {
-      if (!event) {
-        return false;
-      }
-
       var isRightMB = false;
 
       if ('which' in event) {
@@ -1173,6 +1176,26 @@ function () {
       }
 
       return isRightMB;
+    }
+    /**
+     * Based on a click event object in an area,
+     * checks if the click was triggered onto a scrollbar.
+     * @param {object} event – the event object
+     * @param {(HTMLElement|SVGElement|any)} area – containing area / document if none
+     * @return {boolean}
+     * @private
+     */
+
+  }, {
+    key: "_isScrollbarClick",
+    value: function _isScrollbarClick(event, area) {
+      var cPos = this._getCursorPos(event, area);
+
+      var areaRect = this.getAreaRect(area);
+      var border = area.computedBorder || 0;
+      if (areaRect.width + border <= cPos.x) return true;
+      if (areaRect.height + border <= cPos.y) return true;
+      return false;
     }
     /**
      * Transforms a nodelist or single node to an array
@@ -1357,8 +1380,8 @@ function () {
         left: rect.left,
         bottom: rect.bottom,
         right: rect.right,
-        width: rect.width,
-        height: rect.height
+        width: area.clientWidth || rect.width,
+        height: area.clientHeight || rect.height
       };
     }
     /**

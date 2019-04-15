@@ -1,4 +1,4 @@
-// v 1.12.1
+// v 1.12.2
 // @ts-check
 /* 
     ____                   _____      __          __ 
@@ -135,11 +135,13 @@ class DragSelect {
     if (area === document) return area;
 
     // Area has to have a special position attribute for calculations
-    const computedArea = getComputedStyle(area);
+    const computedStyles = getComputedStyle(area);
+    area.computedBorder = parseInt(computedStyles.borderWidth);
+    const position = computedStyles.position;
     const isPositioned =
-      computedArea.position === 'absolute' ||
-      computedArea.position === 'relative' ||
-      computedArea.position === 'fixed';
+      position === 'absolute' ||
+      position === 'relative' ||
+      position === 'fixed';
     if (!isPositioned) {
       area.style.position = 'relative';
     }
@@ -297,11 +299,12 @@ class DragSelect {
       // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
       event.preventDefault();
 
+    if (this._isRightClick(event)) return;
+    if (this._isScrollbarClick(event, this.area)) return;
+
     // callback
     this.onDragStartBegin(event);
     if (this._breaked) return false;
-
-    if (this._isRightClick(event)) return;
 
     this.mouseInteraction = true;
     this.selector.style.display = 'block';
@@ -327,7 +330,9 @@ class DragSelect {
       passive: false
     });
     this.area.addEventListener('mousemove', this._handleMove);
-    this.area.addEventListener('touchmove', this._handleMove);
+    this.area.addEventListener('touchmove', this._handleMove, {
+      passive: false
+    });
     document.addEventListener('mouseup', this._end);
     document.addEventListener('touchend', this._end);
   }
@@ -754,7 +759,9 @@ class DragSelect {
     document.removeEventListener('mouseup', this._end);
     document.removeEventListener('touchend', this._end);
     this.area.removeEventListener('mousemove', this._handleMove);
-    this.area.removeEventListener('touchmove', this._handleMove);
+    this.area.removeEventListener('touchmove', this._handleMove, {
+      passive: false
+    });
     this.area.addEventListener('mousedown', this._startUp);
     this.area.addEventListener('touchstart', this._startUp, { passive: false });
 
@@ -1011,10 +1018,6 @@ class DragSelect {
    * @private
    */
   _isRightClick(event) {
-    if (!event) {
-      return false;
-    }
-
     var isRightMB = false;
 
     if ('which' in event) {
@@ -1026,6 +1029,24 @@ class DragSelect {
     }
 
     return isRightMB;
+  }
+
+  /**
+   * Based on a click event object in an area,
+   * checks if the click was triggered onto a scrollbar.
+   * @param {object} event – the event object
+   * @param {(HTMLElement|SVGElement|any)} area – containing area / document if none
+   * @return {boolean}
+   * @private
+   */
+  _isScrollbarClick(event, area) {
+    const cPos = this._getCursorPos(event, area);
+    const areaRect = this.getAreaRect(area);
+    const border = area.computedBorder || 0;
+
+    if (areaRect.width + border <= cPos.x) return true;
+    if (areaRect.height + border <= cPos.y) return true;
+    return false;
   }
 
   /**
@@ -1213,8 +1234,8 @@ class DragSelect {
       left: rect.left,
       bottom: rect.bottom,
       right: rect.right,
-      width: rect.width,
-      height: rect.height
+      width: area.clientWidth || rect.width,
+      height: area.clientHeight || rect.height
     };
   }
 
