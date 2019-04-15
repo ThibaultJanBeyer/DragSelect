@@ -7,5 +7,7 @@ stages:
   - name: build
     if: branch = master
 
-- stage: build
-    - script: npm run build
+jobs:
+  include:
+    - stage: build
+      - script: npm run build
