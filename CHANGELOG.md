@@ -1,3 +1,10 @@
+# 1.12.0
+
+- Fix bugs related to the `stop()` functionality [#37](https://github.com/ThibaultJanBeyer/DragSelect/issues/37) and [#38](https://github.com/ThibaultJanBeyer/DragSelect/issues/38). Big thanks to [@Martin-Eckleben](https://github.com/Martin-Eckleben) for the contribution!
+- - Note that `reset()` now only resets the tool while `resetWithCallback()` also triggers the callback.
+- Improve automatic tests
+- Add typechecking to tests
+
 # 1.11.3
 
 - Keep the `dist/` folder holding only the relevant files. In order to not introduce breaking changed to standarts introduced earlier.
