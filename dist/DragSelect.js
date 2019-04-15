@@ -18,7 +18,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// v 1.12.0
+// v 1.12.1
 // @ts-check
 
 /* 
@@ -173,145 +173,19 @@ function () {
     _defineProperty(this, "_lastTouch", void 0);
 
     _defineProperty(this, "_onClick", function (event) {
-      if (_this.mouseInteraction) {
-        return;
-      } // fix firefox doubleclick issue
-
-
-      if (_this._isRightClick(event)) {
-        return;
-      }
-      /** @type {any} */
-
-
-      var node = event.target;
-
-      if (_this._isMultiSelectKeyPressed(event)) {
-        _this._prevSelected = _this._selected.slice();
-      } // #9
-      else {
-          _this._prevSelected = [];
-        } // #9
-
-
-      _this.checkIfInsideSelection(true); // reset selection if no multiselectionkeypressed
-
-
-      if (_this.selectables.indexOf(node) > -1) {
-        _this.toggle(node);
-      }
-
-      _this.resetWithCallback(event);
+      return _this.handleClick(event);
     });
 
     _defineProperty(this, "_startUp", function (event) {
-      // touchmove handler
-      if (event.type === 'touchstart') // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
-        event.preventDefault(); // callback
-
-      _this.onDragStartBegin(event);
-
-      if (_this._breaked) {
-        return false;
-      }
-
-      if (_this._isRightClick(event)) {
-        return;
-      }
-
-      _this.mouseInteraction = true;
-      _this.selector.style.display = 'block';
-
-      if (_this._isMultiSelectKeyPressed(event)) {
-        _this._prevSelected = _this._selected.slice();
-      } // #9
-      else {
-          _this._prevSelected = [];
-        } // #9
-      // move element on location
-
-
-      _this._getStartingPositions(event);
-
-      _this.checkIfInsideSelection(true);
-
-      _this.selector.style.display = 'none'; // hidden unless moved, fix for issue #8
-      // callback
-
-      _this.moveStartCallback(event);
-
-      if (_this._breaked) {
-        return false;
-      } // event listeners
-
-
-      _this.area.removeEventListener('mousedown', _this._startUp);
-
-      _this.area.removeEventListener('touchstart', _this._startUp, {
-        passive: false
-      });
-
-      _this.area.addEventListener('mousemove', _this._handleMove);
-
-      _this.area.addEventListener('touchmove', _this._handleMove);
-
-      document.addEventListener('mouseup', _this.resetWithCallback);
-      document.addEventListener('touchend', _this.resetWithCallback);
+      return _this.startUp(event);
     });
 
     _defineProperty(this, "_handleMove", function (event) {
-      var selectorPos = _this._getPosition(event); // callback
-
-
-      _this.moveCallback(event);
-
-      if (_this._breaked) {
-        return false;
-      }
-
-      _this.selector.style.display = 'block'; // hidden unless moved, fix for issue #8
-      // move element on location
-
-      _this._updatePos(_this.selector, selectorPos);
-
-      _this.checkIfInsideSelection(); // scroll area if area is scrollable
-
-
-      _this._autoScroll(event);
+      return _this.handleMove(event);
     });
 
-    _defineProperty(this, "resetWithCallback", function (event) {
-      _this.callback(_this.getSelection(), event);
-
-      _this.reset(event);
-    });
-
-    _defineProperty(this, "reset", function (event) {
-      _this._previousCursorPos = _this._getCursorPos(event, _this.area);
-      document.removeEventListener('mouseup', _this.resetWithCallback);
-      document.removeEventListener('touchend', _this.resetWithCallback);
-
-      _this.area.removeEventListener('mousemove', _this._handleMove);
-
-      _this.area.removeEventListener('touchmove', _this._handleMove);
-
-      _this.area.addEventListener('mousedown', _this._startUp);
-
-      _this.area.addEventListener('touchstart', _this._startUp, {
-        passive: false
-      });
-
-      if (_this._breaked) {
-        return false;
-      }
-
-      _this.selector.style.width = '0';
-      _this.selector.style.height = '0';
-      _this.selector.style.display = 'none';
-      setTimeout(function () {
-        // debounce in order "onClick" to work
-        this.mouseInteraction = false;
-      }.bind(_this), 100);
+    _defineProperty(this, "_end", function (event) {
+      return _this.reset(event, true);
     });
 
     this.selectedClass = selectedClass;
@@ -419,6 +293,14 @@ function () {
       }
     }
     /**
+     * @param {MouseEvent} event
+     * @private
+     */
+
+  }, {
+    key: "handleClick",
+
+    /**
      * Triggers when a node is actively selected.
      *
      * This might be an "onClick" method but it also triggers when
@@ -428,15 +310,44 @@ function () {
      * @param {MouseEvent} event
      * @private
      */
+    value: function handleClick(event) {
+      if (this.mouseInteraction) {
+        return;
+      } // fix firefox doubleclick issue
 
-  }, {
-    key: "_createSelector",
 
+      if (this._isRightClick(event)) {
+        return;
+      }
+      /** @type {any} */
+
+
+      var node = event.target;
+
+      if (this._isMultiSelectKeyPressed(event)) {
+        this._prevSelected = this._selected.slice();
+      } // #9
+      else {
+          this._prevSelected = [];
+        } // #9
+
+
+      this.checkIfInsideSelection(true); // reset selection if no multiselectionkeypressed
+
+      if (this.selectables.indexOf(node) > -1) {
+        this.toggle(node);
+      }
+
+      this._end(event);
+    }
     /**
      * Create the selector node when not provided by options object.
      * @return {HTMLElement}
      * @private
      */
+
+  }, {
+    key: "_createSelector",
     value: function _createSelector() {
       var selector = document.createElement('div');
       selector.style.position = 'absolute';
@@ -472,20 +383,59 @@ function () {
       });
     }
     /**
-     * Startup when the area is clicked.
      * @param {Object} event - The event object.
      * @private
      */
 
   }, {
-    key: "_isMultiSelectKeyPressed",
+    key: "startUp",
 
+    /**
+     * Startup when the area is clicked.
+     * @param {Object} event - The event object.
+     * @private
+     */
+    value: function startUp(event) {
+      // touchmove handler
+      if (event.type === 'touchstart') // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
+        event.preventDefault(); // callback
+
+      this.onDragStartBegin(event);
+      if (this._breaked) return false;
+      if (this._isRightClick(event)) return;
+      this.mouseInteraction = true;
+      this.selector.style.display = 'block';
+      if (this._isMultiSelectKeyPressed(event)) this._prevSelected = this._selected.slice(); // #9
+      else this._prevSelected = []; // #9
+      // move element on location
+
+      this._getStartingPositions(event);
+
+      this.checkIfInsideSelection(true);
+      this.selector.style.display = 'none'; // hidden unless moved, fix for issue #8
+      // callback
+
+      this.moveStartCallback(event);
+      if (this._breaked) return false; // event listeners
+
+      this.area.removeEventListener('mousedown', this._startUp);
+      this.area.removeEventListener('touchstart', this._startUp, {
+        passive: false
+      });
+      this.area.addEventListener('mousemove', this._handleMove);
+      this.area.addEventListener('touchmove', this._handleMove);
+      document.addEventListener('mouseup', this._end);
+      document.addEventListener('touchend', this._end);
+    }
     /**
      * Check if some multiselection modifier key is pressed
      * @param {Object} event - The event object.
      * @return {boolean} this._isMultiSelectKeyPressed
      * @private
      */
+
+  }, {
+    key: "_isMultiSelectKeyPressed",
     value: function _isMultiSelectKeyPressed(event) {
       this._multiSelectKeyPressed = false;
 
@@ -525,20 +475,42 @@ function () {
     //////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Handles what happens while the mouse is moved
      * @param {Object} event - The event object.
      * @private
      */
 
   }, {
-    key: "_getPosition",
+    key: "handleMove",
 
+    /**
+     * Handles what happens while the mouse is moved
+     * @param {Object} event - The event object.
+     * @private
+     */
+    value: function handleMove(event) {
+      var selectorPos = this._getPosition(event); // callback
+
+
+      this.moveCallback(event);
+      if (this._breaked) return false;
+      this.selector.style.display = 'block'; // hidden unless moved, fix for issue #8
+      // move element on location
+
+      this._updatePos(this.selector, selectorPos);
+
+      this.checkIfInsideSelection(); // scroll area if area is scrollable
+
+      this._autoScroll(event);
+    }
     /**
      * Calculates and returns the exact x,y,w,h positions of the selector element
      * @param {object} [event] - The event object.
      * @returns {{x:number,y:number,w:number,h:number}}
      * @private
      */
+
+  }, {
+    key: "_getPosition",
     value: function _getPosition(event) {
       var cursorPosNew = this._getCursorPos(event, this.area);
 
@@ -871,43 +843,81 @@ function () {
      * Triggered on mouse click release (end of dragging a selection).
      * Calls the callback method & unbind functions.
      * @param {Object} event - The event object.
+     * @private
      */
 
   }, {
-    key: "break",
+    key: "reset",
 
+    /**
+     * Unbind functions i.e. when mouse click is released
+     * @param {Object} [event] - The event object.
+     * @param {boolean} [withCallback] - whether or not the callback should be called
+     */
+    value: function reset(event, withCallback) {
+      var _this2 = this;
+
+      this._previousCursorPos = this._getCursorPos(event, this.area);
+      document.removeEventListener('mouseup', this._end);
+      document.removeEventListener('touchend', this._end);
+      this.area.removeEventListener('mousemove', this._handleMove);
+      this.area.removeEventListener('touchmove', this._handleMove);
+      this.area.addEventListener('mousedown', this._startUp);
+      this.area.addEventListener('touchstart', this._startUp, {
+        passive: false
+      });
+      if (withCallback) this.callback(this.getSelection(), event);
+      if (this._breaked) return false;
+      this.selector.style.width = '0';
+      this.selector.style.height = '0';
+      this.selector.style.display = 'none';
+      setTimeout(function () {
+        return (// debounce in order "onClick" to work
+          _this2.mouseInteraction = false
+        );
+      }, 100);
+    }
     /**
      * Function break: used in callbacks to disable the execution of the upcoming code at the specific moment
      * In contrary to stop():
      * - Event listeners, callback calls and calculation will continue working
      * - Selector won’t display and will not select
      */
+
+  }, {
+    key: "break",
     value: function _break() {
-      var _this2 = this;
+      var _this3 = this;
 
       this._breaked = true;
       setTimeout( // debounce the break should only break once instantly after call
       function () {
-        return _this2._breaked = false;
+        return _this3._breaked = false;
       }, 100);
     }
     /**
      * Complete function teardown
      * Will teardown/stop the whole functionality
+     * @param {boolean} [remove=true] - if elements should be removed.
+     * @param {boolean} [fromSelection=true] - if elements should also be added/removed to the selection.
+     * @param {boolean} [withCallback] - if elements should also be added/removed to the selection.
      */
 
   }, {
     key: "stop",
     value: function stop() {
-      this.reset();
+      var remove = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+      var fromSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      var withCallback = arguments.length > 2 ? arguments[2] : undefined;
+      this.reset(false, withCallback);
       this.area.removeEventListener('mousedown', this._startUp);
       this.area.removeEventListener('touchstart', this._startUp, {
         passive: false
       });
-      document.removeEventListener('mouseup', this.resetWithCallback);
-      document.removeEventListener('touchend', this.resetWithCallback);
+      document.removeEventListener('mouseup', this._end);
+      document.removeEventListener('touchend', this._end);
 
-      this._handleSelectables(_toConsumableArray(this.selectables), true, true);
+      this._handleSelectables(_toConsumableArray(this.selectables), remove, fromSelection);
     } // Usefull methods for user
     //////////////////////////////////////////////////////////////////////////////////////
 

@@ -69,6 +69,7 @@ describe('Scroll', () => {
 
     var callback = await page.evaluate(() => callback);
     expect(callback.length).toBe(1);
+    var callback = await page.evaluate(() => (callback = []));
 
     await mouse.move(10, 10);
     await mouse.down();

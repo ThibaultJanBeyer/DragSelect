@@ -1,4 +1,4 @@
-// v 1.12.0
+// v 1.12.1
 // @ts-check
 /* 
     ____                   _____      __          __ 
@@ -203,6 +203,12 @@ class DragSelect {
   }
 
   /**
+   * @param {MouseEvent} event
+   * @private
+   */
+  _onClick = event => this.handleClick(event);
+
+  /**
    * Triggers when a node is actively selected.
    *
    * This might be an "onClick" method but it also triggers when
@@ -212,7 +218,7 @@ class DragSelect {
    * @param {MouseEvent} event
    * @private
    */
-  _onClick = event => {
+  handleClick(event) {
     if (this.mouseInteraction) {
       return;
     } // fix firefox doubleclick issue
@@ -236,8 +242,8 @@ class DragSelect {
       this.toggle(node);
     }
 
-    this.resetWithCallback(event);
-  };
+    this._end(event);
+  }
 
   /**
    * Create the selector node when not provided by options object.
@@ -275,11 +281,17 @@ class DragSelect {
   }
 
   /**
+   * @param {Object} event - The event object.
+   * @private
+   */
+  _startUp = event => this.startUp(event);
+
+  /**
    * Startup when the area is clicked.
    * @param {Object} event - The event object.
    * @private
    */
-  _startUp = event => {
+  startUp(event) {
     // touchmove handler
     if (event.type === 'touchstart')
       // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
@@ -287,23 +299,17 @@ class DragSelect {
 
     // callback
     this.onDragStartBegin(event);
-    if (this._breaked) {
-      return false;
-    }
+    if (this._breaked) return false;
 
-    if (this._isRightClick(event)) {
-      return;
-    }
+    if (this._isRightClick(event)) return;
 
     this.mouseInteraction = true;
     this.selector.style.display = 'block';
 
-    if (this._isMultiSelectKeyPressed(event)) {
+    if (this._isMultiSelectKeyPressed(event))
       this._prevSelected = this._selected.slice();
-    } // #9
-    else {
-      this._prevSelected = [];
-    } // #9
+    // #9
+    else this._prevSelected = []; // #9
 
     // move element on location
     this._getStartingPositions(event);
@@ -313,9 +319,7 @@ class DragSelect {
 
     // callback
     this.moveStartCallback(event);
-    if (this._breaked) {
-      return false;
-    }
+    if (this._breaked) return false;
 
     // event listeners
     this.area.removeEventListener('mousedown', this._startUp);
@@ -324,9 +328,9 @@ class DragSelect {
     });
     this.area.addEventListener('mousemove', this._handleMove);
     this.area.addEventListener('touchmove', this._handleMove);
-    document.addEventListener('mouseup', this.resetWithCallback);
-    document.addEventListener('touchend', this.resetWithCallback);
-  };
+    document.addEventListener('mouseup', this._end);
+    document.addEventListener('touchend', this._end);
+  }
 
   /**
    * Check if some multiselection modifier key is pressed
@@ -375,18 +379,22 @@ class DragSelect {
   //////////////////////////////////////////////////////////////////////////////////////
 
   /**
+   * @param {Object} event - The event object.
+   * @private
+   */
+  _handleMove = event => this.handleMove(event);
+
+  /**
    * Handles what happens while the mouse is moved
    * @param {Object} event - The event object.
    * @private
    */
-  _handleMove = event => {
-    var selectorPos = this._getPosition(event);
+  handleMove(event) {
+    const selectorPos = this._getPosition(event);
 
     // callback
     this.moveCallback(event);
-    if (this._breaked) {
-      return false;
-    }
+    if (this._breaked) return false;
 
     this.selector.style.display = 'block'; // hidden unless moved, fix for issue #8
 
@@ -396,7 +404,7 @@ class DragSelect {
 
     // scroll area if area is scrollable
     this._autoScroll(event);
-  };
+  }
 
   /**
    * Calculates and returns the exact x,y,w,h positions of the selector element
@@ -732,40 +740,38 @@ class DragSelect {
    * Triggered on mouse click release (end of dragging a selection).
    * Calls the callback method & unbind functions.
    * @param {Object} event - The event object.
+   * @private
    */
-  resetWithCallback = event => {
-    this.callback(this.getSelection(), event);
-    this.reset(event);
-  };
+  _end = event => this.reset(event, true);
 
   /**
-   * Unbind functions when mouse click is released
+   * Unbind functions i.e. when mouse click is released
+   * @param {Object} [event] - The event object.
+   * @param {boolean} [withCallback] - whether or not the callback should be called
    */
-  reset = event => {
+  reset(event, withCallback) {
     this._previousCursorPos = this._getCursorPos(event, this.area);
-    document.removeEventListener('mouseup', this.resetWithCallback);
-    document.removeEventListener('touchend', this.resetWithCallback);
+    document.removeEventListener('mouseup', this._end);
+    document.removeEventListener('touchend', this._end);
     this.area.removeEventListener('mousemove', this._handleMove);
     this.area.removeEventListener('touchmove', this._handleMove);
     this.area.addEventListener('mousedown', this._startUp);
     this.area.addEventListener('touchstart', this._startUp, { passive: false });
 
-    if (this._breaked) {
-      return false;
-    }
+    if (withCallback) this.callback(this.getSelection(), event);
+    if (this._breaked) return false;
 
     this.selector.style.width = '0';
     this.selector.style.height = '0';
     this.selector.style.display = 'none';
 
     setTimeout(
-      function() {
+      () =>
         // debounce in order "onClick" to work
-        this.mouseInteraction = false;
-      }.bind(this),
+        (this.mouseInteraction = false),
       100
     );
-  };
+  }
 
   /**
    * Function break: used in callbacks to disable the execution of the upcoming code at the specific moment
@@ -785,17 +791,20 @@ class DragSelect {
   /**
    * Complete function teardown
    * Will teardown/stop the whole functionality
+   * @param {boolean} [remove=true] - if elements should be removed.
+   * @param {boolean} [fromSelection=true] - if elements should also be added/removed to the selection.
+   * @param {boolean} [withCallback] - if elements should also be added/removed to the selection.
    */
-  stop() {
-    this.reset();
+  stop(remove = true, fromSelection = true, withCallback) {
+    this.reset(false, withCallback);
     this.area.removeEventListener('mousedown', this._startUp);
     this.area.removeEventListener('touchstart', this._startUp, {
       passive: false
     });
-    document.removeEventListener('mouseup', this.resetWithCallback);
-    document.removeEventListener('touchend', this.resetWithCallback);
+    document.removeEventListener('mouseup', this._end);
+    document.removeEventListener('touchend', this._end);
 
-    this._handleSelectables([...this.selectables], true, true);
+    this._handleSelectables([...this.selectables], remove, fromSelection);
   }
 
   // Usefull methods for user

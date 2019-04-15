@@ -1,3 +1,7 @@
+# 1.12.1
+
+- Improve private event callbacks
+
 # 1.12.0
 
 - Fix bugs related to the `stop()` functionality [#37](https://github.com/ThibaultJanBeyer/DragSelect/issues/37) and [#38](https://github.com/ThibaultJanBeyer/DragSelect/issues/38). Big thanks to [@Martin-Eckleben](https://github.com/Martin-Eckleben) for the contribution!
