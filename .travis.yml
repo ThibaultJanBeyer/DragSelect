@@ -2,12 +2,7 @@ language: node_js
 node_js:
   - "11"
 
-stages:
-  - test
-  - name: build
-    if: branch = master
-
 jobs:
   include:
-    - stage: build
-      - script: npm run build
+     after_success:
+        - npm run build
