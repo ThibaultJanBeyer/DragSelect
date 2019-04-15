@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "checkJs": true
+    },
+    "exclude": [
+        "node_modules",
+        "**/node_modules/*",
+        "__tests__/**/*",
+        "dist/**/*",
+        "docs/**/*",
+    ]
+}

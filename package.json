@@ -8,6 +8,7 @@
     "start": "npm install; npm run open & npm run watch",
     "open": "open __tests__/quicktest.html -a 'Google Chrome'",
     "watch": "babel ./src/DragSelect.js -w -o ./docs/DragSelect.js",
+    "checkjs": "tsc --allowJs --checkJs --noEmit src/*.js",
     "es6m": "cp ./docs/DragSelect.js ./docs/DragSelect.es6m.js && echo 'export default DragSelect;' >> ./docs/DragSelect.es6m.js",
     "es6m-min": "cp ./docs/ds.min.js ./docs/ds.es6m.min.js && echo 'export default DragSelect;' >> ./docs/ds.es6m.min.js",
     "dist": "cp ./docs/*.js ./dist",
@@ -17,7 +18,7 @@
     "uglify": "uglifyjs ./docs/DragSelect.js -o ./docs/ds.min.js",
     "postuglify": "npm run es6m-min",
     "docs": "jsdoc ./src/DragSelect.js ./README.md -t ./node_modules/minami -d ./docs",
-    "test": "jest"
+    "test": "npm run checkjs && jest"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -31,7 +32,8 @@
     "jest": "^24.3.1",
     "jsdoc": "^3.5.5",
     "minami": "^1.2.3",
-    "puppeteer": "^1.13.0"
+    "puppeteer": "^1.13.0",
+    "typescript": "^3.4.3"
   },
   "repository": {
     "type": "git",
