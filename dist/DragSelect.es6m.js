@@ -281,7 +281,7 @@ function () {
     });
 
     _defineProperty(this, "resetWithCallback", function (event) {
-      _this.callback(_this._selected, event);
+      _this.callback(_this.getSelection(), event);
 
       _this.reset(event);
     });
@@ -319,9 +319,7 @@ function () {
     this.selectorClass = selectorClass;
     this.selectableClass = selectableClass;
     this.selectables = [];
-
-    this._handleSelectables(this._toArray(selectables));
-
+    this._initialSelectables = this._toArray(selectables);
     this.multiSelectKeys = multiSelectKeys;
     this.multiSelectMode = multiSelectMode;
     this.autoScrollSpeed = autoScrollSpeed === 0 ? 0 : autoScrollSpeed;
@@ -466,6 +464,8 @@ function () {
   }, {
     key: "start",
     value: function start() {
+      this._handleSelectables(this._initialSelectables);
+
       this.area.addEventListener('mousedown', this._startUp);
       this.area.addEventListener('touchstart', this._startUp, {
         passive: false
@@ -919,7 +919,7 @@ function () {
   }, {
     key: "getSelection",
     value: function getSelection() {
-      return this._selected;
+      return _toConsumableArray(this._selected);
     }
     /**
      * Returns cursor x, y position based on event object

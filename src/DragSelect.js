@@ -108,7 +108,7 @@ class DragSelect {
     this.selectorClass = selectorClass;
     this.selectableClass = selectableClass;
     this.selectables = [];
-    this._handleSelectables(this._toArray(selectables));
+    this._initialSelectables = this._toArray(selectables);
     this.multiSelectKeys = multiSelectKeys;
     this.multiSelectMode = multiSelectMode;
     this.autoScrollSpeed = autoScrollSpeed === 0 ? 0 : autoScrollSpeed;
@@ -269,6 +269,7 @@ class DragSelect {
    * Also, reset the functionality after a teardown
    */
   start() {
+    this._handleSelectables(this._initialSelectables);
     this.area.addEventListener('mousedown', this._startUp);
     this.area.addEventListener('touchstart', this._startUp, { passive: false });
   }
@@ -733,7 +734,7 @@ class DragSelect {
    * @param {Object} event - The event object.
    */
   resetWithCallback = event => {
-    this.callback(this._selected, event);
+    this.callback(this.getSelection(), event);
     this.reset(event);
   };
 
@@ -805,7 +806,7 @@ class DragSelect {
    * @return {Array.<(HTMLElement|SVGElement)>}
    */
   getSelection() {
-    return this._selected;
+    return [...this._selected];
   }
 
   /**
