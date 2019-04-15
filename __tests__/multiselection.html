@@ -1,0 +1,36 @@
+<link rel="stylesheet" href="basics.css">
+
+<div>
+    <button type="button" id="one" class="item one">1</button>
+    <button type="button" id="two" class="item two">2</button>
+    <button type="button" id="three" class="item three">3</button>
+    <button type="button" id="four" class="item four">4</button>
+    <button type="button" id="five" class="item five">5</button>
+</div>
+
+<div>
+    <button type="button" id="one" class="itemi one">1</button>
+    <button type="button" id="two" class="itemi two">2</button>
+    <button type="button" id="three" class="itemi three">3</button>
+    <button type="button" id="four" class="itemi four">4</button>
+    <button type="button" id="five" class="itemi five">5</button>
+</div>
+
+<script src="../docs/DragSelect.js"></script>
+<script>
+    window.selected = [];
+
+    new DragSelect({
+        selectables: document.querySelectorAll('.item'),
+        callback: sel => { selected = sel.map(sel => sel.id) }
+    });
+</script>
+<script>
+    window.multiselected = [];
+
+    new DragSelect({
+        selectables: document.querySelectorAll('.itemi'),
+        multiSelectMode: true,
+        callback: sel => { multiselected = sel.map(sel => sel.id) }
+    });
+</script>

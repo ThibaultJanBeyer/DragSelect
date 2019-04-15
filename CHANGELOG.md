@@ -1,7 +1,7 @@
 # 1.11.3
 
 - Keep the `dist/` folder holding only the relevant files. In order to not introduce breaking changed to standarts introduced earlier.
-- Added more automated tests and automated build jobs to improve project stability and maintainability.
+- Automated all manual tests (functional) and added a CI process to improve project stability and maintainability.
 
 # 1.11.2
 

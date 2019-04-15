@@ -32,7 +32,7 @@ async function moveMouse(page, dpi = steps + 1) {
   }));
 }
 
-describe('Callbacks', () => {
+describe('Position Difference Calculations', () => {
   it('should have correct first value on move', async () => {
     await page.goto(`${baseUrl}/cursor-position-difference.html`);
     const { cursorMoveDiff } = await moveMouse(page);

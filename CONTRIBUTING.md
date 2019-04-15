@@ -41,14 +41,4 @@ Automated tests are run via:
 npm test
 ```
 
-There aren’t many automated tests yet. So please also test manually:
-
-### Manual
-
-- If you feel like your test case should be permanently tested before each release, just extract it to a new file in the `tests` folder.  
-
-- Write what to test & name it `test#.html` where `#` is the next available number.  
-
-- Once you are happy with your changes, **always test all test scenarios in `tests/`**. I.e. `tests/test1.html`,  `tests/test2.html` etc.  
-
-- Unfortunately, this has to be done manually at the moment.  
+- If you feel like your test case should be permanently tested before each release, please add it to the `__tests__` folder.  

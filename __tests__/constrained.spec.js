@@ -13,7 +13,7 @@ afterAll(() => {
   browser.close();
 });
 
-describe('Callbacks', () => {
+describe('Constrained', () => {
   it('selection should be constrained to the area with only contains one element', async () => {
     await page.goto(`${baseUrl}/constrained.html`);
 

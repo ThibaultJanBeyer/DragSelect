@@ -6,7 +6,7 @@
   "dependencies": {},
   "scripts": {
     "start": "npm install; npm run open & npm run watch",
-    "open": "open tests/quicktest.html -a 'Google Chrome'",
+    "open": "open __tests__/quicktest.html -a 'Google Chrome'",
     "watch": "babel ./src/DragSelect.js -w -o ./docs/DragSelect.js",
     "es6m": "cp ./docs/DragSelect.js ./docs/DragSelect.es6m.js && echo 'export default DragSelect;' >> ./docs/DragSelect.es6m.js",
     "es6m-min": "cp ./docs/ds.min.js ./docs/ds.es6m.min.js && echo 'export default DragSelect;' >> ./docs/ds.es6m.min.js",

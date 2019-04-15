@@ -7,7 +7,7 @@ html, body {
   width: 50px;
   height: 50px;
   position: relative;
-  color: white;
+  background-color: lightblue;
   border: 0;
 }
 

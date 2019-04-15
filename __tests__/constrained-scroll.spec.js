@@ -13,7 +13,7 @@ afterAll(() => {
   browser.close();
 });
 
-describe('Callbacks', () => {
+describe('Constrained Scroll', () => {
   it('selection should be able to scroll in the constrained container while dragging', async () => {
     await page.goto(`${baseUrl}/constrained-scroll.html`);
 
