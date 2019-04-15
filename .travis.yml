@@ -1,3 +1,11 @@
 language: node_js
 node_js:
   - "11"
+
+stages:
+  - test
+  - name: build
+    if: branch = master
+
+- stage: build
+    - script: npm run build
