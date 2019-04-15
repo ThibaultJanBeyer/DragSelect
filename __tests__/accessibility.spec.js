@@ -28,7 +28,7 @@ describe('Accessibility', () => {
 
     var { selected } = await page.evaluate(() => ({ selected }));
 
-    expect(selected[0]).toBe("two");
+    expect(selected[0]).toBe('two');
   });
 
   it('should multiselect using keyboard only', async () => {
@@ -55,8 +55,8 @@ describe('Accessibility', () => {
 
     var { selected } = await page.evaluate(() => ({ selected }));
 
-    expect(selected[0]).toBe("two");
-    expect(selected[1]).toBe("three");
-    expect(selected[2]).toBe("five");
+    expect(selected[0]).toBe('two');
+    expect(selected[1]).toBe('three');
+    expect(selected[2]).toBe('five');
   });
 });

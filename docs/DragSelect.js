@@ -18,7 +18,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// v 1.11.3
+// v 1.12.0
 // @ts-check
 
 /* 
@@ -201,7 +201,7 @@ function () {
         _this.toggle(node);
       }
 
-      _this.reset();
+      _this.resetWithCallback(event);
     });
 
     _defineProperty(this, "_startUp", function (event) {
@@ -868,7 +868,7 @@ function () {
     //////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Triggered on mouse click release (end of dragging a selection). 
+     * Triggered on mouse click release (end of dragging a selection).
      * Calls the callback method & unbind functions.
      * @param {Object} event - The event object.
      */

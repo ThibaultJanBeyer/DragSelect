@@ -1,4 +1,4 @@
-// v 1.11.3
+// v 1.12.0
 // @ts-check
 /* 
     ____                   _____      __          __ 
@@ -236,7 +236,7 @@ class DragSelect {
       this.toggle(node);
     }
 
-    this.reset();
+    this.resetWithCallback(event);
   };
 
   /**
@@ -728,7 +728,7 @@ class DragSelect {
   //////////////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Triggered on mouse click release (end of dragging a selection). 
+   * Triggered on mouse click release (end of dragging a selection).
    * Calls the callback method & unbind functions.
    * @param {Object} event - The event object.
    */
@@ -794,7 +794,7 @@ class DragSelect {
     document.removeEventListener('mouseup', this.resetWithCallback);
     document.removeEventListener('touchend', this.resetWithCallback);
 
-    this._handleSelectables([...this.selectables],true,true)
+    this._handleSelectables([...this.selectables], true, true);
   }
 
   // Usefull methods for user
