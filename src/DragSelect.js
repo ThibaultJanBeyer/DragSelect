@@ -323,8 +323,8 @@ class DragSelect {
     });
     this.area.addEventListener('mousemove', this._handleMove);
     this.area.addEventListener('touchmove', this._handleMove);
-    document.addEventListener('mouseup', this.reset);
-    document.addEventListener('touchend', this.reset);
+    document.addEventListener('mouseup', this.resetWithCallback);
+    document.addEventListener('touchend', this.resetWithCallback);
   };
 
   /**
@@ -728,18 +728,27 @@ class DragSelect {
   //////////////////////////////////////////////////////////////////////////////////////
 
   /**
+   * Triggered on mouse click release (end of dragging a selection). 
+   * Calls the callback method & unbind functions.
+   * @param {Object} event - The event object.
+   */
+  resetWithCallback = event => {
+    this.callback(this._selected, event);
+    this.reset(event);
+  };
+
+  /**
    * Unbind functions when mouse click is released
    */
   reset = event => {
     this._previousCursorPos = this._getCursorPos(event, this.area);
-    document.removeEventListener('mouseup', this.reset);
-    document.removeEventListener('touchend', this.reset);
+    document.removeEventListener('mouseup', this.resetWithCallback);
+    document.removeEventListener('touchend', this.resetWithCallback);
     this.area.removeEventListener('mousemove', this._handleMove);
     this.area.removeEventListener('touchmove', this._handleMove);
     this.area.addEventListener('mousedown', this._startUp);
     this.area.addEventListener('touchstart', this._startUp, { passive: false });
 
-    this.callback(this._selected, event);
     if (this._breaked) {
       return false;
     }
@@ -782,8 +791,10 @@ class DragSelect {
     this.area.removeEventListener('touchstart', this._startUp, {
       passive: false
     });
-    document.removeEventListener('mouseup', this.reset);
-    document.removeEventListener('touchend', this.reset);
+    document.removeEventListener('mouseup', this.resetWithCallback);
+    document.removeEventListener('touchend', this.resetWithCallback);
+
+    this._handleSelectables([...this.selectables],true,true)
   }
 
   // Usefull methods for user

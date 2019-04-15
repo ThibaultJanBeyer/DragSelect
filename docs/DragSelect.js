@@ -2,6 +2,14 @@
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -247,8 +255,8 @@ function () {
 
       _this.area.addEventListener('touchmove', _this._handleMove);
 
-      document.addEventListener('mouseup', _this.reset);
-      document.addEventListener('touchend', _this.reset);
+      document.addEventListener('mouseup', _this.resetWithCallback);
+      document.addEventListener('touchend', _this.resetWithCallback);
     });
 
     _defineProperty(this, "_handleMove", function (event) {
@@ -272,10 +280,16 @@ function () {
       _this._autoScroll(event);
     });
 
+    _defineProperty(this, "resetWithCallback", function (event) {
+      _this.callback(_this._selected, event);
+
+      _this.reset(event);
+    });
+
     _defineProperty(this, "reset", function (event) {
       _this._previousCursorPos = _this._getCursorPos(event, _this.area);
-      document.removeEventListener('mouseup', _this.reset);
-      document.removeEventListener('touchend', _this.reset);
+      document.removeEventListener('mouseup', _this.resetWithCallback);
+      document.removeEventListener('touchend', _this.resetWithCallback);
 
       _this.area.removeEventListener('mousemove', _this._handleMove);
 
@@ -286,8 +300,6 @@ function () {
       _this.area.addEventListener('touchstart', _this._startUp, {
         passive: false
       });
-
-      _this.callback(_this._selected, event);
 
       if (_this._breaked) {
         return false;
@@ -856,7 +868,9 @@ function () {
     //////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Unbind functions when mouse click is released
+     * Triggered on mouse click release (end of dragging a selection). 
+     * Calls the callback method & unbind functions.
+     * @param {Object} event - The event object.
      */
 
   }, {
@@ -890,8 +904,10 @@ function () {
       this.area.removeEventListener('touchstart', this._startUp, {
         passive: false
       });
-      document.removeEventListener('mouseup', this.reset);
-      document.removeEventListener('touchend', this.reset);
+      document.removeEventListener('mouseup', this.resetWithCallback);
+      document.removeEventListener('touchend', this.resetWithCallback);
+
+      this._handleSelectables(_toConsumableArray(this.selectables), true, true);
     } // Usefull methods for user
     //////////////////////////////////////////////////////////////////////////////////////
 
