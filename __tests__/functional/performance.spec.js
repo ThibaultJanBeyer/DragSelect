@@ -16,7 +16,9 @@ afterAll(() => {
 jest.setTimeout(10000);
 
 describe('Scroll', () => {
-  it('should work with 25k items', async () => {
+  it('should work and be fast even with 25k items', async () => {
+    const start = performance.now();
+
     await page.goto(`${baseUrl}/performance.html`, {
       waitUntil: 'load'
     });
@@ -38,5 +40,9 @@ describe('Scroll', () => {
     expect(selected[6]).toBe('item-66');
     expect(selected[7]).toBe('item-67');
     expect(selected[8]).toBe('item-68');
+
+    const duration = performance.now() - start;
+    expect(duration).toBeLessThan(20000);
   });
+
 });
