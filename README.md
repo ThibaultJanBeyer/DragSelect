@@ -16,7 +16,7 @@ easily add a selection algorithm to your application/website.
 
 # TOC
 
-- [Project Page: Demo & Info](#project-page:-demo--info)
+- [Project Page: Demo & Info](#project-page-demo--info)
 - [Key-Features](#key-features)
 - [Why?](#why)
 - [Supporters](#supporters)
@@ -57,9 +57,9 @@ We use it currently in a professional rich interface application where we have a
 # Supporters
 
 Thanks to:  
-[BrowserStack](https://thibaultjanbeyer.github.io/DragSelect/browserstack.jpg) | you?
---- | ---
-[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing us with a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | [Direct Donations](https://paypal.me/kleinanzeigen3) (will be linked here) or [Get in touch](mailto:thibault.beyer@gmail.com)
+| [BrowserStack](https://thibaultjanbeyer.github.io/DragSelect/browserstack.jpg) | you? |
+| --- | --- |
+| [BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing us with a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | [Direct Donations](https://paypal.me/kleinanzeigen3) (will be linked here) or [Get in touch](mailto:thibault.beyer@gmail.com) |
 
 # Installation
 ## easy
