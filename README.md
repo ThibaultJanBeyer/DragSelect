@@ -14,6 +14,18 @@
 # DragSelect ![GitHub package.json version](https://img.shields.io/github/package-json/v/ThibaultJanBeyer/DragSelect.svg)
 easily add a selection algorithm to your application/website.
 
+# TOC
+
+- [Project Page: Demo & Info](#project-page:-demo--info)
+- [Key-Features](#key-features)
+- [Why?](#why)
+- [Supporters](#supporters)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Properties](#properties)
+- [Methods](#methods)
+- [Classes](#classes)
+
 # Project Page: Demo & Info
 
 [https://thibaultjanbeyer.github.io/DragSelect/](https://thibaultjanbeyer.github.io/DragSelect/)
@@ -41,6 +53,13 @@ easily add a selection algorithm to your application/website.
 Because apparently there is nothing that does not require jquery out there yet.  
 This is better than https://jqueryui.com/selectable/ and has no dependencies.
 We use it currently in a professional rich interface application where we have a file management system. The user can select files to organize them and change their metadata, with this plugin our users are able to select multiple files and perform batch/bulk-operations (applying changes to multiple files at once). We also started using it in production for a huge, graphical cloud hosting manager with a lot of active users. Users can select multiple servers, storages, etc. on an artboard to perform multi-operations, re-organize them or batch-delete. We’re running it since January 18' it’s super helpful and very stable, let’s keep it that way. I can easily think of dozens other possibilites this can be used for. I’m really keen to know how you use it in your projects, please let me know.
+
+# Supporters
+
+Thanks to:  
+[BrowserStack](https://thibaultjanbeyer.github.io/DragSelect/browserstack.jpg) | you?
+--- | ---
+[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing us with a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | [Direct Donations](https://paypal.me/kleinanzeigen3) (will be linked here) or [Get in touch](mailto:thibault.beyer@gmail.com)
 
 # Installation
 ## easy
