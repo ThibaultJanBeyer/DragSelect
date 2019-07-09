@@ -88,6 +88,7 @@ function () {
    * @param {object} options - The options object.
    * @param {HTMLElement | SVGElement | Document} [options.area=document] area in which you can drag. If not provided it will be the whole document
    * @param {number} [options.autoScrollSpeed=1] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Default = 1
+   * @param {number} [options.zoom=1] Zoom (if available). Unit sczle soom. Default = 1
    * @param {Function} [options.callback=(selected, event) => {}] a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes. The second property passed is the event object.
    * @param {boolean} [options.customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
    * @param {string} [options.hoverClass=ds-hover] the class assigned to the mouse hovered items
@@ -140,7 +141,9 @@ function () {
         _ref$selector = _ref.selector,
         selector = _ref$selector === void 0 ? undefined : _ref$selector,
         _ref$selectorClass = _ref.selectorClass,
-        selectorClass = _ref$selectorClass === void 0 ? 'ds-selector' : _ref$selectorClass;
+        selectorClass = _ref$selectorClass === void 0 ? 'ds-selector' : _ref$selectorClass,
+        _ref$zoom = _ref.zoom,
+        zoom = _ref$zoom === void 0 ? 1 : _ref$zoom;
 
     _classCallCheck(this, DragSelect);
 
@@ -204,7 +207,8 @@ function () {
     this.moveCallback = onDragMove;
     this.callback = callback;
     this.area = this._handleArea(area);
-    this.customStyles = customStyles; // Selector
+    this.customStyles = customStyles;
+    this.zoom = zoom; // Selector
 
     this.selector = selector || this._createSelector();
     this.selector.classList.add(this.selectorClass);
@@ -334,7 +338,7 @@ function () {
         } // #9
 
 
-      this.checkIfInsideSelection(true); // reset selection if no multiselectionkeypressed
+      this.checkIfInsideSelection(true, this.zoom); // reset selection if no multiselectionkeypressed
 
       if (this.selectables.indexOf(node) > -1) {
         this.toggle(node);
@@ -402,7 +406,7 @@ function () {
       if (event.type === 'touchstart') // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
         event.preventDefault();
       if (this._isRightClick(event)) return;
-      if (this._isScrollbarClick(event, this.area)) return; // callback
+      if (this._isScrollbarClick(event, this.area, this.zoom)) return; // callback
 
       this.onDragStartBegin(event);
       if (this._breaked) return false;
@@ -414,7 +418,7 @@ function () {
 
       this._getStartingPositions(event);
 
-      this.checkIfInsideSelection(true);
+      this.checkIfInsideSelection(true, this.zoom);
       this.selector.style.display = 'none'; // hidden unless moved, fix for issue #8
       // callback
 
@@ -467,7 +471,7 @@ function () {
   }, {
     key: "_getStartingPositions",
     value: function _getStartingPositions(event) {
-      this._initialCursorPos = this._newCursorPos = this._getCursorPos(event, this.area);
+      this._initialCursorPos = this._newCursorPos = this._getCursorPos(event, this.area, this.zoom);
       this._initialScroll = this.getScroll(this.area);
       var selectorPos = {};
       selectorPos.x = this._initialCursorPos.x + this._initialScroll.x;
@@ -503,7 +507,7 @@ function () {
 
       this._updatePos(this.selector, selectorPos);
 
-      this.checkIfInsideSelection(); // scroll area if area is scrollable
+      this.checkIfInsideSelection(null, this.zoom); // scroll area if area is scrollable
 
       this._autoScroll(event);
     }
@@ -517,7 +521,7 @@ function () {
   }, {
     key: "_getPosition",
     value: function _getPosition(event) {
-      var cursorPosNew = this._getCursorPos(event, this.area);
+      var cursorPosNew = this._getCursorPos(event, this.area, this.zoom);
 
       var scrollNew = this.getScroll(this.area); // save for later retrieval
 
@@ -605,20 +609,20 @@ function () {
 
   }, {
     key: "checkIfInsideSelection",
-    value: function checkIfInsideSelection(force) {
+    value: function checkIfInsideSelection(force, zoom) {
       var anyInside = false;
 
       for (var i = 0, il = this.selectables.length; i < il; i++) {
         var selectable = this.selectables[i];
         var scroll = this.getScroll(this.area);
         var selectionRect = {
-          y: this.selector.getBoundingClientRect().top + scroll.y,
-          x: this.selector.getBoundingClientRect().left + scroll.x,
+          y: this.selector.getBoundingClientRect().top / this.zoom + scroll.y,
+          x: this.selector.getBoundingClientRect().left / this.zoom + scroll.x,
           h: this.selector.offsetHeight,
           w: this.selector.offsetWidth
         };
 
-        if (this._isElementTouching(selectable, selectionRect, scroll)) {
+        if (this._isElementTouching(selectable, selectionRect, scroll, zoom)) {
           this._handleSelection(selectable, force);
 
           anyInside = true;
@@ -759,13 +763,13 @@ function () {
 
   }, {
     key: "_isElementTouching",
-    value: function _isElementTouching(element, selectionRect, scroll) {
+    value: function _isElementTouching(element, selectionRect, scroll, zoom) {
       var rect = element.getBoundingClientRect();
       var elementRect = {
-        y: rect.top + scroll.y,
-        x: rect.left + scroll.x,
-        h: rect.height,
-        w: rect.width
+        y: rect.top / zoom + scroll.y,
+        x: rect.left / zoom + scroll.x,
+        h: rect.height / zoom,
+        w: rect.width / zoom
       }; // Axis-Aligned Bounding Box Colision Detection.
       // Imagine following Example:
       //    b01
@@ -797,7 +801,7 @@ function () {
   }, {
     key: "_autoScroll",
     value: function _autoScroll(event) {
-      var edge = this.isCursorNearEdge(event, this.area);
+      var edge = this.isCursorNearEdge(event, this.area, this.zoom);
       var docEl = document && document.documentElement && document.documentElement.scrollTop && document.documentElement;
 
       var _area = this.area === document ? docEl || document.body : this.area;
@@ -821,8 +825,8 @@ function () {
 
   }, {
     key: "isCursorNearEdge",
-    value: function isCursorNearEdge(event, area) {
-      var cursorPosition = this._getCursorPos(event, area);
+    value: function isCursorNearEdge(event, area, zoom) {
+      var cursorPosition = this._getCursorPos(event, area, zoom);
 
       var areaRect = this.getAreaRect(area);
       var tolerance = {
@@ -862,7 +866,7 @@ function () {
     value: function reset(event, withCallback) {
       var _this2 = this;
 
-      this._previousCursorPos = this._getCursorPos(event, this.area);
+      this._previousCursorPos = this._getCursorPos(event, this.area, this.zoom);
       document.removeEventListener('mouseup', this._end);
       document.removeEventListener('touchend', this._end);
       this.area.removeEventListener('mousemove', this._handleMove);
@@ -956,7 +960,7 @@ function () {
       };
       var area = _area || _area !== false && this.area;
 
-      var pos = this._getCursorPos(event, area);
+      var pos = this._getCursorPos(event, area, this.zoom);
 
       var scroll = ignoreScroll ? {
         x: 0,
@@ -1188,8 +1192,8 @@ function () {
 
   }, {
     key: "_isScrollbarClick",
-    value: function _isScrollbarClick(event, area) {
-      var cPos = this._getCursorPos(event, area);
+    value: function _isScrollbarClick(event, area, zoom) {
+      var cPos = this._getCursorPos(event, area, zoom);
 
       var areaRect = this.getAreaRect(area);
       var border = area.computedBorder || 0;
@@ -1246,13 +1250,14 @@ function () {
      * Use the public .getCursorPos() from outside, it’s more flexible
      * @param {Object} [event]
      * @param {(HTMLElement|SVGElement)} area – containing area / document if none
+     * @param {number} [zoom] - zoom factor
      * @return {{x: number, y: number}} cursor X/Y
      * @private
      */
 
   }, {
     key: "_getCursorPos",
-    value: function _getCursorPos(event, area) {
+    value: function _getCursorPos(event, area, zoom) {
       if (!event) return {
         x: 0,
         y: 0
@@ -1271,12 +1276,12 @@ function () {
         y: event.pageY || event.clientY
       };
       var areaRect = this.getAreaRect(area || document);
-      var docScroll = this.getScroll(); // needed when document is scrollable but area is not
+      var docScroll = this.getScroll(null); // needed when document is scrollable but area is not
 
       return {
         // if it’s constrained in an area the area should be substracted calculate
-        x: cPos.x - areaRect.left - docScroll.x,
-        y: cPos.y - areaRect.top - docScroll.y
+        x: (cPos.x - areaRect.left - docScroll.x) / zoom,
+        y: (cPos.y - areaRect.top - docScroll.y) / zoom
       };
     }
     /**

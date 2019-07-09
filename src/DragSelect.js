@@ -68,6 +68,7 @@ class DragSelect {
    * @param {object} options - The options object.
    * @param {HTMLElement | SVGElement | Document} [options.area=document] area in which you can drag. If not provided it will be the whole document
    * @param {number} [options.autoScrollSpeed=1] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Default = 1
+   * @param {number} [options.zoom=1] Zoom (if available). Unit sczle soom. Default = 1
    * @param {Function} [options.callback=(selected, event) => {}] a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes. The second property passed is the event object.
    * @param {boolean} [options.customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
    * @param {string} [options.hoverClass=ds-hover] the class assigned to the mouse hovered items
@@ -83,7 +84,6 @@ class DragSelect {
    * @param {HTMLElement} [options.selector=HTMLElement] the square that will draw the selection
    * @param {string} [options.selectorClass=ds-selector] the class assigned to the square selector helper
    * @param {string[]} [options.multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
-   * @param {number} [options.zoom=1] Zoom (if available). Unit is pixel per movement. Default = 1
    */
   constructor({
     area = document,
