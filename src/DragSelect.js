@@ -304,7 +304,6 @@ class DragSelect {
 
     if (this._isRightClick(event)) return;
     if (this._isScrollbarClick(event, this.area, this.zoom)) return;
-
     // callback
     this.onDragStartBegin(event);
     if (this._breaked) return false;
@@ -374,7 +373,7 @@ class DragSelect {
       this.area,
       this.zoom
     );
-    this._initialScroll = this.getScroll(this.area, this.zoom);
+    this._initialScroll = this.getScroll(this.area);
 
     var selectorPos = {};
     selectorPos.x = this._initialCursorPos.x + this._initialScroll.x;
@@ -515,7 +514,6 @@ class DragSelect {
    * @return {boolean}
    */
   checkIfInsideSelection(force, zoom) {
-
     var anyInside = false;
     for (var i = 0, il = this.selectables.length; i < il; i++) {
       var selectable = this.selectables[i];
@@ -524,10 +522,9 @@ class DragSelect {
       var selectionRect = {
         y: (this.selector.getBoundingClientRect().top)/this.zoom + scroll.y,
         x: (this.selector.getBoundingClientRect().left)/this.zoom + scroll.x,
-        h: this.selector.offsetHeight/this.zoom,
-        w: this.selector.offsetWidth/this.zoom
+        h: this.selector.offsetHeight,
+        w: this.selector.offsetWidth
       };
-      debugger;
       if (this._isElementTouching(selectable, selectionRect, scroll, zoom)) {
         this._handleSelection(selectable, force);
         anyInside = true;
@@ -695,7 +692,7 @@ class DragSelect {
    * @private
    */
   _autoScroll(event) {
-    var edge = this.isCursorNearEdge(event, this.area);
+    var edge = this.isCursorNearEdge(event, this.area, this.zoom);
 
     var docEl =
       document &&
@@ -721,8 +718,8 @@ class DragSelect {
    * @param {(HTMLElement|SVGElement)} area the area.
    * @return {('top'|'bottom'|'left'|'right'|false)}
    */
-  isCursorNearEdge(event, area) {
-    var cursorPosition = this._getCursorPos(event, area);
+  isCursorNearEdge(event, area, zoom) {
+    var cursorPosition = this._getCursorPos(event, area, zoom);
     var areaRect = this.getAreaRect(area);
 
     var tolerance = {
@@ -760,7 +757,7 @@ class DragSelect {
    * @param {boolean} [withCallback] - whether or not the callback should be called
    */
   reset(event, withCallback) {
-    this._previousCursorPos = this._getCursorPos(event, this.area);
+    this._previousCursorPos = this._getCursorPos(event, this.area, this.zoom);
     document.removeEventListener('mouseup', this._end);
     document.removeEventListener('touchend', this._end);
     this.area.removeEventListener('mousemove', this._handleMove);
@@ -776,6 +773,7 @@ class DragSelect {
     this.selector.style.width = '0';
     this.selector.style.height = '0';
     this.selector.style.display = 'none';
+    
 
     setTimeout(
       () =>
@@ -842,7 +840,7 @@ class DragSelect {
     if (!event) return { x: 0, y: 0 };
 
     var area = _area || (_area !== false && this.area);
-    var pos = this._getCursorPos(event, area);
+    var pos = this._getCursorPos(event, area, this.zoom);
     var scroll = ignoreScroll ? { x: 0, y: 0 } : this.getScroll(area);
 
     return {
@@ -1049,8 +1047,8 @@ class DragSelect {
     const areaRect = this.getAreaRect(area);
     const border = area.computedBorder || 0;
 
-    if ((areaRect.width + border)/zoom <= cPos.x) return true;
-    if ((areaRect.height + border)/zoom <= cPos.y) return true;
+    if ((areaRect.width + border) <= cPos.x) return true;
+    if ((areaRect.height + border) <= cPos.y) return true;
     return false;
   }
 
@@ -1126,8 +1124,7 @@ class DragSelect {
     };
 
     var areaRect = this.getAreaRect(area || document);
-    var docScroll = this.getScroll(null, zoom); // needed when document is scrollable but area is not
-
+    var docScroll = this.getScroll(null); // needed when document is scrollable but area is not
     return {
       // if it’s constrained in an area the area should be substracted calculate
       x: (cPos.x - areaRect.left - docScroll.x)/zoom,

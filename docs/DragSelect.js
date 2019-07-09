@@ -472,7 +472,7 @@ function () {
     key: "_getStartingPositions",
     value: function _getStartingPositions(event) {
       this._initialCursorPos = this._newCursorPos = this._getCursorPos(event, this.area, this.zoom);
-      this._initialScroll = this.getScroll(this.area, this.zoom);
+      this._initialScroll = this.getScroll(this.area);
       var selectorPos = {};
       selectorPos.x = this._initialCursorPos.x + this._initialScroll.x;
       selectorPos.y = this._initialCursorPos.y + this._initialScroll.y;
@@ -618,10 +618,9 @@ function () {
         var selectionRect = {
           y: this.selector.getBoundingClientRect().top / this.zoom + scroll.y,
           x: this.selector.getBoundingClientRect().left / this.zoom + scroll.x,
-          h: this.selector.offsetHeight / this.zoom,
-          w: this.selector.offsetWidth / this.zoom
+          h: this.selector.offsetHeight,
+          w: this.selector.offsetWidth
         };
-        debugger;
 
         if (this._isElementTouching(selectable, selectionRect, scroll, zoom)) {
           this._handleSelection(selectable, force);
@@ -802,7 +801,7 @@ function () {
   }, {
     key: "_autoScroll",
     value: function _autoScroll(event) {
-      var edge = this.isCursorNearEdge(event, this.area);
+      var edge = this.isCursorNearEdge(event, this.area, this.zoom);
       var docEl = document && document.documentElement && document.documentElement.scrollTop && document.documentElement;
 
       var _area = this.area === document ? docEl || document.body : this.area;
@@ -826,8 +825,8 @@ function () {
 
   }, {
     key: "isCursorNearEdge",
-    value: function isCursorNearEdge(event, area) {
-      var cursorPosition = this._getCursorPos(event, area);
+    value: function isCursorNearEdge(event, area, zoom) {
+      var cursorPosition = this._getCursorPos(event, area, zoom);
 
       var areaRect = this.getAreaRect(area);
       var tolerance = {
@@ -867,7 +866,7 @@ function () {
     value: function reset(event, withCallback) {
       var _this2 = this;
 
-      this._previousCursorPos = this._getCursorPos(event, this.area);
+      this._previousCursorPos = this._getCursorPos(event, this.area, this.zoom);
       document.removeEventListener('mouseup', this._end);
       document.removeEventListener('touchend', this._end);
       this.area.removeEventListener('mousemove', this._handleMove);
@@ -961,7 +960,7 @@ function () {
       };
       var area = _area || _area !== false && this.area;
 
-      var pos = this._getCursorPos(event, area);
+      var pos = this._getCursorPos(event, area, this.zoom);
 
       var scroll = ignoreScroll ? {
         x: 0,
@@ -1198,8 +1197,8 @@ function () {
 
       var areaRect = this.getAreaRect(area);
       var border = area.computedBorder || 0;
-      if ((areaRect.width + border) / zoom <= cPos.x) return true;
-      if ((areaRect.height + border) / zoom <= cPos.y) return true;
+      if (areaRect.width + border <= cPos.x) return true;
+      if (areaRect.height + border <= cPos.y) return true;
       return false;
     }
     /**
@@ -1277,7 +1276,7 @@ function () {
         y: event.pageY || event.clientY
       };
       var areaRect = this.getAreaRect(area || document);
-      var docScroll = this.getScroll(null, zoom); // needed when document is scrollable but area is not
+      var docScroll = this.getScroll(null); // needed when document is scrollable but area is not
 
       return {
         // if it’s constrained in an area the area should be substracted calculate
