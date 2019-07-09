@@ -103,6 +103,7 @@ function () {
    * @param {HTMLElement} [options.selector=HTMLElement] the square that will draw the selection
    * @param {string} [options.selectorClass=ds-selector] the class assigned to the square selector helper
    * @param {string[]} [options.multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
+   * @param {number} [options.zoom=1] Zoom (if available). Unit is pixel per movement. Default = 1
    */
   function DragSelect(_ref) {
     var _this = this;
@@ -140,7 +141,9 @@ function () {
         _ref$selector = _ref.selector,
         selector = _ref$selector === void 0 ? undefined : _ref$selector,
         _ref$selectorClass = _ref.selectorClass,
-        selectorClass = _ref$selectorClass === void 0 ? 'ds-selector' : _ref$selectorClass;
+        selectorClass = _ref$selectorClass === void 0 ? 'ds-selector' : _ref$selectorClass,
+        _ref$zoom = _ref.zoom,
+        zoom = _ref$zoom === void 0 ? 1 : _ref$zoom;
 
     _classCallCheck(this, DragSelect);
 
@@ -204,7 +207,8 @@ function () {
     this.moveCallback = onDragMove;
     this.callback = callback;
     this.area = this._handleArea(area);
-    this.customStyles = customStyles; // Selector
+    this.customStyles = customStyles;
+    this.zoom = zoom; // Selector
 
     this.selector = selector || this._createSelector();
     this.selector.classList.add(this.selectorClass);
@@ -334,7 +338,7 @@ function () {
         } // #9
 
 
-      this.checkIfInsideSelection(true); // reset selection if no multiselectionkeypressed
+      this.checkIfInsideSelection(true, this.zoom); // reset selection if no multiselectionkeypressed
 
       if (this.selectables.indexOf(node) > -1) {
         this.toggle(node);
@@ -402,7 +406,7 @@ function () {
       if (event.type === 'touchstart') // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
         event.preventDefault();
       if (this._isRightClick(event)) return;
-      if (this._isScrollbarClick(event, this.area)) return; // callback
+      if (this._isScrollbarClick(event, this.area, this.zoom)) return; // callback
 
       this.onDragStartBegin(event);
       if (this._breaked) return false;
@@ -414,7 +418,7 @@ function () {
 
       this._getStartingPositions(event);
 
-      this.checkIfInsideSelection(true);
+      this.checkIfInsideSelection(true, this.zoom);
       this.selector.style.display = 'none'; // hidden unless moved, fix for issue #8
       // callback
 
@@ -467,8 +471,8 @@ function () {
   }, {
     key: "_getStartingPositions",
     value: function _getStartingPositions(event) {
-      this._initialCursorPos = this._newCursorPos = this._getCursorPos(event, this.area);
-      this._initialScroll = this.getScroll(this.area);
+      this._initialCursorPos = this._newCursorPos = this._getCursorPos(event, this.area, this.zoom);
+      this._initialScroll = this.getScroll(this.area, this.zoom);
       var selectorPos = {};
       selectorPos.x = this._initialCursorPos.x + this._initialScroll.x;
       selectorPos.y = this._initialCursorPos.y + this._initialScroll.y;
@@ -503,7 +507,7 @@ function () {
 
       this._updatePos(this.selector, selectorPos);
 
-      this.checkIfInsideSelection(); // scroll area if area is scrollable
+      this.checkIfInsideSelection(null, this.zoom); // scroll area if area is scrollable
 
       this._autoScroll(event);
     }
@@ -517,7 +521,7 @@ function () {
   }, {
     key: "_getPosition",
     value: function _getPosition(event) {
-      var cursorPosNew = this._getCursorPos(event, this.area);
+      var cursorPosNew = this._getCursorPos(event, this.area, this.zoom);
 
       var scrollNew = this.getScroll(this.area); // save for later retrieval
 
@@ -605,20 +609,21 @@ function () {
 
   }, {
     key: "checkIfInsideSelection",
-    value: function checkIfInsideSelection(force) {
+    value: function checkIfInsideSelection(force, zoom) {
       var anyInside = false;
 
       for (var i = 0, il = this.selectables.length; i < il; i++) {
         var selectable = this.selectables[i];
         var scroll = this.getScroll(this.area);
         var selectionRect = {
-          y: this.selector.getBoundingClientRect().top + scroll.y,
-          x: this.selector.getBoundingClientRect().left + scroll.x,
-          h: this.selector.offsetHeight,
-          w: this.selector.offsetWidth
+          y: this.selector.getBoundingClientRect().top / this.zoom + scroll.y,
+          x: this.selector.getBoundingClientRect().left / this.zoom + scroll.x,
+          h: this.selector.offsetHeight / this.zoom,
+          w: this.selector.offsetWidth / this.zoom
         };
+        debugger;
 
-        if (this._isElementTouching(selectable, selectionRect, scroll)) {
+        if (this._isElementTouching(selectable, selectionRect, scroll, zoom)) {
           this._handleSelection(selectable, force);
 
           anyInside = true;
@@ -759,13 +764,13 @@ function () {
 
   }, {
     key: "_isElementTouching",
-    value: function _isElementTouching(element, selectionRect, scroll) {
+    value: function _isElementTouching(element, selectionRect, scroll, zoom) {
       var rect = element.getBoundingClientRect();
       var elementRect = {
-        y: rect.top + scroll.y,
-        x: rect.left + scroll.x,
-        h: rect.height,
-        w: rect.width
+        y: rect.top / zoom + scroll.y,
+        x: rect.left / zoom + scroll.x,
+        h: rect.height / zoom,
+        w: rect.width / zoom
       }; // Axis-Aligned Bounding Box Colision Detection.
       // Imagine following Example:
       //    b01
@@ -1188,13 +1193,13 @@ function () {
 
   }, {
     key: "_isScrollbarClick",
-    value: function _isScrollbarClick(event, area) {
-      var cPos = this._getCursorPos(event, area);
+    value: function _isScrollbarClick(event, area, zoom) {
+      var cPos = this._getCursorPos(event, area, zoom);
 
       var areaRect = this.getAreaRect(area);
       var border = area.computedBorder || 0;
-      if (areaRect.width + border <= cPos.x) return true;
-      if (areaRect.height + border <= cPos.y) return true;
+      if ((areaRect.width + border) / zoom <= cPos.x) return true;
+      if ((areaRect.height + border) / zoom <= cPos.y) return true;
       return false;
     }
     /**
@@ -1246,13 +1251,14 @@ function () {
      * Use the public .getCursorPos() from outside, it’s more flexible
      * @param {Object} [event]
      * @param {(HTMLElement|SVGElement)} area – containing area / document if none
+     * @param {number} [zoom] - zoom factor
      * @return {{x: number, y: number}} cursor X/Y
      * @private
      */
 
   }, {
     key: "_getCursorPos",
-    value: function _getCursorPos(event, area) {
+    value: function _getCursorPos(event, area, zoom) {
       if (!event) return {
         x: 0,
         y: 0
@@ -1271,12 +1277,12 @@ function () {
         y: event.pageY || event.clientY
       };
       var areaRect = this.getAreaRect(area || document);
-      var docScroll = this.getScroll(); // needed when document is scrollable but area is not
+      var docScroll = this.getScroll(null, zoom); // needed when document is scrollable but area is not
 
       return {
         // if it’s constrained in an area the area should be substracted calculate
-        x: cPos.x - areaRect.left - docScroll.x,
-        y: cPos.y - areaRect.top - docScroll.y
+        x: (cPos.x - areaRect.left - docScroll.x) / zoom,
+        y: (cPos.y - areaRect.top - docScroll.y) / zoom
       };
     }
     /**
