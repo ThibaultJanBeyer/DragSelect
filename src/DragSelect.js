@@ -1124,8 +1124,8 @@ class DragSelect {
     var docScroll = this.getScroll(); // needed when document is scrollable but area is not
     return {
       // if it’s constrained in an area the area should be substracted calculate
-      x: (cPos.x - areaRect.left - docScroll.x)/this.zoom,
-      y: (cPos.y - areaRect.top - docScroll.y)/this.zoom
+      x: cPos.x - areaRect.left - docScroll.x/this.zoom,
+      y: cPos.y - areaRect.top - docScroll.y/this.zoom
     };
   }
 
