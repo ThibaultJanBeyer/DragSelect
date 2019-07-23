@@ -651,8 +651,8 @@ class DragSelect {
   _isElementTouching(element, selectionRect, scroll) {
     const rect = element.getBoundingClientRect();
     const elementRect = {
-      y: (rect.top/this.zoom + scroll.y),
-      x: (rect.left/this.zoom + scroll.x),
+      y: rect.top/this.zoom + scroll.y,
+      x: rect.left/this.zoom + scroll.x,
       h: rect.height/this.zoom,
       w: rect.width/this.zoom
     };
