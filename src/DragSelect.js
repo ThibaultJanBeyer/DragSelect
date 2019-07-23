@@ -68,7 +68,7 @@ class DragSelect {
    * @param {object} options - The options object.
    * @param {HTMLElement | SVGElement | Document} [options.area=document] area in which you can drag. If not provided it will be the whole document
    * @param {number} [options.autoScrollSpeed=1] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Default = 1
-   * @param {number} [options.zoom=1] Zoom (if available). Unit sczle soom. Default = 1
+   * @param {number} [options.zoom=1] Zoom (if available). Unit scale soom. Default = 1
    * @param {Function} [options.callback=(selected, event) => {}] a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes. The second property passed is the event object.
    * @param {boolean} [options.customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
    * @param {string} [options.hoverClass=ds-hover] the class assigned to the mouse hovered items
@@ -241,7 +241,7 @@ class DragSelect {
       this._prevSelected = [];
     } // #9
 
-    this.checkIfInsideSelection(true, this.zoom); // reset selection if no multiselectionkeypressed
+    this.checkIfInsideSelection(true); // reset selection if no multiselectionkeypressed
 
     if (this.selectables.indexOf(node) > -1) {
       this.toggle(node);
@@ -303,7 +303,7 @@ class DragSelect {
       event.preventDefault();
 
     if (this._isRightClick(event)) return;
-    if (this._isScrollbarClick(event, this.area, this.zoom)) return;
+    if (this._isScrollbarClick(event, this.area)) return;
     // callback
     this.onDragStartBegin(event);
     if (this._breaked) return false;
@@ -318,7 +318,7 @@ class DragSelect {
 
     // move element on location
     this._getStartingPositions(event);
-    this.checkIfInsideSelection(true, this.zoom);
+    this.checkIfInsideSelection(true);
 
     this.selector.style.display = 'none'; // hidden unless moved, fix for issue #8
 
@@ -370,8 +370,7 @@ class DragSelect {
   _getStartingPositions(event) {
     this._initialCursorPos = this._newCursorPos = this._getCursorPos(
       event,
-      this.area,
-      this.zoom
+      this.area
     );
     this._initialScroll = this.getScroll(this.area);
 
@@ -408,7 +407,7 @@ class DragSelect {
 
     // move element on location
     this._updatePos(this.selector, selectorPos);
-    this.checkIfInsideSelection(null, this.zoom);
+    this.checkIfInsideSelection(null);
 
     // scroll area if area is scrollable
     this._autoScroll(event);
@@ -421,7 +420,7 @@ class DragSelect {
    * @private
    */
   _getPosition(event) {
-    var cursorPosNew = this._getCursorPos(event, this.area, this.zoom);
+    var cursorPosNew = this._getCursorPos(event, this.area);
     var scrollNew = this.getScroll(this.area);
 
     // save for later retrieval
@@ -513,7 +512,7 @@ class DragSelect {
    * @param {boolean} [force] forces through. Handles first clicks and accessibility. Here is user is clicking directly onto some element at start, (contrary to later hovers) we can assume that he really wants to select/deselect that item.
    * @return {boolean}
    */
-  checkIfInsideSelection(force, zoom) {
+  checkIfInsideSelection(force) {
     var anyInside = false;
     for (var i = 0, il = this.selectables.length; i < il; i++) {
       var selectable = this.selectables[i];
@@ -525,7 +524,7 @@ class DragSelect {
         h: this.selector.offsetHeight,
         w: this.selector.offsetWidth
       };
-      if (this._isElementTouching(selectable, selectionRect, scroll, zoom)) {
+      if (this._isElementTouching(selectable, selectionRect, scroll)) {
         this._handleSelection(selectable, force);
         anyInside = true;
       } else {
@@ -649,13 +648,13 @@ class DragSelect {
    * @return {boolean}
    * @private
    */
-  _isElementTouching(element, selectionRect, scroll, zoom) {
+  _isElementTouching(element, selectionRect, scroll) {
     const rect = element.getBoundingClientRect();
     const elementRect = {
-      y: (rect.top/zoom + scroll.y),
-      x: (rect.left/zoom + scroll.x),
-      h: rect.height/zoom,
-      w: rect.width/zoom
+      y: (rect.top/this.zoom + scroll.y),
+      x: (rect.left/this.zoom + scroll.x),
+      h: rect.height/this.zoom,
+      w: rect.width/this.zoom
     };
 
     // Axis-Aligned Bounding Box Colision Detection.
@@ -692,7 +691,7 @@ class DragSelect {
    * @private
    */
   _autoScroll(event) {
-    var edge = this.isCursorNearEdge(event, this.area, this.zoom);
+    var edge = this.isCursorNearEdge(event, this.area);
 
     var docEl =
       document &&
@@ -718,8 +717,8 @@ class DragSelect {
    * @param {(HTMLElement|SVGElement)} area the area.
    * @return {('top'|'bottom'|'left'|'right'|false)}
    */
-  isCursorNearEdge(event, area, zoom) {
-    var cursorPosition = this._getCursorPos(event, area, zoom);
+  isCursorNearEdge(event, area) {
+    var cursorPosition = this._getCursorPos(event, area);
     var areaRect = this.getAreaRect(area);
 
     var tolerance = {
@@ -757,7 +756,7 @@ class DragSelect {
    * @param {boolean} [withCallback] - whether or not the callback should be called
    */
   reset(event, withCallback) {
-    this._previousCursorPos = this._getCursorPos(event, this.area, this.zoom);
+    this._previousCursorPos = this._getCursorPos(event, this.area);
     document.removeEventListener('mouseup', this._end);
     document.removeEventListener('touchend', this._end);
     this.area.removeEventListener('mousemove', this._handleMove);
@@ -773,7 +772,6 @@ class DragSelect {
     this.selector.style.width = '0';
     this.selector.style.height = '0';
     this.selector.style.display = 'none';
-    
 
     setTimeout(
       () =>
@@ -840,7 +838,7 @@ class DragSelect {
     if (!event) return { x: 0, y: 0 };
 
     var area = _area || (_area !== false && this.area);
-    var pos = this._getCursorPos(event, area, this.zoom);
+    var pos = this._getCursorPos(event, area);
     var scroll = ignoreScroll ? { x: 0, y: 0 } : this.getScroll(area);
 
     return {
@@ -1042,13 +1040,13 @@ class DragSelect {
    * @return {boolean}
    * @private
    */
-  _isScrollbarClick(event, area, zoom) {
-    const cPos = this._getCursorPos(event, area, zoom);
+  _isScrollbarClick(event, area) {
+    const cPos = this._getCursorPos(event, area);
     const areaRect = this.getAreaRect(area);
     const border = area.computedBorder || 0;
 
-    if ((areaRect.width + border) <= cPos.x) return true;
-    if ((areaRect.height + border) <= cPos.y) return true;
+    if (areaRect.width + border <= cPos.x) return true;
+    if (areaRect.height + border <= cPos.y) return true;
     return false;
   }
 
@@ -1102,11 +1100,10 @@ class DragSelect {
    * Use the public .getCursorPos() from outside, it’s more flexible
    * @param {Object} [event]
    * @param {(HTMLElement|SVGElement)} area – containing area / document if none
-   * @param {number} [zoom] - zoom factor
    * @return {{x: number, y: number}} cursor X/Y
    * @private
    */
-  _getCursorPos(event, area, zoom) {
+  _getCursorPos(event, area) {
     if (!event) return { x: 0, y: 0 };
 
     // touchend has not touches. so we take the last toucb if a touchevent, we need to store the positions on the prototype
@@ -1124,11 +1121,11 @@ class DragSelect {
     };
 
     var areaRect = this.getAreaRect(area || document);
-    var docScroll = this.getScroll(null); // needed when document is scrollable but area is not
+    var docScroll = this.getScroll(); // needed when document is scrollable but area is not
     return {
       // if it’s constrained in an area the area should be substracted calculate
-      x: (cPos.x - areaRect.left - docScroll.x)/zoom,
-      y: (cPos.y - areaRect.top - docScroll.y)/zoom
+      x: (cPos.x - areaRect.left - docScroll.x)/this.zoom,
+      y: (cPos.y - areaRect.top - docScroll.y)/this.zoom
     };
   }
 

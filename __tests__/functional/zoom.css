@@ -1,0 +1,131 @@
+* {
+    -webkit-user-select: none;
+      -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+  }
+
+  #container {
+    width: 300px;
+    height: 300px;
+    background: rgba(0, 0, 0, 0.05);
+    border: 5px solid red;
+    position: absolute;
+    overflow: auto;
+    top: 100px;
+    left: 100px;
+  }
+
+  #container.oi {
+    overflow: inherit;
+  }
+
+  html, body {
+    padding: 0;
+    margin: 0;
+  }
+
+  .item {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    color: white;
+    border: 0;
+  }
+
+  .item:focus {
+    border: 1px solid blue;
+  }
+
+  .item:nth-child(1),
+  .item.one {
+    background: #f25d0d;
+    top: 4%;
+    left: 6%;
+  }
+
+  .item:nth-child(2),
+  .item.two {
+    background: #0df20d;
+    top: 25%;
+    left: 25%;
+  }
+
+  .item:nth-child(3),
+  .item.three {
+    background: #f20d11;
+    top: 45%;
+    left: 9%;
+  }
+
+  .item:nth-child(4),
+  .item.four {
+    background: #f2700d;
+    top: 23%;
+    left: 4%;
+  }
+
+  .item:nth-child(5),
+  .item.five {
+    background: #f20dbd;
+    top: 44%;
+    left: 19%;
+  }
+
+  .item:nth-child(6),
+  .item.six {
+    background: #e30df2;
+    top: 139%;
+    left: 130%;
+  }
+
+  .item.outside {
+    background: #ccf20d;
+    top: 122%;
+    left: 159%;
+  }
+
+  .item.full {
+    background: #0dd0f2;
+    top: 100%;
+    left: 100%;
+  }
+
+  .item.ds-selected,
+  .generated-item.ds-selected {
+    outline: 3px solid black;
+    outline-offset: 3px;
+    color: black;
+    font-weight: bold;
+  }
+
+  .generated-item {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    background: #0dd0f2;
+    -webkit-box-pack: center;
+      -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+    border: 0;
+    outline: 3px solid transparent;
+    outline-offset: 3px;
+    color: white;
+    margin: 6px;
+  }
+
+  .generated-item:focus {
+    border: 1px solid blue;
+  }
