@@ -88,7 +88,7 @@ function () {
    * @param {object} options - The options object.
    * @param {HTMLElement | SVGElement | Document} [options.area=document] area in which you can drag. If not provided it will be the whole document
    * @param {number} [options.autoScrollSpeed=1] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Default = 1
-   * @param {number} [options.zoom=1] Zoom (if available). Unit scale soom. Default = 1
+   * @param {number} [options.zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom. Default = 1
    * @param {Function} [options.callback=(selected, event) => {}] a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes. The second property passed is the event object.
    * @param {boolean} [options.customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
    * @param {string} [options.hoverClass=ds-hover] the class assigned to the mouse hovered items
