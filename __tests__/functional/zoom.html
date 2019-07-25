@@ -1,0 +1,49 @@
+<link rel="stylesheet" href="zoom.css">
+
+<div id="container">
+  <button type="button" class="item one">1</button>
+  <button type="button" class="item two">2</button>
+  <button type="button" class="item three">3</button>
+  <button type="button" class="item four">4</button>
+  <button type="button" class="item five">5</button>
+  <button type="button" class="item six">6</button>
+</div>
+<button type="button" class="zoom-btn" id="zoomMore">Zoom +</button>
+<button type="button" class="zoom-btn" id="zoomLess">Zoom -</button>
+<span>Current zoom: <span id="zoomer"></span>% </span>
+
+<script src="../../docs/DragSelect.js"></script>
+<script>
+  var zoom = 1.5;
+  var ds;
+
+  var initDS = function () {
+    if (ds) {
+      ds.stop();
+    }
+
+    ds = new DragSelect({
+      selectables: document.getElementsByClassName('item'),
+      area: document.getElementById('container'),
+      callback: function(e) { console.log("selected", e); },
+      zoom: zoom
+    });
+    document.getElementById('container').style = "transform: scale(" + zoom + ")";
+    document.getElementById('zoomer').innerHTML = zoom*100;
+  }
+
+  initDS();
+
+  (function() {
+    document.getElementById('zoomMore').onclick = function increaseZoom() {
+      zoom += 0.5
+      
+      initDS();
+    }
+    document.getElementById('zoomLess').onclick = function decreaseZoom() {
+      zoom -= 0.5
+      initDS();
+    }
+  })();
+
+</script>
