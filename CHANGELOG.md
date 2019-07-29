@@ -1,3 +1,7 @@
+# 1.13.0
+
+- Add `zoom` value for use-cases with CSS scale transformations. Implemented in PR [#40](https://github.com/ThibaultJanBeyer/DragSelect/pull/40). Thanks to [@staradayev](https://github.com/staradayev) for your contribution!
+
 # 1.12.2
 
 - Keep selection when clicking on scrollbars. Fixes [#36](https://github.com/ThibaultJanBeyer/DragSelect/issues/36)
