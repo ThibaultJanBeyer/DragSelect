@@ -1,3 +1,7 @@
+# 1.13.1
+
+- Quick-Fix for `zoom` issue. See PR [#42](https://github.com/ThibaultJanBeyer/DragSelect/pull/42)
+
 # 1.13.0
 
 - Add `zoom` value for use-cases with CSS scale transformations. Implemented in PR [#40](https://github.com/ThibaultJanBeyer/DragSelect/pull/40). Thanks to [@staradayev](https://github.com/staradayev) for your contribution!
