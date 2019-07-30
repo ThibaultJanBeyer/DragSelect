@@ -94,7 +94,7 @@ describe('Zoom', () => {
     selection = await page.evaluate(() => ds.getSelection());
     expect(selection.length).toBe(0);
     
-    await mouse.move(320, 320);
+    await mouse.move(400, 400);
     await mouse.down();
     await mouse.move(30, 30);
     await mouse.up();
