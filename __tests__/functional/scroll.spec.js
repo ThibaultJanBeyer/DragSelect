@@ -9,8 +9,8 @@ beforeAll(async () => {
   page = await browser.newPage();
 });
 
-afterAll(() => {
-  browser.close();
+afterAll(async () => {
+  await browser.close();
 });
 
 describe('Scroll', () => {

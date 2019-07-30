@@ -60,8 +60,8 @@ Thanks to:
 
 | ![BrowserStack](https://thibaultjanbeyer.github.io/DragSelect/browserstack.jpg) | [You?](https://paypal.me/pools/c/8gF2a5szCP) |
 |--- |--- |
-|[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or [Get in touch](mailto:thibault.beyer@gmail.com) |
 
+|[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or [Get in touch](mailto:thibault.beyer@gmail.com) |
 # Installation
 ## easy
 
@@ -222,7 +222,7 @@ There are way more than listed here. You can find all in **[the docs](https://th
 
 Creating and maintaining useful tools is a lot of work. 
 So don’t forget to give this repository a star if you find it useful.
-Tell all your friends and start contributing or [donating 1$](https://paypal.me/kleinanzeigen3) to keep me running. Thank you :)
+Star this repo, tell all your friends and start contributing or [donating 1$](https://paypal.me/pools/c/8gF2a5szCP) to keep it running. Thank you :)
 
 [![Typewriter Gif](https://thibaultjanbeyer.github.io/DragSelect/typewriter.gif)](http://thibaultjanbeyer.com/)
 
