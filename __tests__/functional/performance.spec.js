@@ -13,9 +13,10 @@ afterAll(() => {
   browser.close();
 });
 
-jest.setTimeout(10000);
-
 describe('Scroll', () => {
+
+  jest.setTimeout(20000);
+
   it('should work and be fast even with 25k items', async () => {
     const start = performance.now();
 
