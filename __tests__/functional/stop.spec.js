@@ -9,9 +9,7 @@ beforeAll(async () => {
   page = await browser.newPage();
 });
 
-afterAll(() => {
-  browser.close();
-});
+afterAll(async () => await browser.close());
 
 describe('Scroll', () => {
   it('should stop the functionality', async () => {
@@ -19,7 +17,7 @@ describe('Scroll', () => {
     await page.evaluate(() => {
       window.ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
-        callback: function(elements, e) {
+        callback: function (elements, e) {
           console.log('highlevel callback fired');
           window.callback = elements;
         }
@@ -52,7 +50,7 @@ describe('Scroll', () => {
     await page.evaluate(() => {
       window.ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
-        callback: function(elements, e) {
+        callback: function (elements, e) {
           console.log('highlevel callback fired');
           window.callback = elements;
           this.stop();

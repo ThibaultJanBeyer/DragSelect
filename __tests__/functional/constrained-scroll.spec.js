@@ -9,9 +9,7 @@ beforeAll(async () => {
   page = await browser.newPage();
 });
 
-afterAll(() => {
-  browser.close();
-});
+afterAll(async () => await browser.close());
 
 describe('Constrained Scroll', () => {
   it('selection should be able to scroll in the constrained container while dragging', async () => {

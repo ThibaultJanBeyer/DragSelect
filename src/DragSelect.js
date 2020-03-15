@@ -88,16 +88,16 @@ class DragSelect {
   constructor({
     area = document,
     autoScrollSpeed = 1,
-    callback = () => {},
+    callback = () => { },
     customStyles = false,
     hoverClass = 'ds-hover',
     multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
     multiSelectMode = false,
-    onDragMove = function() {},
-    onDragStart = function() {},
-    onDragStartBegin = function() {},
-    onElementSelect = function() {},
-    onElementUnselect = function() {},
+    onDragMove = function () { },
+    onDragStart = function () { },
+    onDragStartBegin = function () { },
+    onElementSelect = function () { },
+    onElementUnselect = function () { },
     selectableClass = 'ds-selectable',
     selectables = [],
     selectedClass = 'ds-selected',
@@ -519,8 +519,8 @@ class DragSelect {
 
       var scroll = this.getScroll(this.area);
       var selectionRect = {
-        y: (this.selector.getBoundingClientRect().top)/this.zoom + scroll.y,
-        x: (this.selector.getBoundingClientRect().left)/this.zoom + scroll.x,
+        y: (this.selector.getBoundingClientRect().top) / this.zoom + scroll.y,
+        x: (this.selector.getBoundingClientRect().left) / this.zoom + scroll.x,
         h: this.selector.offsetHeight,
         w: this.selector.offsetWidth
       };
@@ -651,10 +651,10 @@ class DragSelect {
   _isElementTouching(element, selectionRect, scroll) {
     const rect = element.getBoundingClientRect();
     const elementRect = {
-      y: rect.top/this.zoom + scroll.y,
-      x: rect.left/this.zoom + scroll.x,
-      h: rect.height/this.zoom,
-      w: rect.width/this.zoom
+      y: rect.top / this.zoom + scroll.y,
+      x: rect.left / this.zoom + scroll.x,
+      h: rect.height / this.zoom,
+      w: rect.width / this.zoom
     };
 
     // Axis-Aligned Bounding Box Colision Detection.
@@ -1274,7 +1274,7 @@ if (typeof module !== 'undefined' && module !== null) {
   define
 ) {
   // @ts-ignore
-  define(function() {
+  define(function () {
     return DragSelect;
   });
 } else {

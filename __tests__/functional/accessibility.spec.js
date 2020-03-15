@@ -9,9 +9,7 @@ beforeAll(async () => {
   page = await browser.newPage();
 });
 
-afterAll(async () => {
-  await browser.close();
-});
+afterAll(async () => await browser.close());
 
 describe('Accessibility', () => {
   it('should select using keyboard only', async () => {

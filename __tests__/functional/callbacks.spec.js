@@ -9,9 +9,7 @@ beforeAll(async () => {
   page = await browser.newPage();
 });
 
-afterAll(() => {
-  browser.close();
-});
+afterAll(async () => await browser.close());
 
 describe('Callbacks', () => {
   it('should trigger callbacks with the correct elements when elements are selected', async () => {

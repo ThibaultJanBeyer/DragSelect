@@ -9,9 +9,7 @@ beforeAll(async () => {
   page = await browser.newPage();
 });
 
-afterAll(() => {
-  browser.close();
-});
+afterAll(async () => await browser.close());
 
 describe('Zoom', () => {
   it('selection should remain when zoomed', async () => {
@@ -89,11 +87,11 @@ describe('Zoom', () => {
     });
 
     const mouse = page.mouse;
-    
+
 
     selection = await page.evaluate(() => ds.getSelection());
     expect(selection.length).toBe(0);
-    
+
     await mouse.move(400, 400);
     await mouse.down();
     await mouse.move(30, 30);

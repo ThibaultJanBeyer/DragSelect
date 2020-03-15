@@ -9,9 +9,7 @@ beforeAll(async () => {
   page = await browser.newPage();
 });
 
-afterAll(() => {
-  browser.close();
-});
+afterAll(async () => await browser.close());
 
 describe('Constrained', () => {
   it('selection should be constrained to the area with only contains one element', async () => {
