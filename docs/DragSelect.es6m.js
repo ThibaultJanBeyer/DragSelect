@@ -33,7 +33,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
  https://github.com/ThibaultJanBeyer/DragSelect
  Please give it a like, this is what makes me happy :-)
- Thanks You
+ Thank You
 
  {*} {*} STAR THIS PLUGIN ON GITHUB: {*} {*}
 
@@ -523,7 +523,7 @@ var DragSelect = /*#__PURE__*/function () {
 
       var scrollNew = this.getScroll(this.area); // save for later retrieval
 
-      this._newCursorPos = cursorPosNew; // if area or document is scrolled those values have to be included aswell
+      this._newCursorPos = cursorPosNew; // if area or document is scrolled those values have to be included as well
 
       var scrollAmount = {
         x: scrollNew.x - this._initialScroll.x,
@@ -548,9 +548,9 @@ var DragSelect = /*#__PURE__*/function () {
        *
        * Example #1:
        * Unfortunately, things get even more complicated when we are inside a scrollable
-       * DIV. Then, let’s say we scoll to the right by 10px and move the cursor right by 5px in our
-       * checks we have to substract 10px from the initialcursor position in our check
-       * (since the inital position is moved to the left by 10px) so in our example:
+       * DIV. Then, let’s say we scroll to the right by 10px and move the cursor right by 5px in our
+       * checks we have to subtract 10px from the initialcursor position in our check
+       * (since the initial position is moved to the left by 10px) so in our example:
        * 1. cursorPosNew.x (5) > initialCursorPos.x (0) - scrollAmount.x (10) === 5 > -10 === true
        * then reset the x position to its initial position (since we might have changed that
        * position when scrolling to the left before going right) in our example:
@@ -568,7 +568,7 @@ var DragSelect = /*#__PURE__*/function () {
        *
        * same thing has to be done for top/bottom
        *
-       * I hope that makes sence, try stuff out and play around with variables to get a hang of it.
+       * I hope that makes sense. Try stuff out and play around with variables to get a hang of it.
        */
 
       var selectorPos = {}; // right
@@ -927,7 +927,7 @@ var DragSelect = /*#__PURE__*/function () {
       document.removeEventListener('touchend', this._end);
 
       this._handleSelectables(_toConsumableArray(this.selectables), remove, fromSelection);
-    } // Usefull methods for user
+    } // Useful methods for the user
     //////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1276,7 +1276,7 @@ var DragSelect = /*#__PURE__*/function () {
       var docScroll = this.getScroll(); // needed when document is scrollable but area is not
 
       return {
-        // if it’s constrained in an area the area should be substracted calculate
+        // if it’s constrained in an area the area should be subtracted calculate
         x: (cPos.x - areaRect.left - docScroll.x) / this.zoom,
         y: (cPos.y - areaRect.top - docScroll.y) / this.zoom
       };
