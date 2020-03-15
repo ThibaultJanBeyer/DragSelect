@@ -1,3 +1,10 @@
+# 1.13.2
+
+- Update dev deps
+- Extract some build functionality from package.json to `/bin`
+- Fix typos in functional tests
+- Update raw DragSelect to meet new standards from prettier
+
 # 1.13.1
 
 - Quick-Fix for `zoom` issue. See PR [#42](https://github.com/ThibaultJanBeyer/DragSelect/pull/42)
