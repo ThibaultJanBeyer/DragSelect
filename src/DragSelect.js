@@ -88,16 +88,16 @@ class DragSelect {
   constructor({
     area = document,
     autoScrollSpeed = 1,
-    callback = () => { },
+    callback = () => {},
     customStyles = false,
     hoverClass = 'ds-hover',
     multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
     multiSelectMode = false,
-    onDragMove = function () { },
-    onDragStart = function () { },
-    onDragStartBegin = function () { },
-    onElementSelect = function () { },
-    onElementUnselect = function () { },
+    onDragMove = function () {},
+    onDragStart = function () {},
+    onDragStartBegin = function () {},
+    onElementSelect = function () {},
+    onElementUnselect = function () {},
     selectableClass = 'ds-selectable',
     selectables = [],
     selectedClass = 'ds-selected',
@@ -123,6 +123,7 @@ class DragSelect {
     this.area = this._handleArea(area);
     this.customStyles = customStyles;
     this.zoom = zoom;
+    this.autoScrollInterval = null;
 
     // Selector
     this.selector = selector || this._createSelector();
@@ -410,7 +411,7 @@ class DragSelect {
     this.checkIfInsideSelection(null);
 
     // scroll area if area is scrollable
-    this._autoScroll(event);
+    this._setScrollState(event);
   }
 
   /**
@@ -519,8 +520,8 @@ class DragSelect {
 
       var scroll = this.getScroll(this.area);
       var selectionRect = {
-        y: (this.selector.getBoundingClientRect().top) / this.zoom + scroll.y,
-        x: (this.selector.getBoundingClientRect().left) / this.zoom + scroll.x,
+        y: this.selector.getBoundingClientRect().top / this.zoom + scroll.y,
+        x: this.selector.getBoundingClientRect().left / this.zoom + scroll.x,
         h: this.selector.offsetHeight,
         w: this.selector.offsetWidth
       };
@@ -690,9 +691,23 @@ class DragSelect {
    * @param {Object} event – event object.
    * @private
    */
-  _autoScroll(event) {
+  _setScrollState(event) {
     var edge = this.isCursorNearEdge(event, this.area);
+    if (edge) {
+      if (this.autoScrollInterval) {
+        window.clearInterval(this.autoScrollInterval);
+      }
+      this.autoScrollInterval = window.setInterval(() => {
+        this._updatePos(this.selector, this._getPosition(event));
+        this._autoScroll(edge);
+      });
+    } else if (!edge && this.autoScrollInterval) {
+      window.clearInterval(this.autoScrollInterval);
+      this.autoScrollInterval = null;
+    }
+  }
 
+  _autoScroll(edge) {
     var docEl =
       document &&
       document.documentElement &&
@@ -772,6 +787,11 @@ class DragSelect {
     this.selector.style.width = '0';
     this.selector.style.height = '0';
     this.selector.style.display = 'none';
+
+    if (this.autoScrollInterval) {
+      window.clearInterval(this.autoScrollInterval);
+      this.autoScrollInterval = null;
+    }
 
     setTimeout(
       () =>

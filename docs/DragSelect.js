@@ -206,7 +206,8 @@ var DragSelect = /*#__PURE__*/function () {
     this.callback = callback;
     this.area = this._handleArea(area);
     this.customStyles = customStyles;
-    this.zoom = zoom; // Selector
+    this.zoom = zoom;
+    this.autoScrollInterval = null; // Selector
 
     this.selector = selector || this._createSelector();
     this.selector.classList.add(this.selectorClass);
@@ -507,7 +508,7 @@ var DragSelect = /*#__PURE__*/function () {
 
       this.checkIfInsideSelection(null); // scroll area if area is scrollable
 
-      this._autoScroll(event);
+      this._setScrollState(event);
     }
     /**
      * Calculates and returns the exact x,y,w,h positions of the selector element
@@ -797,9 +798,30 @@ var DragSelect = /*#__PURE__*/function () {
      */
 
   }, {
-    key: "_autoScroll",
-    value: function _autoScroll(event) {
+    key: "_setScrollState",
+    value: function _setScrollState(event) {
+      var _this2 = this;
+
       var edge = this.isCursorNearEdge(event, this.area);
+
+      if (edge) {
+        if (this.autoScrollInterval) {
+          window.clearInterval(this.autoScrollInterval);
+        }
+
+        this.autoScrollInterval = window.setInterval(function () {
+          _this2._updatePos(_this2.selector, _this2._getPosition(event));
+
+          _this2._autoScroll(edge);
+        });
+      } else if (!edge && this.autoScrollInterval) {
+        window.clearInterval(this.autoScrollInterval);
+        this.autoScrollInterval = null;
+      }
+    }
+  }, {
+    key: "_autoScroll",
+    value: function _autoScroll(edge) {
       var docEl = document && document.documentElement && document.documentElement.scrollTop && document.documentElement;
 
       var _area = this.area === document ? docEl || document.body : this.area;
@@ -862,7 +884,7 @@ var DragSelect = /*#__PURE__*/function () {
      * @param {boolean} [withCallback] - whether or not the callback should be called
      */
     value: function reset(event, withCallback) {
-      var _this2 = this;
+      var _this3 = this;
 
       this._previousCursorPos = this._getCursorPos(event, this.area);
       document.removeEventListener('mouseup', this._end);
@@ -880,9 +902,15 @@ var DragSelect = /*#__PURE__*/function () {
       this.selector.style.width = '0';
       this.selector.style.height = '0';
       this.selector.style.display = 'none';
+
+      if (this.autoScrollInterval) {
+        window.clearInterval(this.autoScrollInterval);
+        this.autoScrollInterval = null;
+      }
+
       setTimeout(function () {
         return (// debounce in order "onClick" to work
-          _this2.mouseInteraction = false
+          _this3.mouseInteraction = false
         );
       }, 100);
     }
@@ -896,12 +924,12 @@ var DragSelect = /*#__PURE__*/function () {
   }, {
     key: "break",
     value: function _break() {
-      var _this3 = this;
+      var _this4 = this;
 
       this._breaked = true;
       setTimeout( // debounce the break should only break once instantly after call
       function () {
-        return _this3._breaked = false;
+        return _this4._breaked = false;
       }, 100);
     }
     /**
