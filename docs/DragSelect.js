@@ -812,6 +812,8 @@ var DragSelect = /*#__PURE__*/function () {
         this.autoScrollInterval = window.setInterval(function () {
           _this2._updatePos(_this2.selector, _this2._getPosition(event));
 
+          _this2.checkIfInsideSelection(null);
+
           _this2._autoScroll(edge);
         });
       } else if (!edge && this.autoScrollInterval) {

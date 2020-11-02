@@ -699,6 +699,7 @@ class DragSelect {
       }
       this.autoScrollInterval = window.setInterval(() => {
         this._updatePos(this.selector, this._getPosition(event));
+        this.checkIfInsideSelection(null);
         this._autoScroll(edge);
       });
     } else if (!edge && this.autoScrollInterval) {
