@@ -1,4 +1,91 @@
-// @ts-check
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> DragSelect.ts</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    API Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="DragSelect.html">DragSelect</a></li></ul><h3><a href="global.html">Global</a></h3></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>DragSelect.ts</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// @ts-check
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -48,19 +135,17 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 class DragSelect {
-  /** @type {boolean} */
-  _multiSelectKeyPressed = false;
-  /** @type {{x: number, y: number}} */
-  _initialCursorPos = { x: 0, y: 0 };
+  _multiSelectKeyPressed: boolean = false;
+  _initialCursorPos: {x:number,y:number} = { x: 0, y: 0 };
   /** @type {{x: number, y: number}} */
   _newCursorPos = { x: 0, y: 0 };
   /** @type {{x: number, y: number}} */
   _previousCursorPos = { x: 0, y: 0 };
   /** @type {{x: number, y: number}} */
   _initialScroll = { x: 0, y: 0 };
-  /** @type {Array.<(SVGElement|HTMLElement)>} */
+  /** @type {Array.&lt;(SVGElement|HTMLElement)>} */
   _selected = [];
-  /** @type {Array.<(SVGElement|HTMLElement)>} */
+  /** @type {Array.&lt;(SVGElement|HTMLElement)>} */
   _prevSelected = []; // memory to fix #9
   _lastTouch;
 
@@ -139,13 +224,13 @@ class DragSelect {
    * @private
    */
   _handleSelectables(selectables, remove, fromSelection) {
-    for (var index = 0; index < selectables.length; index++) {
+    for (var index = 0; index &lt; selectables.length; index++) {
       var selectable = selectables[index];
       var indexOf = this.selectables.indexOf(selectable);
 
-      if (indexOf < 0 && !remove) {
+      if (indexOf &lt; 0 &amp;&amp; !remove) {
         this._addSelectable(selectable, fromSelection);
-      } else if (indexOf > -1 && remove) {
+      } else if (indexOf > -1 &amp;&amp; remove) {
         this._removeSelectable(selectable, indexOf, fromSelection);
       }
     }
@@ -162,7 +247,7 @@ class DragSelect {
     this.selectables.push(selectable);
 
     // also add to current selection
-    if (toSelection && this._selected.indexOf(selectable) < 0) {
+    if (toSelection &amp;&amp; this._selected.indexOf(selectable) &lt; 0) {
       selectable.classList.add(this.selectedClass);
       this._selected.push(selectable);
     }
@@ -181,7 +266,7 @@ class DragSelect {
     this.selectables.splice(indexOf, 1);
 
     // also remove from current selection
-    if (fromSelection && this._selected.indexOf(selectable) > -1) {
+    if (fromSelection &amp;&amp; this._selected.indexOf(selectable) > -1) {
       selectable.classList.remove(this.selectedClass);
       this._selected.splice(this._selected.indexOf(selectable), 1);
     }
@@ -197,7 +282,7 @@ class DragSelect {
    * Triggers when a node is actively selected.
    *
    * This might be an "onClick" method but it also triggers when
-   * <button> nodes are pressed via the keyboard.
+   * &lt;button> nodes are pressed via the keyboard.
    * Making DragSelect accessible for everyone!
    *
    * @param {MouseEvent} event
@@ -279,7 +364,7 @@ class DragSelect {
   startUp(event) {
     // touchmove handler
     if (event.type === 'touchstart')
-      // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
+      // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 &amp; https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
       event.preventDefault();
 
     if (this._isRightClick(event)) return;
@@ -331,7 +416,7 @@ class DragSelect {
     if (this.multiSelectMode) {
       this._multiSelectKeyPressed = true;
     } else {
-      for (var index = 0; index < this.multiSelectKeys.length; index++) {
+      for (var index = 0; index &lt; this.multiSelectKeys.length; index++) {
         var mKey = this.multiSelectKeys[index];
         if (event[mKey]) {
           this._multiSelectKeyPressed = true;
@@ -494,7 +579,7 @@ class DragSelect {
    */
   checkIfInsideSelection(force) {
     var anyInside = false;
-    for (var i = 0, il = this.selectables.length; i < il; i++) {
+    for (var i = 0, il = this.selectables.length; i &lt; il; i++) {
       var selectable = this.selectables[i];
 
       var scroll = this.getScroll(this.area);
@@ -521,14 +606,14 @@ class DragSelect {
    * @private
    */
   _handleSelection(item, force) {
-    if (item.classList.contains(this.hoverClass) && !force) {
+    if (item.classList.contains(this.hoverClass) &amp;&amp; !force) {
       return false;
     }
     var posInSelectedArray = this._selected.indexOf(item);
 
-    if (posInSelectedArray < 0) {
+    if (posInSelectedArray &lt; 0) {
       this.select(item);
-    } else if (posInSelectedArray > -1 && this._multiSelectKeyPressed) {
+    } else if (posInSelectedArray > -1 &amp;&amp; this._multiSelectKeyPressed) {
       this.unselect(item);
     }
 
@@ -542,7 +627,7 @@ class DragSelect {
    * @private
    */
   _handleUnselection(item, force) {
-    if (!item.classList.contains(this.hoverClass) && !force) {
+    if (!item.classList.contains(this.hoverClass) &amp;&amp; !force) {
       return false;
     }
     var posInSelectedArray = this._selected.indexOf(item);
@@ -555,9 +640,9 @@ class DragSelect {
      * = if item was selected and is not in selection anymore, reselect it
      * = if item was not selected and is not in selection anymore, unselect it
      */
-    if (posInSelectedArray > -1 && isInPrevSelection < 0) {
+    if (posInSelectedArray > -1 &amp;&amp; isInPrevSelection &lt; 0) {
       this.unselect(item);
-    } else if (posInSelectedArray < 0 && isInPrevSelection > -1) {
+    } else if (posInSelectedArray &lt; 0 &amp;&amp; isInPrevSelection > -1) {
       this.select(item);
     }
 
@@ -587,7 +672,7 @@ class DragSelect {
    * @return {(HTMLElement|SVGElement|false)} item
    */
   unselect(item) {
-    if (this._selected.indexOf(item) < 0) return false;
+    if (this._selected.indexOf(item) &lt; 0) return false;
 
     this._selected.splice(this._selected.indexOf(item), 1);
     item.classList.remove(this.selectedClass);
@@ -645,15 +730,15 @@ class DragSelect {
     //          a11[2]a12
     //             b12
     // to check if those two boxes collide we do this AABB calculation:
-    //& a01 < a12 (left border pos box1 smaller than right border pos box2)
-    //& a02 > a11 (right border pos box1 larger than left border pos box2)
-    //& b01 < b12 (top border pos box1 smaller than bottom border pos box2)
-    //& b02 > b11 (bottom border pos box1 larger than top border pos box2)
+    //&amp; a01 &lt; a12 (left border pos box1 smaller than right border pos box2)
+    //&amp; a02 > a11 (right border pos box1 larger than left border pos box2)
+    //&amp; b01 &lt; b12 (top border pos box1 smaller than bottom border pos box2)
+    //&amp; b02 > b11 (bottom border pos box1 larger than top border pos box2)
     // See: https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box and https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
     if (
-      selectionRect.x < elementRect.x + elementRect.w &&
-      selectionRect.x + selectionRect.w > elementRect.x &&
-      selectionRect.y < elementRect.y + elementRect.h &&
+      selectionRect.x &lt; elementRect.x + elementRect.w &amp;&amp;
+      selectionRect.x + selectionRect.w > elementRect.x &amp;&amp;
+      selectionRect.y &lt; elementRect.y + elementRect.h &amp;&amp;
       selectionRect.h + selectionRect.y > elementRect.y
     ) {
       return true; // collision detected!
@@ -671,20 +756,20 @@ class DragSelect {
    * @private
    */
   _autoScroll(event) {
-    var edge = this.isCursorNearEdge(this.area, event);
+    var edge = this.isCursorNearEdge(event, this.area);
 
     var docEl =
-      document &&
-      document.documentElement &&
-      document.documentElement.scrollTop &&
+      document &amp;&amp;
+      document.documentElement &amp;&amp;
+      document.documentElement.scrollTop &amp;&amp;
       document.documentElement;
     var _area = this.area === document ? docEl || document.body : this.area;
 
-    if (edge === 'top' && _area.scrollTop > 0) {
+    if (edge === 'top' &amp;&amp; _area.scrollTop > 0) {
       _area.scrollTop -= 1 * this.autoScrollSpeed;
     } else if (edge === 'bottom') {
       _area.scrollTop += 1 * this.autoScrollSpeed;
-    } else if (edge === 'left' && _area.scrollLeft > 0) {
+    } else if (edge === 'left' &amp;&amp; _area.scrollLeft > 0) {
       _area.scrollLeft -= 1 * this.autoScrollSpeed;
     } else if (edge === 'right') {
       _area.scrollLeft += 1 * this.autoScrollSpeed;
@@ -693,11 +778,11 @@ class DragSelect {
 
   /**
    * Check if the selector is near an edge of the area
-   * @param {(HTMLElement|SVGElement)} area the area.
    * @param {Object} [event] event object.
+   * @param {(HTMLElement|SVGElement)} area the area.
    * @return {('top'|'bottom'|'left'|'right'|false)}
    */
-  isCursorNearEdge(area, event) {
+  isCursorNearEdge(event, area) {
     var cursorPosition = this._getCursorPos(event, area);
     var areaRect = this.getAreaRect(area);
 
@@ -706,13 +791,13 @@ class DragSelect {
       y: Math.max(areaRect.height / 10, 30)
     };
 
-    if (cursorPosition.y < tolerance.y) {
+    if (cursorPosition.y &lt; tolerance.y) {
       return 'top';
-    } else if (areaRect.height - cursorPosition.y < tolerance.y) {
+    } else if (areaRect.height - cursorPosition.y &lt; tolerance.y) {
       return 'bottom';
-    } else if (areaRect.width - cursorPosition.x < tolerance.x) {
+    } else if (areaRect.width - cursorPosition.x &lt; tolerance.x) {
       return 'right';
-    } else if (cursorPosition.x < tolerance.x) {
+    } else if (cursorPosition.x &lt; tolerance.x) {
       return 'left';
     }
 
@@ -724,7 +809,7 @@ class DragSelect {
 
   /**
    * Triggered on mouse click release (end of dragging a selection).
-   * Calls the callback method & unbind functions.
+   * Calls the callback method &amp; unbind functions.
    * @param {Object} event - The event object.
    * @private
    */
@@ -800,7 +885,7 @@ class DragSelect {
 
   /**
    * Returns the current selected nodes
-   * @return {Array.<(HTMLElement|SVGElement)>}
+   * @return {Array.&lt;(HTMLElement|SVGElement)>}
    */
   getSelection() {
     return [...this._selected];
@@ -817,7 +902,7 @@ class DragSelect {
   getCursorPos(event, _area, ignoreScroll) {
     if (!event) return { x: 0, y: 0 };
 
-    var area = _area || (_area !== false && this.area);
+    var area = _area || (_area !== false &amp;&amp; this.area);
     var pos = this._getCursorPos(event, area);
     var scroll = ignoreScroll ? { x: 0, y: 0 } : this.getScroll(area);
 
@@ -832,15 +917,15 @@ class DragSelect {
    * also adds the specific classes and take into account all calculations.
    * Does not clear the selection, in contrary to .setSelection
    * Can add multiple nodes at once, in contrary to .select
-   * @param {Array.<(HTMLElement|SVGElement)>} _nodes one or multiple nodes
+   * @param {Array.&lt;(HTMLElement|SVGElement)>} _nodes one or multiple nodes
    * @param {boolean} [triggerCallback] - if callback should be called
    * @param {boolean} [dontAddToSelectables] - if element should not be added to the list of selectable nodes
-   * @return {Array.<(HTMLElement|SVGElement)>} all selected nodes
+   * @return {Array.&lt;(HTMLElement|SVGElement)>} all selected nodes
    */
   addSelection(_nodes, triggerCallback, dontAddToSelectables) {
     var nodes = this._toArray(_nodes);
 
-    for (var index = 0, il = nodes.length; index < il; index++) {
+    for (var index = 0, il = nodes.length; index &lt; il; index++) {
       var node = nodes[index];
       this.select(node);
     }
@@ -849,7 +934,7 @@ class DragSelect {
       this.addSelectables(nodes);
     }
     if (triggerCallback) {
-      this.callback(this._selected);
+      this.callback(this._selected, false);
     }
 
     return this._selected;
@@ -858,7 +943,7 @@ class DragSelect {
   /**
    * Removes specific nodes from the selection
    * Multiple nodes can be given at once, in contrary to unselect
-   * @param {Array.<(HTMLElement|SVGElement)>} _nodes one or multiple nodes
+   * @param {Array.&lt;(HTMLElement|SVGElement)>} _nodes one or multiple nodes
    * @param {boolean} [triggerCallback] - if callback should be called
    * @param {boolean} [removeFromSelectables] - if element should be removed from the list of selectable nodes
    * @return {Array} all selected nodes
@@ -866,7 +951,7 @@ class DragSelect {
   removeSelection(_nodes, triggerCallback, removeFromSelectables) {
     var nodes = this._toArray(_nodes);
 
-    for (var index = 0, il = nodes.length; index < il; index++) {
+    for (var index = 0, il = nodes.length; index &lt; il; index++) {
       var node = nodes[index];
       this.unselect(node);
     }
@@ -875,7 +960,7 @@ class DragSelect {
       this.removeSelectables(nodes);
     }
     if (triggerCallback) {
-      this.callback(this._selected);
+      this.callback(this._selected, false);
     }
 
     return this._selected;
@@ -885,18 +970,18 @@ class DragSelect {
    * Toggles specific nodes from the selection:
    * If element is not in selection it will be added, if it is already selected, it will be removed.
    * Multiple nodes can be given at once.
-   * @param {Array.<(HTMLElement|SVGElement)>} _nodes one or multiple nodes
+   * @param {Array.&lt;(HTMLElement|SVGElement)>} _nodes one or multiple nodes
    * @param {boolean} [triggerCallback] - if callback should be called
-   * @param {boolean} [special] - if true, it also removes selected elements from possible selectable nodes & don’t add them to selectables if they are not
+   * @param {boolean} [special] - if true, it also removes selected elements from possible selectable nodes &amp; don’t add them to selectables if they are not
    * @return {Array} all selected nodes
    */
   toggleSelection(_nodes, triggerCallback, special) {
     var nodes = this._toArray(_nodes);
 
-    for (var index = 0, il = nodes.length; index < il; index++) {
+    for (var index = 0, il = nodes.length; index &lt; il; index++) {
       var node = nodes[index];
 
-      if (this._selected.indexOf(node) < 0) {
+      if (this._selected.indexOf(node) &lt; 0) {
         this.addSelection(node, triggerCallback, special);
       } else {
         this.removeSelection(node, triggerCallback, special);
@@ -909,10 +994,10 @@ class DragSelect {
   /**
    * Sets the current selected nodes and optionally run the callback
    * By default, adds new elements also to the list of selectables
-   * @param {Array.<(HTMLElement|SVGElement)>} _nodes – dom nodes
+   * @param {Array.&lt;(HTMLElement|SVGElement)>} _nodes – dom nodes
    * @param {boolean} [triggerCallback] - if callback should be called
    * @param {boolean} [dontAddToSelectables] - if element should not be added to the list of selectable nodes
-   * @return {Array.<(HTMLElement|SVGElement)>}
+   * @return {Array.&lt;(HTMLElement|SVGElement)>}
    */
   setSelection(_nodes, triggerCallback, dontAddToSelectables) {
     this.clearSelection();
@@ -924,17 +1009,17 @@ class DragSelect {
   /**
    * Unselect / Deselect all current selected Nodes
    * @param {boolean} [triggerCallback] - if callback should be called
-   * @return {Array.<(HTMLElement|SVGElement)>} this.selected, should be empty
+   * @return {Array.&lt;(HTMLElement|SVGElement)>} this.selected, should be empty
    */
   clearSelection(triggerCallback) {
     var selection = this._selected.slice();
-    for (var index = 0, il = selection.length; index < il; index++) {
+    for (var index = 0, il = selection.length; index &lt; il; index++) {
       var node = selection[index];
       this.unselect(node);
     }
 
     if (triggerCallback) {
-      this.callback(this._selected);
+      this.callback(this._selected, false);
     }
 
     return this._selected;
@@ -943,9 +1028,9 @@ class DragSelect {
   /**
    * Add nodes that can be selected.
    * The algorithm makes sure that no node is added twice
-   * @param {Array.<(HTMLElement|SVGElement)>} _nodes dom nodes
+   * @param {Array.&lt;(HTMLElement|SVGElement)>} _nodes dom nodes
    * @param {boolean} [addToSelection] if elements should also be added to current selection
-   * @return {Array.<(HTMLElement|SVGElement)>} _nodes the added node(s)
+   * @return {Array.&lt;(HTMLElement|SVGElement)>} _nodes the added node(s)
    */
   addSelectables(_nodes, addToSelection) {
     var nodes = this._toArray(_nodes);
@@ -955,7 +1040,7 @@ class DragSelect {
 
   /**
    * Gets all nodes that can be selected
-   * @return {Array.<(HTMLElement|SVGElement)>} this.selectables
+   * @return {Array.&lt;(HTMLElement|SVGElement)>} this.selectables
    */
   getSelectables() {
     return this.selectables;
@@ -963,12 +1048,12 @@ class DragSelect {
 
   /**
    * Sets all elements that can be selected.
-   * Removes all current selectables (& their respective classes).
+   * Removes all current selectables (&amp; their respective classes).
    * Adds the new set to the selectables set, thus replacing the original set.
-   * @param {Array.<(HTMLElement|SVGElement)>} nodes – dom nodes
+   * @param {Array.&lt;(HTMLElement|SVGElement)>} nodes – dom nodes
    * @param {boolean} [removeFromSelection] if elements should also be removed from current selection
    * @param {boolean} [addToSelection] if elements should also be added to current selection
-   * @return {Array.<(HTMLElement|SVGElement)>} nodes – the added node(s)
+   * @return {Array.&lt;(HTMLElement|SVGElement)>} nodes – the added node(s)
    */
   setSelectables(nodes, removeFromSelection, addToSelection) {
     this.removeSelectables(this.getSelectables(), removeFromSelection);
@@ -977,9 +1062,9 @@ class DragSelect {
 
   /**
    * Remove nodes from the nodes that can be selected.
-   * @param {Array.<(HTMLElement|SVGElement)>} _nodes – dom nodes
+   * @param {Array.&lt;(HTMLElement|SVGElement)>} _nodes – dom nodes
    * @param {boolean} [removeFromSelection] if elements should also be removed from current selection
-   * @return {Array.<(HTMLElement|SVGElement)>} _nodes – the removed node(s)
+   * @return {Array.&lt;(HTMLElement|SVGElement)>} _nodes – the removed node(s)
    */
   removeSelectables(_nodes, removeFromSelection) {
     var nodes = this._toArray(_nodes);
@@ -1002,7 +1087,7 @@ class DragSelect {
     var isRightMB = false;
 
     if ('which' in event) {
-      // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+      // Gecko (Firefox), WebKit (Safari/Chrome) &amp; Opera
       isRightMB = event.which === 3;
     } else if ('button' in event) {
       // IE, Opera
@@ -1025,8 +1110,8 @@ class DragSelect {
     const areaRect = this.getAreaRect(area);
     const border = area.computedBorder || 0;
 
-    if (areaRect.width + border <= cPos.x) return true;
-    if (areaRect.height + border <= cPos.y) return true;
+    if (areaRect.width + border &lt;= cPos.x) return true;
+    if (areaRect.height + border &lt;= cPos.y) return true;
     return false;
   }
 
@@ -1039,7 +1124,7 @@ class DragSelect {
    */
   _toArray(nodes) {
     if (!nodes) return [];
-    if (!nodes.length && this._isElement(nodes)) return [nodes];
+    if (!nodes.length &amp;&amp; this._isElement(nodes)) return [nodes];
 
     const array = [];
     for (let i = nodes.length - 1; i >= 0; i--) {
@@ -1065,9 +1150,9 @@ class DragSelect {
       // an exception is thrown and we end up here. Testing some
       // properties that all elements have. (works even on IE7)
       return (
-        typeof node === 'object' &&
-        node.nodeType === 1 &&
-        typeof node.style === 'object' &&
+        typeof node === 'object' &amp;&amp;
+        node.nodeType === 1 &amp;&amp;
+        typeof node.style === 'object' &amp;&amp;
         typeof node.ownerDocument === 'object'
       );
     }
@@ -1078,24 +1163,24 @@ class DragSelect {
    * /!\ for internal calculation reasons it does _not_ take
    * the AREA scroll into consideration unless it’s the outer Document.
    * Use the public .getCursorPos() from outside, it’s more flexible
+   * @param {Object} [event]
    * @param {(HTMLElement|SVGElement)} area – containing area / document if none
-   * @param {MouseEvent|TouchEvent|any} [event]
    * @return {{x: number, y: number}} cursor X/Y
    * @private
    */
-  _getCursorPos(area, event) {
+  _getCursorPos(event, area) {
     if (!event) return { x: 0, y: 0 };
 
     // touchend has not touches. so we take the last toucb if a touchevent, we need to store the positions on the prototype
-    if ('touches' in event && event.type !== 'touchend') {
+    if (event.touches &amp;&amp; event.type !== 'touchend') {
       this._lastTouch = event;
     }
     //if a touchevent, return the last touch rather than the regular event
     // we need .touches[0] from that event instead
-    event = 'touches' in event ? this._lastTouch.touches[0] : event;
+    event = event.touches ? this._lastTouch.touches[0] : event;
 
     var cPos = {
-      // event.clientX/Y fallback for <IE8
+      // event.clientX/Y fallback for &lt;IE8
       x: event.pageX || event.clientX,
       y: event.pageY || event.clientY
     };
@@ -1172,8 +1257,8 @@ class DragSelect {
 
     var scroll = {
       // when the rectangle is bound to the document, no scroll is needed
-      y: area && area.scrollTop >= 0 ? area.scrollTop : body.top,
-      x: area && area.scrollLeft >= 0 ? area.scrollLeft : body.left
+      y: area &amp;&amp; area.scrollTop >= 0 ? area.scrollTop : body.top,
+      x: area &amp;&amp; area.scrollLeft >= 0 ? area.scrollLeft : body.left
     };
 
     return scroll;
@@ -1183,10 +1268,8 @@ class DragSelect {
    * Returns the top/left/bottom/right/width/height
    * values of a node. If Area is document then everything
    * except the sizes will be nulled.
-   * @param {HTMLElement|SVGElement|any} area
-   * @returns {{top:number,left:number,bottom:number,right:number,width:number,height:number}}
    */
-  getAreaRect(area) {
+  getAreaRect(area:HTMLElement|SVGElement|any): {top:number,left:number,bottom:number,right:number,width:number,height:number} {
     if (area === document) {
       var size = {
         y:
@@ -1241,15 +1324,15 @@ class DragSelect {
 /* eslint-disable no-undef */
 
 // Module exporting
-if (typeof module !== 'undefined' && module !== null) {
+if (typeof module !== 'undefined' &amp;&amp; module !== null) {
   module.exports = DragSelect;
 
   // AMD Modules
 } else if (
   // @ts-ignore
-  typeof define !== 'undefined' &&
+  typeof define !== 'undefined' &amp;&amp;
   // @ts-ignore
-  typeof define === 'function' &&
+  typeof define === 'function' &amp;&amp;
   // @ts-ignore
   define
 ) {
@@ -1261,3 +1344,32 @@ if (typeof module !== 'undefined' && module !== null) {
   // @ts-ignore
   window.DragSelect = DragSelect;
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+</body>
+</html>

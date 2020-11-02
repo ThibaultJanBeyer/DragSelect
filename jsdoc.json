@@ -1,0 +1,18 @@
+{
+  "opts": {
+    "template": "node_modules/minami",
+    "destination": "./docs"
+  },
+  "source": {
+    "include": ["./src", "./README.md"],
+    "includePattern": "\\.(jsx|js|ts|tsx)$"
+  },
+  "plugins": [
+    "node_modules/better-docs/typescript",
+    "node_modules/better-docs/typedef-import"
+  ],
+  "tags": {
+    "allowUnknownTags": ["optional"]
+  },
+  "sourceType": "module"
+}
