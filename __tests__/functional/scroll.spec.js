@@ -1,15 +1,4 @@
-import puppeteer from 'puppeteer';
-
 const baseUrl = `file://${process.cwd()}/__tests__/functional`;
-let page;
-let browser;
-
-beforeAll(async () => {
-  browser = await puppeteer.launch();
-  page = await browser.newPage();
-});
-
-afterAll(async () => await browser.close());
 
 describe('Scroll', () => {
   it('selection in double scrolling element should work', async () => {

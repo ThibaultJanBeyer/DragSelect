@@ -1,15 +1,6 @@
 import puppeteer from 'puppeteer';
 
 const baseUrl = `file://${process.cwd()}/__tests__/functional`;
-let page;
-let browser;
-
-beforeAll(async () => {
-  browser = await puppeteer.launch();
-  page = await browser.newPage();
-});
-
-afterAll(async () => await browser.close());
 
 describe('Constrained', () => {
   it('selection should be constrained to the area with only contains one element', async () => {
