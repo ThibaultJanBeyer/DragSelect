@@ -2,17 +2,13 @@
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
 
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -84,6 +80,8 @@ var DragSelect = /*#__PURE__*/function () {
 
   /** @type {Array.<(SVGElement|HTMLElement)>} */
   // memory to fix #9
+
+  /** @type {number|null} */
 
   /**
    * @constructor
@@ -177,6 +175,8 @@ var DragSelect = /*#__PURE__*/function () {
 
     _defineProperty(this, "_lastTouch", void 0);
 
+    _defineProperty(this, "_autoScrollInterval", null);
+
     _defineProperty(this, "_onClick", function (event) {
       return _this.handleClick(event);
     });
@@ -210,8 +210,7 @@ var DragSelect = /*#__PURE__*/function () {
     this.callback = callback;
     this.area = this._handleArea(area);
     this.customStyles = customStyles;
-    this.zoom = zoom;
-    this.autoScrollInterval = null; // Selector
+    this.zoom = zoom; // Selector
 
     this.selector = selector || this._createSelector();
     this.selector.classList.add(this.selectorClass);
@@ -796,7 +795,8 @@ var DragSelect = /*#__PURE__*/function () {
     //////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Automatically Scroll the area by selecting
+     * Creates an interval that autoscrolls while the cursor
+     * is near the edge
      * @param {Object} event – event object.
      * @private
      */
@@ -809,22 +809,28 @@ var DragSelect = /*#__PURE__*/function () {
       var edge = this.isCursorNearEdge(event, this.area);
 
       if (edge) {
-        if (this.autoScrollInterval) {
-          window.clearInterval(this.autoScrollInterval);
+        if (this._autoScrollInterval) {
+          window.clearInterval(this._autoScrollInterval);
         }
 
-        this.autoScrollInterval = window.setInterval(function () {
+        this._autoScrollInterval = window.setInterval(function () {
           _this2._updatePos(_this2.selector, _this2._getPosition(event));
 
           _this2.checkIfInsideSelection(null);
 
           _this2._autoScroll(edge);
         });
-      } else if (!edge && this.autoScrollInterval) {
-        window.clearInterval(this.autoScrollInterval);
-        this.autoScrollInterval = null;
+      } else if (!edge && this._autoScrollInterval) {
+        window.clearInterval(this._autoScrollInterval);
+        this._autoScrollInterval = null;
       }
     }
+    /**
+     * Scroll the area in the direction of edge
+     * @param {('top'|'bottom'|'left'|'right'|false)} edge
+     * @private
+     */
+
   }, {
     key: "_autoScroll",
     value: function _autoScroll(edge) {
@@ -909,9 +915,9 @@ var DragSelect = /*#__PURE__*/function () {
       this.selector.style.height = '0';
       this.selector.style.display = 'none';
 
-      if (this.autoScrollInterval) {
-        window.clearInterval(this.autoScrollInterval);
-        this.autoScrollInterval = null;
+      if (this._autoScrollInterval) {
+        window.clearInterval(this._autoScrollInterval);
+        this._autoScrollInterval = null;
       }
 
       setTimeout(function () {

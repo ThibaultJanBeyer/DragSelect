@@ -62,6 +62,8 @@ class DragSelect {
   /** @type {Array.<(SVGElement|HTMLElement)>} */
   _prevSelected = []; // memory to fix #9
   _lastTouch;
+  /** @type {number|null} */
+  _autoScrollInterval = null;
 
   /**
    * @constructor
@@ -123,7 +125,6 @@ class DragSelect {
     this.area = this._handleArea(area);
     this.customStyles = customStyles;
     this.zoom = zoom;
-    this.autoScrollInterval = null;
 
     // Selector
     this.selector = selector || this._createSelector();
@@ -687,27 +688,33 @@ class DragSelect {
   //////////////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Automatically Scroll the area by selecting
+   * Creates an interval that autoscrolls while the cursor
+   * is near the edge
    * @param {Object} event – event object.
    * @private
    */
   _setScrollState(event) {
     var edge = this.isCursorNearEdge(event, this.area);
     if (edge) {
-      if (this.autoScrollInterval) {
-        window.clearInterval(this.autoScrollInterval);
+      if (this._autoScrollInterval) {
+        window.clearInterval(this._autoScrollInterval);
       }
-      this.autoScrollInterval = window.setInterval(() => {
+      this._autoScrollInterval = window.setInterval(() => {
         this._updatePos(this.selector, this._getPosition(event));
         this.checkIfInsideSelection(null);
         this._autoScroll(edge);
       });
-    } else if (!edge && this.autoScrollInterval) {
-      window.clearInterval(this.autoScrollInterval);
-      this.autoScrollInterval = null;
+    } else if (!edge && this._autoScrollInterval) {
+      window.clearInterval(this._autoScrollInterval);
+      this._autoScrollInterval = null;
     }
   }
 
+  /**
+   * Scroll the area in the direction of edge
+   * @param {('top'|'bottom'|'left'|'right'|false)} edge
+   * @private
+   */
   _autoScroll(edge) {
     var docEl =
       document &&
@@ -789,9 +796,9 @@ class DragSelect {
     this.selector.style.height = '0';
     this.selector.style.display = 'none';
 
-    if (this.autoScrollInterval) {
-      window.clearInterval(this.autoScrollInterval);
-      this.autoScrollInterval = null;
+    if (this._autoScrollInterval) {
+      window.clearInterval(this._autoScrollInterval);
+      this._autoScrollInterval = null;
     }
 
     setTimeout(
