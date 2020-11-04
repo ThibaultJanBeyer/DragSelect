@@ -1,3 +1,9 @@
+# 1.13.3
+
+- Update & upgrade dev-deps
+- Use puppeteer-jest for faster & cleaner tests
+- Fix typing issues (unused properties should be used last)
+
 # 1.13.2
 
 - Update dev deps
