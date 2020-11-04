@@ -9,7 +9,7 @@ cat ./bin/es6m.js >> ./docs/DragSelect.es6m.js
 
 
 # Uglify / Minify
-uglifyjs ./docs/DragSelect.js -o ./docs/ds.min.js
+npm run uglify -- ./docs/DragSelect.js -o ./docs/ds.min.js
 
 # ES6 Module Version
 cp ./docs/ds.min.js ./docs/ds.es6m.min.js

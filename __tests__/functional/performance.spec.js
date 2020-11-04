@@ -1,15 +1,6 @@
-import puppeteer from 'puppeteer';
+import { performance } from 'perf_hooks'
 
 const baseUrl = `file://${process.cwd()}/__tests__/functional`;
-let page;
-let browser;
-
-beforeAll(async () => {
-  browser = await puppeteer.launch();
-  page = await browser.newPage();
-});
-
-afterAll(async () => await browser.close());
 
 describe('Scroll', () => {
 

@@ -1,3 +1,4 @@
+// v 1.14.0
 // @ts-check
 /* 
     ____                   _____      __          __ 
@@ -63,21 +64,23 @@ class DragSelect {
   /** @type {Array.<(SVGElement|HTMLElement)>} */
   _prevSelected = []; // memory to fix #9
   _lastTouch;
+  /** @type {number|null} */
+  _autoScrollInterval = null;
 
   /** @param {Settings} settings */
   constructor({
     area = document,
     autoScrollSpeed = 1,
-    callback = () => { },
+    callback = () => {},
     customStyles = false,
     hoverClass = 'ds-hover',
     multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
     multiSelectMode = false,
-    onDragMove = function () { },
-    onDragStart = function () { },
-    onDragStartBegin = function () { },
-    onElementSelect = function () { },
-    onElementUnselect = function () { },
+    onDragMove = function () {},
+    onDragStart = function () {},
+    onDragStartBegin = function () {},
+    onElementSelect = function () {},
+    onElementUnselect = function () {},
     selectableClass = 'ds-selectable',
     selectables = [],
     selectedClass = 'ds-selected',
@@ -349,8 +352,8 @@ class DragSelect {
    */
   _getStartingPositions(event) {
     this._initialCursorPos = this._newCursorPos = this._getCursorPos(
+      this.area,
       event,
-      this.area
     );
     this._initialScroll = this.getScroll(this.area);
 
@@ -390,7 +393,7 @@ class DragSelect {
     this.checkIfInsideSelection(null);
 
     // scroll area if area is scrollable
-    this._autoScroll(event);
+    this._setScrollState(event);
   }
 
   /**
@@ -400,7 +403,7 @@ class DragSelect {
    * @private
    */
   _getPosition(event) {
-    var cursorPosNew = this._getCursorPos(event, this.area);
+    var cursorPosNew = this._getCursorPos(this.area, event);
     var scrollNew = this.getScroll(this.area);
 
     // save for later retrieval
@@ -499,8 +502,8 @@ class DragSelect {
 
       var scroll = this.getScroll(this.area);
       var selectionRect = {
-        y: (this.selector.getBoundingClientRect().top) / this.zoom + scroll.y,
-        x: (this.selector.getBoundingClientRect().left) / this.zoom + scroll.x,
+        y: this.selector.getBoundingClientRect().top / this.zoom + scroll.y,
+        x: this.selector.getBoundingClientRect().left / this.zoom + scroll.x,
         h: this.selector.offsetHeight,
         w: this.selector.offsetWidth
       };
@@ -666,13 +669,35 @@ class DragSelect {
   //////////////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Automatically Scroll the area by selecting
+   * Creates an interval that autoscrolls while the cursor
+   * is near the edge
    * @param {Object} event – event object.
    * @private
    */
-  _autoScroll(event) {
-    var edge = this.isCursorNearEdge(this.area, event);
+  _setScrollState(event) {
+    const edge = this.isCursorNearEdge(this.area, event);
 
+    if (edge) {
+      if (this._autoScrollInterval)
+        window.clearInterval(this._autoScrollInterval);
+
+      this._autoScrollInterval = window.setInterval(() => {
+        this._updatePos(this.selector, this._getPosition(event));
+        this.checkIfInsideSelection(null);
+        this._autoScroll(edge);
+      });
+    } else if (!edge && this._autoScrollInterval) {
+      window.clearInterval(this._autoScrollInterval);
+      this._autoScrollInterval = null;
+    }
+  }
+
+  /**
+   * Scroll the area in the direction of edge
+   * @param {('top'|'bottom'|'left'|'right'|false)} edge
+   * @private
+   */
+  _autoScroll(edge) {
     var docEl =
       document &&
       document.documentElement &&
@@ -698,7 +723,16 @@ class DragSelect {
    * @return {('top'|'bottom'|'left'|'right'|false)}
    */
   isCursorNearEdge(area, event) {
-    var cursorPosition = this._getCursorPos(event, area);
+    // @TODO DEPRECATION: remove support on next major release
+    if (typeof area === "object" && this._isElement(event)) {
+      console.warn("[DragSelect] DEPRECATION warning: this method signature is changing. From isCursorNearEdge(event, area) to isCursorNearEdge(area, event). Please use area as first argument and event as second. It will still work for now but functionality be removed soon")
+      const _event = event
+      const _area = area
+      area = _event
+      event = _area
+    }
+
+    var cursorPosition = this._getCursorPos(area, event);
     var areaRect = this.getAreaRect(area);
 
     var tolerance = {
@@ -736,7 +770,7 @@ class DragSelect {
    * @param {boolean} [withCallback] - whether or not the callback should be called
    */
   reset(event, withCallback) {
-    this._previousCursorPos = this._getCursorPos(event, this.area);
+    this._previousCursorPos = this._getCursorPos(this.area, event);
     document.removeEventListener('mouseup', this._end);
     document.removeEventListener('touchend', this._end);
     this.area.removeEventListener('mousemove', this._handleMove);
@@ -752,6 +786,11 @@ class DragSelect {
     this.selector.style.width = '0';
     this.selector.style.height = '0';
     this.selector.style.display = 'none';
+
+    if (this._autoScrollInterval) {
+      window.clearInterval(this._autoScrollInterval);
+      this._autoScrollInterval = null;
+    }
 
     setTimeout(
       () =>
@@ -818,7 +857,7 @@ class DragSelect {
     if (!event) return { x: 0, y: 0 };
 
     var area = _area || (_area !== false && this.area);
-    var pos = this._getCursorPos(event, area);
+    var pos = this._getCursorPos(area, event);
     var scroll = ignoreScroll ? { x: 0, y: 0 } : this.getScroll(area);
 
     return {
@@ -1021,7 +1060,7 @@ class DragSelect {
    * @private
    */
   _isScrollbarClick(event, area) {
-    const cPos = this._getCursorPos(event, area);
+    const cPos = this._getCursorPos(area, event);
     const areaRect = this.getAreaRect(area);
     const border = area.computedBorder || 0;
 

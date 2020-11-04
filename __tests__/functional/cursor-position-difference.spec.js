@@ -1,16 +1,5 @@
 // Check if onStart ::: getCursorPositionDifference(true) and onMove ::: getCursorPositionDifference() return the correct values
-import puppeteer from 'puppeteer';
-
 const baseUrl = `file://${process.cwd()}/__tests__/functional`;
-let page;
-let browser;
-
-beforeAll(async () => {
-  browser = await puppeteer.launch();
-  page = await browser.newPage();
-});
-
-afterAll(async () => await browser.close());
 
 const startPos = 10;
 const steps = 10;

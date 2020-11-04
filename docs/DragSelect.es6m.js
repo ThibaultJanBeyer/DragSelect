@@ -1,14 +1,18 @@
 "use strict";
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -18,7 +22,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// v 1.12.2
+// v 1.14.0
 // @ts-check
 
 /* 
@@ -80,6 +84,8 @@ var DragSelect = /*#__PURE__*/function () {
 
   /** @type {Array.<(SVGElement|HTMLElement)>} */
   // memory to fix #9
+
+  /** @type {number|null} */
 
   /**
    * @constructor
@@ -172,6 +178,8 @@ var DragSelect = /*#__PURE__*/function () {
     _defineProperty(this, "_prevSelected", []);
 
     _defineProperty(this, "_lastTouch", void 0);
+
+    _defineProperty(this, "_autoScrollInterval", null);
 
     _defineProperty(this, "_onClick", function (event) {
       return _this.handleClick(event);
@@ -469,7 +477,7 @@ var DragSelect = /*#__PURE__*/function () {
   }, {
     key: "_getStartingPositions",
     value: function _getStartingPositions(event) {
-      this._initialCursorPos = this._newCursorPos = this._getCursorPos(event, this.area);
+      this._initialCursorPos = this._newCursorPos = this._getCursorPos(this.area, event);
       this._initialScroll = this.getScroll(this.area);
       var selectorPos = {};
       selectorPos.x = this._initialCursorPos.x + this._initialScroll.x;
@@ -507,7 +515,7 @@ var DragSelect = /*#__PURE__*/function () {
 
       this.checkIfInsideSelection(null); // scroll area if area is scrollable
 
-      this._autoScroll(event);
+      this._setScrollState(event);
     }
     /**
      * Calculates and returns the exact x,y,w,h positions of the selector element
@@ -519,7 +527,7 @@ var DragSelect = /*#__PURE__*/function () {
   }, {
     key: "_getPosition",
     value: function _getPosition(event) {
-      var cursorPosNew = this._getCursorPos(event, this.area);
+      var cursorPosNew = this._getCursorPos(this.area, event);
 
       var scrollNew = this.getScroll(this.area); // save for later retrieval
 
@@ -791,15 +799,42 @@ var DragSelect = /*#__PURE__*/function () {
     //////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Automatically Scroll the area by selecting
+     * Creates an interval that autoscrolls while the cursor
+     * is near the edge
      * @param {Object} event – event object.
      * @private
      */
 
   }, {
+    key: "_setScrollState",
+    value: function _setScrollState(event) {
+      var _this2 = this;
+
+      var edge = this.isCursorNearEdge(this.area, event);
+
+      if (edge) {
+        if (this._autoScrollInterval) window.clearInterval(this._autoScrollInterval);
+        this._autoScrollInterval = window.setInterval(function () {
+          _this2._updatePos(_this2.selector, _this2._getPosition(event));
+
+          _this2.checkIfInsideSelection(null);
+
+          _this2._autoScroll(edge);
+        });
+      } else if (!edge && this._autoScrollInterval) {
+        window.clearInterval(this._autoScrollInterval);
+        this._autoScrollInterval = null;
+      }
+    }
+    /**
+     * Scroll the area in the direction of edge
+     * @param {('top'|'bottom'|'left'|'right'|false)} edge
+     * @private
+     */
+
+  }, {
     key: "_autoScroll",
-    value: function _autoScroll(event) {
-      var edge = this.isCursorNearEdge(event, this.area);
+    value: function _autoScroll(edge) {
       var docEl = document && document.documentElement && document.documentElement.scrollTop && document.documentElement;
 
       var _area = this.area === document ? docEl || document.body : this.area;
@@ -816,15 +851,24 @@ var DragSelect = /*#__PURE__*/function () {
     }
     /**
      * Check if the selector is near an edge of the area
-     * @param {Object} [event] event object.
      * @param {(HTMLElement|SVGElement)} area the area.
+     * @param {Object} [event] event object.
      * @return {('top'|'bottom'|'left'|'right'|false)}
      */
 
   }, {
     key: "isCursorNearEdge",
-    value: function isCursorNearEdge(event, area) {
-      var cursorPosition = this._getCursorPos(event, area);
+    value: function isCursorNearEdge(area, event) {
+      // @TODO DEPRECATION: remove support on next major release
+      if (_typeof(area) === "object" && this._isElement(event)) {
+        console.warn("[DragSelect] DEPRECATION warning: this method signature is changing. From isCursorNearEdge(event, area) to isCursorNearEdge(area, event). Please use area as first argument and event as second. It will still work for now but functionality be removed soon");
+        var _event = event;
+        var _area = area;
+        area = _event;
+        event = _area;
+      }
+
+      var cursorPosition = this._getCursorPos(area, event);
 
       var areaRect = this.getAreaRect(area);
       var tolerance = {
@@ -862,9 +906,9 @@ var DragSelect = /*#__PURE__*/function () {
      * @param {boolean} [withCallback] - whether or not the callback should be called
      */
     value: function reset(event, withCallback) {
-      var _this2 = this;
+      var _this3 = this;
 
-      this._previousCursorPos = this._getCursorPos(event, this.area);
+      this._previousCursorPos = this._getCursorPos(this.area, event);
       document.removeEventListener('mouseup', this._end);
       document.removeEventListener('touchend', this._end);
       this.area.removeEventListener('mousemove', this._handleMove);
@@ -880,9 +924,15 @@ var DragSelect = /*#__PURE__*/function () {
       this.selector.style.width = '0';
       this.selector.style.height = '0';
       this.selector.style.display = 'none';
+
+      if (this._autoScrollInterval) {
+        window.clearInterval(this._autoScrollInterval);
+        this._autoScrollInterval = null;
+      }
+
       setTimeout(function () {
         return (// debounce in order "onClick" to work
-          _this2.mouseInteraction = false
+          _this3.mouseInteraction = false
         );
       }, 100);
     }
@@ -896,12 +946,12 @@ var DragSelect = /*#__PURE__*/function () {
   }, {
     key: "break",
     value: function _break() {
-      var _this3 = this;
+      var _this4 = this;
 
       this._breaked = true;
       setTimeout( // debounce the break should only break once instantly after call
       function () {
-        return _this3._breaked = false;
+        return _this4._breaked = false;
       }, 100);
     }
     /**
@@ -958,7 +1008,7 @@ var DragSelect = /*#__PURE__*/function () {
       };
       var area = _area || _area !== false && this.area;
 
-      var pos = this._getCursorPos(event, area);
+      var pos = this._getCursorPos(area, event);
 
       var scroll = ignoreScroll ? {
         x: 0,
@@ -1191,7 +1241,7 @@ var DragSelect = /*#__PURE__*/function () {
   }, {
     key: "_isScrollbarClick",
     value: function _isScrollbarClick(event, area) {
-      var cPos = this._getCursorPos(event, area);
+      var cPos = this._getCursorPos(area, event);
 
       var areaRect = this.getAreaRect(area);
       var border = area.computedBorder || 0;
@@ -1246,15 +1296,15 @@ var DragSelect = /*#__PURE__*/function () {
      * /!\ for internal calculation reasons it does _not_ take
      * the AREA scroll into consideration unless it’s the outer Document.
      * Use the public .getCursorPos() from outside, it’s more flexible
-     * @param {Object} [event]
      * @param {(HTMLElement|SVGElement)} area – containing area / document if none
+     * @param {Object} [event]
      * @return {{x: number, y: number}} cursor X/Y
      * @private
      */
 
   }, {
     key: "_getCursorPos",
-    value: function _getCursorPos(event, area) {
+    value: function _getCursorPos(area, event) {
       if (!event) return {
         x: 0,
         y: 0

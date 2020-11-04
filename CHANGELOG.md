@@ -1,3 +1,15 @@
+# 1.14.0
+
+- Enhanced auto-scrolling. See PR [59](https://github.com/ThibaultJanBeyer/DragSelect/pull/59). Big thanks to [@slinhart](https://github.com/slinhart) for this addition <3
+
+# 1.13.3-5
+
+- Update & upgrade dev-deps
+- Use puppeteer-jest for faster & cleaner tests
+- Fix typing issues (unused properties should be used last)
+- Deprecating `isCursorNearEdge(event, area)` in favor of `isCursorNearEdge(area, event)`
+- Using [uglify-js](https://www.npmjs.com/package/uglify-js) as new uglifier
+
 # 1.13.2
 
 - Update dev deps
