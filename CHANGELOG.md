@@ -1,8 +1,9 @@
-# 1.13.3
+# 1.13.3-4
 
 - Update & upgrade dev-deps
 - Use puppeteer-jest for faster & cleaner tests
 - Fix typing issues (unused properties should be used last)
+- Deprecating `isCursorNearEdge(event, area)` in favor of `isCursorNearEdge(area, event)`
 
 # 1.13.2
 
