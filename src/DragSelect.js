@@ -62,6 +62,8 @@ class DragSelect {
   /** @type {Array.<(SVGElement|HTMLElement)>} */
   _prevSelected = []; // memory to fix #9
   _lastTouch;
+  /** @type {number|null} */
+  _autoScrollInterval = null;
 
   /**
    * @constructor
@@ -88,16 +90,16 @@ class DragSelect {
   constructor({
     area = document,
     autoScrollSpeed = 1,
-    callback = () => { },
+    callback = () => {},
     customStyles = false,
     hoverClass = 'ds-hover',
     multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
     multiSelectMode = false,
-    onDragMove = function () { },
-    onDragStart = function () { },
-    onDragStartBegin = function () { },
-    onElementSelect = function () { },
-    onElementUnselect = function () { },
+    onDragMove = function () {},
+    onDragStart = function () {},
+    onDragStartBegin = function () {},
+    onElementSelect = function () {},
+    onElementUnselect = function () {},
     selectableClass = 'ds-selectable',
     selectables = [],
     selectedClass = 'ds-selected',
@@ -410,7 +412,7 @@ class DragSelect {
     this.checkIfInsideSelection(null);
 
     // scroll area if area is scrollable
-    this._autoScroll(event);
+    this._setScrollState(event);
   }
 
   /**
@@ -519,8 +521,8 @@ class DragSelect {
 
       var scroll = this.getScroll(this.area);
       var selectionRect = {
-        y: (this.selector.getBoundingClientRect().top) / this.zoom + scroll.y,
-        x: (this.selector.getBoundingClientRect().left) / this.zoom + scroll.x,
+        y: this.selector.getBoundingClientRect().top / this.zoom + scroll.y,
+        x: this.selector.getBoundingClientRect().left / this.zoom + scroll.x,
         h: this.selector.offsetHeight,
         w: this.selector.offsetWidth
       };
@@ -686,13 +688,35 @@ class DragSelect {
   //////////////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Automatically Scroll the area by selecting
+   * Creates an interval that autoscrolls while the cursor
+   * is near the edge
    * @param {Object} event – event object.
    * @private
    */
-  _autoScroll(event) {
-    var edge = this.isCursorNearEdge(this.area, event);
+  _setScrollState(event) {
+    const edge = this.isCursorNearEdge(this.area, event);
 
+    if (edge) {
+      if (this._autoScrollInterval)
+        window.clearInterval(this._autoScrollInterval);
+
+      this._autoScrollInterval = window.setInterval(() => {
+        this._updatePos(this.selector, this._getPosition(event));
+        this.checkIfInsideSelection(null);
+        this._autoScroll(edge);
+      });
+    } else if (!edge && this._autoScrollInterval) {
+      window.clearInterval(this._autoScrollInterval);
+      this._autoScrollInterval = null;
+    }
+  }
+
+  /**
+   * Scroll the area in the direction of edge
+   * @param {('top'|'bottom'|'left'|'right'|false)} edge
+   * @private
+   */
+  _autoScroll(edge) {
     var docEl =
       document &&
       document.documentElement &&
@@ -781,6 +805,11 @@ class DragSelect {
     this.selector.style.width = '0';
     this.selector.style.height = '0';
     this.selector.style.display = 'none';
+
+    if (this._autoScrollInterval) {
+      window.clearInterval(this._autoScrollInterval);
+      this._autoScrollInterval = null;
+    }
 
     setTimeout(
       () =>

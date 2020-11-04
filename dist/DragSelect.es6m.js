@@ -85,6 +85,8 @@ var DragSelect = /*#__PURE__*/function () {
   /** @type {Array.<(SVGElement|HTMLElement)>} */
   // memory to fix #9
 
+  /** @type {number|null} */
+
   /**
    * @constructor
    * @param {object} options - The options object.
@@ -176,6 +178,8 @@ var DragSelect = /*#__PURE__*/function () {
     _defineProperty(this, "_prevSelected", []);
 
     _defineProperty(this, "_lastTouch", void 0);
+
+    _defineProperty(this, "_autoScrollInterval", null);
 
     _defineProperty(this, "_onClick", function (event) {
       return _this.handleClick(event);
@@ -511,7 +515,7 @@ var DragSelect = /*#__PURE__*/function () {
 
       this.checkIfInsideSelection(null); // scroll area if area is scrollable
 
-      this._autoScroll(event);
+      this._setScrollState(event);
     }
     /**
      * Calculates and returns the exact x,y,w,h positions of the selector element
@@ -795,15 +799,42 @@ var DragSelect = /*#__PURE__*/function () {
     //////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Automatically Scroll the area by selecting
+     * Creates an interval that autoscrolls while the cursor
+     * is near the edge
      * @param {Object} event – event object.
      * @private
      */
 
   }, {
-    key: "_autoScroll",
-    value: function _autoScroll(event) {
+    key: "_setScrollState",
+    value: function _setScrollState(event) {
+      var _this2 = this;
+
       var edge = this.isCursorNearEdge(this.area, event);
+
+      if (edge) {
+        if (this._autoScrollInterval) window.clearInterval(this._autoScrollInterval);
+        this._autoScrollInterval = window.setInterval(function () {
+          _this2._updatePos(_this2.selector, _this2._getPosition(event));
+
+          _this2.checkIfInsideSelection(null);
+
+          _this2._autoScroll(edge);
+        });
+      } else if (!edge && this._autoScrollInterval) {
+        window.clearInterval(this._autoScrollInterval);
+        this._autoScrollInterval = null;
+      }
+    }
+    /**
+     * Scroll the area in the direction of edge
+     * @param {('top'|'bottom'|'left'|'right'|false)} edge
+     * @private
+     */
+
+  }, {
+    key: "_autoScroll",
+    value: function _autoScroll(edge) {
       var docEl = document && document.documentElement && document.documentElement.scrollTop && document.documentElement;
 
       var _area = this.area === document ? docEl || document.body : this.area;
@@ -875,7 +906,7 @@ var DragSelect = /*#__PURE__*/function () {
      * @param {boolean} [withCallback] - whether or not the callback should be called
      */
     value: function reset(event, withCallback) {
-      var _this2 = this;
+      var _this3 = this;
 
       this._previousCursorPos = this._getCursorPos(this.area, event);
       document.removeEventListener('mouseup', this._end);
@@ -893,9 +924,15 @@ var DragSelect = /*#__PURE__*/function () {
       this.selector.style.width = '0';
       this.selector.style.height = '0';
       this.selector.style.display = 'none';
+
+      if (this._autoScrollInterval) {
+        window.clearInterval(this._autoScrollInterval);
+        this._autoScrollInterval = null;
+      }
+
       setTimeout(function () {
         return (// debounce in order "onClick" to work
-          _this2.mouseInteraction = false
+          _this3.mouseInteraction = false
         );
       }, 100);
     }
@@ -909,12 +946,12 @@ var DragSelect = /*#__PURE__*/function () {
   }, {
     key: "break",
     value: function _break() {
-      var _this3 = this;
+      var _this4 = this;
 
       this._breaked = true;
       setTimeout( // debounce the break should only break once instantly after call
       function () {
-        return _this3._breaked = false;
+        return _this4._breaked = false;
       }, 100);
     }
     /**
