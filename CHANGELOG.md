@@ -1,3 +1,7 @@
+# 1.14.0
+
+- Enhanced auto-scrolling. See PR [59](https://github.com/ThibaultJanBeyer/DragSelect/pull/59). Big thanks to [@slinhart](https://github.com/slinhart) for this addition <3
+
 # 1.13.3-5
 
 - Update & upgrade dev-deps
