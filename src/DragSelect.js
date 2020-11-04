@@ -720,7 +720,7 @@ class DragSelect {
   isCursorNearEdge(area, event) {
     // @TODO DEPRECATION: remove support on next major release
     if (typeof area === "object" && this._isElement(event)) {
-      console.warn("DEPRECATION warning: this method signature is changing. From isCursorNearEdge(event, area) to isCursorNearEdge(area, event). Please use area as first argument and event as second. It will still work for now but functionality be removed soon")
+      console.warn("[DragSelect] DEPRECATION warning: this method signature is changing. From isCursorNearEdge(event, area) to isCursorNearEdge(area, event). Please use area as first argument and event as second. It will still work for now but functionality be removed soon")
       const _event = event
       const _area = area
       area = _event
