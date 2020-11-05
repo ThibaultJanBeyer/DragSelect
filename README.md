@@ -117,27 +117,54 @@ Find all possible properties and methods in **[the docs](https://thibaultjanbeye
 
 ```javascript
 var ds = new DragSelect({
-  selectables: document.getElementsByClassName('selectable-nodes'), // node/nodes that can be selected. This is also optional, you could just add them later with .addSelectables.
-  selector: document.getElementById('rectangle'), // draggable element. By default one will be created.
-  area: document.getElementById('area'), // area in which you can drag. If not provided it will be the whole document.
-  customStyles: false,  // If set to true, no styles (except for position absolute) will be applied by default.
-  multiSelectKeys: ['ctrlKey', 'shiftKey', 'metaKey'],  // special keys that allow multiselection.
-  multiSelectMode: false,  // If set to true, the multiselection behavior will be turned on by default without the need of modifier keys. Default: false
-  autoScrollSpeed: 3,  // Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Set to 0 to disable autoscrolling. Default = 1
-  onDragStart: function(element) {}, // fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners.
-  onDragMove: function(element) {}, // fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
-  onElementSelect: function(element) {}, // fired every time an element is selected. (element) = just selected node
-  onElementUnselect: function(element) {}, // fired every time an element is de-selected. (element) = just de-selected node.
-  callback: function(elements) {} // fired once the user releases the mouse. (elements) = selected nodes.
+
+  // node/nodes that can be selected.
+  // This is also optional, you could just add them later with .addSelectables().
+  selectables: document.getElementsByClassName('selectable-nodes'),
+  // draggable element. By default one will be created.
+  selector: document.getElementById('rectangle'),
+  // area in which you can drag. If not provided it will be the whole document.
+  area: document.getElementById('area'), 
+  // If set to true, no styles (except for position absolute) will be applied by default.
+  customStyles: false,
+  // special keys that allow multiselection. Default value below.
+  multiSelectKeys: ['ctrlKey', 'shiftKey', 'metaKey'],
+  // If set to true, the multiselection behavior will be turned on by default without pressing
+  // modifier keys. Default: false
+  multiSelectMode: false,
+  // Speed in which the area scrolls while selecting (if available).
+  // Unit is pixel per movement. Set to 0 to disable autoscrolling. Default = 1
+  autoScrollSpeed: 3,
+
+  // fired when the user clicks in the area. This callback gets the event object.
+  // Executed after DragSelect function code ran, before the setup of event listeners.
+  onDragStart: function(element) {},
+  // fired when the user drags. This callback gets the event object.
+  // Executed before DragSelect function code ran, after getting the current mouse position.
+  onDragMove: function(element) {},
+  // fired every time an element is selected. (element) = just selected node
+  onElementSelect: function(element) {},
+  // fired every time an element is de-selected. (element) = just de-selected node.
+  onElementUnselect: function(element) {},
+  // fired once the user releases the mouse. (elements) = selected nodes.
+  callback: function(elements) {}
+
 });
 
 // if you add the function to a variable like we did, you have access to all its functions
 // and can now use start() and stop() like so:
-ds.getSelection();  // returns all currently selected nodes
-ds.addSelectables(document.getElementsByClassName('selectable-node'));  // adds elements that can be selected. Intelligent algorithm never adds elements twice.
-ds.break();  // used in callbacks to disable the execution of the upcoming code. It will not teardown the functionality.
+ds.getSelection(); // returns all currently selected nodes
+
+// adds elements that can be selected. Intelligent algorithm never adds elements twice.
+ds.addSelectables(document.getElementsByClassName('selectable-node'));
+
+// used in callbacks to disable the execution of the upcoming code.
+// It will not teardown the functionality.
+ds.break(); 
+
 ds.stop();  // will teardown/stop the whole functionality
-ds.start();  // reset the functionality after a teardown
+ds.start(); // reset the functionality after a teardown
+
 // and many more, see "methods" section in documentation
 ```  
 
