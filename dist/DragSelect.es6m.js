@@ -1,74 +1,134 @@
-"use strict";
+function _typeof(obj) {
+  "@babel/helpers - typeof";
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function (obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function (obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+  return _typeof(obj);
+}
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
 
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
 
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
 
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+  return obj;
+}
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+}
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+}
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
 
-// v 1.14.0
-// @ts-check
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
 
-/* 
-    ____                   _____      __          __ 
-   / __ \_________ _____ _/ ___/___  / /__  _____/ /_
-  / / / / ___/ __ `/ __ `/\__ \/ _ \/ / _ \/ ___/ __/
- / /_/ / /  / /_/ / /_/ /___/ /  __/ /  __/ /__/ /_  
-/_____/_/   \__,_/\__, //____/\___/_/\___/\___/\__/  
-                 /____/                              
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
 
- {*} {*} STAR THIS PLUGIN ON GITHUB: {*} {*}
+  return arr2;
+}
 
- https://github.com/ThibaultJanBeyer/DragSelect
- Please give it a like, this is what makes me happy :-)
- Thank You
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
 
- {*} {*} STAR THIS PLUGIN ON GITHUB: {*} {*}
-
- ******************************************
- ********* The MIT License (MIT) **********
- ******************************************
- Copyright (c) 2017 ThibaultJanBeyer
- web: http://www.thibaultjanbeyer.com/
- github: https://github.com/ThibaultJanBeyer/DragSelect
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
- --- Notes ---
- Checking types using JS-Docs inspired by this post:
- https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76
- ---
+/**
+* The Settings to be passed to the Class
+* @typedef {Object} Settings
+* @property {HTMLElement | SVGElement | Document} [area=document] area in which you can drag. If not provided it will be the whole document
+* @property {number} [autoScrollSpeed=1] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Default = 1
+* @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom. Default = 1
+* @property {DSCallback} [callback=() => {}] a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes. The second property passed is the event object.
+* @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
+* @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
+* @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them. Default = false
+* @property {DSGenericInteractionCallbackEvent} [onDragMove=()=>{}] It is fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
+* @property {DSGenericInteractionCallbackEvent} [onDragStartBegin=()=>{}] Is fired when the user clicks in the area. This callback gets the event object. Executed *before* DragSelect function code ran.
+* @property {DSGenericInteractionCallbackEvent} [onDragStart=()=>{}] It is fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, before the setup of event listeners.
+* @property {DSInteractionCallbackEvent} [onElementSelect=()=>{}] It is fired every time an element is selected. This callback gets a property which is the just selected node
+* @property {DSInteractionCallbackEvent} [onElementUnselect=()=>{}] It is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
+* @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
+* @property {HTMLElement[] | SVGElement[] | HTMLElement | SVGElement} [selectables=[]] the elements that can be selected
+* @property {string} [selectedClass=ds-selected] the class assigned to the selected items
+* @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
+* @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
+* @property {string[]} [multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
 */
-// Setup
+
+/**
+ * @typedef {function} DSCallback
+ * @param {Array<HTMLElement|SVGElement|any>} selected - The selected items
+ * @param {MouseEvent|TouchEvent|Event} [event]
+ * @return {*}
+ */
+
+/**
+ * @typedef {function} DSGenericInteractionCallbackEvent
+ * @param {MouseEvent|TouchEvent|Event} [event]
+ * @return {*}
+ */
+
+/**
+ * @typedef {function} DSInteractionCallbackEvent
+ * @param {HTMLElement|SVGElement|any} item
+ * @return {*}
+ */
+console.log();
+
 //////////////////////////////////////////////////////////////////////////////////////
+
 var DragSelect = /*#__PURE__*/function () {
   /** @type {boolean} */
 
@@ -89,25 +149,7 @@ var DragSelect = /*#__PURE__*/function () {
 
   /**
    * @constructor
-   * @param {object} options - The options object.
-   * @param {HTMLElement | SVGElement | Document} [options.area=document] area in which you can drag. If not provided it will be the whole document
-   * @param {number} [options.autoScrollSpeed=1] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Default = 1
-   * @param {number} [options.zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom. Default = 1
-   * @param {Function} [options.callback=(selected, event) => {}] a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes. The second property passed is the event object.
-   * @param {boolean} [options.customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
-   * @param {string} [options.hoverClass=ds-hover] the class assigned to the mouse hovered items
-   * @param {boolean} [options.multiSelectMode=false] Add newly selected elements to the selection instead of replacing them. Default = false
-   * @param {Function} [options.onDragMove=()=>{}] It is fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
-   * @param {Function} [options.onDragStartBegin=()=>{}] Is fired when the user clicks in the area. This callback gets the event object. Executed *before* DragSelect function code ran.
-   * @param {Function} [options.onDragStart=()=>{}] It is fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, before the setup of event listeners.
-   * @param {Function} [options.onElementSelect=()=>{}] It is fired every time an element is selected. This callback gets a property which is the just selected node
-   * @param {Function} [options.onElementUnselect=()=>{}] It is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
-   * @param {string} [options.selectableClass=ds-selectable] the class assigned to the elements that can be selected
-   * @param {HTMLElement[] | SVGElement[] | HTMLElement | SVGElement} [options.selectables=[]] the elements that can be selected
-   * @param {string} [options.selectedClass=ds-selected] the class assigned to the selected items
-   * @param {HTMLElement} [options.selector=HTMLElement] the square that will draw the selection
-   * @param {string} [options.selectorClass=ds-selector] the class assigned to the square selector helper
-   * @param {string[]} [options.multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
+   * @param {Settings} settings
    */
   function DragSelect(_ref) {
     var _this = this;
@@ -1045,7 +1087,7 @@ var DragSelect = /*#__PURE__*/function () {
       }
 
       if (triggerCallback) {
-        this.callback(this._selected, false);
+        this.callback(this._selected);
       }
 
       return this._selected;
@@ -1074,7 +1116,7 @@ var DragSelect = /*#__PURE__*/function () {
       }
 
       if (triggerCallback) {
-        this.callback(this._selected, false);
+        this.callback(this._selected);
       }
 
       return this._selected;
@@ -1139,7 +1181,7 @@ var DragSelect = /*#__PURE__*/function () {
       }
 
       if (triggerCallback) {
-        this.callback(this._selected, false);
+        this.callback(this._selected);
       }
 
       return this._selected;
@@ -1297,7 +1339,7 @@ var DragSelect = /*#__PURE__*/function () {
      * the AREA scroll into consideration unless it’s the outer Document.
      * Use the public .getCursorPos() from outside, it’s more flexible
      * @param {(HTMLElement|SVGElement)} area – containing area / document if none
-     * @param {Object} [event]
+     * @param {MouseEvent|TouchEvent|any} [event]
      * @return {{x: number, y: number}} cursor X/Y
      * @private
      */
@@ -1310,13 +1352,13 @@ var DragSelect = /*#__PURE__*/function () {
         y: 0
       }; // touchend has not touches. so we take the last toucb if a touchevent, we need to store the positions on the prototype
 
-      if (event.touches && event.type !== 'touchend') {
+      if ('touches' in event && event.type !== 'touchend') {
         this._lastTouch = event;
       } //if a touchevent, return the last touch rather than the regular event
       // we need .touches[0] from that event instead
 
 
-      event = event.touches ? this._lastTouch.touches[0] : event;
+      event = 'touches' in event ? this._lastTouch.touches[0] : event;
       var cPos = {
         // event.clientX/Y fallback for <IE8
         x: event.pageX || event.clientX,
@@ -1404,8 +1446,8 @@ var DragSelect = /*#__PURE__*/function () {
      * Returns the top/left/bottom/right/width/height
      * values of a node. If Area is document then everything
      * except the sizes will be nulled.
-     * @param {(HTMLElement|SVGElement|any)} area
-     * @return {{top:number,left:number,bottom:number,right:number,width:number,height:number}}
+     * @param {HTMLElement|SVGElement|any} area
+     * @returns {{top:number,left:number,bottom:number,right:number,width:number,height:number}}
      */
 
   }, {
@@ -1457,25 +1499,6 @@ var DragSelect = /*#__PURE__*/function () {
   }]);
 
   return DragSelect;
-}(); // Make exportable
-//////////////////////////////////////////////////////////////////////////////////////
+}();
 
-/* eslint-disable no-undef */
-// Module exporting
-
-
-if (typeof module !== 'undefined' && module !== null) {
-  module.exports = DragSelect; // AMD Modules
-} else if ( // @ts-ignore
-typeof define !== 'undefined' && // @ts-ignore
-typeof define === 'function' && // @ts-ignore
-define) {
-  // @ts-ignore
-  define(function () {
-    return DragSelect;
-  });
-} else {
-  // @ts-ignore
-  window.DragSelect = DragSelect;
-}
 export default DragSelect;

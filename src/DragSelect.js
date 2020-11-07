@@ -43,7 +43,7 @@
  ---
 */
 
-/** @typedef {import('./types').Settings} Settings */
+import './types'
 
 // Setup
 //////////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +67,10 @@ class DragSelect {
   /** @type {number|null} */
   _autoScrollInterval = null;
 
-  /** @param {Settings} settings */
+  /**
+   * @constructor
+   * @param {Settings} settings
+   */
   constructor({
     area = document,
     autoScrollSpeed = 1,
@@ -1275,28 +1278,4 @@ class DragSelect {
   }
 }
 
-// Make exportable
-//////////////////////////////////////////////////////////////////////////////////////
-/* eslint-disable no-undef */
-
-// Module exporting
-if (typeof module !== 'undefined' && module !== null) {
-  module.exports = DragSelect;
-
-  // AMD Modules
-} else if (
-  // @ts-ignore
-  typeof define !== 'undefined' &&
-  // @ts-ignore
-  typeof define === 'function' &&
-  // @ts-ignore
-  define
-) {
-  // @ts-ignore
-  define(function () {
-    return DragSelect;
-  });
-} else {
-  // @ts-ignore
-  window.DragSelect = DragSelect;
-}
+export default DragSelect
