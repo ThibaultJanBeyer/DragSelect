@@ -1,3 +1,8 @@
+# 1.15.0
+
+- Use rollup to build the package: this simplifies the portability of the module and will allow to split the code going forward.
+- Added tests for various import types (default, amd & esm)
+
 # 1.14.0
 
 - Enhanced auto-scrolling. See PR [59](https://github.com/ThibaultJanBeyer/DragSelect/pull/59). Big thanks to [@slinhart](https://github.com/slinhart) for this addition <3
