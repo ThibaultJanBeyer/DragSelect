@@ -3,8 +3,9 @@
   "printWidth": 80,
   "tabWidth": 2,
   "singleQuote": true,
-  "trailingComma": "none",
+  "trailingComma": "es5",
   "jsxBracketSameLine": false,
   "arrowParens": "avoid",
-  "parser": "typescript"
+  "parser": "typescript",
+  "semi": false
 }

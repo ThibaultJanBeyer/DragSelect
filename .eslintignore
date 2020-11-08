@@ -1,0 +1,4 @@
+# Ignore these
+node_modules
+dist
+docs
