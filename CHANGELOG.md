@@ -1,3 +1,9 @@
+# 1.15.1
+
+- This is a preparation to some code-refactoring and bigger changes aimed for v2
+- Preparation to deprecate `getScroll` and `getAreaRect`. They will both become internal methods. Unless you've valid reasons to keep exposing them.
+- We will soon also prevent you from using most internal methods (those marked with `_` at the start). You'll not be able to extend them, nor override, nor use directly. Also here, unless you've valid reasons to keep them exposed. 
+
 # 1.15.0
 
 - Use rollup to build the package: this simplifies the portability of the module and will allow to split the code going forward.
