@@ -131,7 +131,6 @@
    * @param {HTMLElement|SVGElement|any} item
    * @return {*}
    */
-  console.log();
 
   //////////////////////////////////////////////////////////////////////////////////////
 
@@ -526,7 +525,7 @@
       key: "_getStartingPositions",
       value: function _getStartingPositions(event) {
         this._initialCursorPos = this._newCursorPos = this._getCursorPos(this.area, event);
-        this._initialScroll = this.getScroll(this.area);
+        this._initialScroll = this._getScroll(this.area);
         var selectorPos = {};
         selectorPos.x = this._initialCursorPos.x + this._initialScroll.x;
         selectorPos.y = this._initialCursorPos.y + this._initialScroll.y;
@@ -577,7 +576,8 @@
       value: function _getPosition(event) {
         var cursorPosNew = this._getCursorPos(this.area, event);
 
-        var scrollNew = this.getScroll(this.area); // save for later retrieval
+        var scrollNew = this._getScroll(this.area); // save for later retrieval
+
 
         this._newCursorPos = cursorPosNew; // if area or document is scrolled those values have to be included as well
 
@@ -668,7 +668,9 @@
 
         for (var i = 0, il = this.selectables.length; i < il; i++) {
           var selectable = this.selectables[i];
-          var scroll = this.getScroll(this.area);
+
+          var scroll = this._getScroll(this.area);
+
           var selectionRect = {
             y: this.selector.getBoundingClientRect().top / this.zoom + scroll.y,
             x: this.selector.getBoundingClientRect().left / this.zoom + scroll.x,
@@ -918,7 +920,8 @@
 
         var cursorPosition = this._getCursorPos(area, event);
 
-        var areaRect = this.getAreaRect(area);
+        var areaRect = this._getAreaRect(area);
+
         var tolerance = {
           x: Math.max(areaRect.width / 10, 30),
           y: Math.max(areaRect.height / 10, 30)
@@ -1061,7 +1064,7 @@
         var scroll = ignoreScroll ? {
           x: 0,
           y: 0
-        } : this.getScroll(area);
+        } : this._getScroll(area);
         return {
           x: pos.x + scroll.x,
           y: pos.y + scroll.y
@@ -1291,7 +1294,8 @@
       value: function _isScrollbarClick(event, area) {
         var cPos = this._getCursorPos(area, event);
 
-        var areaRect = this.getAreaRect(area);
+        var areaRect = this._getAreaRect(area);
+
         var border = area.computedBorder || 0;
         if (areaRect.width + border <= cPos.x) return true;
         if (areaRect.height + border <= cPos.y) return true;
@@ -1370,8 +1374,11 @@
           x: event.pageX || event.clientX,
           y: event.pageY || event.clientY
         };
-        var areaRect = this.getAreaRect(area || document);
-        var docScroll = this.getScroll(); // needed when document is scrollable but area is not
+
+        var areaRect = this._getAreaRect(area || document);
+
+        var docScroll = this._getScroll(); // needed when document is scrollable but area is not
+
 
         return {
           // if it’s constrained in an area the area should be subtracted calculate
@@ -1432,11 +1439,25 @@
        * If container has no scroll it will return 0
        * @param {(HTMLElement|SVGElement)} [area]
        * @return {{x:number,y:number}} scroll X/Y
+       * @deprecated
        */
 
     }, {
       key: "getScroll",
       value: function getScroll(area) {
+        console.warn('[DragSelect]: .getScroll is being deprecated soon. Please do not use it any longer. If you have a real use-case for this, please let us know at https://github.com/ThibaultJanBeyer/DragSelect');
+        return this._getScroll(area);
+      }
+      /**
+       * Returns the current x, y scroll value of a container
+       * If container has no scroll it will return 0
+       * @param {(HTMLElement|SVGElement)} [area]
+       * @return {{x:number,y:number}} scroll X/Y
+       */
+
+    }, {
+      key: "_getScroll",
+      value: function _getScroll(area) {
         var body = {
           top: document.body.scrollTop > 0 ? document.body.scrollTop : document.documentElement.scrollTop,
           left: document.body.scrollLeft > 0 ? document.body.scrollLeft : document.documentElement.scrollLeft
@@ -1454,11 +1475,26 @@
        * except the sizes will be nulled.
        * @param {HTMLElement|SVGElement|any} area
        * @returns {{top:number,left:number,bottom:number,right:number,width:number,height:number}}
+       * @deprecated
        */
 
     }, {
       key: "getAreaRect",
       value: function getAreaRect(area) {
+        console.warn('[DragSelect]: .getAreaRect is being deprecated soon. Please do not use it any longer. If you have a real use-case for this, please let us know at https://github.com/ThibaultJanBeyer/DragSelect');
+        return this._getAreaRect(area);
+      }
+      /**
+       * Returns the top/left/bottom/right/width/height
+       * values of a node. If Area is document then everything
+       * except the sizes will be nulled.
+       * @param {HTMLElement|SVGElement|any} area
+       * @returns {{top:number,left:number,bottom:number,right:number,width:number,height:number}}
+       */
+
+    }, {
+      key: "_getAreaRect",
+      value: function _getAreaRect(area) {
         if (area === document) {
           var size = {
             y: area.documentElement.clientHeight > 0 ? area.documentElement.clientHeight : window.innerHeight,

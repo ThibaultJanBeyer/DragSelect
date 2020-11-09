@@ -358,7 +358,7 @@ class DragSelect {
       this.area,
       event,
     );
-    this._initialScroll = this.getScroll(this.area);
+    this._initialScroll = this._getScroll(this.area);
 
     var selectorPos = {};
     selectorPos.x = this._initialCursorPos.x + this._initialScroll.x;
@@ -407,7 +407,7 @@ class DragSelect {
    */
   _getPosition(event) {
     var cursorPosNew = this._getCursorPos(this.area, event);
-    var scrollNew = this.getScroll(this.area);
+    var scrollNew = this._getScroll(this.area);
 
     // save for later retrieval
     this._newCursorPos = cursorPosNew;
@@ -503,7 +503,7 @@ class DragSelect {
     for (var i = 0, il = this.selectables.length; i < il; i++) {
       var selectable = this.selectables[i];
 
-      var scroll = this.getScroll(this.area);
+      var scroll = this._getScroll(this.area);
       var selectionRect = {
         y: this.selector.getBoundingClientRect().top / this.zoom + scroll.y,
         x: this.selector.getBoundingClientRect().left / this.zoom + scroll.x,
@@ -736,7 +736,7 @@ class DragSelect {
     }
 
     var cursorPosition = this._getCursorPos(area, event);
-    var areaRect = this.getAreaRect(area);
+    var areaRect = this._getAreaRect(area);
 
     var tolerance = {
       x: Math.max(areaRect.width / 10, 30),
@@ -861,7 +861,7 @@ class DragSelect {
 
     var area = _area || (_area !== false && this.area);
     var pos = this._getCursorPos(area, event);
-    var scroll = ignoreScroll ? { x: 0, y: 0 } : this.getScroll(area);
+    var scroll = ignoreScroll ? { x: 0, y: 0 } : this._getScroll(area);
 
     return {
       x: pos.x + scroll.x,
@@ -1064,7 +1064,7 @@ class DragSelect {
    */
   _isScrollbarClick(event, area) {
     const cPos = this._getCursorPos(area, event);
-    const areaRect = this.getAreaRect(area);
+    const areaRect = this._getAreaRect(area);
     const border = area.computedBorder || 0;
 
     if (areaRect.width + border <= cPos.x) return true;
@@ -1142,8 +1142,8 @@ class DragSelect {
       y: event.pageY || event.clientY
     };
 
-    var areaRect = this.getAreaRect(area || document);
-    var docScroll = this.getScroll(); // needed when document is scrollable but area is not
+    var areaRect = this._getAreaRect(area || document);
+    var docScroll = this._getScroll(); // needed when document is scrollable but area is not
     return {
       // if it’s constrained in an area the area should be subtracted calculate
       x: (cPos.x - areaRect.left - docScroll.x) / this.zoom,
@@ -1199,8 +1199,20 @@ class DragSelect {
    * If container has no scroll it will return 0
    * @param {(HTMLElement|SVGElement)} [area]
    * @return {{x:number,y:number}} scroll X/Y
+   * @deprecated
    */
   getScroll(area) {
+    console.warn('[DragSelect]: .getScroll is being deprecated soon. Please do not use it any longer. If you have a real use-case for this, please let us know at https://github.com/ThibaultJanBeyer/DragSelect')
+    return this._getScroll(area)
+  }
+
+  /**
+   * Returns the current x, y scroll value of a container
+   * If container has no scroll it will return 0
+   * @param {(HTMLElement|SVGElement)} [area]
+   * @return {{x:number,y:number}} scroll X/Y
+   */
+  _getScroll(area) {
     var body = {
       top:
         document.body.scrollTop > 0
@@ -1227,8 +1239,21 @@ class DragSelect {
    * except the sizes will be nulled.
    * @param {HTMLElement|SVGElement|any} area
    * @returns {{top:number,left:number,bottom:number,right:number,width:number,height:number}}
+   * @deprecated
    */
   getAreaRect(area) {
+    console.warn('[DragSelect]: .getAreaRect is being deprecated soon. Please do not use it any longer. If you have a real use-case for this, please let us know at https://github.com/ThibaultJanBeyer/DragSelect')
+    return this._getAreaRect(area)
+  }
+
+  /**
+   * Returns the top/left/bottom/right/width/height
+   * values of a node. If Area is document then everything
+   * except the sizes will be nulled.
+   * @param {HTMLElement|SVGElement|any} area
+   * @returns {{top:number,left:number,bottom:number,right:number,width:number,height:number}}
+   */
+  _getAreaRect(area) {
     if (area === document) {
       var size = {
         y:

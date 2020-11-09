@@ -36,4 +36,3 @@
  * @param {HTMLElement|SVGElement|any} item
  * @return {*}
  */
-console.log()

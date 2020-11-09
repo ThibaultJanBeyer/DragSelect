@@ -41,6 +41,14 @@ export default {
         fs.copyFileSync(options.file, `docs/${path.basename(options.file)}`);
         console.log(options.file, `docs/${path.basename(options.file)}`)
       }
+    },
+    {
+      name: "disable-treeshaking",
+      transform(code, id) {
+        if (id.endsWith('types.js')) {
+          return {moduleSideEffects: 'no-treeshake'};
+        } 
+      }
     }
   ],
 };
