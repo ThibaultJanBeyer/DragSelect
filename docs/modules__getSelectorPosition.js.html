@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>types.js - Documentation</title>
+    <title>modules/_getSelectorPosition.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">types.js</h1>
+    <h1 class="page-title">modules/_getSelectorPosition.js</h1>
     
 
     
@@ -39,52 +39,95 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * The Settings to be passed to the Class
- * @typedef {Object} Settings
- * @property {HTMLElement|SVGElement|HTMLDocument} [area=document] area in which you can drag. If not provided it will be the whole document
- * @property {number} [autoScrollSpeed=1] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
- * @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom.
- * @property {DSCallback} [callback=() => {}] a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes. The second property passed is the event object.
- * @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
- * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
- * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them.
- * @property {DSGenericInteractionCallbackEvent} [onDragMove=()=>{}] It is fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
- * @property {DSGenericInteractionCallbackEvent} [onDragStartBegin=()=>{}] Is fired when the user clicks in the area. This callback gets the event object. Executed *before* DragSelect function code ran.
- * @property {DSGenericInteractionCallbackEvent} [onDragStart=()=>{}] It is fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, before the setup of event listeners.
- * @property {DSInteractionCallbackEvent} [onElementSelect=()=>{}] It is fired every time an element is selected. This callback gets a property which is the just selected node
- * @property {DSInteractionCallbackEvent} [onElementUnselect=()=>{}] It is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
- * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
- * @property {HTMLElement[] | SVGElement[] | HTMLElement | SVGElement} [selectables=[]] the elements that can be selected
- * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
- * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
- * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
- * @property {Array.&lt;'ctrlKey'|'shiftKey'|'metaKey'>} [multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: &lt;kbd>ctrlKey&lt;/kbd>, &lt;kbd>shiftKey&lt;/kbd>, &lt;kbd>metaKey&lt;/kbd> and &lt;kbd>altKey&lt;/kbd>. Provide an empty array `[]` if you want to turn off the functionality.
- */
-/**
- * @typedef {function} DSCallback
- * @param {DSElements} selected - The selected items
- * @param {DSEvent} [event]
- * @return {*}
- */
-/**
- * @typedef {function} DSGenericInteractionCallbackEvent
- * @param {DSEvent} [event]
- * @return {*}
- */
-/**
- * @typedef {function} DSInteractionCallbackEvent
- * @param {DSElement} item
- * @return {*}
- */
-/** @typedef {HTMLElement|SVGElement|HTMLDocument} DSArea area in which you can drag */
-/** @typedef {Array.&lt;HTMLElement|SVGElement> | HTMLElement | SVGElement} DSInputElements the elements that can be selected */
-/** @typedef {Array.&lt;HTMLElement|SVGElement>} DSElements the elements that can be selected */
-/** @typedef {HTMLElement|SVGElement} DSElement a single element that can be selected */
-/** @typedef {MouseEvent|TouchEvent} DSEvent en event from a touch or mouse interaction */
-/** @typedef {number} DSZoom Zoom scale factor. Unit scale zoom */
-/** @typedef {Array.&lt;'ctrlKey'|'shiftKey'|'metaKey'>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
+            <pre class="prettyprint source linenums"><code>import '../types.js'
+import { _getCursorPos, _getScroll } from './'
 
+/**
+ * Reliably returns the exact x,y,w,h positions of the selector element
+ * @param {DSArea} area
+ * @param {DSZoom} zoom
+ * @param {{x: number, y: number}} initialScroll
+ * @param {{x: number, y: number}} initialCursorPos
+ * @param {DSEvent} [event]
+ * @returns {{x:number,y:number,w:number,h:number}}
+ */
+export default (area, zoom, initialScroll, initialCursorPos, event) => {
+  const cursorPosNew = _getCursorPos(area, zoom, event)
+  const scrollNew = _getScroll(area)
+
+  // if area or document is scrolled those values have to be included as well
+  const scrollAmount = {
+    x: scrollNew.x - initialScroll.x,
+    y: scrollNew.y - initialScroll.y,
+  }
+
+  /** check for direction
+   *
+   * This is quite complicated math, so also quite complicated to explain. Lemme’ try:
+   *
+   * Problem #1:
+   * Sadly in HTML we can not have negative sizes.
+   * so if we want to scale our element 10px to the right then it is easy,
+   * we just have to add +10px to the width. But if we want to scale the element
+   * -10px to the left then things become more complicated, we have to move
+   * the element -10px to the left on the x axis and also scale the element
+   * by +10px width to fake a negative sizing.
+   *
+   * One solution to this problem is using css-transforms scale() with
+   * transform-origin of top left. BUT we can’t use this since it will size
+   * everything, then when your element has a border for example, the border will
+   * get inanely huge. Also transforms are not widely supported in IE.
+   *
+   * Example #1:
+   * Unfortunately, things get even more complicated when we are inside a scroll-able
+   * DIV. Then, let’s say we scroll to the right by 10px and move the cursor right by 5px in our
+   * checks we have to subtract 10px from the initialcursor position in our check
+   * (since the initial position is moved to the left by 10px) so in our example:
+   * 1. cursorPosNew.x (5) > initialCursorPos.x (0) - scrollAmount.x (10) === 5 > -10 === true
+   * then reset the x position to its initial position (since we might have changed that
+   * position when scrolling to the left before going right) in our example:
+   * 2. selectorPos.x = initialCursorPos.x (0) + initialScroll.x (0) === 0;
+   * then we can calculate the elements width, which is
+   * the new cursor position minus the initial one plus the scroll amount, so in our example:
+   * 3. selectorPos.w = cursorPosNew.x (5) - initialCursorPos.x (0) + scrollAmount.x (10) === 15;
+   *
+   * let’s say after that movement we now scroll 20px to the left and move our cursor by 30px to the left:
+   * 1b. cursorPosNew.x (-30) > initialCursorPos.x (0) - scrollAmount.x (-20) === -30 > -20 === false;
+   * 2b. selectorPos.x = cursorPosNew.x (-30) + scrollNew.x (-20)
+   *                   === -50;  // move left position to cursor (for more info see Problem #1)
+   * 3b. selectorPos.w = initialCursorPos.x (0) - cursorPosNew.x (-30) - scrollAmount.x (-20)
+   *                   === 0--30--20 === 0+30+20 === 50;  // scale width to original left position (for more info see Problem #1)
+   *
+   * same thing has to be done for top/bottom
+   *
+   * I hope that makes sense. Try stuff out and play around with variables to get a hang of it.
+   */
+  const selectorPos = {}
+
+  // right
+  if (cursorPosNew.x > initialCursorPos.x - scrollAmount.x) {
+    // 1.
+    selectorPos.x = initialCursorPos.x + initialScroll.x // 2.
+    selectorPos.w = cursorPosNew.x - initialCursorPos.x + scrollAmount.x // 3.
+    // left
+  } else {
+    // 1b.
+    selectorPos.x = cursorPosNew.x + scrollNew.x // 2b.
+    selectorPos.w = initialCursorPos.x - cursorPosNew.x - scrollAmount.x // 3b.
+  }
+
+  // bottom
+  if (cursorPosNew.y > initialCursorPos.y - scrollAmount.y) {
+    selectorPos.y = initialCursorPos.y + initialScroll.y
+    selectorPos.h = cursorPosNew.y - initialCursorPos.y + scrollAmount.y
+    // top
+  } else {
+    selectorPos.y = cursorPosNew.y + scrollNew.y
+    selectorPos.h = initialCursorPos.y - cursorPosNew.y - scrollAmount.y
+  }
+
+  return selectorPos
+}
 </code></pre>
         </article>
     </section>

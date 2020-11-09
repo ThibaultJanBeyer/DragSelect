@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>types.js - Documentation</title>
+    <title>modules/_getAreaRect.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">types.js</h1>
+    <h1 class="page-title">modules/_getAreaRect.js</h1>
     
 
     
@@ -39,52 +39,42 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * The Settings to be passed to the Class
- * @typedef {Object} Settings
- * @property {HTMLElement|SVGElement|HTMLDocument} [area=document] area in which you can drag. If not provided it will be the whole document
- * @property {number} [autoScrollSpeed=1] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
- * @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom.
- * @property {DSCallback} [callback=() => {}] a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes. The second property passed is the event object.
- * @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
- * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
- * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them.
- * @property {DSGenericInteractionCallbackEvent} [onDragMove=()=>{}] It is fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
- * @property {DSGenericInteractionCallbackEvent} [onDragStartBegin=()=>{}] Is fired when the user clicks in the area. This callback gets the event object. Executed *before* DragSelect function code ran.
- * @property {DSGenericInteractionCallbackEvent} [onDragStart=()=>{}] It is fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, before the setup of event listeners.
- * @property {DSInteractionCallbackEvent} [onElementSelect=()=>{}] It is fired every time an element is selected. This callback gets a property which is the just selected node
- * @property {DSInteractionCallbackEvent} [onElementUnselect=()=>{}] It is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
- * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
- * @property {HTMLElement[] | SVGElement[] | HTMLElement | SVGElement} [selectables=[]] the elements that can be selected
- * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
- * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
- * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
- * @property {Array.&lt;'ctrlKey'|'shiftKey'|'metaKey'>} [multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: &lt;kbd>ctrlKey&lt;/kbd>, &lt;kbd>shiftKey&lt;/kbd>, &lt;kbd>metaKey&lt;/kbd> and &lt;kbd>altKey&lt;/kbd>. Provide an empty array `[]` if you want to turn off the functionality.
- */
-/**
- * @typedef {function} DSCallback
- * @param {DSElements} selected - The selected items
- * @param {DSEvent} [event]
- * @return {*}
- */
-/**
- * @typedef {function} DSGenericInteractionCallbackEvent
- * @param {DSEvent} [event]
- * @return {*}
- */
-/**
- * @typedef {function} DSInteractionCallbackEvent
- * @param {DSElement} item
- * @return {*}
- */
-/** @typedef {HTMLElement|SVGElement|HTMLDocument} DSArea area in which you can drag */
-/** @typedef {Array.&lt;HTMLElement|SVGElement> | HTMLElement | SVGElement} DSInputElements the elements that can be selected */
-/** @typedef {Array.&lt;HTMLElement|SVGElement>} DSElements the elements that can be selected */
-/** @typedef {HTMLElement|SVGElement} DSElement a single element that can be selected */
-/** @typedef {MouseEvent|TouchEvent} DSEvent en event from a touch or mouse interaction */
-/** @typedef {number} DSZoom Zoom scale factor. Unit scale zoom */
-/** @typedef {Array.&lt;'ctrlKey'|'shiftKey'|'metaKey'>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
+            <pre class="prettyprint source linenums"><code>import '../types.js'
 
+/**
+ * Returns the top/left/bottom/right/width/height
+ * values of an area. If area is document then everything
+ * except the sizes will be nulled.
+ * @param {DSArea} area
+ * @returns {{top:number,left:number,bottom:number,right:number,width:number,height:number}}
+ */
+export default area => {
+  if (area instanceof Document)
+    return {
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      width:
+        area.documentElement.clientWidth > 0
+          ? area.documentElement.clientWidth
+          : window.innerWidth,
+      height:
+        area.documentElement.clientHeight > 0
+          ? area.documentElement.clientHeight
+          : window.innerHeight,
+    }
+
+  const rect = area.getBoundingClientRect()
+  return {
+    top: rect.top,
+    left: rect.left,
+    bottom: rect.bottom,
+    right: rect.right,
+    width: area.clientWidth || rect.width,
+    height: area.clientHeight || rect.height,
+  }
+}
 </code></pre>
         </article>
     </section>
