@@ -1,3 +1,4 @@
+export * as _selectorArea from './_selectorArea'
 export { default as _autoScroll } from './_autoScroll'
 export { default as _createSelector } from './_createSelector'
 export { default as _getAreaRect } from './_getAreaRect'

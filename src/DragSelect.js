@@ -47,8 +47,6 @@ import './types'
 import {
   _autoScroll,
   _createSelector,
-  _getAreaRect,
-  _getComputedBorder,
   _getCursorPos,
   _getScroll,
   _getSelectorPosition,
@@ -56,6 +54,7 @@ import {
   _isElementTouching,
   _isMultiSelectKeyPressed,
   _isScrollbarClick,
+  _selectorArea,
   _updatePos,
   isCursorNearEdge,
   toArray,
@@ -127,8 +126,15 @@ class DragSelect {
     this.zoom = zoom
 
     // Selector
-    this.selector = selector || _createSelector(this.customStyles, this.area)
+    this.selector = selector || _createSelector(this.customStyles)
     this.selector.classList.add(this.selectorClass)
+
+    this.selectorArea = _selectorArea.create()
+    _selectorArea.updatePosition(this.selectorArea, this.area)
+
+    this.selectorArea.appendChild(this.selector)
+    document.body.appendChild(this.selectorArea)
+
     this.start()
   }
 
@@ -247,6 +253,7 @@ class DragSelect {
     this._handleSelectables(this._initialSelectables)
     this.area.addEventListener('mousedown', this._startUp)
     this.area.addEventListener('touchstart', this._startUp, { passive: false })
+    _selectorArea.addObservers(this.selectorArea, this.area)
   }
 
   /**
@@ -261,7 +268,6 @@ class DragSelect {
    * @private
    */
   startUp(event) {
-    console.log('Startup!')
     // touchmove handler
     if (event.type === 'touchstart')
       // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
@@ -303,8 +309,8 @@ class DragSelect {
       // @ts-ignore
       passive: false,
     })
-    this.area.addEventListener('mousemove', this._handleMove)
-    this.area.addEventListener('touchmove', this._handleMove, {
+    document.addEventListener('mousemove', this._handleMove)
+    document.addEventListener('touchmove', this._handleMove, {
       passive: false,
     })
     document.addEventListener('mouseup', this._end)
@@ -537,8 +543,8 @@ class DragSelect {
     this._previousCursorPos = _getCursorPos(this.area, this.zoom, event)
     document.removeEventListener('mouseup', this._end)
     document.removeEventListener('touchend', this._end)
-    this.area.removeEventListener('mousemove', this._handleMove)
-    this.area.removeEventListener('touchmove', this._handleMove, {
+    document.removeEventListener('mousemove', this._handleMove)
+    document.removeEventListener('touchmove', this._handleMove, {
       // @ts-ignore
       passive: false,
     })
@@ -589,6 +595,9 @@ class DragSelect {
    */
   stop(remove = true, fromSelection = true, withCallback) {
     this.reset(false, withCallback)
+
+    _selectorArea.removeObservers()
+
     this.area.removeEventListener('mousedown', this._startUp)
     this.area.removeEventListener('touchstart', this._startUp, {
       // @ts-ignore

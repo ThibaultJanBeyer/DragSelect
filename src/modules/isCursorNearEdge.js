@@ -15,8 +15,8 @@ export default (area, zoom, event) => {
   const areaRect = _getAreaRect(area)
 
   const tolerance = {
-    x: Math.max(areaRect.width / 10, 30),
-    y: Math.max(areaRect.height / 10, 30),
+    x: 5,
+    y: 5,
   }
 
   if (cursorPosition.y < tolerance.y) return 'top'
