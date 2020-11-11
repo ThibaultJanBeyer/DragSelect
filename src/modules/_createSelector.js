@@ -3,10 +3,9 @@ import '../types.js'
 /**
  * Create the selector node when not provided by options object.
  * @param {boolean} customStyles
- * @param {DSArea} area
  * @return {HTMLElement}
  */
-export default (customStyles, area) => {
+export default (customStyles) => {
   const selector = document.createElement('div')
 
   selector.style.position = 'absolute'
@@ -16,9 +15,6 @@ export default (customStyles, area) => {
     selector.style.display = 'none'
     selector.style.pointerEvents = 'none' // fix for issue #8 (ie11+)
   }
-
-  const _area = area === document ? document.body : area
-  _area.appendChild(selector)
 
   return selector
 }

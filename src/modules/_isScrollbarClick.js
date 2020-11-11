@@ -14,7 +14,7 @@ export default (area, zoom, event) => {
   const areaRect = _getAreaRect(area)
   const border = _getComputedBorder(area)
 
-  if (areaRect.width + border <= cPos.x) return true
-  if (areaRect.height + border <= cPos.y) return true
+  if (areaRect.width + border.left + border.right <= cPos.x) return true
+  if (areaRect.height + border.top + border.bottom <= cPos.y) return true
   return false
 }

@@ -22,7 +22,7 @@ export default (area, zoom, initialScroll, initialCursorPos, event) => {
 
   /** check for direction
    *
-   * This is quite complicated math, so also quite complicated to explain. Lemme’ try:
+   * This is quite complicated, so also quite complicated to explain. Lemme’ try:
    *
    * Problem #1:
    * Sadly in HTML we can not have negative sizes.
@@ -43,19 +43,16 @@ export default (area, zoom, initialScroll, initialCursorPos, event) => {
    * checks we have to subtract 10px from the initialcursor position in our check
    * (since the initial position is moved to the left by 10px) so in our example:
    * 1. cursorPosNew.x (5) > initialCursorPos.x (0) - scrollAmount.x (10) === 5 > -10 === true
-   * then reset the x position to its initial position (since we might have changed that
-   * position when scrolling to the left before going right) in our example:
-   * 2. selectorPos.x = initialCursorPos.x (0) + initialScroll.x (0) === 0;
+   * then set the x position to the cursors start position
+   * selectorPos.x = initialCursorPos.x (0) - scrollAmount.x (10) === 10 // 2.
    * then we can calculate the elements width, which is
    * the new cursor position minus the initial one plus the scroll amount, so in our example:
    * 3. selectorPos.w = cursorPosNew.x (5) - initialCursorPos.x (0) + scrollAmount.x (10) === 15;
    *
    * let’s say after that movement we now scroll 20px to the left and move our cursor by 30px to the left:
-   * 1b. cursorPosNew.x (-30) > initialCursorPos.x (0) - scrollAmount.x (-20) === -30 > -20 === false;
-   * 2b. selectorPos.x = cursorPosNew.x (-30) + scrollNew.x (-20)
-   *                   === -50;  // move left position to cursor (for more info see Problem #1)
-   * 3b. selectorPos.w = initialCursorPos.x (0) - cursorPosNew.x (-30) - scrollAmount.x (-20)
-   *                   === 0--30--20 === 0+30+20 === 50;  // scale width to original left position (for more info see Problem #1)
+   * 1b. cursorPosNew.x (-30) > initialCursorPos.x (0) - scrollAmount.x (-20) === -30 < --20 === -30 < +20 === false;
+   * 2b. selectorPos.x = cursorPosNew.x (-30) === -30; move left position to cursor (for more info see Problem #1)
+   * 3b. selectorPos.w = initialCursorPos.x (0) - cursorPosNew.x (-30) - scrollAmount.x (-20) === 0--30--20 === 0+30+20 === 50;  // scale width to original left position (for more info see Problem #1)
    *
    * same thing has to be done for top/bottom
    *
@@ -64,24 +61,22 @@ export default (area, zoom, initialScroll, initialCursorPos, event) => {
   const selectorPos = {}
 
   // right
-  if (cursorPosNew.x > initialCursorPos.x - scrollAmount.x) {
-    // 1.
-    selectorPos.x = initialCursorPos.x + initialScroll.x // 2.
+  if (cursorPosNew.x > initialCursorPos.x - scrollAmount.x) { // 1.
+    selectorPos.x = initialCursorPos.x - scrollAmount.x // 2.
     selectorPos.w = cursorPosNew.x - initialCursorPos.x + scrollAmount.x // 3.
     // left
-  } else {
-    // 1b.
-    selectorPos.x = cursorPosNew.x + scrollNew.x // 2b.
+  } else { // 1b.
+    selectorPos.x = cursorPosNew.x // 2b.
     selectorPos.w = initialCursorPos.x - cursorPosNew.x - scrollAmount.x // 3b.
   }
 
   // bottom
   if (cursorPosNew.y > initialCursorPos.y - scrollAmount.y) {
-    selectorPos.y = initialCursorPos.y + initialScroll.y
+    selectorPos.y = initialCursorPos.y - scrollAmount.y
     selectorPos.h = cursorPosNew.y - initialCursorPos.y + scrollAmount.y
     // top
   } else {
-    selectorPos.y = cursorPosNew.y + scrollNew.y
+    selectorPos.y = cursorPosNew.y
     selectorPos.h = initialCursorPos.y - cursorPosNew.y - scrollAmount.y
   }
 
