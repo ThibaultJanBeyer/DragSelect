@@ -16,9 +16,10 @@ export const create = () => {
 /**
  * @param {HTMLElement} selectorArea
  * @param {DSArea} area
+ * @param {DSZoom} zoom
  * @return {function}
  */
-const modificationEvent = (selectorArea, area) => (event) => updatePosition(selectorArea, area)
+const modificationEvent = (selectorArea, area, zoom) => (event) => updatePosition(selectorArea, area, zoom)
 
 /** @type {*} */
 let modificationCallback
@@ -29,9 +30,10 @@ let modificationObserver
  * Adds event-listeners to the selectorArea
  * @param {HTMLElement} selectorArea
  * @param {DSArea} area
+ * @param {DSZoom} zoom
  */
-export const addObservers = (selectorArea, area) => {
-  modificationCallback = modificationEvent(selectorArea, area)
+export const addObservers = (selectorArea, area, zoom) => {
+  modificationCallback = modificationEvent(selectorArea, area, zoom)
   window.addEventListener('resize', modificationCallback)
   window.addEventListener('scroll', modificationCallback)
   modificationObserver = new MutationObserver(modificationCallback);
@@ -52,14 +54,15 @@ export const removeObservers = () => {
  * Updates the selectorAreas positions to match the areas
  * @param {HTMLElement} selectorArea
  * @param {DSArea} area
+ * @param {DSZoom} zoom
  * @return {HTMLElement}
  */
-export const updatePosition = (selectorArea, area) => {
+export const updatePosition = (selectorArea, area, zoom) => {
   const rect = _getAreaRect(area)
   const border = _getComputedBorder(area)
   selectorArea.style.top = `${rect.top + border.top}px`
   selectorArea.style.left = `${rect.left + border.left}px`
-  selectorArea.style.width = `${rect.width}px`
-  selectorArea.style.height = `${rect.height}px`
+  selectorArea.style.width = `${rect.width * zoom}px`
+  selectorArea.style.height = `${rect.height * zoom}px`
   return selectorArea
 }

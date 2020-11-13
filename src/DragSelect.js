@@ -1,4 +1,4 @@
-// v 1.15.0
+// v 2.0.0
 // @ts-check
 /* 
     ____                   _____      __          __ 
@@ -130,7 +130,7 @@ class DragSelect {
     this.selector.classList.add(this.selectorClass)
 
     this.selectorArea = _selectorArea.create()
-    _selectorArea.updatePosition(this.selectorArea, this.area)
+    _selectorArea.updatePosition(this.selectorArea, this.area, this.zoom)
 
     this.selectorArea.appendChild(this.selector)
     document.body.appendChild(this.selectorArea)
@@ -253,7 +253,7 @@ class DragSelect {
     this._handleSelectables(this._initialSelectables)
     this.area.addEventListener('mousedown', this._startUp)
     this.area.addEventListener('touchstart', this._startUp, { passive: false })
-    _selectorArea.addObservers(this.selectorArea, this.area)
+    _selectorArea.addObservers(this.selectorArea, this.area, this.zoom)
   }
 
   /**
