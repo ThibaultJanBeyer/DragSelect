@@ -3,7 +3,13 @@
  * Since apparently also the scroll speed is skewed
  */
 
+/**
+ * @private
+ */
 const initVal = { x: 0, y: 0 }
+/**
+ * @private
+ */
 let _zoomedScroll = initVal
 
 export const get = () => ({ ..._zoomedScroll })

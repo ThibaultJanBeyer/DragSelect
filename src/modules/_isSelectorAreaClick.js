@@ -1,7 +1,10 @@
 import '../types.js'
 import { _isCollision } from './'
 
-/** @type {TouchEvent} */
+/**
+ * @private
+ * @type {TouchEvent}
+ */
 let _lastTouch
 
 /**

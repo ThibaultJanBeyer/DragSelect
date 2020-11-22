@@ -166,6 +166,7 @@ function _nonIterableSpread() {
  * @param {'scrollLeft'|'scrollWidth'} x
  * @param {DSArea} [area]
  * @return {{x:number,y:number}} scroll X/Y
+ * @private
  */
 
 var unified = function unified(y, x, area) {
@@ -184,6 +185,7 @@ var unified = function unified(y, x, area) {
  * If area scrollTop/Left is not available
  * @param {DSArea} [area]
  * @return {{x:number,y:number}} scroll X/Y
+ * @private
  */
 
 
@@ -194,6 +196,7 @@ var getCurrent = function getCurrent(area) {
  * Checks whether the area can scroll or not
  * @param {DSArea} area
  * @return {boolean} scroll X/Y
+ * @private
  */
 
 var canScroll = function canScroll(area) {
@@ -207,16 +210,23 @@ var canScroll = function canScroll(area) {
   return false;
 };
 
-/** @type {*} */
+/**
+ * @private
+ * @type {*}
+ */
 
 var modificationCallback;
-/** @type {MutationObserver} */
+/**
+ * @private
+ * @type {MutationObserver}
+ */
 
 var modificationObserver;
 /**
  * Creates the SelectorArea
  * @param {string} selectorAreaClass
  * @return {HTMLElement}
+ * @private
  */
 
 var create = function create(selectorAreaClass) {
@@ -231,6 +241,7 @@ var create = function create(selectorAreaClass) {
  * @param {HTMLElement} selectorArea
  * @param {DSArea} area
  * @return {function}
+ * @private
  */
 
 var modificationEvent = function modificationEvent(selectorArea, area) {
@@ -242,6 +253,7 @@ var modificationEvent = function modificationEvent(selectorArea, area) {
  * Adds event-listeners to the selectorArea
  * @param {HTMLElement} selectorArea
  * @param {DSArea} area
+ * @private
  */
 
 
@@ -261,6 +273,7 @@ var addObservers = function addObservers(selectorArea, area) {
 };
 /**
  * Removes event-listeners to the selectorArea
+ * @private
  */
 
 var removeObservers = function removeObservers() {
@@ -273,6 +286,7 @@ var removeObservers = function removeObservers() {
  * @param {HTMLElement} selectorArea
  * @param {DSArea} area
  * @return {HTMLElement}
+ * @private
  */
 
 var updatePosition = function updatePosition(selectorArea, area) {
@@ -291,10 +305,18 @@ var updatePosition = function updatePosition(selectorArea, area) {
  * This module fixes an issue where the position of the selector would be screwed when the area is scaled/zoomed
  * Since apparently also the scroll speed is skewed
  */
+
+/**
+ * @private
+ */
 var initVal = {
   x: 0,
   y: 0
 };
+/**
+ * @private
+ */
+
 var _zoomedScroll = initVal;
 var get = function get() {
   return _objectSpread2({}, _zoomedScroll);
@@ -393,7 +415,10 @@ var _getComputedBorder = (function (area) {
   };
 });
 
-/** @type {TouchEvent} */
+/**
+ * @private
+ * @type {TouchEvent}
+ */
 
 var _lastTouch;
 /**
@@ -682,7 +707,10 @@ var _isMultiSelectKeyPressed = (function (multiSelectKeys, multiSelectMode, even
   });
 });
 
-/** @type {TouchEvent} */
+/**
+ * @private
+ * @type {TouchEvent}
+ */
 
 var _lastTouch$1;
 /**

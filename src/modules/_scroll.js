@@ -5,6 +5,7 @@ import '../types.js'
  * @param {'scrollLeft'|'scrollWidth'} x
  * @param {DSArea} [area]
  * @return {{x:number,y:number}} scroll X/Y
+ * @private
  */
 const unified = (y, x, area) => {
   const body = {
@@ -24,6 +25,7 @@ const unified = (y, x, area) => {
  * If area scrollTop/Left is not available
  * @param {DSArea} [area]
  * @return {{x:number,y:number}} scroll X/Y
+ * @private
  */
 export const getCurrent = (area) => unified('scrollTop', 'scrollLeft', area)
 
@@ -32,6 +34,7 @@ export const getCurrent = (area) => unified('scrollTop', 'scrollLeft', area)
  * If area has no scroll it is the same as the elements height
  * @param {DSArea} [area]
  * @return {{x:number,y:number}} scroll X/Y
+ * @private
  */
 export const getMax = (area) => unified('scrollHeight', 'scrollWidth', area)
 
@@ -39,6 +42,7 @@ export const getMax = (area) => unified('scrollHeight', 'scrollWidth', area)
  * Checks whether the area can scroll or not
  * @param {DSArea} area
  * @return {boolean} scroll X/Y
+ * @private
  */
 export const canScroll = (area) => {
   let scroll = getCurrent(area)

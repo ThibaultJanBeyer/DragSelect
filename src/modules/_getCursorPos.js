@@ -1,7 +1,10 @@
 import '../types.js'
 import { _getAreaRect, _scroll } from './'
 
-/** @type {TouchEvent} */
+/**
+ * @private
+ * @type {TouchEvent}
+ */
 let _lastTouch
 
 /**

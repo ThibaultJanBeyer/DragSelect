@@ -1,15 +1,22 @@
 import '../types.js'
 import { _getAreaRect, _getComputedBorder } from './'
 
-/** @type {*} */
+/**
+ * @private
+ * @type {*}
+ */
 let modificationCallback
-/** @type {MutationObserver} */
+/**
+ * @private
+ * @type {MutationObserver}
+ */
 let modificationObserver
 
 /**
  * Creates the SelectorArea
  * @param {string} selectorAreaClass
  * @return {HTMLElement}
+ * @private
  */
 export const create = (selectorAreaClass) => {
   const selectorArea = document.createElement('div')
@@ -24,6 +31,7 @@ export const create = (selectorAreaClass) => {
  * @param {HTMLElement} selectorArea
  * @param {DSArea} area
  * @return {function}
+ * @private
  */
 const modificationEvent = (selectorArea, area) => (event) =>
   updatePosition(selectorArea, area)
@@ -32,6 +40,7 @@ const modificationEvent = (selectorArea, area) => (event) =>
  * Adds event-listeners to the selectorArea
  * @param {HTMLElement} selectorArea
  * @param {DSArea} area
+ * @private
  */
 export const addObservers = (selectorArea, area) => {
   modificationCallback = modificationEvent(selectorArea, area)
@@ -48,6 +57,7 @@ export const addObservers = (selectorArea, area) => {
 
 /**
  * Removes event-listeners to the selectorArea
+ * @private
  */
 export const removeObservers = () => {
   window.removeEventListener('resize', modificationCallback)
@@ -60,6 +70,7 @@ export const removeObservers = () => {
  * @param {HTMLElement} selectorArea
  * @param {DSArea} area
  * @return {HTMLElement}
+ * @private
  */
 export const updatePosition = (selectorArea, area) => {
   const rect = _getAreaRect(area)
