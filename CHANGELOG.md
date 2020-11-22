@@ -11,6 +11,7 @@ The selector element is now not rendered inside of the area instead we generate 
 - the overlay has no pointer-events and acts as a clip box
 - selection can be drawn outside of the area which makes auto-scrolling and selection easier
 - you can still target that area overlay if you want use the class `ds-selector-area`
+- Area can now be scrolled in each direction simultaneously
 
 ## Inside area checker
 

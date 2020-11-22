@@ -50,7 +50,7 @@ import {
   _getCursorPos,
   _getSelectorPosition,
   _handleArea,
-  _isCursorNearEdge,
+  _isCursorNearEdges,
   _isElementTouching,
   _isInArea,
   _isMultiSelectKeyPressed,
@@ -505,18 +505,18 @@ class DragSelect {
    * @private
    */
   _setScrollState(event) {
-    const edge = _isCursorNearEdge(this.selectorArea, event)
+    const edges = _isCursorNearEdges(this.selectorArea, event)
 
-    if (edge) {
+    if (edges.length) {
       if (this._autoScrollInterval)
         window.clearInterval(this._autoScrollInterval)
 
       this._autoScrollInterval = window.setInterval(() => {
         this._newCursorPos = _getCursorPos(this.selectorArea, event)
         this._moveSelection(event, this.zoom)
-        _autoScroll(this.area, edge, this.autoScrollSpeed)
+        _autoScroll(this.area, edges, this.autoScrollSpeed)
       })
-    } else if (!edge && this._autoScrollInterval) {
+    } else if (!edges.length && this._autoScrollInterval) {
       window.clearInterval(this._autoScrollInterval)
       this._autoScrollInterval = null
     }
