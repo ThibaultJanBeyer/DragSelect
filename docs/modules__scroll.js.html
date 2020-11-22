@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>modules/_createSelector.js - Documentation</title>
+    <title>modules/_scroll.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">modules/_createSelector.js</h1>
+    <h1 class="page-title">modules/_scroll.js</h1>
     
 
     
@@ -42,22 +42,54 @@
             <pre class="prettyprint source linenums"><code>import '../types.js'
 
 /**
- * Create the selector node when not provided by options object.
- * @param {boolean} customStyles
- * @return {HTMLElement}
+ * @param {'scrollTop'|'scrollHeight'} y
+ * @param {'scrollLeft'|'scrollWidth'} x
+ * @param {DSArea} [area]
+ * @return {{x:number,y:number}} scroll X/Y
  */
-export default (customStyles) => {
-  const selector = document.createElement('div')
-
-  selector.style.position = 'absolute'
-  if (!customStyles) {
-    selector.style.background = 'rgba(0, 0, 255, 0.1)'
-    selector.style.border = '1px solid rgba(0, 0, 255, 0.45)'
-    selector.style.display = 'none'
-    selector.style.pointerEvents = 'none' // fix for issue #8 (ie11+)
+const unified = (y, x, area) => {
+  const body = {
+    y: document.body[y] > 0 ? document.body[y] : document.documentElement[y],
+    x: document.body[x] > 0 ? document.body[x] : document.documentElement[x],
   }
 
-  return selector
+  return {
+    y: area &amp;&amp; area[y] >= 0 ? area[y] : body.y,
+    x: area &amp;&amp; area[x] >= 0 ? area[x] : body.x,
+  }
+}
+
+/**
+ * Returns the current x, y scroll value of area
+ * If area has no scroll it will return 0
+ * If area scrollTop/Left is not available
+ * @param {DSArea} [area]
+ * @return {{x:number,y:number}} scroll X/Y
+ */
+export const getCurrent = (area) => unified('scrollTop', 'scrollLeft', area)
+
+/**
+ * Returns the maximum x, y scroll value of area
+ * If area has no scroll it is the same as the elements height
+ * @param {DSArea} [area]
+ * @return {{x:number,y:number}} scroll X/Y
+ */
+export const getMax = (area) => unified('scrollHeight', 'scrollWidth', area)
+
+/**
+ * Checks whether the area can scroll or not
+ * @param {DSArea} area
+ * @return {boolean} scroll X/Y
+ */
+export const canScroll = (area) => {
+  let scroll = getCurrent(area)
+  if (scroll.x || scroll.y) return true
+
+  const _area = area instanceof HTMLDocument ? area.documentElement : area
+  _area.scrollTop = 1
+  if (_area.scrollTop) return true
+
+  return false
 }
 </code></pre>
         </article>

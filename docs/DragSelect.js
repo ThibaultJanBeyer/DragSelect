@@ -41,6 +41,40 @@
     return obj;
   }
 
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      if (enumerableOnly) symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+
+      if (i % 2) {
+        ownKeys(Object(source), true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(Object(source)).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+    }
+
+    return target;
+  }
+
   function _toConsumableArray(arr) {
     return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
   }
@@ -94,6 +128,7 @@
    * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
    * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
    * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
+   * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
    * @property {Array.<'ctrlKey'|'shiftKey'|'metaKey'>} [multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
    */
 
@@ -118,6 +153,8 @@
 
   /** @typedef {HTMLElement|SVGElement|HTMLDocument} DSArea area in which you can drag */
 
+  /** @typedef {HTMLElement} DSSelectorArea area in which you can drag */
+
   /** @typedef {Array.<HTMLElement|SVGElement> | HTMLElement | SVGElement} DSInputElements the elements that can be selected */
 
   /** @typedef {Array.<HTMLElement|SVGElement>} DSElements the elements that can be selected */
@@ -129,6 +166,151 @@
   /** @typedef {number} DSZoom Zoom scale factor. Unit scale zoom */
 
   /** @typedef {Array.<'ctrlKey'|'shiftKey'|'metaKey'>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
+
+  /**
+   * @param {'scrollTop'|'scrollHeight'} y
+   * @param {'scrollLeft'|'scrollWidth'} x
+   * @param {DSArea} [area]
+   * @return {{x:number,y:number}} scroll X/Y
+   */
+
+  var unified = function unified(y, x, area) {
+    var body = {
+      y: document.body[y] > 0 ? document.body[y] : document.documentElement[y],
+      x: document.body[x] > 0 ? document.body[x] : document.documentElement[x]
+    };
+    return {
+      y: area && area[y] >= 0 ? area[y] : body.y,
+      x: area && area[x] >= 0 ? area[x] : body.x
+    };
+  };
+  /**
+   * Returns the current x, y scroll value of area
+   * If area has no scroll it will return 0
+   * If area scrollTop/Left is not available
+   * @param {DSArea} [area]
+   * @return {{x:number,y:number}} scroll X/Y
+   */
+
+
+  var getCurrent = function getCurrent(area) {
+    return unified('scrollTop', 'scrollLeft', area);
+  };
+  /**
+   * Checks whether the area can scroll or not
+   * @param {DSArea} area
+   * @return {boolean} scroll X/Y
+   */
+
+  var canScroll = function canScroll(area) {
+    var scroll = getCurrent(area);
+    if (scroll.x || scroll.y) return true;
+
+    var _area = area instanceof HTMLDocument ? area.documentElement : area;
+
+    _area.scrollTop = 1;
+    if (_area.scrollTop) return true;
+    return false;
+  };
+
+  /** @type {*} */
+
+  var modificationCallback;
+  /** @type {MutationObserver} */
+
+  var modificationObserver;
+  /**
+   * Creates the SelectorArea
+   * @param {string} selectorAreaClass
+   * @return {HTMLElement}
+   */
+
+  var create = function create(selectorAreaClass) {
+    var selectorArea = document.createElement('div');
+    selectorArea.style.position = 'fixed';
+    selectorArea.style.overflow = 'hidden';
+    selectorArea.style.pointerEvents = 'none';
+    selectorArea.classList.add(selectorAreaClass);
+    return selectorArea;
+  };
+  /**
+   * @param {HTMLElement} selectorArea
+   * @param {DSArea} area
+   * @return {function}
+   */
+
+  var modificationEvent = function modificationEvent(selectorArea, area) {
+    return function (event) {
+      return updatePosition(selectorArea, area);
+    };
+  };
+  /**
+   * Adds event-listeners to the selectorArea
+   * @param {HTMLElement} selectorArea
+   * @param {DSArea} area
+   */
+
+
+  var addObservers = function addObservers(selectorArea, area) {
+    modificationCallback = modificationEvent(selectorArea, area);
+    window.addEventListener('resize', modificationCallback);
+    window.addEventListener('scroll', modificationCallback);
+    modificationObserver = new MutationObserver(modificationCallback);
+    modificationObserver.observe(document.body, {
+      subtree: true,
+      childList: true,
+      attributes: true
+    });
+    modificationObserver.observe(area, {
+      attributes: true
+    });
+  };
+  /**
+   * Removes event-listeners to the selectorArea
+   */
+
+  var removeObservers = function removeObservers() {
+    window.removeEventListener('resize', modificationCallback);
+    window.removeEventListener('scroll', modificationCallback);
+    modificationObserver.disconnect();
+  };
+  /**
+   * Updates the selectorAreas positions to match the areas
+   * @param {HTMLElement} selectorArea
+   * @param {DSArea} area
+   * @return {HTMLElement}
+   */
+
+  var updatePosition = function updatePosition(selectorArea, area) {
+    var rect = _getAreaRect(area);
+
+    var border = _getComputedBorder(area);
+
+    selectorArea.style.top = "".concat(rect.top + border.top, "px");
+    selectorArea.style.left = "".concat(rect.left + border.left, "px");
+    selectorArea.style.width = "".concat(rect.width - border.left - border.right, "px");
+    selectorArea.style.height = "".concat(rect.height - border.top - border.bottom, "px");
+    return selectorArea;
+  };
+
+  /**
+   * This module fixes an issue where the position of the selector would be screwed when the area is scaled/zoomed
+   * Since apparently also the scroll speed is skewed
+   */
+  var initVal = {
+    x: 0,
+    y: 0
+  };
+  var _zoomedScroll = initVal;
+  var get = function get() {
+    return _objectSpread2({}, _zoomedScroll);
+  };
+  var set = function set(value) {
+    return _objectSpread2({}, _zoomedScroll = value);
+  };
+  var reset = function reset() {
+    return _objectSpread2({}, _zoomedScroll = initVal);
+  };
 
   /**
    * Scroll the area in the direction of edge
@@ -152,11 +334,10 @@
   /**
    * Create the selector node when not provided by options object.
    * @param {boolean} customStyles
-   * @param {DSArea} area
    * @return {HTMLElement}
    */
 
-  var _createSelector = (function (customStyles, area) {
+  var _createSelector = (function (customStyles) {
     var selector = document.createElement('div');
     selector.style.position = 'absolute';
 
@@ -166,10 +347,6 @@
       selector.style.display = 'none';
       selector.style.pointerEvents = 'none'; // fix for issue #8 (ie11+)
     }
-
-    var _area = area === document ? document.body : area;
-
-    _area.appendChild(selector);
 
     return selector;
   });
@@ -197,8 +374,8 @@
       left: rect.left,
       bottom: rect.bottom,
       right: rect.right,
-      width: area.clientWidth || rect.width,
-      height: area.clientHeight || rect.height
+      width: rect.width,
+      height: rect.height
     };
   });
 
@@ -207,9 +384,19 @@
    */
 
   var _getComputedBorder = (function (area) {
-    if (area instanceof HTMLDocument) return 0;
+    if (area instanceof HTMLDocument) return {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0
+    };
     var computedStyles = getComputedStyle(area);
-    return parseInt(computedStyles.borderWidth) || 0;
+    return {
+      top: parseInt(computedStyles.borderTopWidth) || 0,
+      bottom: parseInt(computedStyles.borderBottomWidth) || 0,
+      left: parseInt(computedStyles.borderLeftWidth) || 0,
+      right: parseInt(computedStyles.borderRightWidth) || 0
+    };
   });
 
   /** @type {TouchEvent} */
@@ -221,13 +408,14 @@
    * the AREA scroll into consideration unless it’s the outer Document.
    * Use the public .getCursorPos() for anything else, it’s more flexible
    * @param {DSArea} area
-   * @param {DSZoom} zoom
    * @param {DSEvent} [event]
+   * @param {DSZoom} [zoom]
    * @return {{x: number, y: number}} cursor X/Y position
    */
 
 
-  var _getCursorPos = (function (area, zoom, event) {
+  var _getCursorPos = (function (area, event) {
+    var zoom = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
     if (!event) return {
       x: 0,
       y: 0
@@ -245,7 +433,7 @@
 
     var areaRect = _getAreaRect(area);
 
-    var docScroll = _getScroll(); // needed when document is scroll-able but area is not
+    var docScroll = getCurrent(); // needed when document is scroll-able but area is not
 
 
     return {
@@ -256,51 +444,43 @@
   });
 
   /**
-   * Returns the current x, y scroll value of area
-   * If area has no scroll it will return 0
-   * If area scrollTop/Left is not available
-   * @param {DSArea} [area]
-   * @return {{x:number,y:number}} scroll X/Y
-   */
-
-  var _getScroll = (function (area) {
-    var body = {
-      top: document.body.scrollTop > 0 ? document.body.scrollTop : document.documentElement.scrollTop,
-      left: document.body.scrollLeft > 0 ? document.body.scrollLeft : document.documentElement.scrollLeft
-    }; // when the rectangle is bound to the document, no scroll is needed
-
-    var scroll = {
-      // @ts-ignore
-      y: area && area.scrollTop >= 0 ? area.scrollTop : body.top,
-      // @ts-ignore
-      x: area && area.scrollLeft >= 0 ? area.scrollLeft : body.left
-    };
-    return scroll;
-  });
-
-  /**
    * Reliably returns the exact x,y,w,h positions of the selector element
+   * @param {DSSelectorArea} selectorArea
    * @param {DSArea} area
-   * @param {DSZoom} zoom
    * @param {{x: number, y: number}} initialScroll
    * @param {{x: number, y: number}} initialCursorPos
+   * @param {DSZoom} [zoom]
    * @param {DSEvent} [event]
    * @returns {{x:number,y:number,w:number,h:number}}
    */
 
-  var _getSelectorPosition = (function (area, zoom, initialScroll, initialCursorPos, event) {
-    var cursorPosNew = _getCursorPos(area, zoom, event);
+  var _getSelectorPosition = (function (selectorArea, area, initialScroll, initialCursorPos, zoom, event) {
+    var cursorPosNew = _getCursorPos(selectorArea, event);
 
-    var scrollNew = _getScroll(area); // if area or document is scrolled those values have to be included as well
+    var scrollNew = getCurrent(area); // if area or document is scrolled those values have to be considered as well
 
 
-    var scrollAmount = {
+    var scrollDiff = {
       x: scrollNew.x - initialScroll.x,
       y: scrollNew.y - initialScroll.y
+    }; // if area is zoomed we'll also need to incorporate that when scrolling…
+
+    if (zoom) {
+      set({
+        x: scrollDiff.x * zoom - scrollDiff.x,
+        y: scrollDiff.y * zoom - scrollDiff.y
+      });
+    }
+
+    var zoomScroll = get();
+
+    var scrollAmount = {
+      x: scrollDiff.x + zoomScroll.x,
+      y: scrollDiff.y + zoomScroll.y
     };
     /** check for direction
      *
-     * This is quite complicated math, so also quite complicated to explain. Lemme’ try:
+     * This is quite complicated, so also quite complicated to explain. Lemme’ try:
      *
      * Problem #1:
      * Sadly in HTML we can not have negative sizes.
@@ -321,19 +501,16 @@
      * checks we have to subtract 10px from the initialcursor position in our check
      * (since the initial position is moved to the left by 10px) so in our example:
      * 1. cursorPosNew.x (5) > initialCursorPos.x (0) - scrollAmount.x (10) === 5 > -10 === true
-     * then reset the x position to its initial position (since we might have changed that
-     * position when scrolling to the left before going right) in our example:
-     * 2. selectorPos.x = initialCursorPos.x (0) + initialScroll.x (0) === 0;
+     * then set the x position to the cursors start position
+     * selectorPos.x = initialCursorPos.x (0) - scrollAmount.x (10) === 10 // 2.
      * then we can calculate the elements width, which is
      * the new cursor position minus the initial one plus the scroll amount, so in our example:
      * 3. selectorPos.w = cursorPosNew.x (5) - initialCursorPos.x (0) + scrollAmount.x (10) === 15;
      *
      * let’s say after that movement we now scroll 20px to the left and move our cursor by 30px to the left:
-     * 1b. cursorPosNew.x (-30) > initialCursorPos.x (0) - scrollAmount.x (-20) === -30 > -20 === false;
-     * 2b. selectorPos.x = cursorPosNew.x (-30) + scrollNew.x (-20)
-     *                   === -50;  // move left position to cursor (for more info see Problem #1)
-     * 3b. selectorPos.w = initialCursorPos.x (0) - cursorPosNew.x (-30) - scrollAmount.x (-20)
-     *                   === 0--30--20 === 0+30+20 === 50;  // scale width to original left position (for more info see Problem #1)
+     * 1b. cursorPosNew.x (-30) > initialCursorPos.x (0) - scrollAmount.x (-20) === -30 < --20 === -30 < +20 === false;
+     * 2b. selectorPos.x = cursorPosNew.x (-30) === -30; move left position to cursor (for more info see Problem #1)
+     * 3b. selectorPos.w = initialCursorPos.x (0) - cursorPosNew.x (-30) - scrollAmount.x (-20) === 0--30--20 === 0+30+20 === 50;  // scale width to original left position (for more info see Problem #1)
      *
      * same thing has to be done for top/bottom
      *
@@ -344,23 +521,23 @@
 
     if (cursorPosNew.x > initialCursorPos.x - scrollAmount.x) {
       // 1.
-      selectorPos.x = initialCursorPos.x + initialScroll.x; // 2.
+      selectorPos.x = initialCursorPos.x - scrollAmount.x; // 2.
 
       selectorPos.w = cursorPosNew.x - initialCursorPos.x + scrollAmount.x; // 3.
       // left
     } else {
       // 1b.
-      selectorPos.x = cursorPosNew.x + scrollNew.x; // 2b.
+      selectorPos.x = cursorPosNew.x; // 2b.
 
       selectorPos.w = initialCursorPos.x - cursorPosNew.x - scrollAmount.x; // 3b.
     } // bottom
 
 
     if (cursorPosNew.y > initialCursorPos.y - scrollAmount.y) {
-      selectorPos.y = initialCursorPos.y + initialScroll.y;
+      selectorPos.y = initialCursorPos.y - scrollAmount.y;
       selectorPos.h = cursorPosNew.y - initialCursorPos.y + scrollAmount.y; // top
     } else {
-      selectorPos.y = cursorPosNew.y + scrollNew.y;
+      selectorPos.y = cursorPosNew.y;
       selectorPos.h = initialCursorPos.y - cursorPosNew.y - scrollAmount.y;
     }
 
@@ -383,49 +560,117 @@
   });
 
   /**
+   * Axis-Aligned Bounding Box Collision Detection.
+   * Imagine following Example:
+   *
+   *
+   *        b01
+   *     a01[1]a02
+   *        b02      b11
+   *              a11[2]a12
+   *                 b12
+   *
+   *
+   * to check if those two boxes collide we do this AABB calculation:
+   * 1. a01 < a12 (left border pos box1 smaller than right border pos box2)
+   * 2. a02 > a11 (right border pos box1 larger than left border pos box2)
+   * 3. b01 < b12 (top border pos box1 smaller than bottom border pos box2)
+   * 4. b02 > b11 (bottom border pos box1 larger than top border pos box2)
+   * {@link https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box Wikipedia}
+   * {@link https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection MDN}
+   * @param {{x:number,y:number,w:number,h:number}} a
+   * @param {{x:number,y:number,w:number,h:number}} b
+   */
+  var _isCollision = (function (el1, el2) {
+    if (el1.x < el2.x + el2.w && // 1.
+    el1.x + el1.w > el2.x && // 2.
+    el1.y < el2.y + el2.h && // 3.
+    el1.h + el1.y > el2.y // 4.
+    ) {
+        return true; // collision detected!
+      } else {
+      return false;
+    }
+  });
+
+  /**
+   * Check if the selector is near an edge of the area
+   * @param {DSSelectorArea} area
+   * @param {DSEvent} [event]
+   * @return {('top'|'bottom'|'left'|'right'|false)}
+   */
+
+  var _isCursorNearEdge = (function (area, event) {
+    var cursorPosition = _getCursorPos(area, event);
+
+    var areaRect = _getAreaRect(area);
+
+    var tolerance = {
+      x: 10,
+      y: 10
+    };
+    if (cursorPosition.y < tolerance.y) return 'top';
+    if (areaRect.height - cursorPosition.y < tolerance.y) return 'bottom';
+    if (areaRect.width - cursorPosition.x < tolerance.x) return 'right';
+    if (cursorPosition.x < tolerance.x) return 'left';
+    return false;
+  });
+
+  /**
    * Checks if there is a collision between the element and the selector
    * (whether they touch each other)
    * @param {DSElement} element
    * @param {HTMLElement} selector
-   * @param {DSZoom} zoom
    * @param {DSArea} area
+   * @param {DSSelectorArea} selectorArea
    * @return {boolean}
    */
 
-  var _isElementTouching = (function (element, selector, zoom, area) {
-    var scroll = _getScroll(area);
-
+  var _isElementTouching = (function (element, selector, area, selectorArea) {
+    if (!_isInArea(element, area, selectorArea)) return;
     var selectionRect = {
-      y: selector.getBoundingClientRect().top / zoom + scroll.y,
-      x: selector.getBoundingClientRect().left / zoom + scroll.x,
+      y: selector.getBoundingClientRect().top,
+      x: selector.getBoundingClientRect().left,
       h: selector.offsetHeight,
       w: selector.offsetWidth
     };
     var rect = element.getBoundingClientRect();
     var elementRect = {
-      y: rect.top / zoom + scroll.y,
-      x: rect.left / zoom + scroll.x,
-      h: rect.height / zoom,
-      w: rect.width / zoom
-    }; // Axis-Aligned Bounding Box Collision Detection.
-    // Imagine following Example:
-    //    b01
-    // a01[1]a02
-    //    b02      b11
-    //          a11[2]a12
-    //             b12
-    // to check if those two boxes collide we do this AABB calculation:
-    //& a01 < a12 (left border pos box1 smaller than right border pos box2)
-    //& a02 > a11 (right border pos box1 larger than left border pos box2)
-    //& b01 < b12 (top border pos box1 smaller than bottom border pos box2)
-    //& b02 > b11 (bottom border pos box1 larger than top border pos box2)
-    // See: https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box and https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+      y: rect.top,
+      x: rect.left,
+      h: rect.height,
+      w: rect.width
+    };
+    if (_isCollision(selectionRect, elementRect)) return true;
+    return false;
+  });
 
-    if (selectionRect.x < elementRect.x + elementRect.w && selectionRect.x + selectionRect.w > elementRect.x && selectionRect.y < elementRect.y + elementRect.h && selectionRect.h + selectionRect.y > elementRect.y) {
-      return true; // collision detected!
-    } else {
-      return false;
-    }
+  /**
+   * Checks if there is a collision between the element and the selector
+   * (whether they touch each other)
+   * @param {DSElement} element
+   * @param {DSArea} area
+   * @param {DSSelectorArea} selectorArea
+   * @return {boolean}
+   */
+
+  var _isInArea = (function (element, area, selectorArea) {
+    if (area.contains(element) && canScroll(area)) return true;
+    var selectorAreaRect = {
+      y: selectorArea.getBoundingClientRect().top,
+      x: selectorArea.getBoundingClientRect().left,
+      h: selectorArea.offsetHeight,
+      w: selectorArea.offsetWidth
+    };
+    var rect = element.getBoundingClientRect();
+    var elementRect = {
+      y: rect.top,
+      x: rect.left,
+      h: rect.height,
+      w: rect.width
+    };
+    if (_isCollision(selectorAreaRect, elementRect)) return true;
+    return false;
   });
 
   /**
@@ -443,25 +688,50 @@
     });
   });
 
+  /** @type {TouchEvent} */
+
+  var _lastTouch$1;
   /**
    * Based on a click event object in an area,
    * checks if the click was triggered onto a scrollbar.
-   * @param {DSArea} area
-   * @param {DSZoom} zoom
+   * @param {DSSelectorArea} area
    * @param {DSEvent} event
    * @return {boolean}
    */
 
-  var _isScrollbarClick = (function (area, zoom, event) {
-    var cPos = _getCursorPos(area, zoom, event);
 
-    var areaRect = _getAreaRect(area);
+  var _isSelectorAreaClick = (function (area, event) {
+    // touchend has not touches. so we take the last touch if a touchevent, we need to store the positions
+    if ('touches' in event && event.type !== 'touchend') _lastTouch$1 = event; // if a touchevent, return the last touch rather than the regular event
+    // we need .touches[0] from that event instead
 
-    var border = _getComputedBorder(area);
+    var _event = 'touches' in event ? _lastTouch$1.touches[0] : event;
 
-    if (areaRect.width + border <= cPos.x) return true;
-    if (areaRect.height + border <= cPos.y) return true;
-    return false;
+    var cPos = {
+      x: _event.clientX,
+      y: _event.clientY,
+      w: 0,
+      h: 0
+    };
+    var areaRect = {
+      x: area.getBoundingClientRect().left,
+      y: area.getBoundingClientRect().top,
+      w: area.offsetWidth,
+      h: area.offsetHeight
+    };
+    return _isCollision(cPos, areaRect);
+  });
+
+  /**
+   * Transforms any list or single item to an array so user doesn’t have to care.
+   * @param {DSInputElements} items a single item, a Node-list or any element group
+   * @return {DSElements}
+   */
+
+  var _toArray = (function (items) {
+    if (!items) return [];
+    if (!Array.isArray(items) && (items instanceof HTMLElement || items instanceof SVGElement)) return [items];
+    return _toConsumableArray(items);
   });
 
   /**
@@ -478,46 +748,6 @@
     element.style.width = "".concat(pos.w, "px");
     element.style.height = "".concat(pos.h, "px");
     return element;
-  });
-
-  /**
-   * Check if the selector is near an edge of the area
-   * @memberof DragSelect#
-   * @function isCursorNearEdge
-   * @param {DSArea} area
-   * @param {DSZoom} zoom
-   * @param {DSEvent} [event]
-   * @return {('top'|'bottom'|'left'|'right'|false)}
-   */
-
-  var isCursorNearEdge = (function (area, zoom, event) {
-    var cursorPosition = _getCursorPos(area, zoom, event);
-
-    var areaRect = _getAreaRect(area);
-
-    var tolerance = {
-      x: Math.max(areaRect.width / 10, 30),
-      y: Math.max(areaRect.height / 10, 30)
-    };
-    if (cursorPosition.y < tolerance.y) return 'top';
-    if (areaRect.height - cursorPosition.y < tolerance.y) return 'bottom';
-    if (areaRect.width - cursorPosition.x < tolerance.x) return 'right';
-    if (cursorPosition.x < tolerance.x) return 'left';
-    return false;
-  });
-
-  /**
-   * Transforms any list or single item to an array so user doesn’t have to care.
-   * @memberof DragSelect#
-   * @function toArray
-   * @param {DSInputElements} items a single item, a Node-list or any element group
-   * @return {DSElements}
-   */
-
-  var toArray = (function (items) {
-    if (!items) return [];
-    if (!Array.isArray(items) && (items instanceof HTMLElement || items instanceof SVGElement)) return [items];
-    return _toConsumableArray(items);
   });
 
   //////////////////////////////////////////////////////////////////////////////////////
@@ -582,6 +812,8 @@
           selector = _ref$selector === void 0 ? undefined : _ref$selector,
           _ref$selectorClass = _ref.selectorClass,
           selectorClass = _ref$selectorClass === void 0 ? 'ds-selector' : _ref$selectorClass,
+          _ref$selectorAreaClas = _ref.selectorAreaClass,
+          selectorAreaClass = _ref$selectorAreaClas === void 0 ? 'ds-selector-area' : _ref$selectorAreaClas,
           _ref$zoom = _ref.zoom,
           zoom = _ref$zoom === void 0 ? 1 : _ref$zoom;
 
@@ -631,14 +863,12 @@
         return _this.reset(event, true);
       });
 
-      _defineProperty(this, "toArray", toArray);
-
       this.selectedClass = selectedClass;
       this.hoverClass = hoverClass;
       this.selectorClass = selectorClass;
       this.selectableClass = selectableClass;
       this.selectables = [];
-      this._initialSelectables = toArray(selectables);
+      this._initialSelectables = _toArray(selectables);
       this.multiSelectKeys = multiSelectKeys;
       this.multiSelectMode = multiSelectMode;
       this.autoScrollSpeed = autoScrollSpeed === 0 ? 0 : autoScrollSpeed;
@@ -652,8 +882,14 @@
       this.customStyles = customStyles;
       this.zoom = zoom; // Selector
 
-      this.selector = selector || _createSelector(this.customStyles, this.area);
+      this.selector = selector || _createSelector(this.customStyles);
       this.selector.classList.add(this.selectorClass);
+      this.selectorArea = create(selectorAreaClass);
+
+      updatePosition(this.selectorArea, this.area);
+
+      this.selectorArea.appendChild(this.selector);
+      document.body.appendChild(this.selectorArea);
       this.start();
     }
     /**
@@ -738,31 +974,22 @@
        * @private
        */
       value: function handleClick(event) {
-        if (this.mouseInteraction) {
-          return;
-        } // fix firefox doubleclick issue
-        // right-clicks
+        if (this.mouseInteraction) return; // fix firefox doubleclick issue
 
+        if (event.button === 2) return; // right-clicks
 
-        if (event.button === 2) return;
         /** @type {any} */
 
         var node = event.target;
+        if (!this.selectables.includes(node)) return;
+        if (!_isInArea(node, this.area, this.selectorArea)) return; // fix for multi-selection issue #9
+
         this._multiSelectKeyPressed = _isMultiSelectKeyPressed(this.multiSelectKeys, this.multiSelectMode, event);
-
-        if (this._multiSelectKeyPressed) {
-          this._prevSelected = this._selected.slice();
-        } // #9
-        else {
-            this._prevSelected = [];
-          } // #9
-
+        if (this._multiSelectKeyPressed) this._prevSelected = this._selected.slice();else this._prevSelected = []; // actual selection logic
 
         this.checkIfInsideSelection(true); // reset selection if no multiselectionkeypressed
 
-        if (this.selectables.indexOf(node) > -1) {
-          this.toggle(node);
-        }
+        this.toggle(node);
 
         this._end(event);
       } // Start
@@ -782,6 +1009,8 @@
         this.area.addEventListener('touchstart', this._startUp, {
           passive: false
         });
+
+        addObservers(this.selectorArea, this.area);
       }
       /**
        * @param {DSEvent} event - The event object.
@@ -797,19 +1026,18 @@
        * @private
        */
       value: function startUp(event) {
-        console.log('Startup!'); // touchmove handler
-
+        // touchmove handler
         if (event.type === 'touchstart') // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
-          event.preventDefault(); // right-clicks
+          event.preventDefault();
+        this.mouseInteraction = true; // right-clicks
 
         if (
         /** @type {*} */
         event.button === 2) return;
-        if (_isScrollbarClick(this.area, this.zoom, event)) return; // callback
+        if (!_isSelectorAreaClick(this.selectorArea, event)) return; // callback
 
         this.onDragStartBegin(event);
         if (this._breaked) return false;
-        this.mouseInteraction = true;
         this.selector.style.display = 'block';
         this._multiSelectKeyPressed = _isMultiSelectKeyPressed(this.multiSelectKeys, this.multiSelectMode, event);
         if (this._multiSelectKeyPressed) this._prevSelected = this._selected.slice(); // #9
@@ -830,8 +1058,8 @@
           // @ts-ignore
           passive: false
         });
-        this.area.addEventListener('mousemove', this._handleMove);
-        this.area.addEventListener('touchmove', this._handleMove, {
+        document.addEventListener('mousemove', this._handleMove);
+        document.addEventListener('touchmove', this._handleMove, {
           passive: false
         });
         document.addEventListener('mouseup', this._end);
@@ -846,8 +1074,8 @@
     }, {
       key: "_getStartingPositions",
       value: function _getStartingPositions(event) {
-        this._initialCursorPos = this._newCursorPos = _getCursorPos(this.area, this.zoom, event);
-        this._initialScroll = _getScroll(this.area);
+        this._initialCursorPos = this._newCursorPos = _getCursorPos(this.selectorArea, event);
+        this._initialScroll = getCurrent(this.area);
         var selectorPos = {};
         selectorPos.x = this._initialCursorPos.x + this._initialScroll.x;
         selectorPos.y = this._initialCursorPos.y + this._initialScroll.y;
@@ -872,18 +1100,24 @@
        * @private
        */
       value: function handleMove(event) {
-        this._newCursorPos = _getCursorPos(this.area, this.zoom, event); // callback
+        this._newCursorPos = _getCursorPos(this.selectorArea, event); // callback
 
         this.moveCallback(event);
         if (this._breaked) return false;
         this.selector.style.display = 'block'; // hidden unless moved, fix for issue #8
         // move element on location
 
-        _updatePos(this.selector, _getSelectorPosition(this.area, this.zoom, this._initialScroll, this._initialCursorPos, event));
+        this._moveSelection(event); // scroll area if area is scroll-able
 
-        this.checkIfInsideSelection(null); // scroll area if area is scroll-able
 
         this._setScrollState(event);
+      }
+    }, {
+      key: "_moveSelection",
+      value: function _moveSelection(event, zoom) {
+        _updatePos(this.selector, _getSelectorPosition(this.selectorArea, this.area, this._initialScroll, this._initialCursorPos, zoom, event));
+
+        this.checkIfInsideSelection(null);
       } // Colision detection
       //////////////////////////////////////////////////////////////////////////////////////
 
@@ -901,7 +1135,7 @@
         for (var i = 0, il = this.selectables.length; i < il; i++) {
           var selectable = this.selectables[i];
 
-          if (_isElementTouching(selectable, this.selector, this.zoom, this.area)) {
+          if (_isElementTouching(selectable, this.selector, this.area, this.selectorArea)) {
             this._handleSelection(selectable, force);
 
             anyInside = true;
@@ -1016,16 +1250,14 @@
       value: function _setScrollState(event) {
         var _this2 = this;
 
-        var edge = isCursorNearEdge(this.area, this.zoom, event);
+        var edge = _isCursorNearEdge(this.selectorArea, event);
 
         if (edge) {
           if (this._autoScrollInterval) window.clearInterval(this._autoScrollInterval);
           this._autoScrollInterval = window.setInterval(function () {
-            _this2._newCursorPos = _getCursorPos(_this2.area, _this2.zoom, event);
+            _this2._newCursorPos = _getCursorPos(_this2.selectorArea, event);
 
-            _updatePos(_this2.selector, _getSelectorPosition(_this2.area, _this2.zoom, _this2._initialScroll, _this2._initialCursorPos, event));
-
-            _this2.checkIfInsideSelection(null);
+            _this2._moveSelection(event, _this2.zoom);
 
             _autoScroll(_this2.area, edge, _this2.autoScrollSpeed);
           });
@@ -1051,14 +1283,17 @@
        * @param {Object} [event] - The event object.
        * @param {boolean} [withCallback] - whether or not the callback should be called
        */
-      value: function reset(event, withCallback) {
+      value: function reset$1(event, withCallback) {
         var _this3 = this;
 
-        this._previousCursorPos = _getCursorPos(this.area, this.zoom, event);
+        this._previousCursorPos = _getCursorPos(this.selectorArea, event);
+
+        reset();
+
         document.removeEventListener('mouseup', this._end);
         document.removeEventListener('touchend', this._end);
-        this.area.removeEventListener('mousemove', this._handleMove);
-        this.area.removeEventListener('touchmove', this._handleMove, {
+        document.removeEventListener('mousemove', this._handleMove);
+        document.removeEventListener('touchmove', this._handleMove, {
           // @ts-ignore
           passive: false
         });
@@ -1116,6 +1351,9 @@
         var fromSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
         var withCallback = arguments.length > 2 ? arguments[2] : undefined;
         this.reset(false, withCallback);
+
+        removeObservers();
+
         this.area.removeEventListener('mousedown', this._startUp);
         this.area.removeEventListener('touchstart', this._startUp, {
           // @ts-ignore
@@ -1128,44 +1366,15 @@
       } // Useful methods for the user
       //////////////////////////////////////////////////////////////////////////////////////
 
-    }, {
-      key: "getSelection",
-
       /**
        * Returns the current selected nodes
        * @return {Array.<(HTMLElement|SVGElement)>}
        */
-      value: function getSelection() {
-        return _toConsumableArray(this._selected);
-      }
-      /**
-       * Returns cursor x, y position based on event object
-       * Will be relative to an area including the scroll unless advised otherwise
-       * @param {Object} [event]
-       * @param {(HTMLElement|SVGElement|false)} [_area] containing area / this.area if === undefined / document if === false
-       * @param {boolean} [ignoreScroll] if true, the scroll will be ignored
-       * @return {{x:number,y:number}} cursor { x/y }
-       */
 
     }, {
-      key: "getCursorPos",
-      value: function getCursorPos(event, _area, ignoreScroll) {
-        if (!event) return {
-          x: 0,
-          y: 0
-        };
-        var area = _area || _area !== false && this.area;
-
-        var pos = _getCursorPos(area, this.zoom, event);
-
-        var scroll = ignoreScroll ? {
-          x: 0,
-          y: 0
-        } : _getScroll(area);
-        return {
-          x: pos.x + scroll.x,
-          y: pos.y + scroll.y
-        };
+      key: "getSelection",
+      value: function getSelection() {
+        return _toConsumableArray(this._selected);
       }
       /**
        * Adds several elements to the selection list
@@ -1183,7 +1392,8 @@
       value: function addSelection(elements, triggerCallback, dontAddToSelectables) {
         var _this5 = this;
 
-        var nodes = toArray(elements);
+        var nodes = _toArray(elements);
+
         nodes.forEach(function (node) {
           return _this5.select(node);
         });
@@ -1205,7 +1415,8 @@
       value: function removeSelection(elements, triggerCallback, removeFromSelectables) {
         var _this6 = this;
 
-        var nodes = toArray(elements);
+        var nodes = _toArray(elements);
+
         nodes.forEach(function (node) {
           return _this6.unselect(node);
         });
@@ -1233,7 +1444,7 @@
     }, {
       key: "toggleSelection",
       value: function toggleSelection(elements, triggerCallback, special) {
-        var nodes = toArray(elements);
+        var nodes = _toArray(elements);
 
         for (var index = 0, il = nodes.length; index < il; index++) {
           var node = nodes[index];
@@ -1293,7 +1504,7 @@
     }, {
       key: "addSelectables",
       value: function addSelectables(elements, addToSelection) {
-        var nodes = toArray(elements);
+        var nodes = _toArray(elements);
 
         this._handleSelectables(nodes, false, addToSelection);
 
@@ -1336,7 +1547,7 @@
     }, {
       key: "removeSelectables",
       value: function removeSelectables(elements, removeFromSelection) {
-        var nodes = toArray(elements);
+        var nodes = _toArray(elements);
 
         this._handleSelectables(nodes, true, removeFromSelection);
 

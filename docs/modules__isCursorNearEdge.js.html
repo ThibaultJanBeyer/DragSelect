@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>modules/_createSelector.js - Documentation</title>
+    <title>modules/_isCursorNearEdge.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">modules/_createSelector.js</h1>
+    <h1 class="page-title">modules/_isCursorNearEdge.js</h1>
     
 
     
@@ -40,24 +40,29 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>import '../types.js'
+import { _getCursorPos, _getAreaRect } from './'
 
 /**
- * Create the selector node when not provided by options object.
- * @param {boolean} customStyles
- * @return {HTMLElement}
+ * Check if the selector is near an edge of the area
+ * @param {DSSelectorArea} area
+ * @param {DSEvent} [event]
+ * @return {('top'|'bottom'|'left'|'right'|false)}
  */
-export default (customStyles) => {
-  const selector = document.createElement('div')
+export default (area, event) => {
+  const cursorPosition = _getCursorPos(area, event)
+  const areaRect = _getAreaRect(area)
 
-  selector.style.position = 'absolute'
-  if (!customStyles) {
-    selector.style.background = 'rgba(0, 0, 255, 0.1)'
-    selector.style.border = '1px solid rgba(0, 0, 255, 0.45)'
-    selector.style.display = 'none'
-    selector.style.pointerEvents = 'none' // fix for issue #8 (ie11+)
+  const tolerance = {
+    x: 10,
+    y: 10,
   }
 
-  return selector
+  if (cursorPosition.y &lt; tolerance.y) return 'top'
+  if (areaRect.height - cursorPosition.y &lt; tolerance.y) return 'bottom'
+  if (areaRect.width - cursorPosition.x &lt; tolerance.x) return 'right'
+  if (cursorPosition.x &lt; tolerance.x) return 'left'
+
+  return false
 }
 </code></pre>
         </article>

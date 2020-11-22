@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>modules/_createSelector.js - Documentation</title>
+    <title>modules/_toArray.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">modules/_createSelector.js</h1>
+    <h1 class="page-title">modules/_toArray.js</h1>
     
 
     
@@ -42,22 +42,18 @@
             <pre class="prettyprint source linenums"><code>import '../types.js'
 
 /**
- * Create the selector node when not provided by options object.
- * @param {boolean} customStyles
- * @return {HTMLElement}
+ * Transforms any list or single item to an array so user doesn’t have to care.
+ * @param {DSInputElements} items a single item, a Node-list or any element group
+ * @return {DSElements}
  */
-export default (customStyles) => {
-  const selector = document.createElement('div')
-
-  selector.style.position = 'absolute'
-  if (!customStyles) {
-    selector.style.background = 'rgba(0, 0, 255, 0.1)'
-    selector.style.border = '1px solid rgba(0, 0, 255, 0.45)'
-    selector.style.display = 'none'
-    selector.style.pointerEvents = 'none' // fix for issue #8 (ie11+)
-  }
-
-  return selector
+export default items => {
+  if (!items) return []
+  if (
+    !Array.isArray(items) &amp;&amp;
+    (items instanceof HTMLElement || items instanceof SVGElement)
+  )
+    return [items]
+  return [...items]
 }
 </code></pre>
         </article>

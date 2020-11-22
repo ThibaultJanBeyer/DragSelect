@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>modules/_createSelector.js - Documentation</title>
+    <title>modules/_zoomedScroll.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">modules/_createSelector.js</h1>
+    <h1 class="page-title">modules/_zoomedScroll.js</h1>
     
 
     
@@ -39,26 +39,17 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import '../types.js'
-
-/**
- * Create the selector node when not provided by options object.
- * @param {boolean} customStyles
- * @return {HTMLElement}
+            <pre class="prettyprint source linenums"><code>/**
+ * This module fixes an issue where the position of the selector would be screwed when the area is scaled/zoomed
+ * Since apparently also the scroll speed is skewed
  */
-export default (customStyles) => {
-  const selector = document.createElement('div')
 
-  selector.style.position = 'absolute'
-  if (!customStyles) {
-    selector.style.background = 'rgba(0, 0, 255, 0.1)'
-    selector.style.border = '1px solid rgba(0, 0, 255, 0.45)'
-    selector.style.display = 'none'
-    selector.style.pointerEvents = 'none' // fix for issue #8 (ie11+)
-  }
+const initVal = { x: 0, y: 0 }
+let _zoomedScroll = initVal
 
-  return selector
-}
+export const get = () => ({ ..._zoomedScroll })
+export const set = (value) => ({ ...(_zoomedScroll = value) })
+export const reset = () => ({ ...(_zoomedScroll = initVal) })
 </code></pre>
         </article>
     </section>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>modules/_createSelector.js - Documentation</title>
+    <title>modules/_selectorArea.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">modules/_createSelector.js</h1>
+    <h1 class="page-title">modules/_selectorArea.js</h1>
     
 
     
@@ -40,24 +40,76 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>import '../types.js'
+import { _getAreaRect, _getComputedBorder } from './'
+
+/** @type {*} */
+let modificationCallback
+/** @type {MutationObserver} */
+let modificationObserver
 
 /**
- * Create the selector node when not provided by options object.
- * @param {boolean} customStyles
+ * Creates the SelectorArea
+ * @param {string} selectorAreaClass
  * @return {HTMLElement}
  */
-export default (customStyles) => {
-  const selector = document.createElement('div')
+export const create = (selectorAreaClass) => {
+  const selectorArea = document.createElement('div')
+  selectorArea.style.position = 'fixed'
+  selectorArea.style.overflow = 'hidden'
+  selectorArea.style.pointerEvents = 'none'
+  selectorArea.classList.add(selectorAreaClass)
+  return selectorArea
+}
 
-  selector.style.position = 'absolute'
-  if (!customStyles) {
-    selector.style.background = 'rgba(0, 0, 255, 0.1)'
-    selector.style.border = '1px solid rgba(0, 0, 255, 0.45)'
-    selector.style.display = 'none'
-    selector.style.pointerEvents = 'none' // fix for issue #8 (ie11+)
-  }
+/**
+ * @param {HTMLElement} selectorArea
+ * @param {DSArea} area
+ * @return {function}
+ */
+const modificationEvent = (selectorArea, area) => (event) =>
+  updatePosition(selectorArea, area)
 
-  return selector
+/**
+ * Adds event-listeners to the selectorArea
+ * @param {HTMLElement} selectorArea
+ * @param {DSArea} area
+ */
+export const addObservers = (selectorArea, area) => {
+  modificationCallback = modificationEvent(selectorArea, area)
+  window.addEventListener('resize', modificationCallback)
+  window.addEventListener('scroll', modificationCallback)
+  modificationObserver = new MutationObserver(modificationCallback)
+  modificationObserver.observe(document.body, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+  })
+  modificationObserver.observe(area, { attributes: true })
+}
+
+/**
+ * Removes event-listeners to the selectorArea
+ */
+export const removeObservers = () => {
+  window.removeEventListener('resize', modificationCallback)
+  window.removeEventListener('scroll', modificationCallback)
+  modificationObserver.disconnect()
+}
+
+/**
+ * Updates the selectorAreas positions to match the areas
+ * @param {HTMLElement} selectorArea
+ * @param {DSArea} area
+ * @return {HTMLElement}
+ */
+export const updatePosition = (selectorArea, area) => {
+  const rect = _getAreaRect(area)
+  const border = _getComputedBorder(area)
+  selectorArea.style.top = `${rect.top + border.top}px`
+  selectorArea.style.left = `${rect.left + border.left}px`
+  selectorArea.style.width = `${rect.width - border.left - border.right}px`
+  selectorArea.style.height = `${rect.height - border.top - border.bottom}px`
+  return selectorArea
 }
 </code></pre>
         </article>

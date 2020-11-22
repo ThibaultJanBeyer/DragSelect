@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>modules/_createSelector.js - Documentation</title>
+    <title>modules/_isCollision.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">modules/_createSelector.js</h1>
+    <h1 class="page-title">modules/_isCollision.js</h1>
     
 
     
@@ -39,25 +39,39 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import '../types.js'
-
-/**
- * Create the selector node when not provided by options object.
- * @param {boolean} customStyles
- * @return {HTMLElement}
+            <pre class="prettyprint source linenums"><code>/**
+ * Axis-Aligned Bounding Box Collision Detection.
+ * Imagine following Example:
+ *
+ *
+ *        b01
+ *     a01[1]a02
+ *        b02      b11
+ *              a11[2]a12
+ *                 b12
+ *
+ *
+ * to check if those two boxes collide we do this AABB calculation:
+ * 1. a01 &lt; a12 (left border pos box1 smaller than right border pos box2)
+ * 2. a02 > a11 (right border pos box1 larger than left border pos box2)
+ * 3. b01 &lt; b12 (top border pos box1 smaller than bottom border pos box2)
+ * 4. b02 > b11 (bottom border pos box1 larger than top border pos box2)
+ * {@link https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box Wikipedia}
+ * {@link https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection MDN}
+ * @param {{x:number,y:number,w:number,h:number}} a
+ * @param {{x:number,y:number,w:number,h:number}} b
  */
-export default (customStyles) => {
-  const selector = document.createElement('div')
-
-  selector.style.position = 'absolute'
-  if (!customStyles) {
-    selector.style.background = 'rgba(0, 0, 255, 0.1)'
-    selector.style.border = '1px solid rgba(0, 0, 255, 0.45)'
-    selector.style.display = 'none'
-    selector.style.pointerEvents = 'none' // fix for issue #8 (ie11+)
+export default (el1, el2) => {
+  if (
+    el1.x &lt; el2.x + el2.w &amp;&amp; // 1.
+    el1.x + el1.w > el2.x &amp;&amp; // 2.
+    el1.y &lt; el2.y + el2.h &amp;&amp; // 3.
+    el1.h + el1.y > el2.y // 4.
+  ) {
+    return true // collision detected!
+  } else {
+    return false
   }
-
-  return selector
 }
 </code></pre>
         </article>
