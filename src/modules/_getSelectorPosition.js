@@ -1,23 +1,45 @@
 import '../types.js'
-import { _getCursorPos, _getScroll } from './'
+import { _getCursorPos, _scroll, _zoomedScroll } from './'
 
 /**
  * Reliably returns the exact x,y,w,h positions of the selector element
+ * @param {DSSelectorArea} selectorArea
  * @param {DSArea} area
- * @param {DSZoom} zoom
  * @param {{x: number, y: number}} initialScroll
  * @param {{x: number, y: number}} initialCursorPos
+ * @param {DSZoom} [zoom]
  * @param {DSEvent} [event]
  * @returns {{x:number,y:number,w:number,h:number}}
  */
-export default (area, zoom, initialScroll, initialCursorPos, event) => {
-  const cursorPosNew = _getCursorPos(area, zoom, event)
-  const scrollNew = _getScroll(area)
+export default (
+  selectorArea,
+  area,
+  initialScroll,
+  initialCursorPos,
+  zoom,
+  event
+) => {
+  const cursorPosNew = _getCursorPos(selectorArea, event)
+  const scrollNew = _scroll.getCurrent(area)
 
-  // if area or document is scrolled those values have to be included as well
-  const scrollAmount = {
+  // if area or document is scrolled those values have to be considered as well
+  const scrollDiff = {
     x: scrollNew.x - initialScroll.x,
     y: scrollNew.y - initialScroll.y,
+  }
+
+  // if area is zoomed we'll also need to incorporate that when scrolling…
+  if (zoom) {
+    _zoomedScroll.set({
+      x: scrollDiff.x * zoom - scrollDiff.x,
+      y: scrollDiff.y * zoom - scrollDiff.y,
+    })
+  }
+  const zoomScroll = _zoomedScroll.get()
+
+  const scrollAmount = {
+    x: scrollDiff.x + zoomScroll.x,
+    y: scrollDiff.y + zoomScroll.y,
   }
 
   /** check for direction
@@ -61,11 +83,13 @@ export default (area, zoom, initialScroll, initialCursorPos, event) => {
   const selectorPos = {}
 
   // right
-  if (cursorPosNew.x > initialCursorPos.x - scrollAmount.x) { // 1.
+  if (cursorPosNew.x > initialCursorPos.x - scrollAmount.x) {
+    // 1.
     selectorPos.x = initialCursorPos.x - scrollAmount.x // 2.
     selectorPos.w = cursorPosNew.x - initialCursorPos.x + scrollAmount.x // 3.
     // left
-  } else { // 1b.
+  } else {
+    // 1b.
     selectorPos.x = cursorPosNew.x // 2b.
     selectorPos.w = initialCursorPos.x - cursorPosNew.x - scrollAmount.x // 3b.
   }

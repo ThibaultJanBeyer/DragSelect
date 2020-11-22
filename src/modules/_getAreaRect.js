@@ -7,7 +7,7 @@ import '../types.js'
  * @param {DSArea} area
  * @returns {{top:number,left:number,bottom:number,right:number,width:number,height:number}}
  */
-export default area => {
+export default (area) => {
   if (area instanceof Document)
     return {
       top: 0,
@@ -30,7 +30,7 @@ export default area => {
     left: rect.left,
     bottom: rect.bottom,
     right: rect.right,
-    width: area.clientWidth || rect.width,
-    height: area.clientHeight || rect.height,
+    width: rect.width,
+    height: rect.height,
   }
 }

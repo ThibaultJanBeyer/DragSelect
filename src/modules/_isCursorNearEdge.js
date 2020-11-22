@@ -3,20 +3,17 @@ import { _getCursorPos, _getAreaRect } from './'
 
 /**
  * Check if the selector is near an edge of the area
- * @memberof DragSelect#
- * @function isCursorNearEdge
- * @param {DSArea} area
- * @param {DSZoom} zoom
+ * @param {DSSelectorArea} area
  * @param {DSEvent} [event]
  * @return {('top'|'bottom'|'left'|'right'|false)}
  */
-export default (area, zoom, event) => {
-  const cursorPosition = _getCursorPos(area, zoom, event)
+export default (area, event) => {
+  const cursorPosition = _getCursorPos(area, event)
   const areaRect = _getAreaRect(area)
 
   const tolerance = {
-    x: 5,
-    y: 5,
+    x: 10,
+    y: 10,
   }
 
   if (cursorPosition.y < tolerance.y) return 'top'

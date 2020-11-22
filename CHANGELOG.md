@@ -1,3 +1,41 @@
+# 2.0.0
+
+## Changes on the Selector
+
+The selector element is now not rendered inside of the area instead we generate a div overlaying the actual area and render the element inside that div. Which has a lot of benefits:
+
+- selector is not inside of the area itself (solves #63)
+- selector is now in a fresh selection area overlay (solves #26)
+- the overlay adapts size to always match the real area
+- most css modifications will work as the area is not affected
+- the overlay has no pointer-events and acts as a clip box
+- selection can be drawn outside of the area which makes auto-scrolling and selection easier
+- you can still target that area overlay if you want use the class `ds-selector-area`
+
+## Inside area checker
+
+There were various bugs before 2.0 which would bypass the area restrictions and user would still be able to select elements outside of the area.
+We now check whether the elements are inside of the area to know whether they are selectable or not.
+
+- Fixes bug where elements outside of area could still be selected with keyboard
+- Fixes bug where elements outside of area could still be selected with negative scroll
+
+## Improved callbacks
+
+…TBD…
+
+## Removed private and public methods
+
+Based on the changes, some methods did not make sense anymore. So we cleaned them up. Generally we want to move away from providing utility methods (like i.e. cursor position retrieval) instead we want to focus on the tool itself only. In case you still want any of the public method or a new one, feel free to open an issue.
+
+Public methods that were removed:
+
+- `.getCursorPos`
+- `.getScroll`
+- `.getAreaRect`
+- `.toArray`
+- `.isCursorNearEdge`
+
 # 1.15.0
 
 - Use rollup to build the package: this simplifies the portability of the module and will allow to split the code going forward.

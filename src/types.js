@@ -18,6 +18,7 @@
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
  * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
  * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
+ * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
  * @property {Array.<'ctrlKey'|'shiftKey'|'metaKey'>} [multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  */
 /**
@@ -37,6 +38,7 @@
  * @return {*}
  */
 /** @typedef {HTMLElement|SVGElement|HTMLDocument} DSArea area in which you can drag */
+/** @typedef {HTMLElement} DSSelectorArea area in which you can drag */
 /** @typedef {Array.<HTMLElement|SVGElement> | HTMLElement | SVGElement} DSInputElements the elements that can be selected */
 /** @typedef {Array.<HTMLElement|SVGElement>} DSElements the elements that can be selected */
 /** @typedef {HTMLElement|SVGElement} DSElement a single element that can be selected */
