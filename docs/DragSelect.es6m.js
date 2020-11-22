@@ -331,20 +331,23 @@ var reset = function reset() {
 /**
  * Scroll the area in the direction of edge
  * @param {DSArea} area
- * @param {('top'|'bottom'|'left'|'right'|false)} edge
+ * @param {Array.<'top'|'bottom'|'left'|'right'|undefined>} edges
  * @param {number} autoScrollSpeed
  */
 
-var _autoScroll = (function (area, edge, autoScrollSpeed) {
+var _autoScroll = (function (area, edges, autoScrollSpeed) {
   var docEl = document && document.documentElement && document.documentElement.scrollTop && document.documentElement;
 
   var _area = area instanceof HTMLDocument ? docEl || document.body : area;
 
-  var scrollTop = edge === 'top' && _area.scrollTop > 0;
-  var scrollBot = edge === 'bottom';
-  var scrollLeft = edge === 'left' && _area.scrollLeft > 0;
-  var scrollRight = edge === 'right';
-  if (scrollTop) _area.scrollTop -= 1 * autoScrollSpeed;else if (scrollBot) _area.scrollTop += 1 * autoScrollSpeed;else if (scrollLeft) _area.scrollLeft -= 1 * autoScrollSpeed;else if (scrollRight) _area.scrollLeft += 1 * autoScrollSpeed;
+  var scrollTop = edges.includes('top') && _area.scrollTop > 0;
+  var scrollBot = edges.includes('bottom');
+  var scrollLeft = edges.includes('left') && _area.scrollLeft > 0;
+  var scrollRight = edges.includes('right');
+  if (scrollTop) _area.scrollTop -= 1 * autoScrollSpeed;
+  if (scrollBot) _area.scrollTop += 1 * autoScrollSpeed;
+  if (scrollLeft) _area.scrollLeft -= 1 * autoScrollSpeed;
+  if (scrollRight) _area.scrollLeft += 1 * autoScrollSpeed;
 });
 
 /**
@@ -613,13 +616,13 @@ var _isCollision = (function (el1, el2) {
 });
 
 /**
- * Check if the selector is near an edge of the area
+ * Check if the selector is near a edges of the area
  * @param {DSSelectorArea} area
  * @param {DSEvent} [event]
- * @return {('top'|'bottom'|'left'|'right'|false)}
+ * @return {Array.<'top'|'bottom'|'left'|'right'|undefined>}
  */
 
-var _isCursorNearEdge = (function (area, event) {
+var _isCursorNearEdges = (function (area, event) {
   var cursorPosition = _getCursorPos(area, event);
 
   var areaRect = _getAreaRect(area);
@@ -628,11 +631,15 @@ var _isCursorNearEdge = (function (area, event) {
     x: 10,
     y: 10
   };
-  if (cursorPosition.y < tolerance.y) return 'top';
-  if (areaRect.height - cursorPosition.y < tolerance.y) return 'bottom';
-  if (areaRect.width - cursorPosition.x < tolerance.x) return 'right';
-  if (cursorPosition.x < tolerance.x) return 'left';
-  return false;
+  var edges = [];
+  if (cursorPosition.y < tolerance.y) edges.push('top');
+  if (areaRect.height - cursorPosition.y < tolerance.y) edges.push('bottom');
+  if (areaRect.width - cursorPosition.x < tolerance.x) edges.push('right');
+  if (cursorPosition.x < tolerance.x) edges.push('left');
+  return (
+    /** @type {Array.<'top'|'bottom'|'left'|'right'|undefined>} */
+    edges
+  );
 });
 
 /**
@@ -1272,18 +1279,18 @@ var DragSelect = /*#__PURE__*/function () {
     value: function _setScrollState(event) {
       var _this2 = this;
 
-      var edge = _isCursorNearEdge(this.selectorArea, event);
+      var edges = _isCursorNearEdges(this.selectorArea, event);
 
-      if (edge) {
+      if (edges.length) {
         if (this._autoScrollInterval) window.clearInterval(this._autoScrollInterval);
         this._autoScrollInterval = window.setInterval(function () {
           _this2._newCursorPos = _getCursorPos(_this2.selectorArea, event);
 
           _this2._moveSelection(event, _this2.zoom);
 
-          _autoScroll(_this2.area, edge, _this2.autoScrollSpeed);
+          _autoScroll(_this2.area, edges, _this2.autoScrollSpeed);
         });
-      } else if (!edge && this._autoScrollInterval) {
+      } else if (!edges.length && this._autoScrollInterval) {
         window.clearInterval(this._autoScrollInterval);
         this._autoScrollInterval = null;
       }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>modules/_isElementTouching.js - Documentation</title>
+    <title>modules/_isCursorNearEdges.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">modules/_isElementTouching.js</h1>
+    <h1 class="page-title">modules/_isCursorNearEdges.js</h1>
     
 
     
@@ -40,38 +40,30 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>import '../types.js'
-import { _scroll, _getAreaRect, _isInArea, _isCollision } from './'
+import { _getCursorPos, _getAreaRect } from './'
 
 /**
- * Checks if there is a collision between the element and the selector
- * (whether they touch each other)
- * @param {DSElement} element
- * @param {HTMLElement} selector
- * @param {DSArea} area
- * @param {DSSelectorArea} selectorArea
- * @return {boolean}
+ * Check if the selector is near a edges of the area
+ * @param {DSSelectorArea} area
+ * @param {DSEvent} [event]
+ * @return {Array.&lt;'top'|'bottom'|'left'|'right'|undefined>}
  */
-export default (element, selector, area, selectorArea) => {
-  if (!_isInArea(element, area, selectorArea)) return
+export default (area, event) => {
+  const cursorPosition = _getCursorPos(area, event)
+  const areaRect = _getAreaRect(area)
 
-  const selectionRect = {
-    y: selector.getBoundingClientRect().top,
-    x: selector.getBoundingClientRect().left,
-    h: selector.offsetHeight,
-    w: selector.offsetWidth,
+  const tolerance = {
+    x: 10,
+    y: 10,
   }
 
-  const rect = element.getBoundingClientRect()
-  const elementRect = {
-    y: rect.top,
-    x: rect.left,
-    h: rect.height,
-    w: rect.width,
-  }
+  const edges = []
+  if (cursorPosition.y &lt; tolerance.y) edges.push('top')
+  if (areaRect.height - cursorPosition.y &lt; tolerance.y) edges.push('bottom')
+  if (areaRect.width - cursorPosition.x &lt; tolerance.x) edges.push('right')
+  if (cursorPosition.x &lt; tolerance.x) edges.push('left')
 
-  if (_isCollision(selectionRect, elementRect)) return true
-
-  return false
+  return /** @type {Array.&lt;'top'|'bottom'|'left'|'right'|undefined>} */ (edges)
 }
 </code></pre>
         </article>
