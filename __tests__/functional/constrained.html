@@ -39,7 +39,7 @@
 .area {
     background: grey;
     height: 150px;
-    left: 150px;
+    left: 140px;
     position: absolute;
     top: 110px;
     width: 150px;
@@ -58,9 +58,12 @@
 <script>
     window.callbackIds = [];
 
-    new DragSelect({
+    const ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
         area: document.querySelector('.area'),
-        callback: (n, e) => window.callbackIds = n.map(n => n.id)
+        callback: (n, e) => {
+          console.log(window.callbackIds)
+          window.callbackIds = n.map(n => n.id)
+        }
     });
 </script>
