@@ -9,7 +9,7 @@ setup_git() {
 }
 
 commit_website_files() {
-  git checkout master
+  git checkout version/2.0.0
   # Current month and year, e.g: Apr 2018
   dateAndMonth=`date "+%b %Y"`
   # Setup
