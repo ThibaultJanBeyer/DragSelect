@@ -46,7 +46,7 @@ easily add a selection algorithm to your application/website.
 - Free & open source under MIT License
 - Ease of use
 
-![demo-gif](https://thibaultjanbeyer.github.io/DragSelect/dragselect.gif)
+![demo-gif](https://thibaultjanbeyer.github.io/DragSelect/media/dragselect.gif)
 
 # Why?
 
@@ -58,7 +58,7 @@ We use it currently in a professional rich interface application where we have a
 
 Thanks to:  
 
-| ![BrowserStack](https://thibaultjanbeyer.github.io/DragSelect/browserstack.jpg) | [You?](https://paypal.me/pools/c/8gF2a5szCP) |
+| ![BrowserStack](https://thibaultjanbeyer.github.io/DragSelect/media/browserstack.jpg) | [You?](https://paypal.me/pools/c/8gF2a5szCP) |
 |--- |--- |
 |[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or [Get in touch](mailto:thibault.beyer@gmail.com) |
 # Installation
@@ -250,7 +250,7 @@ Creating and maintaining useful tools is a lot of work.
 So don’t forget to give this repository a star if you find it useful.
 Star this repo, tell all your friends and start contributing or [donating 1$](https://paypal.me/pools/c/8gF2a5szCP) to keep it running. Thank you :)
 
-[![Typewriter Gif](https://thibaultjanbeyer.github.io/DragSelect/typewriter.gif)](http://thibaultjanbeyer.com/)
+[![Typewriter Gif](https://thibaultjanbeyer.github.io/DragSelect/media/typewriter.gif)](http://thibaultjanbeyer.com/)
 
 
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>

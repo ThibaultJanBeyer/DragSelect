@@ -5,4 +5,7 @@ tests/DragSelect.js
 .publish
 package-lock.json
 npm-debug.log
-original/
+original
+docs/*.html
+docs/*.js
+dist
