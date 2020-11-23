@@ -2,5 +2,8 @@ language: node_js
 node_js:
   - 12
 
+script:
+ - npm run build
+
 after_success:
   - .travis/push.sh
