@@ -22,7 +22,7 @@
 
     new DragSelect({
         selectables: document.querySelectorAll('.item'),
-        callback: sel => { selected = sel.map(sel => sel.id) }
+        callback: sel => window.selected = sel.map(sel => sel.id)
     });
 </script>
 <script>
@@ -31,6 +31,6 @@
     new DragSelect({
         selectables: document.querySelectorAll('.itemi'),
         multiSelectMode: true,
-        callback: sel => { multiselected = sel.map(sel => sel.id) }
+        callback: sel => window.multiselected = sel.map(sel => sel.id)
     });
 </script>

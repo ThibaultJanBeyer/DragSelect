@@ -60,6 +60,7 @@ import {
   _toArray,
   _updatePos,
   _zoomedScroll,
+  PubSub,
 } from './modules'
 
 // Setup
@@ -91,16 +92,10 @@ class DragSelect {
   constructor({
     area = document,
     autoScrollSpeed = 1,
-    callback = () => {},
     customStyles = false,
     hoverClass = 'ds-hover',
     multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
     multiSelectMode = false,
-    onDragMove = function () {},
-    onDragStart = function () {},
-    onDragStartBegin = function () {},
-    onElementSelect = function () {},
-    onElementUnselect = function () {},
     selectableClass = 'ds-selectable',
     selectables = [],
     selectedClass = 'ds-selected',
@@ -108,6 +103,12 @@ class DragSelect {
     selectorClass = 'ds-selector',
     selectorAreaClass = 'ds-selector-area',
     zoom = 1,
+    callback,
+    onDragMove,
+    onDragStart,
+    onDragStartBegin,
+    onElementSelect,
+    onElementUnselect,
   }) {
     this.selectedClass = selectedClass
     this.hoverClass = hoverClass
@@ -118,15 +119,19 @@ class DragSelect {
     this.multiSelectKeys = multiSelectKeys
     this.multiSelectMode = multiSelectMode
     this.autoScrollSpeed = autoScrollSpeed === 0 ? 0 : autoScrollSpeed
-    this.selectCallback = onElementSelect
-    this.unselectCallback = onElementUnselect
-    this.onDragStartBegin = onDragStartBegin
-    this.moveStartCallback = onDragStart
-    this.moveCallback = onDragMove
-    this.callback = callback
     this.area = _handleArea(area)
     this.customStyles = customStyles
     this.zoom = zoom
+
+    this._setupPubSub()
+    this._callbacksTemp({
+      callback,
+      onDragMove,
+      onDragStart,
+      onDragStartBegin,
+      onElementSelect,
+      onElementUnselect,
+    })
 
     // Selector
     this.selector = selector || _createSelector(this.customStyles)
@@ -139,6 +144,62 @@ class DragSelect {
     document.body.appendChild(this.selectorArea)
 
     this.start()
+  }
+
+  _setupPubSub() {
+    this.PubSub = new PubSub()
+    this.subscribe = this.PubSub.subscribe.bind(this.PubSub)
+    this.unsubscribe = this.PubSub.unsubscribe.bind(this.PubSub)
+    this.publish = this.PubSub.publish.bind(this.PubSub)
+  }
+
+  // @TODO: remove after deprecation
+  _callbacksTemp({
+    callback,
+    onDragMove,
+    onDragStart,
+    onDragStartBegin,
+    onElementSelect,
+    onElementUnselect,
+  }) {
+    const warnMessage = (name, newName) =>
+      console.warn(
+        `[DragSelect] ${name} is being deprecated. Use DragSelect.subscribe("${newName}", (callbackObject) => {}) instead. See docs for more info`
+      )
+    if (callback) {
+      warnMessage('callback', 'callback')
+      this.subscribe('callback', ({ items, item, event }) =>
+        callback(items, event)
+      )
+    }
+    if (onDragMove) {
+      warnMessage('onDragMove', 'dragmove')
+      this.subscribe('dragmove', ({ items, item, event }) => onDragMove(event))
+    }
+    if (onDragStart) {
+      warnMessage('onDragStart', 'dragstart')
+      this.subscribe('dragstart', ({ items, item, event }) =>
+        onDragStart(event)
+      )
+    }
+    if (onDragStartBegin) {
+      warnMessage('onDragStartBegin', 'dragstartbegin')
+      this.subscribe('dragstartbegin', ({ items, item, event }) =>
+        onDragStartBegin(event)
+      )
+    }
+    if (onElementSelect) {
+      warnMessage('onElementSelect', 'elementselect')
+      this.subscribe('elementselect', ({ items, item, event }) =>
+        onElementSelect(item, event)
+      )
+    }
+    if (onElementUnselect) {
+      warnMessage('onElementUnselect', 'elementunselect')
+      this.subscribe('elementunselect', ({ items, item, event }) =>
+        onElementUnselect(item, event)
+      )
+    }
   }
 
   /**
@@ -277,7 +338,7 @@ class DragSelect {
     if (!_isSelectorAreaClick(this.selectorArea, event)) return
 
     // callback
-    this.onDragStartBegin(event)
+    this.PubSub.publish('dragstartbegin', { items: this.getSelection(), event })
     if (this._breaked) return false
 
     this.selector.style.display = 'block'
@@ -298,7 +359,7 @@ class DragSelect {
     this.selector.style.display = 'none' // hidden unless moved, fix for issue #8
 
     // callback
-    this.moveStartCallback(event)
+    this.PubSub.publish('dragstart', { items: this.getSelection(), event })
     if (this._breaked) return false
 
     // event listeners
@@ -353,7 +414,7 @@ class DragSelect {
     this._newCursorPos = _getCursorPos(this.selectorArea, event)
 
     // callback
-    this.moveCallback(event)
+    this.PubSub.publish('dragmove', { items: this.getSelection(), event })
     if (this._breaked) return false
 
     this.selector.style.display = 'block' // hidden unless moved, fix for issue #8
@@ -461,7 +522,7 @@ class DragSelect {
     this._selected.push(item)
     item.classList.add(this.selectedClass)
 
-    this.selectCallback(item)
+    this.PubSub.publish('elementselect', { items: this.getSelection(), item })
     if (this._breaked) return false
 
     return item
@@ -478,7 +539,7 @@ class DragSelect {
     this._selected.splice(this._selected.indexOf(item), 1)
     item.classList.remove(this.selectedClass)
 
-    this.unselectCallback(item)
+    this.PubSub.publish('elementunselect', { items: this.getSelection(), item })
     if (this._breaked) return false
 
     return item
@@ -551,7 +612,8 @@ class DragSelect {
     this.area.addEventListener('mousedown', this._startUp)
     this.area.addEventListener('touchstart', this._startUp, { passive: false })
 
-    if (withCallback) this.callback(this.getSelection(), event)
+    if (withCallback)
+      this.PubSub.publish('callback', { items: this.getSelection(), event })
     if (this._breaked) return false
 
     this.selector.style.width = '0'
@@ -637,9 +699,10 @@ class DragSelect {
 
     if (!dontAddToSelectables) this.addSelectables(elements)
 
-    if (triggerCallback) this.callback(this._selected)
+    if (triggerCallback)
+      this.PubSub.publish('callback', { items: this.getSelection() })
 
-    return this._selected
+    return this.getSelection()
   }
 
   /**
@@ -658,10 +721,10 @@ class DragSelect {
       this.removeSelectables(elements)
     }
     if (triggerCallback) {
-      this.callback(this._selected)
+      this.PubSub.publish('callback', { items: this.getSelection() })
     }
 
-    return this._selected
+    return this.getSelection()
   }
 
   /**
@@ -713,9 +776,10 @@ class DragSelect {
     const selection = this._selected.slice()
     selection.forEach((element) => this.unselect(element))
 
-    if (triggerCallback) this.callback(this._selected)
+    if (triggerCallback)
+      this.PubSub.publish('callback', { items: this.getSelection() })
 
-    return this._selected
+    return this.getSelection()
   }
 
   /**

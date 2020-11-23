@@ -23,7 +23,37 @@ We now check whether the elements are inside of the area to know whether they ar
 
 ## Improved callbacks
 
-…TBD…
+Changed the callbacks to follow a pub/sub pattern. They're not events you can subscribe to and they will pass back an object always following the same pattern holding extra information. Currently DragSelect still supports setting callbacks in the constructor method to make it easier for you to transition. However, in future, only subscribers will work.
+
+- Adds 3 public methods: `subscribe` (listen to an event), `unsubscribe` (remove listener) and `publish` (publish an event yourself!)
+- Allows adding/removing events whenever and wherever you want
+- Makes it more flexible to add new events
+- Follows the pub/sub pattern from dom events (i.e. `addEventListener` is `subscribe`)
+
+Here is an example on what you'll have to change:
+
+### Before
+```javascript
+const ds = new DragSelect({
+  callback: (items, event) => console.log("my callback", items, event),
+  onDragMove: (event) => console.log("my callback", event),
+  onDragStartBegin: (event) => console.log("my callback", event),
+  onDragStart: (event) => console.log("my callback", event),
+  onElementSelect: (item) => console.log("my callback", item),
+  onElementUnselect:  (item) => console.log("my callback", item),
+})
+```
+
+### Now
+```javascript
+const ds = new DragSelect()
+ds.subscribe('callback', ({ items, item, event }) => console.log("my callback", items, event))
+ds.subscribe('dragmove', ({ items, item, event }) => console.log("my callback", event))
+ds.subscribe('dragstartbegin', ({ items, item, event }) => console.log("my callback", event))
+ds.subscribe('dragstart', ({ items, item, event }) => console.log("my callback", event))
+ds.subscribe('elementselect', ({ items, item, event }) => console.log("my callback", item))
+ds.subscribe('callback', ({ items, item, event }) => console.log("my callback", item))
+```
 
 ## Removed private and public methods
 

@@ -1,6 +1,7 @@
 export * as _scroll from './_scroll'
 export * as _selectorArea from './_selectorArea'
 export * as _zoomedScroll from './_zoomedScroll'
+export { default as PubSub } from './PubSub'
 export { default as _autoScroll } from './_autoScroll'
 export { default as _createSelector } from './_createSelector'
 export { default as _getAreaRect } from './_getAreaRect'
