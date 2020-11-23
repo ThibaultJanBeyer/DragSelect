@@ -1,15 +1,13 @@
 #!/bin/sh
 # Credit: https://www.vinaygopinath.me/blog/tech/commit-to-master-branch-on-github-using-travis-ci/
 
-echo "LOL"
-
 setup_git() {
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "Travis CI"
 }
 
 commit_website_files() {
-  git checkout version/2.0.0
+  git checkout $TRAVIS_BRANCH
   # Current month and year, e.g: Apr 2018
   dateAndMonth=`date "+%b %Y"`
   # Setup
