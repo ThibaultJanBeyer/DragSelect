@@ -11,7 +11,7 @@ commit_website_files() {
   # Current month and year, e.g: Apr 2018
   dateAndMonth=`date "+%b %Y"`
   # Setup
-  npm i
+  npm ci
   npm run build
   # Stage the modified dist files
   git add -f dist docs
@@ -23,9 +23,13 @@ commit_website_files() {
 }
 
 upload_files() {
+  echo $(git remote get-url origin)
   # Remove existing "origin"
   git remote rm origin
   # Add new "origin" with access token in the git URL for authentication
+  echo "what?"
+  echo $GH_TOKEN
+  echo https://${GH_TOKEN}@github.com/ThibaultJanBeyer/DragSelect.git
   git remote add origin https://${GH_TOKEN}@github.com/ThibaultJanBeyer/DragSelect.git > /dev/null 2>&1
   git push origin $TRAVIS_BRANCH --quiet > /dev/null 2>&1
 }

@@ -24,6 +24,7 @@ const test = async () => {
   await mouse.down()
   await mouse.move(50, 50)
   await mouse.up()
+  await delay(500)
   const callback = await page.evaluate(() => callback)
   expect(callback.length).toBe(1)
   expect(callback[0]).toBe('1')
