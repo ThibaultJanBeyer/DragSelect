@@ -905,7 +905,7 @@
   //////////////////////////////////////////////////////////////////////////////////////
 
   var DragSelect = /*#__PURE__*/function () {
-    /** @type {boolean} */
+    /** @type {boolean} **/
 
     /** @type {{x: number, y: number}} */
 
