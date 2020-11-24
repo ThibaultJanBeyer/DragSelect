@@ -14,7 +14,7 @@ commit_website_files() {
   npm ci
   npm run build
   # remove assume unchanged
-  .bin/no-assume-unchanged
+  bash .bin/no-assume-unchanged.sh
   # Stage the modified dist files
   git add -f dist docs
   # Create a new commit with a custom build message
