@@ -7,6 +7,7 @@ setup_git() {
 }
 
 commit_website_files() {
+  git stash
   git checkout $TRAVIS_BRANCH
   # Current month and year, e.g: Apr 2018
   dateAndMonth=`date "+%b %Y"`
