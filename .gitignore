@@ -6,5 +6,3 @@ tests/DragSelect.js
 package-lock.json
 npm-debug.log
 original
-docs
-dist
