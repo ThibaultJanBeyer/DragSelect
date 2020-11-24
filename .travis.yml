@@ -6,4 +6,4 @@ script:
  - npm run build
 
 after_success:
-  - .travis/push.sh
+  - .bin/travis-push.sh

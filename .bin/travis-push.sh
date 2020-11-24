@@ -27,11 +27,6 @@ upload_files() {
   # Add new "origin" with access token in the git URL for authentication
   git remote add origin https://${GH_TOKEN}@github.com/ThibaultJanBeyer/DragSelect.git > /dev/null 2>&1
   git push origin $TRAVIS_BRANCH --quiet > /dev/null 2>&1
-
-  git rm -r --cached dist docs
-  git add all
-  git commit -m "Travis update: $dateAndMonth (Build $TRAVIS_BUILD_NUMBER)" -m "[skip ci]"
-  git push origin $TRAVIS_BRANCH --quiet > /dev/null 2>&1
 }
 
 setup_git
