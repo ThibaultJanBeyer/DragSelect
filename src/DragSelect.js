@@ -67,7 +67,7 @@ import {
 //////////////////////////////////////////////////////////////////////////////////////
 
 class DragSelect {
-  /** @type {boolean} */
+  /** @type {boolean} **/
   _multiSelectKeyPressed = false
   /** @type {{x: number, y: number}} */
   _initialCursorPos = { x: 0, y: 0 }
