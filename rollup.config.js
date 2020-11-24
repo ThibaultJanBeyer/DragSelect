@@ -4,7 +4,7 @@ import { terser } from 'rollup-plugin-terser'
 import fs from 'fs'
 import path from 'path'
 
-const banner = `/*
+const banner = `/**
 
  ~~~ Version ${process.env.npm_package_version} ~~~
 

@@ -11,9 +11,10 @@
     "watch": "concurrently --kill-others \"npm run checkjs:watch\" \"npm run rollup:watch\" \"npm run test:watch\"",
     "checkjs": "tsc --lib es6,dom --allowJs --checkJs --noEmit src/*.js",
     "checkjs:watch": "tsc -w --lib es6,dom --allowJs --checkJs --noEmit src/*.js",
-    "build": "npm run rollup && npm run test && npm run docs",
+    "build": "npm run rollup && npm run test && npm run media && npm run docs",
     "rollup": "rollup -c",
     "rollup:watch": "rollup -c -w",
+    "media": "rm -r docs/media && cp -R .media docs/media",
     "docs": "jsdoc -c jsdoc.json",
     "test": "npm run checkjs && jest --detectOpenHandles",
     "test:watch": "jest --watch"
