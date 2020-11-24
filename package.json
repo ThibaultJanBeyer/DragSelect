@@ -5,7 +5,7 @@
   "main": "./dist/DragSelect.js",
   "dependencies": {},
   "scripts": {
-    "prestart": "npm run au && npm i",
+    "prestart": "npm run skip && npm i",
     "start": "npm run open & npm run watch",
     "open": "open __tests__/quicktest.html -a 'Google Chrome'",
     "watch": "concurrently --kill-others \"npm run checkjs:watch\" \"npm run rollup:watch\" \"npm run test:watch\"",
