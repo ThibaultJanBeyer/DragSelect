@@ -2,12 +2,6 @@ const { beforeAll, afterAll, it } = require('@jest/globals')
 const http = require('http')
 const fs = require('fs')
 
-function delay(time) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, time)
-  })
-}
-
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 const goToPage = async (uri = `${baseUrl}/imports.html`) => {
@@ -19,15 +13,12 @@ const goToPage = async (uri = `${baseUrl}/imports.html`) => {
 
 const test = async () => {
   await page.waitForFunction(() => 'ds' in window)
-  const mouse = page.mouse
-  await mouse.move(10, 10)
-  await mouse.down()
-  await mouse.move(50, 50)
-  await mouse.up()
-  await delay(500)
-  const callback = await page.evaluate(() => callback)
-  expect(callback.length).toBe(1)
-  expect(callback[0]).toBe('1')
+  await page.waitForSelector('.ds-selector')
+  const dragNode = await page.$('.ds-selector')
+  await page.waitForSelector('.ds-selector-area')
+  const dragNodeArea = await page.$('.ds-selector-area')
+  expect(dragNode).not.toBeNull()
+  expect(dragNodeArea).not.toBeNull()
 }
 
 const teardown = async () => {
