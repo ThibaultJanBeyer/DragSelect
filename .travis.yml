@@ -3,7 +3,7 @@ node_js:
   - lts/*
 
 script:
- - npm run build
+ - npm run travis:test
 
 after_success:
   - .bin/travis-push.sh

@@ -13,9 +13,10 @@ commit_website_files() {
   dateAndMonth=`date "+%b %Y"`
   # Setup
   npm ci
-  npm run build
   # remove assume unchanged
-  bash .bin/no-skip.sh
+  npm run no-skip
+  # build
+  npm run travis:build
   # Stage the modified dist files
   git add -f dist docs
   # Create a new commit with a custom build message
