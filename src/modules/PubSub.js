@@ -33,7 +33,7 @@ export default class PubSub {
   }
 
   /**
-   * Removes event subscription
+   * Publishes an event to all subscribers
    * @memberof DragSelect#
    * @function publish
    * @param {DSCallbackNames} eventName

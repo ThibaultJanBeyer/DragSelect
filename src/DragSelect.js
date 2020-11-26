@@ -56,10 +56,10 @@ import {
   _isMultiSelectKeyPressed,
   _isSelectorAreaClick,
   _scroll,
-  _selectorArea,
   _toArray,
   _updatePos,
   _zoomedScroll,
+  _SelectorArea,
   PubSub,
 } from './modules'
 
@@ -137,11 +137,11 @@ class DragSelect {
     this.selector = selector || _createSelector(this.customStyles)
     this.selector.classList.add(this.selectorClass)
 
-    this.selectorArea = _selectorArea.create(selectorAreaClass)
-    _selectorArea.updatePosition(this.selectorArea, this.area)
-
-    this.selectorArea.appendChild(this.selector)
-    document.body.appendChild(this.selectorArea)
+    this.SelectorArea = new _SelectorArea({
+      Area: { node: this.area },
+      selectorAreaClass,
+      selector: this.selector,
+    })
 
     this.start()
   }
@@ -282,7 +282,7 @@ class DragSelect {
     const node = event.target
     if (!this.selectables.includes(node)) return
 
-    if (!_isInArea(node, this.area, this.selectorArea)) return
+    if (!_isInArea(node, this.area, this.SelectorArea.node)) return
 
     // fix for multi-selection issue #9
     this._multiSelectKeyPressed = _isMultiSelectKeyPressed(
@@ -311,7 +311,7 @@ class DragSelect {
     this._handleSelectables(this._initialSelectables)
     this.area.addEventListener('mousedown', this._startUp)
     this.area.addEventListener('touchstart', this._startUp, { passive: false })
-    _selectorArea.addObservers(this.selectorArea, this.area)
+    this.SelectorArea.start()
   }
 
   /**
@@ -335,7 +335,7 @@ class DragSelect {
 
     // right-clicks
     if (/** @type {*} */ (event).button === 2) return
-    if (!_isSelectorAreaClick(this.selectorArea, event)) return
+    if (!_isSelectorAreaClick(this.SelectorArea.node, event)) return
 
     // callback
     this.PubSub.publish('dragstartbegin', { items: this.getSelection(), event })
@@ -383,7 +383,7 @@ class DragSelect {
    */
   _getStartingPositions(event) {
     this._initialCursorPos = this._newCursorPos = _getCursorPos(
-      this.selectorArea,
+      this.SelectorArea.node,
       event
     )
     this._initialScroll = _scroll.getCurrent(this.area)
@@ -411,7 +411,7 @@ class DragSelect {
    * @private
    */
   handleMove(event) {
-    this._newCursorPos = _getCursorPos(this.selectorArea, event)
+    this._newCursorPos = _getCursorPos(this.SelectorArea.node, event)
 
     // callback
     this.PubSub.publish('dragmove', { items: this.getSelection(), event })
@@ -430,7 +430,7 @@ class DragSelect {
     _updatePos(
       this.selector,
       _getSelectorPosition(
-        this.selectorArea,
+        this.SelectorArea.node,
         this.area,
         this._initialScroll,
         this._initialCursorPos,
@@ -459,7 +459,7 @@ class DragSelect {
           selectable,
           this.selector,
           this.area,
-          this.selectorArea
+          this.SelectorArea.node
         )
       ) {
         this._handleSelection(selectable, force)
@@ -566,14 +566,14 @@ class DragSelect {
    * @private
    */
   _setScrollState(event) {
-    const edges = _isCursorNearEdges(this.selectorArea, event)
+    const edges = _isCursorNearEdges(this.SelectorArea.node, event)
 
     if (edges.length) {
       if (this._autoScrollInterval)
         window.clearInterval(this._autoScrollInterval)
 
       this._autoScrollInterval = window.setInterval(() => {
-        this._newCursorPos = _getCursorPos(this.selectorArea, event)
+        this._newCursorPos = _getCursorPos(this.SelectorArea.node, event)
         this._moveSelection(event, this.zoom)
         _autoScroll(this.area, edges, this.autoScrollSpeed)
       })
@@ -600,7 +600,7 @@ class DragSelect {
    * @param {boolean} [withCallback] - whether or not the callback should be called
    */
   reset(event, withCallback) {
-    this._previousCursorPos = _getCursorPos(this.selectorArea, event)
+    this._previousCursorPos = _getCursorPos(this.SelectorArea.node, event)
     _zoomedScroll.reset()
     document.removeEventListener('mouseup', this._end)
     document.removeEventListener('touchend', this._end)
@@ -658,7 +658,7 @@ class DragSelect {
   stop(remove = true, fromSelection = true, withCallback) {
     this.reset(false, withCallback)
 
-    _selectorArea.removeObservers()
+    this.SelectorArea.stop()
 
     this.area.removeEventListener('mousedown', this._startUp)
     this.area.removeEventListener('touchstart', this._startUp, {
