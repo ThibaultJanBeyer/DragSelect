@@ -268,97 +268,6 @@ var canScroll = function canScroll(area) {
 };
 
 /**
- * @private
- * @type {*}
- */
-
-var modificationCallback;
-/**
- * @private
- * @type {MutationObserver}
- */
-
-var modificationObserver;
-/**
- * Creates the SelectorArea
- * @param {string} selectorAreaClass
- * @return {HTMLElement}
- * @private
- */
-
-var create = function create(selectorAreaClass) {
-  var selectorArea = document.createElement('div');
-  selectorArea.style.position = 'fixed';
-  selectorArea.style.overflow = 'hidden';
-  selectorArea.style.pointerEvents = 'none';
-  selectorArea.classList.add(selectorAreaClass);
-  return selectorArea;
-};
-/**
- * @param {HTMLElement} selectorArea
- * @param {DSArea} area
- * @return {function}
- * @private
- */
-
-var modificationEvent = function modificationEvent(selectorArea, area) {
-  return function (event) {
-    return updatePosition(selectorArea, area);
-  };
-};
-/**
- * Adds event-listeners to the selectorArea
- * @param {HTMLElement} selectorArea
- * @param {DSArea} area
- * @private
- */
-
-
-var addObservers = function addObservers(selectorArea, area) {
-  modificationCallback = modificationEvent(selectorArea, area);
-  window.addEventListener('resize', modificationCallback);
-  window.addEventListener('scroll', modificationCallback);
-  modificationObserver = new MutationObserver(modificationCallback);
-  modificationObserver.observe(document.body, {
-    subtree: true,
-    childList: true,
-    attributes: true
-  });
-  modificationObserver.observe(area, {
-    attributes: true
-  });
-};
-/**
- * Removes event-listeners to the selectorArea
- * @private
- */
-
-var removeObservers = function removeObservers() {
-  window.removeEventListener('resize', modificationCallback);
-  window.removeEventListener('scroll', modificationCallback);
-  modificationObserver.disconnect();
-};
-/**
- * Updates the selectorAreas positions to match the areas
- * @param {HTMLElement} selectorArea
- * @param {DSArea} area
- * @return {HTMLElement}
- * @private
- */
-
-var updatePosition = function updatePosition(selectorArea, area) {
-  var rect = _getAreaRect(area);
-
-  var border = _getComputedBorder(area);
-
-  selectorArea.style.top = "".concat(rect.top + border.top, "px");
-  selectorArea.style.left = "".concat(rect.left + border.left, "px");
-  selectorArea.style.width = "".concat(rect.width - border.left - border.right, "px");
-  selectorArea.style.height = "".concat(rect.height - border.top - border.bottom, "px");
-  return selectorArea;
-};
-
-/**
  * This module fixes an issue where the position of the selector would be screwed when the area is scaled/zoomed
  * Since apparently also the scroll speed is skewed
  */
@@ -383,6 +292,182 @@ var set = function set(value) {
 };
 var reset = function reset() {
   return _objectSpread2({}, _zoomedScroll = initVal);
+};
+
+/**
+ * @callback DSModificationCallback
+ * @param {*} event
+ */
+
+var SelectorArea = /*#__PURE__*/function () {
+  /** @type {DSModificationCallback} */
+
+  /** @type {MutationObserver} */
+
+  /** @type {HTMLDivElement} */
+
+  /**
+   * @class SelectorArea
+   * @constructor SelectorArea
+   * @param {{ Area:*, selectorAreaClass:string, selector:HTMLElement}} obj
+   * @ignore
+   */
+  function SelectorArea(_ref) {
+    var Area = _ref.Area,
+        selectorAreaClass = _ref.selectorAreaClass,
+        selector = _ref.selector;
+
+    _classCallCheck(this, SelectorArea);
+
+    _defineProperty(this, "modificationCallback", void 0);
+
+    _defineProperty(this, "modificationObserver", void 0);
+
+    _defineProperty(this, "node", void 0);
+
+    this.Area = Area;
+    this.selectorAreaClass = selectorAreaClass;
+    this.selector = selector;
+    this.setup();
+  }
+  /**
+   * - Create Selector Area
+   * - Update Selector Area Position
+   * - Create modification callbacks and observers
+   * - Append selector to Selector Area
+   * - Append Selector Area to body
+   */
+
+
+  _createClass(SelectorArea, [{
+    key: "setup",
+    value: function setup() {
+      var _this = this;
+
+      this.node = createSelectorArea(this.selectorAreaClass);
+      this.update();
+
+      this.modificationCallback = function (event) {
+        return _this.update();
+      };
+
+      this.modificationObserver = new MutationObserver(this.modificationCallback);
+      this.node.append(this.selector);
+      document.body.append(this.node);
+    }
+    /**
+     * Add observers
+     */
+
+  }, {
+    key: "start",
+    value: function start() {
+      addObservers(this.Area.node, this.modificationCallback, this.modificationObserver);
+    }
+    /**
+     * Update Position
+     */
+
+  }, {
+    key: "update",
+    value: function update() {
+      updatePosition(this.node, this.Area.node);
+    }
+    /**
+     * Remove observers
+     */
+
+  }, {
+    key: "stop",
+    value: function stop() {
+      removeObservers(this.modificationObserver, this.modificationCallback);
+    }
+    /**
+     * - Remove observers
+     * - Remove selector
+     * - Remove Selector Area
+     */
+
+  }, {
+    key: "teardown",
+    value: function teardown() {
+      this.stop();
+      this.selector.remove();
+      this.node.remove();
+    }
+  }]);
+
+  return SelectorArea;
+}();
+/**
+ * Creates the SelectorArea
+ * @param {string} selectorAreaClass
+ * @return {HTMLDivElement}
+ * @private
+ */
+
+
+var createSelectorArea = function createSelectorArea(selectorAreaClass) {
+  var node = document.createElement('div');
+  node.style.position = 'fixed';
+  node.style.overflow = 'hidden';
+  node.style.pointerEvents = 'none';
+  node.classList.add(selectorAreaClass);
+  return node;
+};
+/**
+ * Adds event-listeners to the selectorArea
+ * @param {DSArea} area
+ * @param {DSModificationCallback} callback
+ * @param {MutationObserver} modificationObserver
+ * @private
+ */
+
+
+var addObservers = function addObservers(area, callback, modificationObserver) {
+  window.addEventListener('resize', callback);
+  window.addEventListener('scroll', callback);
+  modificationObserver.observe(document.body, {
+    subtree: true,
+    childList: true,
+    attributes: true
+  });
+  modificationObserver.observe(area, {
+    attributes: true
+  });
+};
+/**
+ * Removes event-listeners to the selectorArea
+ * @param {MutationObserver} modificationObserver
+ * @param {DSModificationCallback} callback
+ * @private
+ */
+
+
+var removeObservers = function removeObservers(modificationObserver, callback) {
+  window.removeEventListener('resize', callback);
+  window.removeEventListener('scroll', callback);
+  modificationObserver.disconnect();
+};
+/**
+ * Updates the selectorAreas positions to match the areas
+ * @param {HTMLElement} selectorArea
+ * @param {DSArea} area
+ * @return {HTMLElement}
+ * @private
+ */
+
+
+var updatePosition = function updatePosition(selectorArea, area) {
+  var rect = _getAreaRect(area);
+
+  var border = _getComputedBorder(area);
+
+  selectorArea.style.top = "".concat(rect.top + border.top, "px");
+  selectorArea.style.left = "".concat(rect.left + border.left, "px");
+  selectorArea.style.width = "".concat(rect.width - border.left - border.right, "px");
+  selectorArea.style.height = "".concat(rect.height - border.top - border.bottom, "px");
+  return selectorArea;
 };
 
 var PubSub = /*#__PURE__*/function () {
@@ -425,7 +510,7 @@ var PubSub = /*#__PURE__*/function () {
       });
     }
     /**
-     * Removes event subscription
+     * Publishes an event to all subscribers
      * @memberof DragSelect#
      * @function publish
      * @param {DSCallbackNames} eventName
@@ -1030,12 +1115,13 @@ var DragSelect = /*#__PURE__*/function () {
 
     this.selector = selector || _createSelector(this.customStyles);
     this.selector.classList.add(this.selectorClass);
-    this.selectorArea = create(selectorAreaClass);
-
-    updatePosition(this.selectorArea, this.area);
-
-    this.selectorArea.appendChild(this.selector);
-    document.body.appendChild(this.selectorArea);
+    this.SelectorArea = new SelectorArea({
+      Area: {
+        node: this.area
+      },
+      selectorAreaClass: selectorAreaClass,
+      selector: this.selector
+    });
     this.start();
   }
 
@@ -1211,7 +1297,7 @@ var DragSelect = /*#__PURE__*/function () {
 
       var node = event.target;
       if (!this.selectables.includes(node)) return;
-      if (!_isInArea(node, this.area, this.selectorArea)) return; // fix for multi-selection issue #9
+      if (!_isInArea(node, this.area, this.SelectorArea.node)) return; // fix for multi-selection issue #9
 
       this._multiSelectKeyPressed = _isMultiSelectKeyPressed(this.multiSelectKeys, this.multiSelectMode, event);
       if (this._multiSelectKeyPressed) this._prevSelected = this._selected.slice();else this._prevSelected = []; // actual selection logic
@@ -1238,8 +1324,7 @@ var DragSelect = /*#__PURE__*/function () {
       this.area.addEventListener('touchstart', this._startUp, {
         passive: false
       });
-
-      addObservers(this.selectorArea, this.area);
+      this.SelectorArea.start();
     }
     /**
      * @param {DSEvent} event - The event object.
@@ -1263,7 +1348,7 @@ var DragSelect = /*#__PURE__*/function () {
       if (
       /** @type {*} */
       event.button === 2) return;
-      if (!_isSelectorAreaClick(this.selectorArea, event)) return; // callback
+      if (!_isSelectorAreaClick(this.SelectorArea.node, event)) return; // callback
 
       this.PubSub.publish('dragstartbegin', {
         items: this.getSelection(),
@@ -1309,7 +1394,7 @@ var DragSelect = /*#__PURE__*/function () {
   }, {
     key: "_getStartingPositions",
     value: function _getStartingPositions(event) {
-      this._initialCursorPos = this._newCursorPos = _getCursorPos(this.selectorArea, event);
+      this._initialCursorPos = this._newCursorPos = _getCursorPos(this.SelectorArea.node, event);
       this._initialScroll = getCurrent(this.area);
       var selectorPos = {};
       selectorPos.x = this._initialCursorPos.x + this._initialScroll.x;
@@ -1335,7 +1420,7 @@ var DragSelect = /*#__PURE__*/function () {
      * @private
      */
     value: function handleMove(event) {
-      this._newCursorPos = _getCursorPos(this.selectorArea, event); // callback
+      this._newCursorPos = _getCursorPos(this.SelectorArea.node, event); // callback
 
       this.PubSub.publish('dragmove', {
         items: this.getSelection(),
@@ -1353,7 +1438,7 @@ var DragSelect = /*#__PURE__*/function () {
   }, {
     key: "_moveSelection",
     value: function _moveSelection(event, zoom) {
-      _updatePos(this.selector, _getSelectorPosition(this.selectorArea, this.area, this._initialScroll, this._initialCursorPos, zoom, event));
+      _updatePos(this.selector, _getSelectorPosition(this.SelectorArea.node, this.area, this._initialScroll, this._initialCursorPos, zoom, event));
 
       this.checkIfInsideSelection(null);
     } // Colision detection
@@ -1373,7 +1458,7 @@ var DragSelect = /*#__PURE__*/function () {
       for (var i = 0, il = this.selectables.length; i < il; i++) {
         var selectable = this.selectables[i];
 
-        if (_isElementTouching(selectable, this.selector, this.area, this.selectorArea)) {
+        if (_isElementTouching(selectable, this.selector, this.area, this.SelectorArea.node)) {
           this._handleSelection(selectable, force);
 
           anyInside = true;
@@ -1494,12 +1579,12 @@ var DragSelect = /*#__PURE__*/function () {
     value: function _setScrollState(event) {
       var _this2 = this;
 
-      var edges = _isCursorNearEdges(this.selectorArea, event);
+      var edges = _isCursorNearEdges(this.SelectorArea.node, event);
 
       if (edges.length) {
         if (this._autoScrollInterval) window.clearInterval(this._autoScrollInterval);
         this._autoScrollInterval = window.setInterval(function () {
-          _this2._newCursorPos = _getCursorPos(_this2.selectorArea, event);
+          _this2._newCursorPos = _getCursorPos(_this2.SelectorArea.node, event);
 
           _this2._moveSelection(event, _this2.zoom);
 
@@ -1530,7 +1615,7 @@ var DragSelect = /*#__PURE__*/function () {
     value: function reset$1(event, withCallback) {
       var _this3 = this;
 
-      this._previousCursorPos = _getCursorPos(this.selectorArea, event);
+      this._previousCursorPos = _getCursorPos(this.SelectorArea.node, event);
 
       reset();
 
@@ -1598,9 +1683,7 @@ var DragSelect = /*#__PURE__*/function () {
       var fromSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
       var withCallback = arguments.length > 2 ? arguments[2] : undefined;
       this.reset(false, withCallback);
-
-      removeObservers();
-
+      this.SelectorArea.stop();
       this.area.removeEventListener('mousedown', this._startUp);
       this.area.removeEventListener('touchstart', this._startUp, {
         // @ts-ignore
