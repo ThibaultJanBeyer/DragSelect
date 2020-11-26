@@ -15,6 +15,7 @@
     "media": "cp -R .media docs/media",
     "no-skip": ".bin/no-skip.sh",
     "premedia": "rm -r docs/media &",
+    "rm": "rm -rf dist docs",
     "rollup": "npm run skip && rollup -c",
     "rollup:travis": "rollup -c",
     "rollup:watch": "npm run rollup -- -w",
