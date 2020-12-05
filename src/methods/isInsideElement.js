@@ -1,5 +1,6 @@
-import '../types.js'
-import { _scroll, _isCollision } from './'
+// @ts-check
+import '../types'
+import { isCollision, canScroll } from './'
 
 /**
  * Checks if there is a collision between the element and the selector
@@ -10,7 +11,7 @@ import { _scroll, _isCollision } from './'
  * @return {boolean}
  */
 export default (element, area, selectorArea) => {
-  if (area.contains(element) && _scroll.canScroll(area)) return true
+  if (area.contains(element) && canScroll(area)) return true
 
   const selectorAreaRect = {
     y: selectorArea.getBoundingClientRect().top,
@@ -27,7 +28,7 @@ export default (element, area, selectorArea) => {
     w: rect.width,
   }
 
-  if (_isCollision(selectorAreaRect, elementRect)) return true
+  if (isCollision(selectorAreaRect, elementRect)) return true
 
   return false
 }

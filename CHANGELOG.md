@@ -1,6 +1,6 @@
 # 2.0.0
 
-## Changes on the Selector
+## Improved Selector (Potential Breaking Change)
 
 The selector element is now not rendered inside of the area instead we generate a div overlaying the actual area and render the element inside that div. Which has a lot of benefits:
 
@@ -13,7 +13,7 @@ The selector element is now not rendered inside of the area instead we generate 
 - you can still target that area overlay if you want use the class `ds-selector-area`
 - Area can now be scrolled in each direction simultaneously
 
-## Inside area checker
+## Improved inside area checker (Potential Breaking Change)
 
 There were various bugs before 2.0 which would bypass the area restrictions and user would still be able to select elements outside of the area.
 We now check whether the elements are inside of the area to know whether they are selectable or not.
@@ -21,7 +21,7 @@ We now check whether the elements are inside of the area to know whether they ar
 - Fixes bug where elements outside of area could still be selected with keyboard
 - Fixes bug where elements outside of area could still be selected with negative scroll
 
-## Improved callbacks
+## Improved callbacks (Breaking Change)
 
 Changed the callbacks to follow a pub/sub pattern. They're not events you can subscribe to and they will pass back an object always following the same pattern holding extra information. Currently DragSelect still supports setting callbacks in the constructor method to make it easier for you to transition. However, in future, only subscribers will work.
 
@@ -55,7 +55,7 @@ ds.subscribe('elementselect', ({ items, item, event }) => console.log("my callba
 ds.subscribe('callback', ({ items, item, event }) => console.log("my callback", item))
 ```
 
-## Removed private and public methods
+## Removed private and public methods (Breaking Change)
 
 Based on the changes, some methods did not make sense anymore. So we cleaned them up. Generally we want to move away from providing utility methods (like i.e. cursor position retrieval) instead we want to focus on the tool itself only. In case you still want any of the public method or a new one, feel free to open an issue.
 
@@ -66,6 +66,16 @@ Public methods that were removed:
 - `.getAreaRect`
 - `.toArray`
 - `.isCursorNearEdge`
+
+## Increased performance
+
+This version is an (almost) complete rewrite of DragSelect. Of course the main reason is to improve the ease to add new features and maintain existing ones but that also gave the opportunity to add some performance improvements.
+
+The setup used to measure this is the performance test which runs DragSelect over 25.000 selectable Nodes.
+We compared the accumulated average execution times before and after the changes. Before the changes that was an average of 3s/run.
+
+- 4.27% faster by caching calculations
+- TBD
 
 # 1.15.0
 

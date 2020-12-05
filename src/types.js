@@ -2,7 +2,7 @@
  * The Settings to be passed to the Class
  * @typedef {Object} Settings
  * @property {HTMLElement|SVGElement|HTMLDocument} [area=document] area in which you can drag. If not provided it will be the whole document
- * @property {number} [autoScrollSpeed=1] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
+ * @property {number} [autoScrollSpeed=10] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
  * @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom.
  * @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
  * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
@@ -58,13 +58,26 @@
  * @typedef {DSCallback} DSElementUnSelectEvent
  */
 
-/** @typedef {HTMLElement|SVGElement|HTMLDocument} DSArea area in which you can drag */
+/** @typedef {{x: number, y: number}} Vect2 */
+/** @typedef {{x:number,y:number,w:number,h:number}} DSElementPos */
+/** @typedef {Array.<'top'|'bottom'|'left'|'right'|undefined>} DSEdges */
+
+/** @typedef {HTMLElement|SVGElement|HTMLDocument} DSArea area within which you can drag */
 /** @typedef {HTMLElement} DSSelectorArea area in which you can drag */
 /** @typedef {Array.<HTMLElement|SVGElement> | HTMLElement | SVGElement} DSInputElements the elements that can be selected */
 /** @typedef {Array.<HTMLElement|SVGElement>} DSElements the elements that can be selected */
 /** @typedef {HTMLElement|SVGElement} DSElement a single element that can be selected */
 /** @typedef {MouseEvent|TouchEvent} DSEvent en event from a touch or mouse interaction */
-/** @typedef {number} DSZoom Zoom scale factor. Unit scale zoom */
 /** @typedef {Array.<'ctrlKey'|'shiftKey'|'metaKey'>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
 
-/** @typedef {'dragmove'|'dragstartbegin'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSCallbackNames the name of the callback */
+/** @typedef {'dragmove'|'dragstartbegin'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
+/** @typedef {'Area:startmove'|'Area:move'|'Area:endmove'|'Area:modified'} DSAreaEventNames */
+
+/** @typedef {DSEventNames|DSAreaEventNames} DSCallbackNames the name of the callback */
+
+/** @typedef {{top:number,left:number,bottom:number,right:number,width:number,height:number}} DSBoundingRect */
+
+/**
+ * @callback DSModificationCallback
+ * @param {*} event
+ */

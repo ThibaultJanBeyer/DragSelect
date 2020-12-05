@@ -11,9 +11,10 @@ describe('Zoom', () => {
       return {
         selection: ds.getSelection(),
         containerScrollbarPos: {
-          top: ds.area.offsetTop,
-          x: (ds.area.offsetWidth + ds.area.clientWidth) / 2,
-          y: (ds.area.offsetHeight + ds.area.clientHeight) / 2,
+          top: ds.Area.HTMLNode.offsetTop,
+          x: (ds.Area.HTMLNode.offsetWidth + ds.Area.HTMLNode.clientWidth) / 2,
+          y:
+            (ds.Area.HTMLNode.offsetHeight + ds.Area.HTMLNode.clientHeight) / 2,
         },
       }
     })

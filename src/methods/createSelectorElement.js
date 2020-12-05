@@ -1,7 +1,8 @@
-import '../types.js'
+// @ts-check
+import '../types'
 
 /**
- * Create the selector node when not provided by options object.
+ * Create the selector node
  * @param {boolean} customStyles
  * @return {HTMLElement}
  */

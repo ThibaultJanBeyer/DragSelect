@@ -1,3 +1,5 @@
+// @ts-check
+import '../types'
 /**
  * Axis-Aligned Bounding Box Collision Detection.
  * Imagine following Example:
@@ -17,8 +19,8 @@
  * 4. b02 > b11 (bottom border pos box1 larger than top border pos box2)
  * {@link https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box Wikipedia}
  * {@link https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection MDN}
- * @param {{x:number,y:number,w:number,h:number}} a
- * @param {{x:number,y:number,w:number,h:number}} b
+ * @param {DSElementPos} a
+ * @param {DSElementPos} b
  */
 export default (el1, el2) => {
   if (

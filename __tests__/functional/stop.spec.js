@@ -1,6 +1,6 @@
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
-describe('Scroll', () => {
+describe('Stop', () => {
   it('should stop the functionality', async () => {
     await page.goto(`${baseUrl}/stop.html`)
     await page.evaluate(() => {
@@ -41,7 +41,7 @@ describe('Scroll', () => {
         selectables: document.querySelectorAll('.item'),
       })
       window.ds.subscribe('callback', ({ items }) => {
-        console.log('highlevel callback fired')
+        console.log('highlevel callback fired', items)
         window.callback = items
         ds.stop()
       })

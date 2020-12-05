@@ -44,45 +44,24 @@
 */
 
 import './types'
-import {
-  _autoScroll,
-  _createSelector,
-  _getCursorPos,
-  _getSelectorPosition,
-  _handleArea,
-  _isCursorNearEdges,
-  _isElementTouching,
-  _isInArea,
-  _isMultiSelectKeyPressed,
-  _isSelectorAreaClick,
-  _scroll,
-  _toArray,
-  _updatePos,
-  _zoomedScroll,
-  _SelectorArea,
-  PubSub,
-} from './modules'
+import { Area, Selector, SelectorArea, PubSub } from './modules'
+import { PointerStore, ScrollStore } from './stores'
+import { isElementTouching, toArray, vect2 } from './methods'
 
 // Setup
 //////////////////////////////////////////////////////////////////////////////////////
 
 class DragSelect {
-  /** @type {boolean} **/
-  _multiSelectKeyPressed = false
-  /** @type {{x: number, y: number}} */
-  _initialCursorPos = { x: 0, y: 0 }
-  /** @type {{x: number, y: number}} */
-  _newCursorPos = { x: 0, y: 0 }
-  /** @type {{x: number, y: number}} */
-  _previousCursorPos = { x: 0, y: 0 }
-  /** @type {{x: number, y: number}} */
-  _initialScroll = { x: 0, y: 0 }
-  /** @type {Array.<(SVGElement|HTMLElement)>} */
+  /** @type {number} @private */
+  _subAreaEndMove
+  /** @type {number} @private */
+  _subAreaMove
+  /** @type {number} @private */
+  _subAreaStartMove
+  /** @type {Array.<(SVGElement|HTMLElement)>} @private */
   _selected = []
-  /** @type {Array.<(SVGElement|HTMLElement)>} */
+  /** @type {Array.<(SVGElement|HTMLElement)>} @private */
   _prevSelected = [] // memory to fix #9
-  /** @type {number|null} */
-  _autoScrollInterval = null
 
   /**
    * @class DragSelect
@@ -91,7 +70,7 @@ class DragSelect {
    */
   constructor({
     area = document,
-    autoScrollSpeed = 1,
+    autoScrollSpeed = 10,
     customStyles = false,
     hoverClass = 'ds-hover',
     multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
@@ -112,18 +91,26 @@ class DragSelect {
   }) {
     this.selectedClass = selectedClass
     this.hoverClass = hoverClass
-    this.selectorClass = selectorClass
     this.selectableClass = selectableClass
     this.selectables = []
-    this._initialSelectables = _toArray(selectables)
-    this.multiSelectKeys = multiSelectKeys
-    this.multiSelectMode = multiSelectMode
-    this.autoScrollSpeed = autoScrollSpeed === 0 ? 0 : autoScrollSpeed
-    this.area = _handleArea(area)
+    this._initialSelectables = toArray(selectables)
     this.customStyles = customStyles
-    this.zoom = zoom
 
-    this._setupPubSub()
+    // stores
+    this.stores = {
+      PointerStore: new PointerStore({
+        DS: this,
+        multiSelectMode,
+        multiSelectKeys,
+      }),
+      ScrollStore: new ScrollStore({ DS: this, zoom }),
+    }
+
+    // Pub-Sub
+    this.PubSub = new PubSub()
+    this.subscribe = this.PubSub.subscribe
+    this.unsubscribe = this.PubSub.unsubscribe
+    this.publish = this.PubSub.publish
     this._callbacksTemp({
       callback,
       onDragMove,
@@ -133,24 +120,25 @@ class DragSelect {
       onElementUnselect,
     })
 
-    // Selector
-    this.selector = selector || _createSelector(this.customStyles)
-    this.selector.classList.add(this.selectorClass)
+    // Area
+    this.Area = new Area({ area, PS: this.PubSub, zoom })
 
-    this.SelectorArea = new _SelectorArea({
-      Area: { node: this.area },
-      selectorAreaClass,
-      selector: this.selector,
+    // Selector
+    this.Selector = new Selector({
+      DS: this,
+      selector,
+      selectorClass,
+      customStyles,
     })
 
-    this.start()
-  }
+    // SelectorArea
+    this.SelectorArea = new SelectorArea({
+      DS: this,
+      selectorAreaClass,
+      autoScrollSpeed,
+    })
 
-  _setupPubSub() {
-    this.PubSub = new PubSub()
-    this.subscribe = this.PubSub.subscribe.bind(this.PubSub)
-    this.unsubscribe = this.PubSub.unsubscribe.bind(this.PubSub)
-    this.publish = this.PubSub.publish.bind(this.PubSub)
+    this._init()
   }
 
   // @TODO: remove after deprecation
@@ -203,6 +191,18 @@ class DragSelect {
   }
 
   /**
+   * Initializes the functionality. Automatically triggered when created.
+   * Also, reset the functionality after a teardown
+   */
+  start = () => this._init()
+  _init() {
+    this._handleSelectables(this._initialSelectables)
+    this.Area.start()
+    this.SelectorArea.start()
+    this._subAreaStartMove = this.subscribe('Area:startmove', this._start)
+  }
+
+  /**
    * Add/Remove Selectables also handles css classes and event listeners.
    * @param {DSElements} selectables - selectable elements.
    * @param {boolean} [remove] - if elements should be removed.
@@ -211,8 +211,8 @@ class DragSelect {
    */
   _handleSelectables(selectables, remove, fromSelection) {
     for (let index = 0; index < selectables.length; index++) {
-      var selectable = selectables[index]
-      var indexOf = this.selectables.indexOf(selectable)
+      const selectable = selectables[index]
+      const indexOf = this.selectables.indexOf(selectable)
 
       if (indexOf < 0 && !remove) {
         this._addSelectable(selectable, fromSelection)
@@ -258,12 +258,8 @@ class DragSelect {
     }
   }
 
-  /**
-   * @param {MouseEvent} event
-   * @private
-   */
-  _onClick = (event) => this.handleClick(event)
-
+  /** @param {MouseEvent} event @private */
+  _onClick = (event) => this._handleClick(event)
   /**
    * Triggers when a node is actively selected.
    *
@@ -274,171 +270,97 @@ class DragSelect {
    * @param {MouseEvent} event
    * @private
    */
-  handleClick(event) {
+  _handleClick(event) {
     if (this.mouseInteraction) return // fix firefox doubleclick issue
     if (event.button === 2) return // right-clicks
 
-    /** @type {any} */
-    const node = event.target
+    this.stores.PointerStore.start(event)
+    this.stores.ScrollStore.start()
+    const node = /** @type {any} */ (event.target)
     if (!this.selectables.includes(node)) return
 
-    if (!_isInArea(node, this.area, this.SelectorArea.node)) return
+    if (!this.SelectorArea.isInside(node)) return
 
     // fix for multi-selection issue #9
-    this._multiSelectKeyPressed = _isMultiSelectKeyPressed(
-      this.multiSelectKeys,
-      this.multiSelectMode,
-      event
-    )
-    if (this._multiSelectKeyPressed) this._prevSelected = this._selected.slice()
+    if (this.stores.PointerStore.isMultiSelect)
+      this._prevSelected = this._selected.slice()
     else this._prevSelected = []
 
     // actual selection logic
     this.checkIfInsideSelection(true) // reset selection if no multiselectionkeypressed
     this.toggle(node)
 
-    this._end(event)
+    this.reset(event, true)
   }
 
   // Start
   //////////////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Starts the functionality. Automatically triggered when created.
-   * Also, reset the functionality after a teardown
-   */
-  start() {
-    this._handleSelectables(this._initialSelectables)
-    this.area.addEventListener('mousedown', this._startUp)
-    this.area.addEventListener('touchstart', this._startUp, { passive: false })
-    this.SelectorArea.start()
-  }
-
-  /**
+   * When the area is clicked.
    * @param {DSEvent} event - The event object.
    * @private
    */
-  _startUp = (event) => this.startUp(event)
-
-  /**
-   * Startup when the area is clicked.
-   * @param {DSEvent} event - The event object.
-   * @private
-   */
-  startUp(event) {
+  _start = (event) => {
     // touchmove handler
     if (event.type === 'touchstart')
       // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
       event.preventDefault()
-
+    if (/** @type {*} */ (event).button === 2) return // right-clicks
     this.mouseInteraction = true
 
-    // right-clicks
-    if (/** @type {*} */ (event).button === 2) return
-    if (!_isSelectorAreaClick(this.SelectorArea.node, event)) return
+    this.stores.PointerStore.start(event)
+    this.stores.ScrollStore.start()
+    console.log(this.stores.PointerStore)
+
+    if (!this.SelectorArea.isClicked()) return
 
     // callback
     this.PubSub.publish('dragstartbegin', { items: this.getSelection(), event })
     if (this._breaked) return false
-
-    this.selector.style.display = 'block'
-
-    this._multiSelectKeyPressed = _isMultiSelectKeyPressed(
-      this.multiSelectKeys,
-      this.multiSelectMode,
-      event
-    )
-    if (this._multiSelectKeyPressed) this._prevSelected = this._selected.slice()
+    if (this.stores.PointerStore.isMultiSelect)
+      this._prevSelected = this._selected.slice()
     // #9
     else this._prevSelected = [] // #9
 
     // move element on location
-    this._getStartingPositions(event)
+    this.Selector.start()
     this.checkIfInsideSelection(true)
-
-    this.selector.style.display = 'none' // hidden unless moved, fix for issue #8
 
     // callback
     this.PubSub.publish('dragstart', { items: this.getSelection(), event })
     if (this._breaked) return false
 
     // event listeners
-    this.area.removeEventListener('mousedown', this._startUp)
-    this.area.removeEventListener('touchstart', this._startUp, {
-      // @ts-ignore
-      passive: false,
-    })
-    document.addEventListener('mousemove', this._handleMove)
-    document.addEventListener('touchmove', this._handleMove, {
-      passive: false,
-    })
-    document.addEventListener('mouseup', this._end)
-    document.addEventListener('touchend', this._end)
-  }
-
-  /**
-   * Grabs the starting position of all needed elements
-   * @param {DSEvent} event - The event object.
-   * @private
-   */
-  _getStartingPositions(event) {
-    this._initialCursorPos = this._newCursorPos = _getCursorPos(
-      this.SelectorArea.node,
-      event
+    this.unsubscribe('Area:startmove', null, this._subAreaStartMove)
+    this._subAreaMove = this.subscribe('Area:move', this.handleMove)
+    this._subAreaEndMove = this.subscribe('Area:endmove', (event) =>
+      this.reset(event, true)
     )
-    this._initialScroll = _scroll.getCurrent(this.area)
-
-    var selectorPos = {}
-    selectorPos.x = this._initialCursorPos.x + this._initialScroll.x
-    selectorPos.y = this._initialCursorPos.y + this._initialScroll.y
-    selectorPos.w = 0
-    selectorPos.h = 0
-    _updatePos(this.selector, selectorPos)
   }
 
   // Movements/Sizing of selection
   //////////////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * @param {DSEvent} event - The event object.
-   * @private
-   */
-  _handleMove = (event) => this.handleMove(event)
-
+  // @TODO: these might all be abstracted away by topic publishers/subscribers
   /**
    * Handles what happens while the mouse is moved
    * @param {DSEvent} event - The event object.
    * @private
    */
-  handleMove(event) {
-    this._newCursorPos = _getCursorPos(this.SelectorArea.node, event)
+  handleMove = (event) => {
+    this.stores.PointerStore.update(event)
+    this.stores.ScrollStore.update()
 
     // callback
     this.PubSub.publish('dragmove', { items: this.getSelection(), event })
     if (this._breaked) return false
 
-    this.selector.style.display = 'block' // hidden unless moved, fix for issue #8
-
     // move element on location
-    this._moveSelection(event)
+    this.Selector.update()
 
     // scroll area if area is scroll-able
-    this._setScrollState(event)
-  }
-
-  _moveSelection(event, zoom) {
-    _updatePos(
-      this.selector,
-      _getSelectorPosition(
-        this.SelectorArea.node,
-        this.area,
-        this._initialScroll,
-        this._initialCursorPos,
-        zoom,
-        event
-      )
-    )
-    this.checkIfInsideSelection(null)
+    this.SelectorArea.handleAutoscroll()
   }
 
   // Colision detection
@@ -449,18 +371,14 @@ class DragSelect {
    * @param {boolean} [force] forces through. Handles first clicks and accessibility. Here is user is clicking directly onto some element at start, (contrary to later hovers) we can assume that he really wants to select/deselect that item.
    * @return {boolean}
    */
-  checkIfInsideSelection(force) {
+  checkIfInsideSelection = (force) => {
     let anyInside = false
     for (let i = 0, il = this.selectables.length; i < il; i++) {
       const selectable = this.selectables[i]
 
       if (
-        _isElementTouching(
-          selectable,
-          this.selector,
-          this.area,
-          this.SelectorArea.node
-        )
+        this.SelectorArea.isInside(selectable) &&
+        isElementTouching(selectable, this.Selector.HTMLNode)
       ) {
         this._handleSelection(selectable, force)
         anyInside = true
@@ -481,7 +399,7 @@ class DragSelect {
     if (item.classList.contains(this.hoverClass) && !force) return false
 
     if (!this._selected.includes(item)) this.select(item)
-    else if (this._multiSelectKeyPressed) this.unselect(item)
+    else if (this.stores.PointerStore.isMultiSelect) this.unselect(item)
 
     item.classList.add(this.hoverClass)
   }
@@ -557,42 +475,8 @@ class DragSelect {
     return item
   }
 
-  // Autoscroll
-  //////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Creates an interval that autoscrolls while the cursor is near the edge
-   * @param {DSEvent} event – event object.
-   * @private
-   */
-  _setScrollState(event) {
-    const edges = _isCursorNearEdges(this.SelectorArea.node, event)
-
-    if (edges.length) {
-      if (this._autoScrollInterval)
-        window.clearInterval(this._autoScrollInterval)
-
-      this._autoScrollInterval = window.setInterval(() => {
-        this._newCursorPos = _getCursorPos(this.SelectorArea.node, event)
-        this._moveSelection(event, this.zoom)
-        _autoScroll(this.area, edges, this.autoScrollSpeed)
-      })
-    } else if (!edges.length && this._autoScrollInterval) {
-      window.clearInterval(this._autoScrollInterval)
-      this._autoScrollInterval = null
-    }
-  }
-
   // Ending
   //////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Triggered on mouse click release (end of dragging a selection).
-   * Calls the callback method & unbind functions.
-   * @param {DSEvent} event - The event object.
-   * @private
-   */
-  _end = (event) => this.reset(event, true)
 
   /**
    * Unbind functions i.e. when mouse click is released
@@ -600,35 +484,25 @@ class DragSelect {
    * @param {boolean} [withCallback] - whether or not the callback should be called
    */
   reset(event, withCallback) {
-    this._previousCursorPos = _getCursorPos(this.SelectorArea.node, event)
-    _zoomedScroll.reset()
-    document.removeEventListener('mouseup', this._end)
-    document.removeEventListener('touchend', this._end)
-    document.removeEventListener('mousemove', this._handleMove)
-    document.removeEventListener('touchmove', this._handleMove, {
-      // @ts-ignore
-      passive: false,
-    })
-    this.area.addEventListener('mousedown', this._startUp)
-    this.area.addEventListener('touchstart', this._startUp, { passive: false })
+    // _zoomedScroll.reset()
+
+    this.stores.PointerStore.reset(event)
+    this.stores.ScrollStore.reset()
+
+    this.Area.reset()
+    this.Selector.reset()
+    this.SelectorArea.reset()
+
+    this.unsubscribe('Area:move', null, this._subAreaMove)
+    this.unsubscribe('Area:endmove', null, this._subAreaEndMove)
+    this._subAreaStartMove = this.subscribe('Area:startmove', this._start)
 
     if (withCallback)
-      this.PubSub.publish('callback', { items: this.getSelection(), event })
-    if (this._breaked) return false
-
-    this.selector.style.width = '0'
-    this.selector.style.height = '0'
-    this.selector.style.display = 'none'
-
-    if (this._autoScrollInterval) {
-      window.clearInterval(this._autoScrollInterval)
-      this._autoScrollInterval = null
-    }
+      this.publish('callback', { items: this.getSelection(), event })
 
     setTimeout(
-      () =>
-        // debounce in order "onClick" to work
-        (this.mouseInteraction = false),
+      () => (this.mouseInteraction = false),
+      // debounce in order "onClick" to work
       100
     )
   }
@@ -658,15 +532,12 @@ class DragSelect {
   stop(remove = true, fromSelection = true, withCallback) {
     this.reset(false, withCallback)
 
+    this.unsubscribe('Area:startmove', null, this._subAreaStartMove)
+    this.unsubscribe('Area:move', null, this._subAreaMove)
+    this.unsubscribe('Area:endmove', null, this._subAreaEndMove)
     this.SelectorArea.stop()
-
-    this.area.removeEventListener('mousedown', this._startUp)
-    this.area.removeEventListener('touchstart', this._startUp, {
-      // @ts-ignore
-      passive: false,
-    })
-    document.removeEventListener('mouseup', this._end)
-    document.removeEventListener('touchend', this._end)
+    this.Selector.stop()
+    this.Area.stop()
 
     this._handleSelectables([...this.selectables], remove, fromSelection)
   }
@@ -693,7 +564,7 @@ class DragSelect {
    * @return {DSElements} all selected elements
    */
   addSelection(elements, triggerCallback, dontAddToSelectables) {
-    const nodes = _toArray(elements)
+    const nodes = toArray(elements)
 
     nodes.forEach((node) => this.select(node))
 
@@ -714,7 +585,7 @@ class DragSelect {
    * @return {DSElements} all selected elements
    */
   removeSelection(elements, triggerCallback, removeFromSelectables) {
-    const nodes = _toArray(elements)
+    const nodes = toArray(elements)
     nodes.forEach((node) => this.unselect(node))
 
     if (removeFromSelectables) {
@@ -737,7 +608,7 @@ class DragSelect {
    * @return {DSElements} all selected elements
    */
   toggleSelection(elements, triggerCallback, special) {
-    var nodes = _toArray(elements)
+    var nodes = toArray(elements)
 
     for (var index = 0, il = nodes.length; index < il; index++) {
       var node = nodes[index]
@@ -790,7 +661,7 @@ class DragSelect {
    * @return {DSInputElements} the added element(s)
    */
   addSelectables(elements, addToSelection) {
-    var nodes = _toArray(elements)
+    var nodes = toArray(elements)
     this._handleSelectables(nodes, false, addToSelection)
     return elements
   }
@@ -824,33 +695,33 @@ class DragSelect {
    * @return {DSInputElements} the removed element(s)
    */
   removeSelectables(elements, removeFromSelection) {
-    const nodes = _toArray(elements)
+    const nodes = toArray(elements)
     this._handleSelectables(nodes, true, removeFromSelection)
     return elements
   }
 
   /**
    * Returns the starting/initial position of the cursor/selector
-   * @return {{x:number,y:number}}
+   * @return {Vect2}
    */
   getInitialCursorPosition() {
-    return this._initialCursorPos
+    return this.stores.PointerStore.initialVal
   }
 
   /**
    * Returns the last seen position of the cursor/selector
-   * @return {{x:number,y:number}}
+   * @return {Vect2}
    */
   getCurrentCursorPosition() {
-    return this._newCursorPos
+    return this.stores.PointerStore.currentVal
   }
 
   /**
    * Returns the previous position of the cursor/selector
-   * @return {{x:number,y:number}}
+   * @return {Vect2}
    */
   getPreviousCursorPosition() {
-    return this._previousCursorPos
+    return this.stores.PointerStore.lastVal
   }
 
   /**
@@ -858,18 +729,16 @@ class DragSelect {
    * If usePreviousCursorDifference is passed,
    * it will output the cursor position difference between the previous selection and now
    * @param {boolean} [usePreviousCursorDifference]
-   * @return {{x:number,y:number}}
+   * @return {Vect2}
    */
   getCursorPositionDifference(usePreviousCursorDifference) {
+    console.log('diff')
     var posA = this.getCurrentCursorPosition()
     var posB = usePreviousCursorDifference
       ? this.getPreviousCursorPosition()
       : this.getInitialCursorPosition()
 
-    return {
-      x: posA.x - posB.x,
-      y: posA.y - posB.y,
-    }
+    return vect2.calc(posA, '-', posB)
   }
 }
 

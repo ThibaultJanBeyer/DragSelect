@@ -62,10 +62,11 @@
     window.selectables = document.querySelectorAll('.item');
     window.itemIds = [...selectables].map(item => item.id);
 
-    new DragSelect({
+    const ds = new DragSelect({
         selectables,
         area: document.querySelector('.area'),
         autoScrollSpeed: 100,
         callback: (n, e) => window.callbackIds = n.map(n => n.id)
     });
+    ds.subscribe('callback', ({ items }) => console.log(items.map(n => n.id), window.itemIds))
 </script>
