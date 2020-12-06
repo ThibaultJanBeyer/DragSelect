@@ -67,6 +67,10 @@ Public methods that were removed:
 - `.toArray`
 - `.isCursorNearEdge`
 
+## Removed break functionality (Breaking Change)
+
+- `.break` was removed
+
 ## Increased performance
 
 This version is an (almost) complete rewrite of DragSelect. Of course the main reason is to improve the ease to add new features and maintain existing ones but that also gave the opportunity to add some performance improvements.
@@ -75,7 +79,8 @@ The setup used to measure this is the performance test which runs DragSelect ove
 We compared the accumulated average execution times before and after the changes. Before the changes that was an average of 3s/run.
 
 - 4.27% faster by caching calculations
-- TBD
+- 1.26% faster by using a game loop
+We now use a main loop with `requestAnimationFrame` to update the various parts instead of listening for the cursor move on the document as before
 
 # 1.15.0
 

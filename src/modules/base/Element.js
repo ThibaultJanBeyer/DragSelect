@@ -1,8 +1,8 @@
 // @ts-check
-import '../types.js'
+import '../../types.js'
 import { getAreaRect } from '../../methods'
 
-class Element {
+export default class Element {
   /** @type {number} */
   _zoom
   /** @type {DSArea} */
@@ -105,5 +105,3 @@ class Element {
     return this._parentNodes
   }
 }
-
-export default Element

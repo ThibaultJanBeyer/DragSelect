@@ -1,9 +1,13 @@
+// @ts-check
+import '../types'
+
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
  * be triggered. The function will be called after it stops being called for
  * `wait` milliseconds. All credits to [Trey Huffine]{@link https://levelup.gitconnected.com/debounce-in-javascript-improve-your-applications-performance-5b01855e086}
  * @param {*} func
  * @param {number} wait
+ * @returns {DSModificationCallback}
  */
 export default (func, wait) => {
   let timeout

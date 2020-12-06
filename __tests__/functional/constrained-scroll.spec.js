@@ -18,6 +18,8 @@ describe('Constrained Scroll', () => {
     })
 
     expect(executesFn.callbackIds.length).toBe(executesFn.ids.length)
-    expect(executesFn.callbackIds.join()).toBe(executesFn.ids.join())
+    expect(executesFn.callbackIds).toEqual(
+      expect.arrayContaining(executesFn.ids)
+    )
   })
 })

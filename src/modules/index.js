@@ -1,5 +1,6 @@
 export { default as Area } from './Area'
 export { default as Element } from './base/Element'
+export { default as MainLoop } from './MainLoop'
 export { default as PubSub } from './PubSub'
 export { default as Selector } from './Selector'
 export { default as SelectorArea } from './SelectorArea'

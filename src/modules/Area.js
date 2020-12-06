@@ -9,7 +9,7 @@ import {
   scrollElement,
 } from '../methods'
 
-class Area {
+export default class Area {
   /** @type {DSModificationCallback} */
   _modificationCallback
   /** @type {MutationObserver} */
@@ -47,52 +47,27 @@ class Area {
       this.Element.reset()
       this.PubSub.publish('Area:modified', { event, item: this })
     })
+
+    this.PubSub.subscribe('MainLoop:init', this.start)
+    this.PubSub.subscribe('MainLoop:end', () => this.Element.stop())
   }
 
   /** Add observers */
-  start() {
+  start = () => {
     addModificationObservers(
       this.parentNodes,
       this._modificationCallback,
       this._modificationObserver
     )
-
-    this.HTMLNode.addEventListener('mousedown', this._startEvent)
-    this.HTMLNode.addEventListener('touchstart', this._startEvent, {
-      passive: false,
-    })
   }
 
-  /**
-   * Remove observers
-   */
-  stop() {
+  /** Remove observers */
+  stop = () => {
     removeModificationObservers(
       this._modificationObserver,
       this._modificationCallback
     )
-
-    this.HTMLNode.removeEventListener('mousedown', this._startEvent)
-    this.HTMLNode.removeEventListener('touchstart', this._startEvent, {
-      // @ts-ignore
-      passive: false,
-    })
-
-    document.removeEventListener('mousemove', this._moveEvent)
-    document.removeEventListener('touchmove', this._moveEvent, {
-      // @ts-ignore
-      passive: false,
-    })
-
-    document.removeEventListener('mouseup', this._endEvent)
-    document.removeEventListener('touchend', this._endEvent)
-
     this.Element.stop()
-  }
-
-  reset() {
-    this.stop()
-    this.start()
   }
 
   //////////////////////////////////////////////////////////////////////////////////////
@@ -105,41 +80,6 @@ class Area {
    */
   scroll = (directions, multiplier) =>
     scrollElement(this.HTMLNode, directions, multiplier)
-
-  //////////////////////////////////////////////////////////////////////////////////////
-  // Event Handlers
-
-  /**
-   * Triggered on dragging selection
-   * @param {DSEvent} event
-   */
-  _moveEvent = (event) => this.PubSub.publish('Area:move', event)
-
-  /**
-   * Triggered on end of dragging a selection
-   * @param {DSEvent} event
-   */
-  _endEvent = (event) => this.PubSub.publish('Area:endmove', event)
-
-  /**
-   * Triggered on start of dragging a selection
-   * @param {DSEvent} event
-   */
-  _startEvent = (event) => this._started(event)
-
-  /**
-   * Adds follow-up listeners when a start is initiated
-   * @param {DSEvent} event
-   */
-  _started(event) {
-    this.PubSub.publish('Area:startmove', event)
-    document.addEventListener('mousemove', this._moveEvent)
-    document.addEventListener('touchmove', this._moveEvent, {
-      passive: false,
-    })
-    document.addEventListener('mouseup', this._endEvent)
-    document.addEventListener('touchend', this._endEvent)
-  }
 
   //////////////////////////////////////////////////////////////////////////////////////
   // Aliases
@@ -165,5 +105,3 @@ class Area {
     return this.Element.parentNodes
   }
 }
-
-export default Area

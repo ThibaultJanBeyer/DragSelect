@@ -44,7 +44,7 @@
 */
 
 import './types'
-import { Area, Selector, SelectorArea, PubSub } from './modules'
+import { Area, Selector, SelectorArea, PubSub, MainLoop } from './modules'
 import { PointerStore, ScrollStore } from './stores'
 import { isElementTouching, toArray, vect2 } from './methods'
 
@@ -57,7 +57,7 @@ class DragSelect {
   /** @type {number} @private */
   _subAreaMove
   /** @type {number} @private */
-  _subAreaStartMove
+  _subStartMove
   /** @type {Array.<(SVGElement|HTMLElement)>} @private */
   _selected = []
   /** @type {Array.<(SVGElement|HTMLElement)>} @private */
@@ -70,7 +70,7 @@ class DragSelect {
    */
   constructor({
     area = document,
-    autoScrollSpeed = 10,
+    autoScrollSpeed = 100,
     customStyles = false,
     hoverClass = 'ds-hover',
     multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
@@ -96,16 +96,6 @@ class DragSelect {
     this._initialSelectables = toArray(selectables)
     this.customStyles = customStyles
 
-    // stores
-    this.stores = {
-      PointerStore: new PointerStore({
-        DS: this,
-        multiSelectMode,
-        multiSelectKeys,
-      }),
-      ScrollStore: new ScrollStore({ DS: this, zoom }),
-    }
-
     // Pub-Sub
     this.PubSub = new PubSub()
     this.subscribe = this.PubSub.subscribe
@@ -119,6 +109,16 @@ class DragSelect {
       onElementSelect,
       onElementUnselect,
     })
+
+    // stores
+    this.stores = {
+      PointerStore: new PointerStore({
+        DS: this,
+        multiSelectMode,
+        multiSelectKeys,
+      }),
+      ScrollStore: new ScrollStore({ DS: this, areaElement: area, zoom }),
+    }
 
     // Area
     this.Area = new Area({ area, PS: this.PubSub, zoom })
@@ -138,7 +138,16 @@ class DragSelect {
       autoScrollSpeed,
     })
 
+    // MainLoop
+    this.MainLoop = new MainLoop({ areaElement: area, DS: this })
+
     this._init()
+
+    this.subscribe('PointerStore:updated', ({ event }) =>
+      this.publish('dragmove', { items: this.getSelection(), event })
+    )
+    this.subscribe('MainLoop:start', ({ event }) => this._start(event))
+    this.subscribe('MainLoop:end', ({ event }) => this.reset(event, true))
   }
 
   // @TODO: remove after deprecation
@@ -197,9 +206,7 @@ class DragSelect {
   start = () => this._init()
   _init() {
     this._handleSelectables(this._initialSelectables)
-    this.Area.start()
-    this.SelectorArea.start()
-    this._subAreaStartMove = this.subscribe('Area:startmove', this._start)
+    this.MainLoop.init()
   }
 
   /**
@@ -275,7 +282,7 @@ class DragSelect {
     if (event.button === 2) return // right-clicks
 
     this.stores.PointerStore.start(event)
-    this.stores.ScrollStore.start()
+
     const node = /** @type {any} */ (event.target)
     if (!this.selectables.includes(node)) return
 
@@ -291,6 +298,7 @@ class DragSelect {
     this.toggle(node)
 
     this.reset(event, true)
+    this.stores.PointerStore.stop(event)
   }
 
   // Start
@@ -302,65 +310,20 @@ class DragSelect {
    * @private
    */
   _start = (event) => {
-    // touchmove handler
-    if (event.type === 'touchstart')
-      // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
-      event.preventDefault()
-    if (/** @type {*} */ (event).button === 2) return // right-clicks
     this.mouseInteraction = true
 
-    this.stores.PointerStore.start(event)
-    this.stores.ScrollStore.start()
-    console.log(this.stores.PointerStore)
+    this.publish('dragstartbegin', { items: this.getSelection(), event })
 
-    if (!this.SelectorArea.isClicked()) return
-
-    // callback
-    this.PubSub.publish('dragstartbegin', { items: this.getSelection(), event })
-    if (this._breaked) return false
     if (this.stores.PointerStore.isMultiSelect)
       this._prevSelected = this._selected.slice()
     // #9
     else this._prevSelected = [] // #9
 
     // move element on location
-    this.Selector.start()
     this.checkIfInsideSelection(true)
 
     // callback
-    this.PubSub.publish('dragstart', { items: this.getSelection(), event })
-    if (this._breaked) return false
-
-    // event listeners
-    this.unsubscribe('Area:startmove', null, this._subAreaStartMove)
-    this._subAreaMove = this.subscribe('Area:move', this.handleMove)
-    this._subAreaEndMove = this.subscribe('Area:endmove', (event) =>
-      this.reset(event, true)
-    )
-  }
-
-  // Movements/Sizing of selection
-  //////////////////////////////////////////////////////////////////////////////////////
-
-  // @TODO: these might all be abstracted away by topic publishers/subscribers
-  /**
-   * Handles what happens while the mouse is moved
-   * @param {DSEvent} event - The event object.
-   * @private
-   */
-  handleMove = (event) => {
-    this.stores.PointerStore.update(event)
-    this.stores.ScrollStore.update()
-
-    // callback
-    this.PubSub.publish('dragmove', { items: this.getSelection(), event })
-    if (this._breaked) return false
-
-    // move element on location
-    this.Selector.update()
-
-    // scroll area if area is scroll-able
-    this.SelectorArea.handleAutoscroll()
+    this.publish('dragstart', { items: this.getSelection(), event })
   }
 
   // Colision detection
@@ -441,7 +404,6 @@ class DragSelect {
     item.classList.add(this.selectedClass)
 
     this.PubSub.publish('elementselect', { items: this.getSelection(), item })
-    if (this._breaked) return false
 
     return item
   }
@@ -458,7 +420,6 @@ class DragSelect {
     item.classList.remove(this.selectedClass)
 
     this.PubSub.publish('elementunselect', { items: this.getSelection(), item })
-    if (this._breaked) return false
 
     return item
   }
@@ -483,41 +444,13 @@ class DragSelect {
    * @param {Object} [event] - The event object.
    * @param {boolean} [withCallback] - whether or not the callback should be called
    */
-  reset(event, withCallback) {
-    // _zoomedScroll.reset()
-
-    this.stores.PointerStore.reset(event)
-    this.stores.ScrollStore.reset()
-
-    this.Area.reset()
-    this.Selector.reset()
-    this.SelectorArea.reset()
-
-    this.unsubscribe('Area:move', null, this._subAreaMove)
-    this.unsubscribe('Area:endmove', null, this._subAreaEndMove)
-    this._subAreaStartMove = this.subscribe('Area:startmove', this._start)
-
+  reset = (event, withCallback) => {
     if (withCallback)
       this.publish('callback', { items: this.getSelection(), event })
 
     setTimeout(
       () => (this.mouseInteraction = false),
       // debounce in order "onClick" to work
-      100
-    )
-  }
-
-  /**
-   * Function break: used in callbacks to disable the execution of the upcoming code at the specific moment
-   * In contrary to stop():
-   * - Event listeners, callback calls and calculation will continue working
-   * - Selector won’t display and will not select
-   */
-  break() {
-    this._breaked = true
-    setTimeout(
-      // debounce the break should only break once instantly after call
-      () => (this._breaked = false),
       100
     )
   }
@@ -532,9 +465,7 @@ class DragSelect {
   stop(remove = true, fromSelection = true, withCallback) {
     this.reset(false, withCallback)
 
-    this.unsubscribe('Area:startmove', null, this._subAreaStartMove)
-    this.unsubscribe('Area:move', null, this._subAreaMove)
-    this.unsubscribe('Area:endmove', null, this._subAreaEndMove)
+    this.MainLoop.stop()
     this.SelectorArea.stop()
     this.Selector.stop()
     this.Area.stop()
@@ -700,29 +631,14 @@ class DragSelect {
     return elements
   }
 
-  /**
-   * Returns the starting/initial position of the cursor/selector
-   * @return {Vect2}
-   */
-  getInitialCursorPosition() {
-    return this.stores.PointerStore.initialVal
-  }
-
-  /**
-   * Returns the last seen position of the cursor/selector
-   * @return {Vect2}
-   */
-  getCurrentCursorPosition() {
-    return this.stores.PointerStore.currentVal
-  }
-
-  /**
-   * Returns the previous position of the cursor/selector
-   * @return {Vect2}
-   */
-  getPreviousCursorPosition() {
-    return this.stores.PointerStore.lastVal
-  }
+  /** The starting/initial position of the cursor/selector @return {Vect2} */
+  getInitialCursorPosition = () => this.stores.PointerStore.initialVal
+  /** The last seen position of the cursor/selector @return {Vect2} */
+  getCurrentCursorPosition = () => this.stores.PointerStore.currentVal
+  /** The previous position of the cursor/selector @return {Vect2} */
+  getPreviousCursorPosition = () => this.stores.PointerStore.lastVal
+  /** Whether the multi-selection key was pressed @return {boolean} */
+  isMultiSelect = () => this.stores.PointerStore.isMultiSelect
 
   /**
    * Returns the cursor position difference between start and now
@@ -732,7 +648,6 @@ class DragSelect {
    * @return {Vect2}
    */
   getCursorPositionDifference(usePreviousCursorDifference) {
-    console.log('diff')
     var posA = this.getCurrentCursorPosition()
     var posB = usePreviousCursorDifference
       ? this.getPreviousCursorPosition()

@@ -1,5 +1,5 @@
 import DragSelect from '../DragSelect'
-import { getPointerPos, documentScroll, vect2 } from '../methods'
+import { getPointerPos, documentScroll, vect2, debounce } from '../methods'
 
 export default class PointerStore {
   // multiselect
@@ -34,6 +34,9 @@ export default class PointerStore {
     this.DS = DS
     this._multiSelectKeys = multiSelectKeys
     this._multiSelectMode = multiSelectMode
+
+    this.DS.subscribe('MainLoop:start', ({ event }) => this.start(event))
+    this.DS.subscribe('MainLoop:end', ({ event }) => this.stop(event))
   }
 
   /** @param {DSEvent} [event] */
@@ -44,20 +47,34 @@ export default class PointerStore {
       event: this._normalizedEvent(event),
       documentScroll,
     })
+
+    document.addEventListener('mousemove', this.update)
+    document.addEventListener('touchmove', this.update, {
+      // @ts-ignore
+      passive: false,
+    })
   }
 
   /** @param {DSEvent} [event] */
-  update(event) {
+  update = (event) => {
     if (!event) return
     this.currentVal = getPointerPos({
       event: this._normalizedEvent(event),
       documentScroll,
     })
+    this.DS.publish('PointerStore:updated', { event })
   }
 
   /** @param {DSEvent} [event] */
-  reset(event) {
+  stop = (event) => {
     if (!event) return
+
+    document.removeEventListener('mousemove', this.update)
+    document.removeEventListener('touchmove', this.update, {
+      // @ts-ignore
+      passive: false,
+    })
+
     this.lastVal = getPointerPos({
       event: this._normalizedEvent(event),
       documentScroll,
@@ -132,20 +149,44 @@ export default class PointerStore {
     this._initialVal = value
     this._initialValArea =
       value &&
-      vect2.calc(value, '-', vect2.rect2vect(this.DS.Area.boundingClientRect))
+      vect2.calc(
+        value,
+        '-',
+        vect2.calc(
+          vect2.rect2vect(this.DS.Area.boundingClientRect),
+          '+',
+          vect2.rect2vect(this.DS.Area.computedBorder)
+        )
+      )
   }
 
   set currentVal(value) {
     this._currentVal = value
     this._currentValArea =
       value &&
-      vect2.calc(value, '-', vect2.rect2vect(this.DS.Area.boundingClientRect))
+      vect2.calc(
+        value,
+        '-',
+        vect2.calc(
+          vect2.rect2vect(this.DS.Area.boundingClientRect),
+          '+',
+          vect2.rect2vect(this.DS.Area.computedBorder)
+        )
+      )
   }
 
   set lastVal(value) {
     this._lastVal = value
     this._lastValArea =
       value &&
-      vect2.calc(value, '-', vect2.rect2vect(this.DS.Area.boundingClientRect))
+      vect2.calc(
+        value,
+        '-',
+        vect2.calc(
+          vect2.rect2vect(this.DS.Area.boundingClientRect),
+          '+',
+          vect2.rect2vect(this.DS.Area.computedBorder)
+        )
+      )
   }
 }

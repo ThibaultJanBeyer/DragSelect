@@ -71,9 +71,8 @@
 /** @typedef {Array.<'ctrlKey'|'shiftKey'|'metaKey'>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
 
 /** @typedef {'dragmove'|'dragstartbegin'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
-/** @typedef {'Area:startmove'|'Area:move'|'Area:endmove'|'Area:modified'} DSAreaEventNames */
-
-/** @typedef {DSEventNames|DSAreaEventNames} DSCallbackNames the name of the callback */
+/** @typedef {'MainLoop:init'|'MainLoop:start'|'MainLoop:end'|'MainLoop:update'|'Area:modified'|'PointerStore:updated'} DSInternalEventNames */
+/** @typedef {DSEventNames|DSInternalEventNames} DSCallbackNames the name of the callback */
 
 /** @typedef {{top:number,left:number,bottom:number,right:number,width:number,height:number}} DSBoundingRect */
 

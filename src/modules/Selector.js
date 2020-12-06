@@ -9,7 +9,7 @@ import {
 } from '../methods'
 import DragSelect from '../DragSelect'
 
-class Selector {
+export default class Selector {
   /**
    * @constructor Selector
    * @param {Object} obj
@@ -25,9 +25,13 @@ class Selector {
       node: selector || createSelectorElement(customStyles),
     })
     this.HTMLNode.classList.add(selectorClass)
+
+    this.DS.subscribe('MainLoop:start', this.start)
+    this.DS.subscribe('MainLoop:update', this.update)
+    this.DS.subscribe('MainLoop:end', this.stop)
   }
 
-  start() {
+  start = () => {
     const {
       stores: { ScrollStore, PointerStore },
     } = this.DS
@@ -42,21 +46,15 @@ class Selector {
     this.HTMLNode.style.display = 'block'
   }
 
-  stop() {
+  stop = () => {
     this.HTMLNode.style.width = '0'
     this.HTMLNode.style.height = '0'
     this.HTMLNode.style.display = 'none'
     this.Element.stop()
   }
 
-  reset() {
-    this.stop()
-  }
-
-  /**
-   * Moves the selection to the correct place
-   */
-  update() {
+  /** Moves the selection to the correct place */
+  update = () => {
     const {
       stores: { ScrollStore, PointerStore },
       checkIfInsideSelection,
@@ -83,5 +81,3 @@ class Selector {
     this.Element.HTMLNode = element
   }
 }
-
-export default Selector

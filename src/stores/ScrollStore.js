@@ -1,28 +1,38 @@
+// @ts-check
+import '../types'
 import DragSelect from '../DragSelect'
-import { getCurrentScroll, vect2 } from '../methods'
+import { getCurrentScroll, vect2, debounce } from '../methods'
 
 export default class ScrollStore {
   /** @type {Vect2} @private */
   _initialVal
   /** @type {Vect2} @private */
   _currentVal
+  /** @type {DSArea} @private */
+  _areaElement
 
-  /** @param {{ DS:DragSelect, zoom:number }} p */
-  constructor({ DS, zoom }) {
+  /** @param {{ DS:DragSelect, areaElement: DSArea, zoom:number }} p */
+  constructor({ DS, areaElement, zoom }) {
+    this._areaElement = areaElement
     this.DS = DS
     this.zoom = zoom
+
+    this.DS.subscribe('MainLoop:start', ({ event }) => this.start())
+    this.DS.subscribe('MainLoop:end', ({ event }) => this.stop())
   }
 
-  start() {
-    this.currentVal = this.initialVal = getCurrentScroll(this.DS.Area.HTMLNode)
+  start = () => {
+    this._currentVal = this._initialVal = getCurrentScroll(this._areaElement)
+    this._areaElement.addEventListener('scroll', this.update)
   }
 
-  update() {
-    this.currentVal = getCurrentScroll(this.DS.Area.HTMLNode)
+  update = () => {
+    this._currentVal = getCurrentScroll(this._areaElement)
   }
 
-  reset() {
-    this.initialVal = { x: 0, y: 0 }
+  stop = () => {
+    this._areaElement.removeEventListener('scroll', this.update)
+    this._initialVal = { x: 0, y: 0 }
   }
 
   get scrollAmount() {
@@ -50,13 +60,5 @@ export default class ScrollStore {
   get currentVal() {
     if (!this._currentVal) return { x: 0, y: 0 }
     return this._currentVal
-  }
-
-  set initialVal(value) {
-    this._initialVal = value
-  }
-
-  set currentVal(value) {
-    this._currentVal = value
   }
 }

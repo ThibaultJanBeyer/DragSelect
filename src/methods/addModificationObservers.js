@@ -11,10 +11,10 @@ export default (nodes, callback, modificationObserver) => {
   window.addEventListener('resize', callback)
   window.addEventListener('scroll', callback)
 
-  nodes.forEach((el, i) =>
+  nodes.forEach((el, i) => {
     modificationObserver.observe(el, {
       childList: i !== 0,
       attributes: true,
     })
-  )
+  })
 }

@@ -13,11 +13,7 @@ class SelectorArea {
   /** @type {DSEdges} @private */
   _currentEdges
   /** @type {number} @private */
-  _autoScrollInterval
-  /** @type {number} */
-  autoScrollSpeed
-  /** @type {number} @private */
-  _subAreaModified
+  _autoScrollSpeed
 
   /**
    * @class SelectorArea
@@ -26,7 +22,7 @@ class SelectorArea {
    * @ignore
    */
   constructor({ DS, selectorAreaClass, autoScrollSpeed }) {
-    this.autoScrollSpeed = autoScrollSpeed === 0 ? 0 : autoScrollSpeed
+    this._autoScrollSpeed = autoScrollSpeed
     this.DS = DS
     this.Element = new Element({
       node: createSelectorAreaElement(selectorAreaClass),
@@ -34,72 +30,48 @@ class SelectorArea {
 
     this.HTMLNode.append(this.DS.Selector.HTMLNode)
     document.body.append(this.HTMLNode)
+
+    this.DS.subscribe('Area:modified', this.updatePos)
+    this.DS.subscribe('MainLoop:update', this.handleAutoScroll)
+    this.DS.subscribe('MainLoop:end', this.stop)
   }
 
-  /** Add observers */
-  start() {
-    this._subAreaModified = this.DS.subscribe('Area:modified', this.updatePos)
-  }
-
-  /** Remove observers */
-  stop() {
-    this.DS.unsubscribe('Area:modified', null, this._subAreaModified)
-
-    if (this._autoScrollInterval) {
-      window.clearInterval(this._autoScrollInterval)
-      this._autoScrollInterval = null
-    }
-
+  stop = () => {
     this.Element.stop()
   }
 
-  /**
-   * Updates the selectorAreas positions to match the areas
-   */
+  /** Updates the selectorAreas positions to match the areas */
   updatePos = () => {
-    console.log('UPDATE POS')
     const rect = this.DS.Area.boundingClientRect
     const border = this.DS.Area.computedBorder
-    this.HTMLNode.style.top = `${rect.top + border.top}px`
-    this.HTMLNode.style.left = `${rect.left + border.left}px`
-    this.HTMLNode.style.width = `${rect.width}px`
-    this.HTMLNode.style.height = `${rect.height}px`
-  }
-
-  reset() {
-    this.stop()
-    this.start()
+    const { style } = this.HTMLNode
+    const top = `${rect.top + border.top}px`
+    const left = `${rect.left + border.left}px`
+    const width = `${rect.width}px`
+    const height = `${rect.height}px`
+    if (style.top !== top) style.top = top
+    if (style.left !== left) style.left = left
+    if (style.width !== width) style.width = width
+    if (style.height !== height) style.height = height
   }
 
   //////////////////////////////////////////////////////////////////////////////////////
   // Autoscroll
 
-  /**
-   * Creates an interval that autoscrolls while the cursor is near the edge
-   */
-  handleAutoscroll() {
+  /** Creates an interval that autoscrolls while the cursor is near the edge */
+  handleAutoScroll = ({ dt }) => {
     const {
-      stores: { PointerStore, ScrollStore },
+      stores: { PointerStore },
       Area,
-      Selector,
     } = this.DS
 
-    this._currentEdges = isCursorNearEdges({
+    const currentEdges = isCursorNearEdges({
       position: PointerStore.currentValArea,
       boundingRect: Area.boundingClientRect,
     })
 
-    if (this._currentEdges.length) {
-      if (this._autoScrollInterval) return
-
-      this._autoScrollInterval = window.setInterval(() => {
-        ScrollStore.update()
-        Selector.update()
-        Area.scroll(this._currentEdges, this.autoScrollSpeed)
-      }, 25)
-    } else if (!this._currentEdges.length && this._autoScrollInterval) {
-      window.clearInterval(this._autoScrollInterval)
-      this._autoScrollInterval = null
+    if (currentEdges.length) {
+      Area.scroll(currentEdges, this._autoScrollSpeed / dt)
     }
   }
 
@@ -158,10 +130,6 @@ class SelectorArea {
 
   get computedStyle() {
     return this.Element.computedStyle
-  }
-
-  set HTMLNode(element) {
-    this.Element.HTMLNode = element
   }
 }
 

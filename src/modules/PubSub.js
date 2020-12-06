@@ -1,3 +1,6 @@
+// @ts-check
+import '../types'
+
 export default class PubSub {
   subscribers = {}
 

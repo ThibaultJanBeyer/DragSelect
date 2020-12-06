@@ -26,7 +26,7 @@ export const calc = ({ x: x1, y: y1 }, operator, { x: x2, y: y2 }) => {
 }
 
 /**
- * @param {DSBoundingRect} rect
+ * @param {{left:number,top:number}} rect
  * @returns {Vect2}
  */
 export const rect2vect = (rect) => ({ x: rect.left, y: rect.top })
