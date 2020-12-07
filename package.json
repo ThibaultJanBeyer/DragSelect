@@ -16,10 +16,11 @@
     "premedia": "rm -r docs/media &",
     "rm": "rm -rf dist docs",
     "rollup": "rollup -c",
+    "rollup:travis": "rollup -c --travis",
     "rollup:watch": "npm run rollup -- -w",
     "test": "npm run checkjs && jest --detectOpenHandles",
     "test:watch": "jest --watch",
-    "travis:build": "npm run rollup && npm run media && npm run docs",
+    "travis:build": "npm run rollup:travis && npm run media && npm run docs",
     "travis:test": "npm run rollup && npm run test"
   },
   "devDependencies": {
