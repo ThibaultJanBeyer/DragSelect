@@ -22,7 +22,8 @@ easily add a selection algorithm to your application/website.
 - [Supporters](#supporters)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Properties](#properties)
+- [Constructor Properties](#constructor-properties)
+- [Callbacks](#callbacks)
 - [Methods](#methods)
 - [Classes](#classes)
 
@@ -62,7 +63,7 @@ Thanks to:
 |--- |--- |
 |[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or [Get in touch](mailto:thibault.beyer@gmail.com) |
 # Installation
-## easy
+## global
 
 Just [download the file](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/docs/DragSelect.js) ([minified](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/docs/ds.min.js)) and add it to your document:
 
@@ -70,7 +71,9 @@ Just [download the file](https://github.com/ThibaultJanBeyer/DragSelect/blob/mas
 <script src="https://thibaultjanbeyer.github.io/DragSelect/ds.min.js"></script>
 ```
 
-*Note: if you are using `<script type=module` you can use the `DragSelect.es6m.js` or `ds.es6m.min.js` files as they include `export default DragSelect`*
+> Note: if you are using `<script type=module` you can use the `DragSelect.es6m.js` or `ds.es6m.min.js` files as they include `export default DragSelect`
+
+> We don't recommend the direct linking for production set-up since you'll not benefit from versioning. Please use `npm` or `bower` if you can.
 
 ## npm
 ```console
@@ -112,57 +115,29 @@ Here the selection is constrained. You can only use the selection inside of the 
 
 ## extended
 
-All options are optional. You could also just initiate the Dragselect by `new DragSelect();` without any option.  
+All options are optional. You could also just initiate the Dragselect by `new DragSelect({});` without any option.  
 Find all possible properties and methods in **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**  
 
 ```javascript
-var ds = new DragSelect({
-
+const ds = new DragSelect({
   // node/nodes that can be selected.
   // This is also optional, you could just add them later with .addSelectables().
-  selectables: document.getElementsByClassName('selectable-nodes'),
-  // draggable element. By default one will be created.
-  selector: document.getElementById('rectangle'),
-  // area in which you can drag. If not provided it will be the whole document.
-  area: document.getElementById('area'), 
-  // If set to true, no styles (except for position absolute) will be applied by default.
-  customStyles: false,
-  // special keys that allow multiselection. Default value below.
-  multiSelectKeys: ['ctrlKey', 'shiftKey', 'metaKey'],
-  // If set to true, the multiselection behavior will be turned on by default without pressing
-  // modifier keys. Default: false
-  multiSelectMode: false,
-  // Speed in which the area scrolls while selecting (if available).
-  // Unit is pixel per movement. Set to 0 to disable autoscrolling. Default = 1
-  autoScrollSpeed: 3,
-
-  // fired when the user clicks in the area. This callback gets the event object.
-  // Executed after DragSelect function code ran, before the setup of event listeners.
-  onDragStart: function(element) {},
-  // fired when the user drags. This callback gets the event object.
-  // Executed before DragSelect function code ran, after getting the current mouse position.
-  onDragMove: function(element) {},
-  // fired every time an element is selected. (element) = just selected node
-  onElementSelect: function(element) {},
-  // fired every time an element is de-selected. (element) = just de-selected node.
-  onElementUnselect: function(element) {},
-  // fired once the user releases the mouse. (elements) = selected nodes.
-  callback: function(elements) {}
-
+  selectables: document.querySelectorAll('.selectable-nodes'),
+  // area in which you can drag. If not provided it will be the whole document & body/documentElement.
+  area: document.getElementById('area'),
+  // and many more, see "properties" section in the docs
 });
 
-// if you add the function to a variable like we did, you have access to all its functions
-// and can now use start() and stop() like so:
+// fired once the user releases the mouse. (items) = selected nodes.
+ds.subscribe('callback', ({ items, event }) => {})
+
+// if you add the function to a variable like we did, you have access to all its functions:
 ds.getSelection(); // returns all currently selected nodes
 
-// adds elements that can be selected. Intelligent algorithm never adds elements twice.
+// adds elements that can be selected. Won't add elements twice.
 ds.addSelectables(document.getElementsByClassName('selectable-node'));
 
-// used in callbacks to disable the execution of the upcoming code.
-// It will not teardown the functionality.
-ds.break(); 
-
-ds.stop();  // will teardown/stop the whole functionality
+ds.stop(); // will teardown/stop the whole functionality
 ds.start(); // reset the functionality after a teardown
 
 // and many more, see "methods" section in documentation
@@ -170,10 +145,10 @@ ds.start(); // reset the functionality after a teardown
 
 *You can also use the "shift", "ctrl" or "command" key to make multiple independent selections.*
 
-## Mobile/Touch useage
+## Mobile/Touch usage
 
-Keep in mind that using DragSelect on a mobile/touch device will also turn off the default scroll behaviour (on `click` + `drag` interaction).
-In 99% of the usecases, this is what you want. If DragSelect is only one part of a website, and you still want to be able to scroll the page on mobile, you can use an `area` [property](#properties). This way the scroll behaviour remains for all the rest of the page.
+Keep in mind that using DragSelect on a mobile/touch device will also turn off the default scroll behavior (on `click` + `drag` interaction).
+In 99% of the use-cases, this is what you want. If DragSelect is only one part of a website, and you still want to be able to scroll the page on mobile, you can use an `area` [property](#constructor-properties). This way the scroll behavior remains for all the rest of the page.
 
 ## Accessibility (a11y)
 
@@ -181,35 +156,49 @@ DragSelect is accessibly by default:
 
 > TLDR; => Your `selectables` should be buttons: `<button type="button"></button>`.  
 
-Obviously, keyboard users won’t get the full visual experience but it works similarely to the OS default behaviour. You can select items using the default select keys (usually space or enter) and also multiselect when using a modifier key at the same time (unfortunately this does not work in firefox for now since FF doesn’t add the modifier key in the event object when using the keyboard). There is one little thing you have to do tho’: the `selectables` have to be pressable (clickable)! To achieve this, they should be of type `<button type="button"></button>`.  
+Obviously, keyboard users won’t get the full visual experience but it works similarly to the OS default behavior. You can select items using the default select keys (usually space or enter) and also multi-select when using a modifier key at the same time (unfortunately this does not work in firefox for now since FF doesn’t add the modifier key in the event object when using the keyboard). There is one little thing you have to do tho’: the `selectables` have to be pressable (clickable)! To achieve this, they should be of type `<button type="button"></button>`.  
 
 <p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="html,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">DragSelect</a> on CodePen.</p>
 
-# Properties:
+# Constructor Properties:
 
-Full list of properties is found in **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**  
-Here are some properties for your convenience (not all):  
+Full list of properties to pass to the constructor object is found in **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**  
+Here are some properties for your convenience. Note, all properties are optional:  
 
-| property | type | usage |
-|--- |--- |--- |
-|selectables |DOM elements (nodes) |OPTIONAL. The elements that can be selected |
-|selector |single DOM element (node) |OPTIONAL. The square that will draw the selection. Autocreated by default |
-|area |single DOM element (node) |OPTIONAL. The square in which you are able to select |
-|customStyles |boolean |OPTIONAL. If true, no styles will be automatically applied (except position: absolute). Default: `false` |
-|multiSelectKeys |array |OPTIONAL. An array of keys that allows switching to the multi-select mode (see the multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the funcionality. Default: `['ctrlKey', 'shiftKey', 'metaKey']` |
-|multiSelectMode |boolean |OPTIONAL. Add newly selected elements to the selection instead of replacing them. Default = `false` |
-|autoScrollSpeed |integer |OPTIONAL. The speed in which the area scrolls while selecting (if available). The unit is pixel per movement. Set to `0.0001` to disable autoscrolling. Default = `1` |
-|selectedClass |string |OPTIONAL. The class name assigned to the selected items. Default = [see classes](#classes) |
-|hoverClass |string |OPTIONAL. The class name assigned to the mouse hovered items. Default = [see classes](#classes) |
-|multiSelectToggling |boolean |OPTIONAL. Whether or not to toggle already active elements while multi-selecting. Default = `true` |
-|selectorClass |string |OPTIONAL. The class name assigned to the square selector helper. Default = [see classes](#classes) |
-|selectableClass |string |OPTIONAL. The class name assigned to the elements that can be selected. Default = [see classes](#classes) |
-|onDragStartBegin |function |OPTIONAL. Fired when the user clicks in the area. This callback gets the event object. Executed **before** DragSelect function code runs |
-|onDragStart |function |OPTIONAL. Fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, befor the setup of event listeners |
-|onDragMove |function |OPTIONAL. Fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position |
-|onElementSelect |function |OPTIONAL. Fired every time an element is selected. This callback gets a property which is the selected node |
-|onElementUnselect |function |OPTIONAL. Fired every time an element is de-selected. This callback gets a property which is the de-selected node |
-|callback |function |OPTIONAL. Callback function that gets fired when the selection is released. This callback gets a property which is an array that holds all selected nodes |
+| property | type | usage | default |
+|--- |--- |--- |--- |
+|area |single DOM element (node) |The square in which you are able to select |document
+|selectables |DOM elements (nodes) |The elements that can be selected | []
+|autoScrollSpeed |number |The speed in which the area scrolls while selecting (if available). The unit is arbitrary (interval aims for 30fps). Set to `0.0001` to disable auto-scrolling. |`50`
+|zoom |number |Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom. |`1`
+|customStyles |boolean |If true, no styles will be automatically applied to the selector element (except position: absolute). |`false`
+|multiSelectMode |boolean |Add newly selected elements to the selection instead of replacing them. |`false`
+|multiSelectToggling |boolean |Whether or not to toggle already active elements while multi-selecting. |`true` (MacOS selection behavior)
+|multiSelectKeys |array |Keys that allows switching to the multi-select mode (see the multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality. |`['ctrlKey', 'shiftKey', 'metaKey']`
+|selector |single DOM element (node) |The square that will be used to draw the selection. | Auto-created HTML Element
+|selectedClass |string |The class name assigned to the selected items. |[see classes](#classes)
+|hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)
+|selectorClass |string |The class name assigned to the square selector helper. |[see classes](#classes)
+|selectableClass |string |The class name assigned to the elements that can be selected. |[see classes](#classes)
+
+# Callbacks
+
+Callbacks are used like this:
+
+```JavaScript
+ds.subscribe('<callback_name>', (callback_object) => {})
+```
+
+DragSelect offers a lot of useful callbacks to react to changes, check out **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**. Here are some for your convenience:  
+
+|callback_name |callback_object |description |
+|--- |--- |---
+|callback |`{ items, event }` |Fired after the selection (i.e. on mouse-up). 
+|dragstart |`{ items, event }` |Fired when the selection starts (i.e. on mouse-down). 
+|dragmove |`{ items, event }` |Fired when the mouse moves while dragging (i.e. on mouse-move).
+|autoscroll |`{ data }` |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
+|elementselect |`{ items, item }` |Fired when an element is added to the selection.
+|elementunselect |`{ items, item }` |Fired when an element is removed from the selection.
 
 # Methods:
 When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions.  
@@ -217,23 +206,23 @@ There are way more than listed here. You can find all in **[the docs](https://th
 
 | method | properties | usage |
 |--- |--- |--- |
-|stop |/ |Will teardown/stop the whole functionality |
-|start |/ |Reset the functionality after a teardown |
-|break |/ |Used in callbacks to disable the execution of the upcoming code. It will not teardown the functionality |
-|getSelection |/ |Returns all currently selected nodes |
-|addSelection |DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables) |adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. By default, it checks if all elements ere alos in the list of selectables and adds them if not (can be turned off by setting the last boolean to true) |
-|removeSelection |DOM elements (nodes), Boolean (callback), Boolean (removeFromSelectables) |removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last bolean is set to true, it also removes them from the possible selectable nodes if they were. |
-|toggleSelection |DOM elements (nodes), Boolean (callback), Boolean (special) |toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If boolean is set to true: callback will be called afterward. If last boolean is set to true, it also removes selected elements from possible selectable nodes & doesn’t add them to selectables if they are not. |
-|setSelection |DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables) |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. By default, it checks if all elements ere alos in the list of selectables and adds them if not (can be turned off by setting the last boolean to true) |
+|stop |/ |Will teardown/stop the whole functionality
+|start |/ |Reset the functionality after a teardown
+|getSelection |/ |Returns all currently selected nodes 
+|addSelection |DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables) |adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true) 
+|removeSelection |DOM elements (nodes), Boolean (callback), Boolean (removeFromSelectables) |removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last boolean is set to true, it also removes them from the possible selectable nodes if they were. 
+|toggleSelection |DOM elements (nodes), Boolean (callback), Boolean (alsoSelectables) |toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If boolean is set to true: callback will be called afterward. If last boolean is set to true, it also removes selected elements from possible selectable nodes & doesn’t add them to selectables if they are not (can be turned off by setting the last boolean to true).
+|setSelection |DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables) |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true)
 |clearSelection |DOM elements (nodes), Boolean (callback) |remove all elements from the selection. If boolean is set to true: callback will be called afterwards. |
-|addSelectables |DOM elements (nodes), Boolean (addToSelection) |Adds elements that can be selected. Don’t worry, a smart algorithm makes sure that nodes are never added twice. If boolean is set to true: elements will also be added to current selection. |
-|removeSelectables |DOM elements (nodes), Boolean (removeFromSelection) |Remove elements that can be selected. If boolean is set to true: elements will also be removed from current selection. |
-|getSelectables |/ |Returns array with all nodes that can be selected. |
-|setSelectables |DOM elements (nodes), Boolean (removeFromSelection), Boolean (addToSelection) |Sets all elements that can be selected. Removes all current selectables (& their respective applied classes). Adds the new set to the selectables set. Thus, replacing the original set. First boolean if old elements should be removed from the selection. Second boolean if new elements should be added to the selection. |
-|getInitialCursorPosition |/ |Returns the registered x, y coordinates the cursor had when first clicked |
-|getCurrentCursorPosition |/ |Returns current/last registered x, y coordinates of the cursor |
-|getCursorPositionDifference |Boolean (usePreviousCursorDifference) |Returns object with the x, y difference between the initial and the last cursor position. If the argument is set to true, it will instead return the x, y difference to the previous selection |
-|getCursorPos |Event, Node (_area), Boolean (ignoreScroll) |Returns the cursor x, y coordinates *based on a click event object*. The click event object is required. By default, takes scroll and area into consideration. Area is this.area by default and can be fully ignored by setting the second argument explicitely to false. Scroll can be ignored by setting the third argument to true. |
+|addSelectables |DOM elements (nodes), Boolean (addToSelection) |Adds elements that can be selected. Don’t worry, nodes are never added twice. If boolean is set to true: elements will also be added to current selection.
+|removeSelectables |DOM elements (nodes), Boolean (removeFromSelection) |Remove elements from the set of elements that can be selected. If boolean is set to true: elements will also be removed from current selection.
+|getSelectables |/ |Returns array with all nodes that can be selected.
+|setSelectables |DOM elements (nodes), Boolean (removeFromSelection), Boolean (addToSelection) |Sets all elements that can be selected. Removes all current selectables (& their respective applied classes). Adds the new set to the selectables set. Thus, replacing the original set. First boolean if old elements should be removed from the selection. Second boolean if new elements should be added to the selection. 
+|getInitialCursorPosition |/ |Returns the registered x, y coordinates the cursor had when first clicked 
+|getCurrentCursorPosition |/ |Returns current/last registered x, y coordinates of the cursor 
+|getPreviousCursorPosition |/ |Returns last registered x, y coordinates of the cursor (after last callback) 
+|getCursorPositionDifference |Boolean (usePreviousCursorDifference) |Returns object with the x, y difference between the initial and the last cursor position. If the argument is set to true, it will instead return the x, y difference to the previous coordinates |
+|isMultiSelect |/ |Whether the multi-select key is currently pressed
 
 # Classes
 | name | trigger |
@@ -241,6 +230,7 @@ There are way more than listed here. You can find all in **[the docs](https://th
 |.ds-selected |On elements that are selected
 |.ds-hover |On elements that are currently hovered
 |.ds-selector |On the selector element
+|.ds-selector-area |The overlay where the selector resides in
 |.ds-selectable |On elements that can be selected
 
 *note: you can change the class names setting the respective property on the constructor, see **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)** properties section.*
@@ -249,7 +239,7 @@ There are way more than listed here. You can find all in **[the docs](https://th
 
 Creating and maintaining useful tools is a lot of work. 
 So don’t forget to give this repository a star if you find it useful.
-Star this repo, tell all your friends and start contributing or [donating 1$](https://paypal.me/pools/c/8gF2a5szCP) to keep it running. Thank you :)
+Star this repo, tell all your friends and start contributing and/or [donating 1$](https://paypal.me/pools/c/8gF2a5szCP) to keep it running. Thank you :)
 
 [![Typewriter Gif](https://thibaultjanbeyer.github.io/DragSelect/media/typewriter.gif)](http://thibaultjanbeyer.com/)
 

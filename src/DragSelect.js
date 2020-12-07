@@ -67,23 +67,23 @@ class DragSelect {
    */
   constructor({
     area = document,
+    selectables = [],
     autoScrollSpeed = 50,
+    zoom = 1,
     customStyles = false,
-    hoverClass = 'ds-hover',
-    multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
     multiSelectMode = false,
     multiSelectToggling = true,
-    selectableClass = 'ds-selectable',
-    selectables = [],
-    selectedClass = 'ds-selected',
+    multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
     selector = undefined,
+    hoverClass = 'ds-hover',
+    selectableClass = 'ds-selectable',
+    selectedClass = 'ds-selected',
     selectorClass = 'ds-selector',
     selectorAreaClass = 'ds-selector-area',
-    zoom = 1,
     callback,
     onDragMove,
-    onDragStart,
     onDragStartBegin,
+    onDragStart,
     onElementSelect,
     onElementUnselect,
   }) {
@@ -164,6 +164,11 @@ class DragSelect {
       this.publish('dragmove', {
         items: this.getSelection(),
         event,
+      })
+    )
+    this.subscribe('Area:scroll', ({ directions }) =>
+      this.publish('autoscroll', {
+        data: directions,
       })
     )
     this.subscribe('Interaction:start', ({ event }) =>

@@ -267,16 +267,17 @@ function _nonIterableSpread() {
  * The Settings to be passed to the Class
  * @typedef {Object} Settings
  * @property {HTMLElement|SVGElement|HTMLDocument} [area=document] area in which you can drag. If not provided it will be the whole document
- * @property {number} [autoScrollSpeed=10] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
+ * @property {DSInputElements} [selectables=[]] the elements that can be selected
+ * @property {number} [autoScrollSpeed=50] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
  * @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom.
  * @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
- * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them
  * @property {boolean} [multiSelectToggling=true] Whether or not to toggle already active elements while multi-selecting
- * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
- * @property {DSInputElements} [selectables=[]] the elements that can be selected
- * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
+ * @property {Array.<'ctrlKey'|'shiftKey'|'metaKey'>} [multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
+ * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
+ * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
+ * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
  * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
  * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
  * @property {DSCallbackEvent} [callback] Deprecated: please use DragSelect.subscribe('callback', callback) instead
@@ -285,7 +286,6 @@ function _nonIterableSpread() {
  * @property {DSDragStartEvent} [onDragStart]  Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
  * @property {DSElementSelectEvent} [onElementSelect]  Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
  * @property {DSElementUnSelectEvent} [onElementUnselect]  Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
- * @property {Array.<'ctrlKey'|'shiftKey'|'metaKey'>} [multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  */
 
 /**
@@ -351,7 +351,7 @@ function _nonIterableSpread() {
 
 /** @typedef {Array.<'ctrlKey'|'shiftKey'|'metaKey'>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
 
-/** @typedef {'dragmove'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
+/** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
 
 /** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'} DSInternalEventNames */
 
@@ -955,7 +955,9 @@ var Area = /*#__PURE__*/function () {
     _defineProperty(this, "scroll", function (directions, multiplier) {
       scrollElement(_this._node, directions, multiplier);
 
-      _this.PubSub.publish('Area:scroll', {});
+      _this.PubSub.publish('Area:scroll', {
+        directions: directions
+      });
     });
 
     this._node = area;
@@ -2091,36 +2093,36 @@ var DragSelect = /*#__PURE__*/function () {
 
     var _ref$area = _ref.area,
         area = _ref$area === void 0 ? document : _ref$area,
+        _ref$selectables = _ref.selectables,
+        selectables = _ref$selectables === void 0 ? [] : _ref$selectables,
         _ref$autoScrollSpeed = _ref.autoScrollSpeed,
         autoScrollSpeed = _ref$autoScrollSpeed === void 0 ? 50 : _ref$autoScrollSpeed,
+        _ref$zoom = _ref.zoom,
+        zoom = _ref$zoom === void 0 ? 1 : _ref$zoom,
         _ref$customStyles = _ref.customStyles,
         customStyles = _ref$customStyles === void 0 ? false : _ref$customStyles,
-        _ref$hoverClass = _ref.hoverClass,
-        hoverClass = _ref$hoverClass === void 0 ? 'ds-hover' : _ref$hoverClass,
-        _ref$multiSelectKeys = _ref.multiSelectKeys,
-        multiSelectKeys = _ref$multiSelectKeys === void 0 ? ['ctrlKey', 'shiftKey', 'metaKey'] : _ref$multiSelectKeys,
         _ref$multiSelectMode = _ref.multiSelectMode,
         multiSelectMode = _ref$multiSelectMode === void 0 ? false : _ref$multiSelectMode,
         _ref$multiSelectToggl = _ref.multiSelectToggling,
         multiSelectToggling = _ref$multiSelectToggl === void 0 ? true : _ref$multiSelectToggl,
-        _ref$selectableClass = _ref.selectableClass,
-        selectableClass = _ref$selectableClass === void 0 ? 'ds-selectable' : _ref$selectableClass,
-        _ref$selectables = _ref.selectables,
-        selectables = _ref$selectables === void 0 ? [] : _ref$selectables,
-        _ref$selectedClass = _ref.selectedClass,
-        selectedClass = _ref$selectedClass === void 0 ? 'ds-selected' : _ref$selectedClass,
+        _ref$multiSelectKeys = _ref.multiSelectKeys,
+        multiSelectKeys = _ref$multiSelectKeys === void 0 ? ['ctrlKey', 'shiftKey', 'metaKey'] : _ref$multiSelectKeys,
         _ref$selector = _ref.selector,
         selector = _ref$selector === void 0 ? undefined : _ref$selector,
+        _ref$hoverClass = _ref.hoverClass,
+        hoverClass = _ref$hoverClass === void 0 ? 'ds-hover' : _ref$hoverClass,
+        _ref$selectableClass = _ref.selectableClass,
+        selectableClass = _ref$selectableClass === void 0 ? 'ds-selectable' : _ref$selectableClass,
+        _ref$selectedClass = _ref.selectedClass,
+        selectedClass = _ref$selectedClass === void 0 ? 'ds-selected' : _ref$selectedClass,
         _ref$selectorClass = _ref.selectorClass,
         selectorClass = _ref$selectorClass === void 0 ? 'ds-selector' : _ref$selectorClass,
         _ref$selectorAreaClas = _ref.selectorAreaClass,
         selectorAreaClass = _ref$selectorAreaClas === void 0 ? 'ds-selector-area' : _ref$selectorAreaClas,
-        _ref$zoom = _ref.zoom,
-        zoom = _ref$zoom === void 0 ? 1 : _ref$zoom,
         callback = _ref.callback,
         onDragMove = _ref.onDragMove,
-        onDragStart = _ref.onDragStart,
         onDragStartBegin = _ref.onDragStartBegin,
+        onDragStart = _ref.onDragStart,
         onElementSelect = _ref.onElementSelect,
         onElementUnselect = _ref.onElementUnselect;
 
@@ -2248,15 +2250,21 @@ var DragSelect = /*#__PURE__*/function () {
         event: event
       });
     });
-    this.subscribe('Interaction:start', function (_ref5) {
-      var event = _ref5.event;
+    this.subscribe('Area:scroll', function (_ref5) {
+      var directions = _ref5.directions;
+      return _this.publish('autoscroll', {
+        data: directions
+      });
+    });
+    this.subscribe('Interaction:start', function (_ref6) {
+      var event = _ref6.event;
       return _this.publish('dragstart', {
         items: _this.getSelection(),
         event: event
       });
     });
-    this.subscribe('Interaction:end', function (_ref6) {
-      var event = _ref6.event;
+    this.subscribe('Interaction:end', function (_ref7) {
+      var event = _ref7.event;
       return _this.publish('callback', {
         items: _this.getSelection(),
         event: event
@@ -2273,13 +2281,13 @@ var DragSelect = /*#__PURE__*/function () {
   _createClass(DragSelect, [{
     key: "_callbacksTemp",
     // @TODO: remove after deprecation
-    value: function _callbacksTemp(_ref7) {
-      var callback = _ref7.callback,
-          onDragMove = _ref7.onDragMove,
-          onDragStart = _ref7.onDragStart,
-          onDragStartBegin = _ref7.onDragStartBegin,
-          onElementSelect = _ref7.onElementSelect,
-          onElementUnselect = _ref7.onElementUnselect;
+    value: function _callbacksTemp(_ref8) {
+      var callback = _ref8.callback,
+          onDragMove = _ref8.onDragMove,
+          onDragStart = _ref8.onDragStart,
+          onDragStartBegin = _ref8.onDragStartBegin,
+          onElementSelect = _ref8.onElementSelect,
+          onElementUnselect = _ref8.onElementUnselect;
 
       var warnMessage = function warnMessage(name, newName) {
         return console.warn("[DragSelect] ".concat(name, " is being deprecated. Use DragSelect.subscribe(\"").concat(newName, "\", (callbackObject) => {}) instead. See docs for more info"));
@@ -2287,60 +2295,60 @@ var DragSelect = /*#__PURE__*/function () {
 
       if (callback) {
         warnMessage('callback', 'callback');
-        this.subscribe('callback', function (_ref8) {
-          var items = _ref8.items,
-              item = _ref8.item,
-              event = _ref8.event;
+        this.subscribe('callback', function (_ref9) {
+          var items = _ref9.items,
+              item = _ref9.item,
+              event = _ref9.event;
           return callback(items, event);
         });
       }
 
       if (onDragMove) {
         warnMessage('onDragMove', 'dragmove');
-        this.subscribe('dragmove', function (_ref9) {
-          var items = _ref9.items,
-              item = _ref9.item,
-              event = _ref9.event;
+        this.subscribe('dragmove', function (_ref10) {
+          var items = _ref10.items,
+              item = _ref10.item,
+              event = _ref10.event;
           return onDragMove(event);
         });
       }
 
       if (onDragStart) {
         warnMessage('onDragStart', 'dragstart');
-        this.subscribe('dragstart', function (_ref10) {
-          var items = _ref10.items,
-              item = _ref10.item,
-              event = _ref10.event;
+        this.subscribe('dragstart', function (_ref11) {
+          var items = _ref11.items,
+              item = _ref11.item,
+              event = _ref11.event;
           return onDragStart(event);
         });
       }
 
       if (onDragStartBegin) {
         warnMessage('onDragStartBegin', 'dragstart');
-        this.subscribe('dragstart', function (_ref11) {
-          var items = _ref11.items,
-              item = _ref11.item,
-              event = _ref11.event;
+        this.subscribe('dragstart', function (_ref12) {
+          var items = _ref12.items,
+              item = _ref12.item,
+              event = _ref12.event;
           return onDragStartBegin(event);
         });
       }
 
       if (onElementSelect) {
         warnMessage('onElementSelect', 'elementselect');
-        this.subscribe('elementselect', function (_ref12) {
-          var items = _ref12.items,
-              item = _ref12.item,
-              event = _ref12.event;
+        this.subscribe('elementselect', function (_ref13) {
+          var items = _ref13.items,
+              item = _ref13.item,
+              event = _ref13.event;
           return onElementSelect(item, event);
         });
       }
 
       if (onElementUnselect) {
         warnMessage('onElementUnselect', 'elementunselect');
-        this.subscribe('elementunselect', function (_ref13) {
-          var items = _ref13.items,
-              item = _ref13.item,
-              event = _ref13.event;
+        this.subscribe('elementunselect', function (_ref14) {
+          var items = _ref14.items,
+              item = _ref14.item,
+              event = _ref14.event;
           return onElementUnselect(item, event);
         });
       }
