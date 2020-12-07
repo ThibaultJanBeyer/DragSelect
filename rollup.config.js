@@ -73,8 +73,9 @@ export default {
       name: 'copy',
       writeBundle(options) {
         if (!fs.existsSync('docs/')) fs.mkdirSync('docs')
-        fs.copyFileSync(options.file, `docs/${path.basename(options.file)}`)
-        console.log(options.file, `docs/${path.basename(options.file)}`)
+        if (!fs.existsSync('docs/v2')) fs.mkdirSync('docs/v2')
+        fs.copyFileSync(options.file, `docs/v2/${path.basename(options.file)}`)
+        console.log(options.file, `docs/v2/${path.basename(options.file)}`)
       },
     },
     {

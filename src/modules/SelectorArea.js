@@ -1,7 +1,6 @@
 // @ts-check
 import '../types.js'
 import DragSelect from '../DragSelect'
-import { Element } from './'
 import {
   createSelectorAreaElement,
   isCollision,
@@ -9,11 +8,11 @@ import {
   isInsideElement,
 } from '../methods'
 
-class SelectorArea {
-  /** @type {DSEdges} @private */
-  _currentEdges
+export default class SelectorArea {
   /** @type {number} @private */
   _autoScrollSpeed
+  /** @type {*} @private */
+  _scrollInterval
 
   /**
    * @class SelectorArea
@@ -24,20 +23,15 @@ class SelectorArea {
   constructor({ DS, selectorAreaClass, autoScrollSpeed }) {
     this._autoScrollSpeed = autoScrollSpeed
     this.DS = DS
-    this.Element = new Element({
-      node: createSelectorAreaElement(selectorAreaClass),
-    })
 
+    this.HTMLNode = createSelectorAreaElement(selectorAreaClass)
     this.HTMLNode.append(this.DS.Selector.HTMLNode)
-    document.body.append(this.HTMLNode)
+    const docEl = document.body ? 'body' : 'documentElement'
+    document[docEl].append(this.HTMLNode)
 
     this.DS.subscribe('Area:modified', this.updatePos)
-    this.DS.subscribe('MainLoop:update', this.handleAutoScroll)
-    this.DS.subscribe('MainLoop:end', this.stop)
-  }
-
-  stop = () => {
-    this.Element.stop()
+    this.DS.subscribe('Interaction:start', this.startAutoScroll)
+    this.DS.subscribe('Interaction:end', this.stopAutoScroll)
   }
 
   /** Updates the selectorAreas positions to match the areas */
@@ -56,10 +50,13 @@ class SelectorArea {
   }
 
   //////////////////////////////////////////////////////////////////////////////////////
-  // Autoscroll
+  // AutoScroll
 
-  /** Creates an interval that autoscrolls while the cursor is near the edge */
-  handleAutoScroll = ({ dt }) => {
+  startAutoScroll = () =>
+    (this._scrollInterval = setInterval(() => this.handleAutoScroll(), 16))
+
+  /** Creates an interval that auto-scrolls while the cursor is near the edge */
+  handleAutoScroll = () => {
     const {
       stores: { PointerStore },
       Area,
@@ -70,10 +67,10 @@ class SelectorArea {
       boundingRect: Area.boundingClientRect,
     })
 
-    if (currentEdges.length) {
-      Area.scroll(currentEdges, this._autoScrollSpeed / dt)
-    }
+    if (currentEdges.length) Area.scroll(currentEdges, this._autoScrollSpeed)
   }
+
+  stopAutoScroll = () => clearInterval(this._scrollInterval)
 
   //////////////////////////////////////////////////////////////////////////////////////
   // Booleans
@@ -103,34 +100,15 @@ class SelectorArea {
       h: 0,
     }
 
+    const boundingClientRect = this.HTMLNode.getBoundingClientRect()
+
     const areaRect = {
-      x: this.boundingClientRect.left,
-      y: this.boundingClientRect.top,
+      x: boundingClientRect.left,
+      y: boundingClientRect.top,
       w: this.HTMLNode.offsetWidth,
       h: this.HTMLNode.offsetHeight,
     }
 
     return isCollision(cPos, areaRect)
   }
-
-  //////////////////////////////////////////////////////////////////////////////////////
-  // Aliases
-
-  get HTMLNode() {
-    return /** @type {HTMLElement} */ (this.Element.HTMLNode)
-  }
-
-  get boundingClientRect() {
-    return this.Element.boundingClientRect
-  }
-
-  get computedBorder() {
-    return this.Element.computedBorder
-  }
-
-  get computedStyle() {
-    return this.Element.computedStyle
-  }
 }
-
-export default SelectorArea

@@ -70,8 +70,9 @@ describe('Zoom', () => {
 
     await mouse.move(430, 430)
     await mouse.down()
-    await mouse.move(30, 30)
+    await mouse.move(30, 430, { steps: 5 })
     await mouse.up()
+
     selection = await page.evaluate(() => ds.getSelection())
     // Expect to see the last (6-th) button. It placed at the
     // bottom right corner of the #container.

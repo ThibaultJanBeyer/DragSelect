@@ -1,4 +1,3 @@
-// v 2.0.0
 // @ts-check
 /* 
     ____                   _____      __          __ 
@@ -44,25 +43,23 @@
 */
 
 import './types'
-import { Area, Selector, SelectorArea, PubSub, MainLoop } from './modules'
+import {
+  Area,
+  Interaction,
+  PubSub,
+  SelectableSet,
+  SelectedSet,
+  Selection,
+  Selector,
+  SelectorArea,
+} from './modules'
 import { PointerStore, ScrollStore } from './stores'
-import { isElementTouching, toArray, vect2 } from './methods'
+import { toArray, vect2 } from './methods'
 
 // Setup
 //////////////////////////////////////////////////////////////////////////////////////
 
 class DragSelect {
-  /** @type {number} @private */
-  _subAreaEndMove
-  /** @type {number} @private */
-  _subAreaMove
-  /** @type {number} @private */
-  _subStartMove
-  /** @type {Array.<(SVGElement|HTMLElement)>} @private */
-  _selected = []
-  /** @type {Array.<(SVGElement|HTMLElement)>} @private */
-  _prevSelected = [] // memory to fix #9
-
   /**
    * @class DragSelect
    * @constructor DragSelect
@@ -70,7 +67,7 @@ class DragSelect {
    */
   constructor({
     area = document,
-    autoScrollSpeed = 100,
+    autoScrollSpeed = 50,
     customStyles = false,
     hoverClass = 'ds-hover',
     multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
@@ -89,13 +86,6 @@ class DragSelect {
     onElementSelect,
     onElementUnselect,
   }) {
-    this.selectedClass = selectedClass
-    this.hoverClass = hoverClass
-    this.selectableClass = selectableClass
-    this.selectables = []
-    this._initialSelectables = toArray(selectables)
-    this.customStyles = customStyles
-
     // Pub-Sub
     this.PubSub = new PubSub()
     this.subscribe = this.PubSub.subscribe
@@ -138,17 +128,60 @@ class DragSelect {
       autoScrollSpeed,
     })
 
-    // MainLoop
-    this.MainLoop = new MainLoop({ areaElement: area, DS: this })
+    // Selectables
+    this.SelectableSet = new SelectableSet({
+      elements: selectables,
+      DS: this,
+      className: selectableClass,
+      hoverClassName: hoverClass,
+    })
 
-    this._init()
+    // Selected
+    this.SelectedSet = new SelectedSet({
+      DS: this,
+      className: selectedClass,
+    })
 
-    this.subscribe('PointerStore:updated', ({ event }) =>
-      this.publish('dragmove', { items: this.getSelection(), event })
+    // Selection
+    this.Selection = new Selection({
+      DS: this,
+      hoverClassName: hoverClass,
+    })
+
+    // Interaction
+    this.Interaction = new Interaction({ areaElement: area, DS: this })
+
+    // Subscriber Aliases
+    this.subscribe('Selected:added', ({ items, item }) =>
+      this.publish('elementselect', { items, item })
     )
-    this.subscribe('MainLoop:start', ({ event }) => this._start(event))
-    this.subscribe('MainLoop:end', ({ event }) => this.reset(event, true))
+    this.subscribe('Selected:removed', ({ items, item }) =>
+      this.publish('elementunselect', { items, item })
+    )
+    this.subscribe('PointerStore:updated', ({ event }) =>
+      this.publish('dragmove', {
+        items: this.getSelection(),
+        event,
+      })
+    )
+    this.subscribe('Interaction:start', ({ event }) =>
+      this.publish('dragstart', {
+        items: this.getSelection(),
+        event,
+      })
+    )
+    this.subscribe('Interaction:end', ({ event }) =>
+      this.publish('callback', { items: this.getSelection(), event })
+    )
+
+    this.start()
   }
+
+  /**
+   * Initializes the functionality. Automatically triggered when created.
+   * Also, reset the functionality after a teardown
+   */
+  start = () => this.Interaction.init()
 
   // @TODO: remove after deprecation
   _callbacksTemp({
@@ -180,8 +213,8 @@ class DragSelect {
       )
     }
     if (onDragStartBegin) {
-      warnMessage('onDragStartBegin', 'dragstartbegin')
-      this.subscribe('dragstartbegin', ({ items, item, event }) =>
+      warnMessage('onDragStartBegin', 'dragstart')
+      this.subscribe('dragstart', ({ items, item, event }) =>
         onDragStartBegin(event)
       )
     }
@@ -199,262 +232,8 @@ class DragSelect {
     }
   }
 
-  /**
-   * Initializes the functionality. Automatically triggered when created.
-   * Also, reset the functionality after a teardown
-   */
-  start = () => this._init()
-  _init() {
-    this._handleSelectables(this._initialSelectables)
-    this.MainLoop.init()
-  }
-
-  /**
-   * Add/Remove Selectables also handles css classes and event listeners.
-   * @param {DSElements} selectables - selectable elements.
-   * @param {boolean} [remove] - if elements should be removed.
-   * @param {boolean} [fromSelection] - if elements should also be added/removed to the selection.
-   * @private
-   */
-  _handleSelectables(selectables, remove, fromSelection) {
-    for (let index = 0; index < selectables.length; index++) {
-      const selectable = selectables[index]
-      const indexOf = this.selectables.indexOf(selectable)
-
-      if (indexOf < 0 && !remove) {
-        this._addSelectable(selectable, fromSelection)
-      } else if (indexOf > -1 && remove) {
-        this._removeSelectable(selectable, indexOf, fromSelection)
-      }
-    }
-  }
-
-  /**
-   * @param {(HTMLElement|SVGElement)} selectable
-   * @param {boolean} toSelection also adds it to the current selection
-   * @private
-   */
-  _addSelectable(selectable, toSelection) {
-    selectable.classList.add(this.selectableClass)
-    selectable.addEventListener('click', this._onClick)
-    this.selectables.push(selectable)
-
-    // also add to current selection
-    if (toSelection && this._selected.indexOf(selectable) < 0) {
-      selectable.classList.add(this.selectedClass)
-      this._selected.push(selectable)
-    }
-  }
-
-  /**
-   * @param {(HTMLElement|SVGElement)} selectable
-   * @param {number} indexOf
-   * @param {boolean} [fromSelection] also adds it to the current selection
-   * @private
-   */
-  _removeSelectable(selectable, indexOf, fromSelection) {
-    selectable.classList.remove(this.hoverClass)
-    selectable.classList.remove(this.selectableClass)
-    selectable.removeEventListener('click', this._onClick)
-    this.selectables.splice(indexOf, 1)
-
-    // also remove from current selection
-    if (fromSelection && this._selected.indexOf(selectable) > -1) {
-      selectable.classList.remove(this.selectedClass)
-      this._selected.splice(this._selected.indexOf(selectable), 1)
-    }
-  }
-
-  /** @param {MouseEvent} event @private */
-  _onClick = (event) => this._handleClick(event)
-  /**
-   * Triggers when a node is actively selected.
-   *
-   * This might be an "onClick" method but it also triggers when
-   * <button> nodes are pressed via the keyboard.
-   * Making DragSelect accessible for everyone!
-   *
-   * @param {MouseEvent} event
-   * @private
-   */
-  _handleClick(event) {
-    if (this.mouseInteraction) return // fix firefox doubleclick issue
-    if (event.button === 2) return // right-clicks
-
-    this.stores.PointerStore.start(event)
-
-    const node = /** @type {any} */ (event.target)
-    if (!this.selectables.includes(node)) return
-
-    if (!this.SelectorArea.isInside(node)) return
-
-    // fix for multi-selection issue #9
-    if (this.stores.PointerStore.isMultiSelect)
-      this._prevSelected = this._selected.slice()
-    else this._prevSelected = []
-
-    // actual selection logic
-    this.checkIfInsideSelection(true) // reset selection if no multiselectionkeypressed
-    this.toggle(node)
-
-    this.reset(event, true)
-    this.stores.PointerStore.stop(event)
-  }
-
-  // Start
+  // Useful methods for the user
   //////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * When the area is clicked.
-   * @param {DSEvent} event - The event object.
-   * @private
-   */
-  _start = (event) => {
-    this.mouseInteraction = true
-
-    this.publish('dragstartbegin', { items: this.getSelection(), event })
-
-    if (this.stores.PointerStore.isMultiSelect)
-      this._prevSelected = this._selected.slice()
-    // #9
-    else this._prevSelected = [] // #9
-
-    // move element on location
-    this.checkIfInsideSelection(true)
-
-    // callback
-    this.publish('dragstart', { items: this.getSelection(), event })
-  }
-
-  // Colision detection
-  //////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Checks if any selectable element is inside selection.
-   * @param {boolean} [force] forces through. Handles first clicks and accessibility. Here is user is clicking directly onto some element at start, (contrary to later hovers) we can assume that he really wants to select/deselect that item.
-   * @return {boolean}
-   */
-  checkIfInsideSelection = (force) => {
-    let anyInside = false
-    for (let i = 0, il = this.selectables.length; i < il; i++) {
-      const selectable = this.selectables[i]
-
-      if (
-        this.SelectorArea.isInside(selectable) &&
-        isElementTouching(selectable, this.Selector.HTMLNode)
-      ) {
-        this._handleSelection(selectable, force)
-        anyInside = true
-      } else {
-        this._handleUnselection(selectable, force)
-      }
-    }
-    return anyInside
-  }
-
-  /**
-   * Logic when an item is selected
-   * @param {(HTMLElement|SVGElement)} item selected item.
-   * @param {boolean} [force] forces through.
-   * @private
-   */
-  _handleSelection(item, force) {
-    if (item.classList.contains(this.hoverClass) && !force) return false
-
-    if (!this._selected.includes(item)) this.select(item)
-    else if (this.stores.PointerStore.isMultiSelect) this.unselect(item)
-
-    item.classList.add(this.hoverClass)
-  }
-
-  /**
-   * Logic when an item is de-selected
-   * @param {(HTMLElement|SVGElement)} item selected item.
-   * @param {boolean} [force] forces through.
-   * @private
-   */
-  _handleUnselection(item, force) {
-    if (!item.classList.contains(this.hoverClass) && !force) return false
-
-    const inSelection = this._selected.includes(item)
-    const inPrevSelection = this._prevSelected.includes(item) // #9
-
-    /**
-     * Special algorithm for issue #9.
-     * if a multiselectkey is pressed, ds 'remembers' the last selection and reverts
-     * to that state if the selection is not kept, to mimic the natural OS behaviour
-     * = if item was selected and is not in selection anymore, reselect it
-     * = if item was not selected and is not in selection anymore, unselect it
-     */
-    if (inSelection && !inPrevSelection) this.unselect(item)
-    else if (!inSelection && inPrevSelection) this.select(item)
-
-    item.classList.remove(this.hoverClass)
-  }
-
-  /**
-   * Adds an item to the selection.
-   * @param {(HTMLElement|SVGElement)} item selected item.
-   * @return {(HTMLElement|SVGElement|false)} item
-   */
-  select(item) {
-    if (this._selected.indexOf(item) > -1) return false
-
-    this._selected.push(item)
-    item.classList.add(this.selectedClass)
-
-    this.PubSub.publish('elementselect', { items: this.getSelection(), item })
-
-    return item
-  }
-
-  /**
-   * Removes an item from the selection.
-   * @param {(HTMLElement|SVGElement)} item selected item.
-   * @return {(HTMLElement|SVGElement|false)} item
-   */
-  unselect(item) {
-    if (this._selected.indexOf(item) < 0) return false
-
-    this._selected.splice(this._selected.indexOf(item), 1)
-    item.classList.remove(this.selectedClass)
-
-    this.PubSub.publish('elementunselect', { items: this.getSelection(), item })
-
-    return item
-  }
-
-  /**
-   * Adds/Removes an item to the selection.
-   * If it is already selected = remove, if not = add.
-   * @param {(HTMLElement|SVGElement)} item – item to select.
-   * @return {(HTMLElement|SVGElement)} item
-   */
-  toggle(item) {
-    if (this._selected.includes(item)) this.unselect(item)
-    else this.select(item)
-    return item
-  }
-
-  // Ending
-  //////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Unbind functions i.e. when mouse click is released
-   * @param {Object} [event] - The event object.
-   * @param {boolean} [withCallback] - whether or not the callback should be called
-   */
-  reset = (event, withCallback) => {
-    if (withCallback)
-      this.publish('callback', { items: this.getSelection(), event })
-
-    setTimeout(
-      () => (this.mouseInteraction = false),
-      // debounce in order "onClick" to work
-      100
-    )
-  }
-
   /**
    * Complete function teardown
    * Will teardown/stop the whole functionality
@@ -463,50 +242,35 @@ class DragSelect {
    * @param {boolean} [withCallback] - if elements should also be added/removed to the selection.
    */
   stop(remove = true, fromSelection = true, withCallback) {
-    this.reset(false, withCallback)
+    if (withCallback) this.publish('callback', { items: this.getSelection() })
 
-    this.MainLoop.stop()
-    this.SelectorArea.stop()
+    this.Interaction.stop()
     this.Selector.stop()
     this.Area.stop()
 
-    this._handleSelectables([...this.selectables], remove, fromSelection)
+    if (remove) this.SelectableSet.clear()
+    if (fromSelection) this.SelectedSet.clear()
   }
-
-  // Useful methods for the user
-  //////////////////////////////////////////////////////////////////////////////////////
-
   /**
    * Returns the current selected nodes
-   * @return {Array.<(HTMLElement|SVGElement)>}
+   * @return {DSElements}
    */
-  getSelection() {
-    return [...this._selected]
-  }
-
+  getSelection = () => this.SelectedSet.elements
   /**
-   * Adds several elements to the selection list
-   * also adds the specific classes and take into account all calculations.
-   * Does not clear the selection, in contrary to .setSelection
-   * Can add multiple elements at once, in contrary to .select
+   * Adds several elements to the selection list also adds the specific classes and take into account all calculations.
+   * Does not clear the selection, in contrary to .setSelection. Can add multiple elements at once
    * @param {DSInputElements} elements one or multiple elements
    * @param {boolean} [triggerCallback] - if callback should be called
    * @param {boolean} [dontAddToSelectables] - if element should not be added to the list of selectable elements
    * @return {DSElements} all selected elements
    */
   addSelection(elements, triggerCallback, dontAddToSelectables) {
-    const nodes = toArray(elements)
-
-    nodes.forEach((node) => this.select(node))
-
+    this.SelectedSet.addAll(toArray(elements))
     if (!dontAddToSelectables) this.addSelectables(elements)
-
     if (triggerCallback)
       this.PubSub.publish('callback', { items: this.getSelection() })
-
     return this.getSelection()
   }
-
   /**
    * Removes specific elements from the selection
    * Multiple elements can be given at once, in contrary to unselect
@@ -516,44 +280,31 @@ class DragSelect {
    * @return {DSElements} all selected elements
    */
   removeSelection(elements, triggerCallback, removeFromSelectables) {
-    const nodes = toArray(elements)
-    nodes.forEach((node) => this.unselect(node))
-
-    if (removeFromSelectables) {
-      this.removeSelectables(elements)
-    }
-    if (triggerCallback) {
+    this.SelectedSet.deleteAll(toArray(elements))
+    if (removeFromSelectables) this.removeSelectables(elements)
+    if (triggerCallback)
       this.PubSub.publish('callback', { items: this.getSelection() })
-    }
-
     return this.getSelection()
   }
-
   /**
    * Toggles specific elements from the selection:
    * If element is not in selection it will be added, if it is already selected, it will be removed.
    * Multiple elements can be given at once.
    * @param {DSInputElements} elements one or multiple elements
    * @param {boolean} [triggerCallback] - if callback should be called
-   * @param {boolean} [special] - if true, it also removes selected elements from possible selectable elements & don’t add them to selectables if they are not
+   * @param {boolean} [alsoSelectables] - if element should not be added/removed to the list of selectable elements accordingly
    * @return {DSElements} all selected elements
    */
-  toggleSelection(elements, triggerCallback, special) {
-    var nodes = toArray(elements)
-
-    for (var index = 0, il = nodes.length; index < il; index++) {
-      var node = nodes[index]
-
-      if (this._selected.indexOf(node) < 0) {
-        this.addSelection(node, triggerCallback, special)
-      } else {
-        this.removeSelection(node, triggerCallback, special)
-      }
-    }
-
-    return this._selected
+  toggleSelection(elements, triggerCallback, alsoSelectables) {
+    toArray(elements).forEach((el) =>
+      this.SelectedSet.has(el)
+        ? this.removeSelection(elements, triggerCallback, alsoSelectables)
+        : this.addSelection(elements, triggerCallback, alsoSelectables)
+    )
+    if (triggerCallback)
+      this.PubSub.publish('callback', { items: this.getSelection() })
+    return this.getSelection()
   }
-
   /**
    * Sets the current selected elements and optionally run the callback
    * By default, adds new elements also to the list of selectables
@@ -565,46 +316,36 @@ class DragSelect {
   setSelection(elements, triggerCallback, dontAddToSelectables) {
     this.clearSelection()
     this.addSelection(elements, triggerCallback, dontAddToSelectables)
-
-    return this._selected
+    return this.getSelection()
   }
-
   /**
    * Unselect / Deselect all current selected Nodes
    * @param {boolean} [triggerCallback] - if callback should be called
    * @return {DSElements} this.selected, should be empty
    */
   clearSelection(triggerCallback) {
-    const selection = this._selected.slice()
-    selection.forEach((element) => this.unselect(element))
-
+    this.SelectedSet.clear()
     if (triggerCallback)
       this.PubSub.publish('callback', { items: this.getSelection() })
-
     return this.getSelection()
   }
-
   /**
-   * Add elements that can be selected.
-   * The algorithm makes sure that no node is added twice
+   * Add elements that can be selected. No node is added twice
    * @param {DSInputElements} elements dom element(s)
    * @param {boolean} [addToSelection] if elements should also be added to current selection
    * @return {DSInputElements} the added element(s)
    */
   addSelectables(elements, addToSelection) {
-    var nodes = toArray(elements)
-    this._handleSelectables(nodes, false, addToSelection)
+    const els = toArray(elements)
+    this.SelectableSet.addAll(els)
+    if (addToSelection) this.SelectedSet.addAll(els)
     return elements
   }
-
   /**
-   * Gets all nodes that can be selected
+   * Gets all nodes that can potentially be selected
    * @return {DSElements} this.selectables
    */
-  getSelectables() {
-    return this.selectables
-  }
-
+  getSelectables = () => this.SelectableSet.elements
   /**
    * Sets all elements that can be selected.
    * Removes all current selectables (& their respective classes).
@@ -615,10 +356,9 @@ class DragSelect {
    * @return {DSInputElements} elements – the added element(s)
    */
   setSelectables(elements, removeFromSelection, addToSelection) {
-    this._handleSelectables(this.getSelectables(), true, removeFromSelection)
+    this.removeSelectables(elements, removeFromSelection)
     return this.addSelectables(elements, addToSelection)
   }
-
   /**
    * Remove elements from the elements that can be selected.
    * @param {DSInputElements} elements – dom element(s)
@@ -626,11 +366,10 @@ class DragSelect {
    * @return {DSInputElements} the removed element(s)
    */
   removeSelectables(elements, removeFromSelection) {
-    const nodes = toArray(elements)
-    this._handleSelectables(nodes, true, removeFromSelection)
+    this.SelectedSet.clear()
+    if (removeFromSelection) this.SelectedSet.clear()
     return elements
   }
-
   /** The starting/initial position of the cursor/selector @return {Vect2} */
   getInitialCursorPosition = () => this.stores.PointerStore.initialVal
   /** The last seen position of the cursor/selector @return {Vect2} */
@@ -639,7 +378,6 @@ class DragSelect {
   getPreviousCursorPosition = () => this.stores.PointerStore.lastVal
   /** Whether the multi-selection key was pressed @return {boolean} */
   isMultiSelect = () => this.stores.PointerStore.isMultiSelect
-
   /**
    * Returns the cursor position difference between start and now
    * If usePreviousCursorDifference is passed,
@@ -652,7 +390,6 @@ class DragSelect {
     var posB = usePreviousCursorDifference
       ? this.getPreviousCursorPosition()
       : this.getInitialCursorPosition()
-
     return vect2.calc(posA, '-', posB)
   }
 }

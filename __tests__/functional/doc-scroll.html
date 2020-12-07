@@ -1,15 +1,15 @@
+<body>
 <link rel="stylesheet" href="basics.css">
-<div id="container"></div>
 <script src="../../dist/DragSelect.js"></script>
 <script>
     window.selected = [];
 
-    for (var i = 0; i < 25000; i++) {
+    for (var i = 0; i < 500; i++) {
         var child = document.createElement("button");
         child.appendChild(document.createTextNode(i));
         child.classList.add("generated-item", "item");
         child.id = `item-${i}`;
-        document.querySelector('#container').appendChild(child);
+        document.body.appendChild(child);
     }
 
     new DragSelect({
@@ -18,3 +18,4 @@
     });
 
 </script>
+</body>

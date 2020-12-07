@@ -1,10 +1,9 @@
 import { performance } from 'perf_hooks'
+import wait from '../helpers/wait'
 
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 describe('Scroll', () => {
-  jest.setTimeout(20000)
-
   it('should work and be fast even with 25k items', async () => {
     const start = performance.now()
 
@@ -15,6 +14,7 @@ describe('Scroll', () => {
     const mouse = page.mouse
     await mouse.move(100, 100)
     await mouse.down()
+    await wait(100)
     await mouse.move(200, 200)
     await mouse.up()
 

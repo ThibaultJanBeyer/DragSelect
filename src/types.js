@@ -8,7 +8,7 @@
  * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them.
  * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
- * @property {HTMLElement[] | SVGElement[] | HTMLElement | SVGElement} [selectables=[]] the elements that can be selected
+ * @property {DSInputElements} [selectables=[]] the elements that can be selected
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
  * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
  * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
@@ -70,8 +70,8 @@
 /** @typedef {MouseEvent|TouchEvent} DSEvent en event from a touch or mouse interaction */
 /** @typedef {Array.<'ctrlKey'|'shiftKey'|'metaKey'>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
 
-/** @typedef {'dragmove'|'dragstartbegin'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
-/** @typedef {'MainLoop:init'|'MainLoop:start'|'MainLoop:end'|'MainLoop:update'|'Area:modified'|'PointerStore:updated'} DSInternalEventNames */
+/** @typedef {'dragmove'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
+/** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'} DSInternalEventNames */
 /** @typedef {DSEventNames|DSInternalEventNames} DSCallbackNames the name of the callback */
 
 /** @typedef {{top:number,left:number,bottom:number,right:number,width:number,height:number}} DSBoundingRect */

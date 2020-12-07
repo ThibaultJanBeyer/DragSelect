@@ -1,5 +1,3 @@
-// import wait from '../helpers/wait.js'
-
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 describe('Scroll', () => {

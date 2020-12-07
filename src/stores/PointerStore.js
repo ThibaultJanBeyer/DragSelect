@@ -1,5 +1,5 @@
 import DragSelect from '../DragSelect'
-import { getPointerPos, documentScroll, vect2, debounce } from '../methods'
+import { getPointerPos, vect2 } from '../methods'
 
 export default class PointerStore {
   // multiselect
@@ -9,6 +9,8 @@ export default class PointerStore {
   _multiSelectKeys
   /** @type {boolean} */
   _isMultiSelect = false
+  /** @type {boolean} */
+  _isMouseInteraction = false
 
   // Pointer Positions within Area
   /** @type {Vect2} @private */
@@ -35,17 +37,17 @@ export default class PointerStore {
     this._multiSelectKeys = multiSelectKeys
     this._multiSelectMode = multiSelectMode
 
-    this.DS.subscribe('MainLoop:start', ({ event }) => this.start(event))
-    this.DS.subscribe('MainLoop:end', ({ event }) => this.stop(event))
+    this.DS.subscribe('Interaction:start', ({ event }) => this.start(event))
+    this.DS.subscribe('Interaction:end', ({ event }) => this.stop(event))
   }
 
   /** @param {DSEvent} [event] */
   start(event) {
     if (!event) return
+    this._isMouseInteraction = true
     this._isMultiSelect = this._isMultiSelectKeyPressed(event)
     this.currentVal = this.initialVal = getPointerPos({
       event: this._normalizedEvent(event),
-      documentScroll,
     })
 
     document.addEventListener('mousemove', this.update)
@@ -60,7 +62,6 @@ export default class PointerStore {
     if (!event) return
     this.currentVal = getPointerPos({
       event: this._normalizedEvent(event),
-      documentScroll,
     })
     this.DS.publish('PointerStore:updated', { event })
   }
@@ -75,11 +76,13 @@ export default class PointerStore {
       passive: false,
     })
 
-    this.lastVal = getPointerPos({
+    this.currentVal = this.lastVal = getPointerPos({
       event: this._normalizedEvent(event),
-      documentScroll,
     })
     this.initialVal = { x: 0, y: 0 }
+
+    // debounce in order "onClick" to work
+    setTimeout(() => (this._isMouseInteraction = false), 100)
   }
 
   /**
@@ -107,6 +110,10 @@ export default class PointerStore {
 
   get isMultiSelect() {
     return this._isMultiSelect
+  }
+
+  get isMouseInteraction() {
+    return this._isMouseInteraction
   }
 
   /** First recorded pointer position within the area */

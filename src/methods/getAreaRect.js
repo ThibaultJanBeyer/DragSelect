@@ -15,14 +15,8 @@ export default (area, zoom) => {
       left: 0,
       bottom: 0,
       right: 0,
-      width:
-        area.documentElement.clientWidth > 0
-          ? area.documentElement.clientWidth
-          : window.innerWidth,
-      height:
-        area.documentElement.clientHeight > 0
-          ? area.documentElement.clientHeight
-          : window.innerHeight,
+      width: window.innerWidth,
+      height: window.innerHeight,
     }
 
   const rect = area.getBoundingClientRect()

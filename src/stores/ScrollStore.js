@@ -1,7 +1,7 @@
 // @ts-check
 import '../types'
 import DragSelect from '../DragSelect'
-import { getCurrentScroll, vect2, debounce } from '../methods'
+import { getCurrentScroll, vect2 } from '../methods'
 
 export default class ScrollStore {
   /** @type {Vect2} @private */
@@ -17,8 +17,8 @@ export default class ScrollStore {
     this.DS = DS
     this.zoom = zoom
 
-    this.DS.subscribe('MainLoop:start', ({ event }) => this.start())
-    this.DS.subscribe('MainLoop:end', ({ event }) => this.stop())
+    this.DS.subscribe('Interaction:start', () => this.start())
+    this.DS.subscribe('Interaction:end', () => this.stop())
   }
 
   start = () => {

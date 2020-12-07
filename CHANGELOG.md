@@ -66,6 +66,8 @@ Public methods that were removed:
 - `.getAreaRect`
 - `.toArray`
 - `.isCursorNearEdge`
+- `.toggle` (use `.toggleSelection` instead)
+- `.select` (use `.setSelection` or `.addSelection` instead)
 
 ## Removed break functionality (Breaking Change)
 
@@ -79,8 +81,7 @@ The setup used to measure this is the performance test which runs DragSelect ove
 We compared the accumulated average execution times before and after the changes. Before the changes that was an average of 3s/run.
 
 - 4.27% faster by caching calculations
-- 1.26% faster by using a game loop
-We now use a main loop with `requestAnimationFrame` to update the various parts instead of listening for the cursor move on the document as before
+- 12,82% faster by using an interaction pub/sub mechanism
 
 # 1.15.0
 

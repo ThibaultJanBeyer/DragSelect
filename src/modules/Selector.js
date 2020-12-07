@@ -1,7 +1,6 @@
 // @ts-check
 import '../types.js'
 
-import { Element } from './'
 import {
   getSelectorPosition,
   updateElementStylePos,
@@ -12,23 +11,23 @@ import DragSelect from '../DragSelect'
 export default class Selector {
   /**
    * @constructor Selector
-   * @param {Object} obj
-   * @param {DragSelect} obj.DS
-   * @param {HTMLElement} obj.selector
-   * @param {string} obj.selectorClass
-   * @param {boolean} obj.customStyles
+   * @param {Object} p
+   * @param {DragSelect} p.DS
+   * @param {HTMLElement} p.selector
+   * @param {string} p.selectorClass
+   * @param {boolean} p.customStyles
    * @ignore
    */
   constructor({ DS, selector, selectorClass, customStyles }) {
     this.DS = DS
-    this.Element = new Element({
-      node: selector || createSelectorElement(customStyles),
-    })
+
+    this.HTMLNode = selector || createSelectorElement(customStyles)
     this.HTMLNode.classList.add(selectorClass)
 
-    this.DS.subscribe('MainLoop:start', this.start)
-    this.DS.subscribe('MainLoop:update', this.update)
-    this.DS.subscribe('MainLoop:end', this.stop)
+    this.DS.subscribe('Interaction:start', this.start)
+    this.DS.subscribe('PointerStore:updated', this.update)
+    this.DS.subscribe('Area:scroll', this.update)
+    this.DS.subscribe('Interaction:end', this.stop)
   }
 
   start = () => {
@@ -50,14 +49,12 @@ export default class Selector {
     this.HTMLNode.style.width = '0'
     this.HTMLNode.style.height = '0'
     this.HTMLNode.style.display = 'none'
-    this.Element.stop()
   }
 
   /** Moves the selection to the correct place */
   update = () => {
     const {
       stores: { ScrollStore, PointerStore },
-      checkIfInsideSelection,
     } = this.DS
     const pos = getSelectorPosition({
       scrollAmount: ScrollStore.scrollAmount,
@@ -65,19 +62,5 @@ export default class Selector {
       pointerPos: PointerStore.currentValArea,
     })
     updateElementStylePos(this.HTMLNode, pos)
-    checkIfInsideSelection()
-  }
-
-  //////////////////////////////////////////////////////////////////////////////////////
-  // Node
-
-  /** @type {HTMLElement} */
-  get HTMLNode() {
-    return /** @type {HTMLElement} */ (this.Element.HTMLNode)
-  }
-
-  /** @param {HTMLElement} element */
-  set HTMLNode(element) {
-    this.Element.HTMLNode = element
   }
 }
