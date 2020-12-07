@@ -34,7 +34,7 @@ describe('Multiselection', () => {
     expect(selected[3]).toBe('five')
   })
 
-  it('multiselectmode should work', async () => {
+  it('multi-select-mode should work', async () => {
     await page.goto(`${baseUrl}/multiselection.html`)
 
     const mouse = page.mouse
@@ -58,5 +58,28 @@ describe('Multiselection', () => {
     expect(selected[1]).toBe('three')
     expect(selected[2]).toBe('four')
     expect(selected[3]).toBe('five')
+  })
+
+  it('multiSelectToggling off should not toggle already selected elements', async () => {
+    await page.goto(`${baseUrl}/multiselection.html`)
+
+    const mouse = page.mouse
+    await mouse.move(30, 110)
+    await mouse.down()
+    await mouse.move(80, 110, { steps: 10 })
+    await mouse.up()
+
+    await mouse.move(180, 110, { steps: 10 })
+    await mouse.down()
+    await mouse.move(30, 120, { steps: 10 })
+    await mouse.up()
+
+    const { multiSelectTogglingOff } = await page.evaluate(() => ({
+      multiSelectTogglingOff,
+    }))
+
+    const expected = ['one3', 'two3', 'four3', 'three3']
+
+    expect(multiSelectTogglingOff.sort()).toEqual(expected.sort())
   })
 })

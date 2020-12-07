@@ -201,6 +201,7 @@ Here are some properties for your convenience (not all):
 |autoScrollSpeed |integer |OPTIONAL. The speed in which the area scrolls while selecting (if available). The unit is pixel per movement. Set to `0.0001` to disable autoscrolling. Default = `1` |
 |selectedClass |string |OPTIONAL. The class name assigned to the selected items. Default = [see classes](#classes) |
 |hoverClass |string |OPTIONAL. The class name assigned to the mouse hovered items. Default = [see classes](#classes) |
+|multiSelectToggling |boolean |OPTIONAL. Whether or not to toggle already active elements while multi-selecting. Default = `true` |
 |selectorClass |string |OPTIONAL. The class name assigned to the square selector helper. Default = [see classes](#classes) |
 |selectableClass |string |OPTIONAL. The class name assigned to the elements that can be selected. Default = [see classes](#classes) |
 |onDragStartBegin |function |OPTIONAL. Fired when the user clicks in the area. This callback gets the event object. Executed **before** DragSelect function code runs |

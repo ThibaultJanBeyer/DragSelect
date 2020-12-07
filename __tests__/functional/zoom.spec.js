@@ -1,3 +1,5 @@
+import wait from '../helpers/wait'
+
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 describe('Zoom', () => {
@@ -70,7 +72,8 @@ describe('Zoom', () => {
 
     await mouse.move(430, 430)
     await mouse.down()
-    await mouse.move(30, 430, { steps: 5 })
+    await mouse.move(30, 430)
+    await wait(100)
     await mouse.up()
 
     selection = await page.evaluate(() => ds.getSelection())
