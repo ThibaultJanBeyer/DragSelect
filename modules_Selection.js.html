@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>modules/Selection.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DragSelect.html">DragSelect</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#addSelectables">addSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#addSelection">addSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#clearSelection">clearSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#getCursorPositionDifference">getCursorPositionDifference</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#publish">publish</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#removeSelectables">removeSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#removeSelection">removeSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#setSelectables">setSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#setSelection">setSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#stop">stop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#subscribe">subscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#toggleSelection">toggleSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#unsubscribe">unsubscribe</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#add">add</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#boundingClientRect">boundingClientRect</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#computedBorder">computedBorder</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#computedStyle">computedStyle</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#delete">delete</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#elements">elements</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#handleClick">handleClick</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#isClicked">isClicked</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggle">toggle</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">modules/Selection.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// @ts-check
+import '../types'
+import DragSelect from '../DragSelect'
+
+import { isElementTouching } from '../methods'
+
+export default class Selection {
+  /**
+   * @type {Set}
+   * @private
+   * */
+  _prevSelected
+  /**
+   * @type {string}
+   * @private
+   * */
+  _hoverClassName
+  /**
+   * @type {boolean}
+   * @private
+   * */
+  _multiSelectToggling
+
+  /**
+   * @constructor Selection
+   * @param {{ DS:DragSelect, hoverClassName:string, multiSelectToggling:boolean }} p
+   * @ignore
+   */
+  constructor({ DS, hoverClassName, multiSelectToggling }) {
+    this._hoverClassName = hoverClassName
+    this._multiSelectToggling = multiSelectToggling
+
+    this.DS = DS
+    this.DS.subscribe('Selectable:click', this._onClick)
+    this.DS.subscribe('Interaction:start', this.start)
+    this.DS.subscribe('PointerStore:updated', this.update)
+    this.DS.subscribe('Area:scroll', this.update)
+  }
+
+  /**
+   * Stores the previous selection (solves #9)
+   * @private
+   * */
+  _storePrevious() {
+    const {
+      stores: { PointerStore },
+      SelectedSet,
+    } = this.DS
+
+    if (PointerStore.isMultiSelect) this._prevSelected = new Set(SelectedSet)
+    else this._prevSelected = new Set()
+  }
+
+  /**
+   * If an element is clicked (via keyboard) @param {{ event:MouseEvent }} p
+   * @private
+   * */
+  _onClick = ({ event }) => this.handleClick(event)
+  /**
+   * Triggers when a node is actively selected.
+   * This might be an "onClick" method but it also triggers when
+   * &lt;button> nodes are pressed via the keyboard.
+   * Making DragSelect accessible for everyone!
+   * @param {MouseEvent} event
+   */
+  handleClick(event) {
+    const {
+      stores: { PointerStore },
+      SelectorArea,
+      SelectableSet,
+      SelectedSet,
+      publish,
+    } = this.DS
+
+    if (event.button === 2) return // right-click
+    if (PointerStore.isMouseInteraction) return // fix firefox doubleclick issue
+
+    PointerStore.start(event)
+
+    const node = /** @type {any} */ (event.target)
+    if (!SelectableSet.has(node)) return
+    if (!SelectorArea.isInside(node)) return
+
+    if (!PointerStore.isMultiSelect) SelectedSet.clear()
+    SelectedSet.toggle(node)
+
+    publish('Interaction:end', { event }) // simulate mouse-up (that does not exist on keyboard)
+  }
+
+  start = () => {
+    this._storePrevious()
+    this._checkIfInsideSelection(true)
+  }
+
+  update = () => this._checkIfInsideSelection()
+
+  /**
+   * Checks if any selectable element is inside selection.
+   * @param {boolean} [force]
+   * @return {boolean}
+   * @private
+   */
+  _checkIfInsideSelection = (force) => {
+    const { SelectableSet, SelectorArea, Selector } = this.DS
+
+    let anyInside = false
+    SelectableSet.forEach((element) => {
+      if (
+        SelectorArea.isInside(element) &amp;&amp;
+        isElementTouching(element, Selector.HTMLNode)
+      ) {
+        this._handleSelection(element, force)
+        anyInside = true
+      } else {
+        this._handleUnselection(element, force)
+      }
+    })
+
+    return anyInside
+  }
+
+  /**
+   * Logic when an element is selected
+   * @param {DSElement} element
+   * @param {boolean} force
+   * @private
+   */
+  _handleSelection(element, force) {
+    const {
+      SelectedSet,
+      stores: { PointerStore },
+    } = this.DS
+
+    if (element.classList.contains(this._hoverClassName) &amp;&amp; !force) return false
+
+    if (!SelectedSet.has(element)) SelectedSet.add(element)
+    else if (PointerStore.isMultiSelect &amp;&amp; this._multiSelectToggling)
+      SelectedSet.delete(element)
+
+    element.classList.add(this._hoverClassName)
+  }
+
+  /**
+   * Logic when an element is de-selected
+   * @param {DSElement} element
+   * @param {boolean} [force]
+   * @private
+   */
+  _handleUnselection(element, force) {
+    const { SelectedSet } = this.DS
+
+    if (!element.classList.contains(this._hoverClassName) &amp;&amp; !force)
+      return false
+
+    const inSelection = SelectedSet.has(element)
+    const inPrevSelection = this._prevSelected.has(element)
+
+    /**
+     * Special for issue #9.
+     * if a multi-select-key is pressed, ds 'remembers' the last selection and reverts
+     * to that state if the selection is not kept, to mimic the natural OS behaviour
+     * = if item was selected and is not in selection anymore, reselect it
+     * = if item was not selected and is not in selection anymore, unselect it
+     */
+    if (inSelection &amp;&amp; !inPrevSelection) SelectedSet.delete(element)
+    else if (!inSelection &amp;&amp; inPrevSelection) SelectedSet.add(element)
+
+    element.classList.remove(this._hoverClassName)
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Mon Dec 07 2020 17:56:44 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

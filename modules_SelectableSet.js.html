@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>modules/SelectableSet.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DragSelect.html">DragSelect</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#addSelectables">addSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#addSelection">addSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#clearSelection">clearSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#getCursorPositionDifference">getCursorPositionDifference</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#publish">publish</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#removeSelectables">removeSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#removeSelection">removeSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#setSelectables">setSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#setSelection">setSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#stop">stop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#subscribe">subscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#toggleSelection">toggleSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#unsubscribe">unsubscribe</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#add">add</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#boundingClientRect">boundingClientRect</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#computedBorder">computedBorder</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#computedStyle">computedStyle</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#delete">delete</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#elements">elements</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#handleClick">handleClick</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#isClicked">isClicked</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggle">toggle</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">modules/SelectableSet.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// @ts-check
+import '../types'
+import DragSelect from '../DragSelect'
+
+import { toArray } from '../methods'
+
+export default class SelectableSet extends Set {
+  /**
+   * @type {DSElements}
+   * @private
+   * */
+  _initElements
+  /**
+   * @type {string}
+   * @private
+   * */
+  _className
+  /**
+   * @type {string}
+   * @private
+   * */
+  _hoverClassName
+
+  /**
+   * @constructor SelectableSet
+   * @param {Object} p
+   * @param {DSInputElements} p.elements
+   * @param {DragSelect} p.DS
+   * @param {string} p.className
+   * @param {string} p.hoverClassName
+   * @ignore
+   */
+  constructor({ elements, className, hoverClassName, DS }) {
+    super()
+    this.DS = DS
+    this._initElements = toArray(elements)
+    this._className = className
+    this._hoverClassName = hoverClassName
+
+    this.DS.subscribe('Interaction:init', this.init)
+  }
+
+  init = () => this._initElements.forEach((el) => this.add(el))
+
+  /** @param {DSElement} element */
+  add(element) {
+    element.classList.add(this._className)
+    element.addEventListener('click', this._onClick)
+    return super.add(element)
+  }
+
+  /** @param {DSElement} element */
+  delete(element) {
+    element.classList.remove(this._className)
+    element.classList.remove(this._hoverClassName)
+    element.removeEventListener('click', this._onClick)
+    return super.delete(element)
+  }
+
+  clear = () => this.forEach((el) => this.delete(el))
+
+  _onClick = (event) => this.DS.publish('Selectable:click', { event })
+
+  /** @param {DSElements} elements */
+  addAll = (elements) => elements.forEach((el) => this.add(el))
+  /** @param {DSElements} elements */
+  deleteAll = (elements) => elements.forEach((el) => this.delete(el))
+  /** @return {DSElements} */
+  get elements() {
+    return Array.from(this.values())
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Mon Dec 07 2020 17:56:44 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
