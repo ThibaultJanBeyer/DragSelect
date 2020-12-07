@@ -13,17 +13,14 @@
     "checkjs:watch": "tsc -w --lib es6,dom -t es5 --allowJs --checkJs --noEmit src/*.js",
     "docs": "jsdoc -c jsdoc.json",
     "media": "cp -R .media docs/media",
-    "no-skip": ".bin/no-skip.sh",
     "premedia": "rm -r docs/media &",
     "rm": "rm -rf dist docs",
-    "rollup": "npm run skip && rollup -c",
-    "rollup:travis": "rollup -c",
+    "rollup": "rollup -c",
     "rollup:watch": "npm run rollup -- -w",
-    "skip": ".bin/skip.sh",
     "test": "npm run checkjs && jest --detectOpenHandles",
     "test:watch": "jest --watch",
-    "travis:build": "npm run rollup:travis && npm run media && npm run docs",
-    "travis:test": "npm run rollup:travis && npm run test"
+    "travis:build": "npm run rollup && npm run media && npm run docs",
+    "travis:test": "npm run rollup && npm run test"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.8",

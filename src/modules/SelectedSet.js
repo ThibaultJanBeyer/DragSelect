@@ -3,10 +3,11 @@ import '../types'
 import DragSelect from '../DragSelect'
 
 export default class SelectedSet extends Set {
-  /** @type {string} */
+  /**
+   * @type {string}
+   * @private
+   * */
   _className
-  /** @type {Set} */
-  _prevSelected = new Set()
 
   /**
    * @constructor SelectableSet

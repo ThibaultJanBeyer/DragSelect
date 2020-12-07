@@ -5,12 +5,21 @@ import DragSelect from '../DragSelect'
 import { toArray } from '../methods'
 
 export default class SelectableSet extends Set {
-  /** @type {DSElements} */
+  /**
+   * @type {DSElements}
+   * @private
+   * */
   _initElements
-  /** @type {string} */
+  /**
+   * @type {string}
+   * @private
+   * */
   _className
-  /** @type {string} */
-  hoverClassName
+  /**
+   * @type {string}
+   * @private
+   * */
+  _hoverClassName
 
   /**
    * @constructor SelectableSet

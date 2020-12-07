@@ -5,11 +5,20 @@ import DragSelect from '../DragSelect'
 import { isElementTouching } from '../methods'
 
 export default class Selection {
-  /** @type {Set} */
+  /**
+   * @type {Set}
+   * @private
+   * */
   _prevSelected
-  /** @type {string} */
+  /**
+   * @type {string}
+   * @private
+   * */
   _hoverClassName
-  /** @type {boolean} */
+  /**
+   * @type {boolean}
+   * @private
+   * */
   _multiSelectToggling
 
   /**
@@ -28,7 +37,10 @@ export default class Selection {
     this.DS.subscribe('Area:scroll', this.update)
   }
 
-  /** Stores the previous selection (solves #9) */
+  /**
+   * Stores the previous selection (solves #9)
+   * @private
+   * */
   _storePrevious() {
     const {
       stores: { PointerStore },
@@ -39,7 +51,10 @@ export default class Selection {
     else this._prevSelected = new Set()
   }
 
-  /** If an element is clicked (via keyboard) @param {{ event:DSEvent }} p */
+  /**
+   * If an element is clicked (via keyboard) @param {{ event:MouseEvent }} p
+   * @private
+   * */
   _onClick = ({ event }) => this.handleClick(event)
   /**
    * Triggers when a node is actively selected.
@@ -47,7 +62,6 @@ export default class Selection {
    * <button> nodes are pressed via the keyboard.
    * Making DragSelect accessible for everyone!
    * @param {MouseEvent} event
-   * @private
    */
   handleClick(event) {
     const {
@@ -84,6 +98,7 @@ export default class Selection {
    * Checks if any selectable element is inside selection.
    * @param {boolean} [force]
    * @return {boolean}
+   * @private
    */
   _checkIfInsideSelection = (force) => {
     const { SelectableSet, SelectorArea, Selector } = this.DS

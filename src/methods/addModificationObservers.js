@@ -3,7 +3,7 @@ import '../types'
 
 /**
  * Adds event-listeners to the selectorArea
- * @param {[DSArea]} nodes
+ * @param {DSArea[]} nodes
  * @param {DSModificationCallback} callback
  * @param {MutationObserver} modificationObserver
  */

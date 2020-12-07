@@ -11,21 +11,45 @@ import {
 } from '../methods'
 
 export default class Area {
-  /** @type {DSModificationCallback} */
+  /**
+   * @type {DSModificationCallback}
+   * @private
+   */
   _modificationCallback
-  /** @type {MutationObserver} */
+  /**
+   * @type {MutationObserver}
+   * @private
+   */
   _modificationObserver
-  /** @type {number} */
+  /**
+   * @type {number}
+   * @private
+   */
   _zoom
-  /** @type {DSArea} */
+  /**
+   * @type {DSArea}
+   * @private
+   */
   _node
-  /** @type {[DSArea]} */
+  /**
+   * @type {DSArea[]}
+   * @private
+   */
   _parentNodes
-  /** @type {CSSStyleDeclaration} @private */
+  /**
+   * @type {CSSStyleDeclaration}
+   * @private
+   * */
   _computedStyle
-  /** @type {{top:number,bottom:number,left:number,right:number}} */
+  /**
+   * @type {{top:number,bottom:number,left:number,right:number}}
+   * @private
+   * */
   _computedBorder
-  /** @type {DSBoundingRect} @private */
+  /**
+   * @type {DSBoundingRect}
+   * @private
+   * */
   _boundingClientRect
 
   /**
@@ -66,7 +90,6 @@ export default class Area {
     this.PubSub.subscribe('Interaction:end', this.reset)
   }
 
-  /** Add observers */
   start = () => {
     addModificationObservers(
       this.parentNodes,
@@ -82,7 +105,6 @@ export default class Area {
     this._parentNodes = undefined
   }
 
-  /** Remove observers */
   stop = () => {
     removeModificationObservers(
       this._modificationObserver,

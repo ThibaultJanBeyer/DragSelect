@@ -9,9 +9,15 @@ import {
 } from '../methods'
 
 export default class SelectorArea {
-  /** @type {number} @private */
+  /**
+   * @type {number}
+   * @private
+   * */
   _autoScrollSpeed
-  /** @type {*} @private */
+  /**
+   * @type {*}
+   * @private
+   * */
   _scrollInterval
 
   /**

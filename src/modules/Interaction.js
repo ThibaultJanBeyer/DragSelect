@@ -3,7 +3,10 @@ import DragSelect from '../DragSelect'
 import '../types'
 
 export default class Interaction {
-  /** @type {DSArea} @private */
+  /**
+   * @type {DSArea}
+   * @private
+   * */
   _areaElement
 
   /**

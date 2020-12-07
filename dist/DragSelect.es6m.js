@@ -419,7 +419,7 @@ var num2vect = function num2vect(n) {
 // @ts-check
 /**
  * Adds event-listeners to the selectorArea
- * @param {[DSArea]} nodes
+ * @param {DSArea[]} nodes
  * @param {DSModificationCallback} callback
  * @param {MutationObserver} modificationObserver
  */
@@ -862,21 +862,45 @@ var updateElementStylePos = (function (element, pos) {
 });
 
 var Area = /*#__PURE__*/function () {
-  /** @type {DSModificationCallback} */
+  /**
+   * @type {DSModificationCallback}
+   * @private
+   */
 
-  /** @type {MutationObserver} */
+  /**
+   * @type {MutationObserver}
+   * @private
+   */
 
-  /** @type {number} */
+  /**
+   * @type {number}
+   * @private
+   */
 
-  /** @type {DSArea} */
+  /**
+   * @type {DSArea}
+   * @private
+   */
 
-  /** @type {[DSArea]} */
+  /**
+   * @type {DSArea[]}
+   * @private
+   */
 
-  /** @type {CSSStyleDeclaration} @private */
+  /**
+   * @type {CSSStyleDeclaration}
+   * @private
+   * */
 
-  /** @type {{top:number,bottom:number,left:number,right:number}} */
+  /**
+   * @type {{top:number,bottom:number,left:number,right:number}}
+   * @private
+   * */
 
-  /** @type {DSBoundingRect} @private */
+  /**
+   * @type {DSBoundingRect}
+   * @private
+   * */
 
   /**
    * @constructor Area
@@ -962,8 +986,6 @@ var Area = /*#__PURE__*/function () {
     this.PubSub.subscribe('Interaction:init', this.start);
     this.PubSub.subscribe('Interaction:end', this.reset);
   }
-  /** Add observers */
-
 
   _createClass(Area, [{
     key: "HTMLNode",
@@ -1042,7 +1064,10 @@ var Area = /*#__PURE__*/function () {
 }();
 
 var Interaction =
-/** @type {DSArea} @private */
+/**
+ * @type {DSArea}
+ * @private
+ * */
 
 /**
  * @constructor Interaction
@@ -1149,11 +1174,20 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
 
   var _super = _createSuper(SelectableSet);
 
-  /** @type {DSElements} */
+  /**
+   * @type {DSElements}
+   * @private
+   * */
 
-  /** @type {string} */
+  /**
+   * @type {string}
+   * @private
+   * */
 
-  /** @type {string} */
+  /**
+   * @type {string}
+   * @private
+   * */
 
   /**
    * @constructor SelectableSet
@@ -1180,7 +1214,7 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
 
     _defineProperty(_assertThisInitialized(_this), "_className", void 0);
 
-    _defineProperty(_assertThisInitialized(_this), "hoverClassName", void 0);
+    _defineProperty(_assertThisInitialized(_this), "_hoverClassName", void 0);
 
     _defineProperty(_assertThisInitialized(_this), "init", function () {
       return _this._initElements.forEach(function (el) {
@@ -1258,9 +1292,10 @@ var SelectedSet = /*#__PURE__*/function (_Set) {
 
   var _super = _createSuper(SelectedSet);
 
-  /** @type {string} */
-
-  /** @type {Set} */
+  /**
+   * @type {string}
+   * @private
+   * */
 
   /**
    * @constructor SelectableSet
@@ -1280,8 +1315,6 @@ var SelectedSet = /*#__PURE__*/function (_Set) {
     _this = _super.call(this);
 
     _defineProperty(_assertThisInitialized(_this), "_className", void 0);
-
-    _defineProperty(_assertThisInitialized(_this), "_prevSelected", new Set());
 
     _defineProperty(_assertThisInitialized(_this), "clear", function () {
       return _this.forEach(function (el) {
@@ -1363,11 +1396,20 @@ var SelectedSet = /*#__PURE__*/function (_Set) {
 }( /*#__PURE__*/_wrapNativeSuper(Set));
 
 var Selection = /*#__PURE__*/function () {
-  /** @type {Set} */
+  /**
+   * @type {Set}
+   * @private
+   * */
 
-  /** @type {string} */
+  /**
+   * @type {string}
+   * @private
+   * */
 
-  /** @type {boolean} */
+  /**
+   * @type {boolean}
+   * @private
+   * */
 
   /**
    * @constructor Selection
@@ -1430,7 +1472,10 @@ var Selection = /*#__PURE__*/function () {
     this.DS.subscribe('PointerStore:updated', this.update);
     this.DS.subscribe('Area:scroll', this.update);
   }
-  /** Stores the previous selection (solves #9) */
+  /**
+   * Stores the previous selection (solves #9)
+   * @private
+   * */
 
 
   _createClass(Selection, [{
@@ -1441,7 +1486,10 @@ var Selection = /*#__PURE__*/function () {
           SelectedSet = _this$DS2.SelectedSet;
       if (PointerStore.isMultiSelect) this._prevSelected = new Set(SelectedSet);else this._prevSelected = new Set();
     }
-    /** If an element is clicked (via keyboard) @param {{ event:DSEvent }} p */
+    /**
+     * If an element is clicked (via keyboard) @param {{ event:MouseEvent }} p
+     * @private
+     * */
 
   }, {
     key: "handleClick",
@@ -1452,7 +1500,6 @@ var Selection = /*#__PURE__*/function () {
      * <button> nodes are pressed via the keyboard.
      * Making DragSelect accessible for everyone!
      * @param {MouseEvent} event
-     * @private
      */
     value: function handleClick(event) {
       var _this$DS3 = this.DS,
@@ -1589,9 +1636,15 @@ function Selector(_ref) {
 };
 
 var SelectorArea = /*#__PURE__*/function () {
-  /** @type {number} @private */
+  /**
+   * @type {number}
+   * @private
+   * */
 
-  /** @type {*} @private */
+  /**
+   * @type {*}
+   * @private
+   * */
 
   /**
    * @class SelectorArea

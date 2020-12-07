@@ -6,4 +6,13 @@ script:
  - npm run travis:test
 
 after_success:
-  - .bin/travis-push.sh
+ - npm run travis:build
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GH_TOKEN # Set in the settings page of your repository, as a secure variable
+  keep_history: true
+  local_dir: docs
+  on:
+    branch: version/2.0.0
