@@ -1,5 +1,9 @@
 # 2.0.0
 
+## Grant more control to multi-selection behavior
+
+- Added `multiSelectToggling` which let's you control how the multi-selection behaves (solves #58)
+
 ## Improved Selector (Potential Breaking Change)
 
 The selector element is now not rendered inside of the area instead we generate a div overlaying the actual area and render the element inside that div. Which has a lot of benefits:

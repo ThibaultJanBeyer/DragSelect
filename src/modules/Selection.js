@@ -9,14 +9,18 @@ export default class Selection {
   _prevSelected
   /** @type {string} */
   _hoverClassName
+  /** @type {boolean} */
+  _multiSelectToggling
 
   /**
    * @constructor Selection
-   * @param {{ DS:DragSelect, hoverClassName:string }} p
+   * @param {{ DS:DragSelect, hoverClassName:string, multiSelectToggling:boolean }} p
    * @ignore
    */
-  constructor({ DS, hoverClassName }) {
+  constructor({ DS, hoverClassName, multiSelectToggling }) {
     this._hoverClassName = hoverClassName
+    this._multiSelectToggling = multiSelectToggling
+
     this.DS = DS
     this.DS.subscribe('Selectable:click', this._onClick)
     this.DS.subscribe('Interaction:start', this.start)
@@ -115,7 +119,8 @@ export default class Selection {
     if (element.classList.contains(this._hoverClassName) && !force) return false
 
     if (!SelectedSet.has(element)) SelectedSet.add(element)
-    else if (PointerStore.isMultiSelect) SelectedSet.delete(element)
+    else if (PointerStore.isMultiSelect && this._multiSelectToggling)
+      SelectedSet.delete(element)
 
     element.classList.add(this._hoverClassName)
   }

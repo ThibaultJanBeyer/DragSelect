@@ -6,7 +6,8 @@
  * @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom.
  * @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
  * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
- * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them.
+ * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them
+ * @property {boolean} [multiSelectToggling=true] Whether or not to toggle already active elements while multi-selecting
  * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
  * @property {DSInputElements} [selectables=[]] the elements that can be selected
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items

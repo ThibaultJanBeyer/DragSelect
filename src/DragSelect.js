@@ -72,6 +72,7 @@ class DragSelect {
     hoverClass = 'ds-hover',
     multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
     multiSelectMode = false,
+    multiSelectToggling = true,
     selectableClass = 'ds-selectable',
     selectables = [],
     selectedClass = 'ds-selected',
@@ -146,6 +147,7 @@ class DragSelect {
     this.Selection = new Selection({
       DS: this,
       hoverClassName: hoverClass,
+      multiSelectToggling,
     })
 
     // Interaction

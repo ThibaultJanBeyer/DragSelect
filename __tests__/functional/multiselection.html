@@ -1,19 +1,30 @@
 <link rel="stylesheet" href="basics.css">
 
+Normal:
 <div>
-    <button type="button" id="one" class="item one">1</button>
-    <button type="button" id="two" class="item two">2</button>
-    <button type="button" id="three" class="item three">3</button>
-    <button type="button" id="four" class="item four">4</button>
-    <button type="button" id="five" class="item five">5</button>
+    <button type="button" id="one" class="item a one">1</button>
+    <button type="button" id="two" class="item a two">2</button>
+    <button type="button" id="three" class="item a three">3</button>
+    <button type="button" id="four" class="item a four">4</button>
+    <button type="button" id="five" class="item a five">5</button>
 </div>
 
+Multi-Select-Mode:
 <div>
-    <button type="button" id="one" class="itemi one">1</button>
-    <button type="button" id="two" class="itemi two">2</button>
-    <button type="button" id="three" class="itemi three">3</button>
-    <button type="button" id="four" class="itemi four">4</button>
-    <button type="button" id="five" class="itemi five">5</button>
+    <button type="button" id="one2" class="item b one">1</button>
+    <button type="button" id="two2" class="item b two">2</button>
+    <button type="button" id="three2" class="item b three">3</button>
+    <button type="button" id="four2" class="item b four">4</button>
+    <button type="button" id="five2" class="item b five">5</button>
+</div>
+
+Multi-Select-Toggling: OFF
+<div>
+    <button type="button" id="one3" class="item c one">1</button>
+    <button type="button" id="two3" class="item c two">2</button>
+    <button type="button" id="three3" class="item c three">3</button>
+    <button type="button" id="four3" class="item c four">4</button>
+    <button type="button" id="five3" class="item c five">5</button>
 </div>
 
 <script src="../../dist/DragSelect.js"></script>
@@ -21,7 +32,7 @@
     window.selected = [];
 
     new DragSelect({
-        selectables: document.querySelectorAll('.item'),
+        selectables: document.querySelectorAll('.item.a'),
         callback: sel => window.selected = sel.map(sel => sel.id)
     });
 </script>
@@ -29,8 +40,17 @@
     window.multiselected = [];
 
     new DragSelect({
-        selectables: document.querySelectorAll('.itemi'),
+        selectables: document.querySelectorAll('.item.b'),
         multiSelectMode: true,
         callback: sel => window.multiselected = sel.map(sel => sel.id)
+    });
+</script>
+<script>
+    window.multiSelectTogglingOff = [];
+
+    new DragSelect({
+        selectables: document.querySelectorAll('.item.c'),
+        multiSelectToggling: false,
+        callback: sel => window.multiSelectTogglingOff = sel.map(sel => sel.id)
     });
 </script>
