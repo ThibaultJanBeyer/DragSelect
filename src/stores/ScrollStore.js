@@ -17,22 +17,28 @@ export default class ScrollStore {
     this.DS = DS
     this.zoom = zoom
 
+    this.DS.subscribe('Interaction:init', this.init)
     this.DS.subscribe('Interaction:start', () => this.start())
-    this.DS.subscribe('Interaction:end', () => this.stop())
+    this.DS.subscribe('Interaction:end', () => this.reset())
   }
+
+  init = () => this._areaElement.addEventListener('scroll', this.update)
 
   start = () => {
     this._currentVal = this._initialVal = getCurrentScroll(this._areaElement)
     this._areaElement.addEventListener('scroll', this.update)
   }
 
-  update = () => {
-    this._currentVal = getCurrentScroll(this._areaElement)
-  }
+  update = () => (this._currentVal = getCurrentScroll(this._areaElement))
 
   stop = () => {
     this._areaElement.removeEventListener('scroll', this.update)
     this._initialVal = { x: 0, y: 0 }
+  }
+
+  reset = () => {
+    this.stop()
+    this.start()
   }
 
   get scrollAmount() {

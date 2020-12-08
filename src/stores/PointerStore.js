@@ -2,13 +2,6 @@ import DragSelect from '../DragSelect'
 import { getPointerPos, vect2 } from '../methods'
 
 export default class PointerStore {
-  // multiselect
-  /** @type {boolean} @private */
-  _multiSelectMode
-  /** @type {DSMultiSelectKeys} @private */
-  _multiSelectKeys
-  /** @type {boolean} */
-  _isMultiSelect = false
   /** @type {boolean} */
   _isMouseInteraction = false
 
@@ -31,29 +24,32 @@ export default class PointerStore {
   /** @type {TouchEvent} @private */
   _lastTouch
 
-  /** @param {{DS:DragSelect,multiSelectKeys:DSMultiSelectKeys,multiSelectMode:boolean}} p */
-  constructor({ DS, multiSelectKeys, multiSelectMode }) {
+  /**
+   * @class PointerStore
+   * @constructor PointerStore
+   * @param {{DS:DragSelect}} p
+   */
+  constructor({ DS }) {
     this.DS = DS
-    this._multiSelectKeys = multiSelectKeys
-    this._multiSelectMode = multiSelectMode
-
+    this.DS.subscribe('Interaction:init', this.init)
     this.DS.subscribe('Interaction:start', ({ event }) => this.start(event))
-    this.DS.subscribe('Interaction:end', ({ event }) => this.stop(event))
+    this.DS.subscribe('Interaction:end', ({ event }) => this.reset(event))
+  }
+
+  init = () => {
+    document.addEventListener('mousemove', this.update)
+    document.addEventListener('touchmove', this.update, {
+      // @ts-ignore
+      passive: false,
+    })
   }
 
   /** @param {DSEvent} [event] */
   start(event) {
     if (!event) return
     this._isMouseInteraction = true
-    this._isMultiSelect = this._isMultiSelectKeyPressed(event)
     this.currentVal = this.initialVal = getPointerPos({
       event: this._normalizedEvent(event),
-    })
-
-    document.addEventListener('mousemove', this.update)
-    document.addEventListener('touchmove', this.update, {
-      // @ts-ignore
-      passive: false,
     })
   }
 
@@ -63,26 +59,30 @@ export default class PointerStore {
     this.currentVal = getPointerPos({
       event: this._normalizedEvent(event),
     })
+    if (!this._isMouseInteraction) return
     this.DS.publish('PointerStore:updated', { event })
   }
 
-  /** @param {DSEvent} [event] */
-  stop = (event) => {
-    if (!event) return
-
+  stop = () => {
     document.removeEventListener('mousemove', this.update)
     document.removeEventListener('touchmove', this.update, {
       // @ts-ignore
       passive: false,
     })
+    // debounce in order "onClick" to work
+    setTimeout(() => (this._isMouseInteraction = false), 100)
+  }
+
+  /** @param {DSEvent} [event] */
+  reset = (event) => {
+    if (!event) return
 
     this.currentVal = this.lastVal = getPointerPos({
       event: this._normalizedEvent(event),
     })
-    this.initialVal = { x: 0, y: 0 }
 
-    // debounce in order "onClick" to work
-    setTimeout(() => (this._isMouseInteraction = false), 100)
+    this.stop()
+    this.init()
   }
 
   /**
@@ -96,20 +96,6 @@ export default class PointerStore {
     // if a touchevent, return the last touch rather than the regular event
     // we need .touches[0] from that event instead
     return 'touches' in event ? this._lastTouch.touches[0] : event
-  }
-
-  /**
-   * @param {DSEvent} event
-   * @return {boolean}
-   * @private
-   */
-  _isMultiSelectKeyPressed(event) {
-    if (this._multiSelectMode) return true
-    return this._multiSelectKeys.some((mKey) => event[mKey])
-  }
-
-  get isMultiSelect() {
-    return this._isMultiSelect
   }
 
   get isMouseInteraction() {

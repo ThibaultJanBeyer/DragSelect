@@ -65,6 +65,7 @@ Based on the changes, some methods did not make sense anymore. So we cleaned the
 
 Public methods that were removed:
 
+- `.break` was removed
 - `.getCursorPos`
 - `.getScroll`
 - `.getAreaRect`
@@ -73,9 +74,16 @@ Public methods that were removed:
 - `.toggle` (use `.toggleSelection` instead)
 - `.select` (use `.setSelection` or `.addSelection` instead)
 
-## Removed break functionality (Breaking Change)
+## Fixing Multi-Select-Keys issue & adding more available keys (Breaking Change)
 
-- `.break` was removed
+- Fixes the issue with multi-selection via Keyboard not working on Firefox.
+- You can now use **any** key to trigger multi-selection mode that is available under `event.key` on Keyboard Events ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key))
+
+However, that means that the key names have changes. Following keys should be replaced:
+
+- Instead of `"ctrlKey"` use `"Control"` now
+- Instead of `"shiftKey"` use `"Shift"` now
+- Instead of `"metaKey"` use `"Meta"` now
 
 ## Increased performance
 

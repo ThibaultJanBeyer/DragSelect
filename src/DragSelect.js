@@ -7,13 +7,13 @@
 /_____/_/   \__,_/\__, //____/\___/_/\___/\___/\__/  
                  /____/                              
 
- {*} {*} STAR THIS PLUGIN ON GITHUB: {*} {*}
+ {*} {*} STAR THIS PLUGIN ON GITHUB {*} {*}
 
  https://github.com/ThibaultJanBeyer/DragSelect
  Please give it a like, this is what makes me happy :-)
  Thank You
 
- {*} {*} STAR THIS PLUGIN ON GITHUB: {*} {*}
+ {*} {*} STAR THIS PLUGIN ON GITHUB {*} {*}
 
  ******************************************
  ********* The MIT License (MIT) **********
@@ -53,7 +53,7 @@ import {
   Selector,
   SelectorArea,
 } from './modules'
-import { PointerStore, ScrollStore } from './stores'
+import { PointerStore, ScrollStore, KeyStore } from './stores'
 import { toArray, vect2 } from './methods'
 
 // Setup
@@ -68,12 +68,12 @@ class DragSelect {
   constructor({
     area = document,
     selectables = [],
-    autoScrollSpeed = 50,
+    autoScrollSpeed = 10,
     zoom = 1,
     customStyles = false,
     multiSelectMode = false,
     multiSelectToggling = true,
-    multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
+    multiSelectKeys = ['Control', 'Shift', 'Meta'],
     selector = undefined,
     hoverClass = 'ds-hover',
     selectableClass = 'ds-selectable',
@@ -103,12 +103,9 @@ class DragSelect {
 
     // stores
     this.stores = {
-      PointerStore: new PointerStore({
-        DS: this,
-        multiSelectMode,
-        multiSelectKeys,
-      }),
+      PointerStore: new PointerStore({ DS: this }),
       ScrollStore: new ScrollStore({ DS: this, areaElement: area, zoom }),
+      KeyStore: new KeyStore({ DS: this, multiSelectKeys, multiSelectMode }),
     }
 
     // Area
@@ -160,17 +157,11 @@ class DragSelect {
     this.subscribe('Selected:removed', ({ items, item }) =>
       this.publish('elementunselect', { items, item })
     )
-    this.subscribe('PointerStore:updated', ({ event }) =>
-      this.publish('dragmove', {
-        items: this.getSelection(),
-        event,
-      })
-    )
-    this.subscribe('Area:scroll', ({ directions }) =>
-      this.publish('autoscroll', {
-        data: directions,
-      })
-    )
+    this.subscribe('Interaction:update', ({ event, data }) => {
+      if (event && !data)
+        this.publish('dragmove', { items: this.getSelection(), event })
+      if (!event && data) this.publish('autoscroll', { data })
+    })
     this.subscribe('Interaction:start', ({ event }) =>
       this.publish('dragstart', {
         items: this.getSelection(),
@@ -184,12 +175,6 @@ class DragSelect {
     this.start()
   }
 
-  /**
-   * Initializes the functionality. Automatically triggered when created.
-   * Also, reset the functionality after a teardown
-   */
-  start = () => this.Interaction.init()
-
   // @TODO: remove after deprecation
   _callbacksTemp({
     callback,
@@ -201,7 +186,7 @@ class DragSelect {
   }) {
     const warnMessage = (name, newName) =>
       console.warn(
-        `[DragSelect] ${name} is being deprecated. Use DragSelect.subscribe("${newName}", (callbackObject) => {}) instead. See docs for more info`
+        `[DragSelect] ${name} is deprecated. Use DragSelect.subscribe("${newName}", (callbackObject) => {}) instead. Act Now! See docs for more info`
       )
     if (callback) {
       warnMessage('callback', 'callback')
@@ -238,9 +223,13 @@ class DragSelect {
       )
     }
   }
-
   // Useful methods for the user
   //////////////////////////////////////////////////////////////////////////////////////
+  /**
+   * Initializes the functionality. Automatically triggered when created.
+   * Also, reset the functionality after a teardown
+   */
+  start = () => this.Interaction.init()
   /**
    * Complete function teardown
    * Will teardown/stop the whole functionality
@@ -254,6 +243,9 @@ class DragSelect {
     this.Interaction.stop()
     this.Selector.stop()
     this.Area.stop()
+    this.stores.KeyStore.stop()
+    this.stores.PointerStore.stop()
+    this.stores.ScrollStore.stop()
 
     if (remove) this.SelectableSet.clear()
     if (fromSelection) this.SelectedSet.clear()
@@ -383,8 +375,18 @@ class DragSelect {
   getCurrentCursorPosition = () => this.stores.PointerStore.currentVal
   /** The previous position of the cursor/selector @return {Vect2} */
   getPreviousCursorPosition = () => this.stores.PointerStore.lastVal
-  /** Whether the multi-selection key was pressed @return {boolean} */
-  isMultiSelect = () => this.stores.PointerStore.isMultiSelect
+  /** The starting/initial position of the cursor/selector @return {Vect2} */
+  getInitialCursorPositionArea = () => this.stores.PointerStore.initialValArea
+  /** The last seen position of the cursor/selector @return {Vect2} */
+  getCurrentCursorPositionArea = () => this.stores.PointerStore.currentValArea
+  /** The previous position of the cursor/selector @return {Vect2} */
+  getPreviousCursorPositionArea = () => this.stores.PointerStore.lastValArea
+  /**
+   * Whether the multi-selection key was pressed
+   * @param {DSEvent|KeyboardEvent} [event]
+   * @return {boolean}
+   */
+  isMultiSelect = (event) => this.stores.KeyStore.isMultiSelectKeyPressed(event)
   /**
    * Returns the cursor position difference between start and now
    * If usePreviousCursorDifference is passed,

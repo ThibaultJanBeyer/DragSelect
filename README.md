@@ -174,7 +174,7 @@ Here are some properties for your convenience. Note, all properties are optional
 |customStyles |boolean |If true, no styles will be automatically applied to the selector element (except position: absolute). |`false`
 |multiSelectMode |boolean |Add newly selected elements to the selection instead of replacing them. |`false`
 |multiSelectToggling |boolean |Whether or not to toggle already active elements while multi-selecting. |`true` (MacOS selection behavior)
-|multiSelectKeys |array |Keys that allows switching to the multi-select mode (see the multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality. |`['ctrlKey', 'shiftKey', 'metaKey']`
+|multiSelectKeys |array |Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality. |`['Control', 'Shift', 'Meta']`
 |selector |single DOM element (node) |The square that will be used to draw the selection. | Auto-created HTML Element
 |selectedClass |string |The class name assigned to the selected items. |[see classes](#classes)
 |hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)
@@ -219,8 +219,11 @@ There are way more than listed here. You can find all in **[the docs](https://th
 |getSelectables |/ |Returns array with all nodes that can be selected.
 |setSelectables |DOM elements (nodes), Boolean (removeFromSelection), Boolean (addToSelection) |Sets all elements that can be selected. Removes all current selectables (& their respective applied classes). Adds the new set to the selectables set. Thus, replacing the original set. First boolean if old elements should be removed from the selection. Second boolean if new elements should be added to the selection. 
 |getInitialCursorPosition |/ |Returns the registered x, y coordinates the cursor had when first clicked 
-|getCurrentCursorPosition |/ |Returns current/last registered x, y coordinates of the cursor 
+|getCurrentCursorPosition |/ |Returns current x, y coordinates of the cursor 
 |getPreviousCursorPosition |/ |Returns last registered x, y coordinates of the cursor (after last callback) 
+|getInitialCursorPositionArea |/ |Returns the registered x, y coordinates relative to the area the cursor had when first clicked 
+|getCurrentCursorPositionArea |/ |Returns current x, y coordinates of the cursor relative to the area
+|getPreviousCursorPositionArea |/ |Returns last registered x, y coordinates of the cursor relative to the area (after last callback) 
 |getCursorPositionDifference |Boolean (usePreviousCursorDifference) |Returns object with the x, y difference between the initial and the last cursor position. If the argument is set to true, it will instead return the x, y difference to the previous coordinates |
 |isMultiSelect |/ |Whether the multi-select key is currently pressed
 

@@ -33,21 +33,22 @@ export default class Selection {
     this.DS = DS
     this.DS.subscribe('Selectable:click', this._onClick)
     this.DS.subscribe('Interaction:start', this.start)
-    this.DS.subscribe('PointerStore:updated', this.update)
-    this.DS.subscribe('Area:scroll', this.update)
+    this.DS.subscribe('Interaction:update', this.update)
   }
 
   /**
    * Stores the previous selection (solves #9)
+   * @param {DSEvent} event
    * @private
    * */
-  _storePrevious() {
+  _storePrevious(event) {
     const {
-      stores: { PointerStore },
+      stores: { KeyStore },
       SelectedSet,
     } = this.DS
 
-    if (PointerStore.isMultiSelect) this._prevSelected = new Set(SelectedSet)
+    if (KeyStore.isMultiSelectKeyPressed(event))
+      this._prevSelected = new Set(SelectedSet)
     else this._prevSelected = new Set()
   }
 
@@ -65,7 +66,7 @@ export default class Selection {
    */
   handleClick(event) {
     const {
-      stores: { PointerStore },
+      stores: { PointerStore, KeyStore },
       SelectorArea,
       SelectableSet,
       SelectedSet,
@@ -81,15 +82,16 @@ export default class Selection {
     if (!SelectableSet.has(node)) return
     if (!SelectorArea.isInside(node)) return
 
-    if (!PointerStore.isMultiSelect) SelectedSet.clear()
+    if (!KeyStore.isMultiSelectKeyPressed(event)) SelectedSet.clear()
     SelectedSet.toggle(node)
 
     publish('Interaction:end', { event }) // simulate mouse-up (that does not exist on keyboard)
   }
 
-  start = () => {
-    this._storePrevious()
-    this._checkIfInsideSelection(true)
+  /** @param {{event:DSEvent}} event */
+  start = ({ event }) => {
+    this._storePrevious(event)
+    this._checkIfInsideSelection(true, event)
   }
 
   update = () => this._checkIfInsideSelection()
@@ -97,25 +99,24 @@ export default class Selection {
   /**
    * Checks if any selectable element is inside selection.
    * @param {boolean} [force]
+   * @param {DSEvent} [event]
    * @return {boolean}
    * @private
    */
-  _checkIfInsideSelection = (force) => {
+  _checkIfInsideSelection = (force, event) => {
     const { SelectableSet, SelectorArea, Selector } = this.DS
 
     let anyInside = false
     SelectableSet.forEach((element) => {
-      if (
-        SelectorArea.isInside(element) &&
-        isElementTouching(element, Selector.HTMLNode)
-      ) {
-        this._handleSelection(element, force)
+      if (!SelectorArea.isInside(element)) return
+
+      if (isElementTouching(element, Selector.HTMLNode)) {
+        this._handleSelection(element, force, event)
         anyInside = true
       } else {
         this._handleUnselection(element, force)
       }
     })
-
     return anyInside
   }
 
@@ -123,18 +124,22 @@ export default class Selection {
    * Logic when an element is selected
    * @param {DSElement} element
    * @param {boolean} force
+   * @param {DSEvent} [event]
    * @private
    */
-  _handleSelection(element, force) {
+  _handleSelection(element, force, event) {
     const {
       SelectedSet,
-      stores: { PointerStore },
+      stores: { KeyStore },
     } = this.DS
 
     if (element.classList.contains(this._hoverClassName) && !force) return false
 
     if (!SelectedSet.has(element)) SelectedSet.add(element)
-    else if (PointerStore.isMultiSelect && this._multiSelectToggling)
+    else if (
+      KeyStore.isMultiSelectKeyPressed(event) &&
+      this._multiSelectToggling
+    )
       SelectedSet.delete(element)
 
     element.classList.add(this._hoverClassName)

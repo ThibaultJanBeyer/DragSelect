@@ -12,10 +12,9 @@
         document.body.appendChild(child);
     }
 
-    new DragSelect({
+    const ds = new DragSelect({
         selectables: document.querySelectorAll('.generated-item'),
         callback: sel => { console.log(sel); window.selected = sel.map(sel => sel.id) }
     });
-
 </script>
 </body>

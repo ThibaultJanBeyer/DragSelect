@@ -18,6 +18,8 @@ describe('Document Scroll', () => {
     }))
 
     const expected = [
+      'item-161',
+      'item-177',
       'item-193',
       'item-209',
       'item-225',
@@ -26,20 +28,6 @@ describe('Document Scroll', () => {
       'item-273',
       'item-289',
       'item-305',
-      'item-321',
-      'item-337',
-      'item-353',
-      'item-369',
-      'item-177',
-      'item-385',
-      'item-401',
-      'item-417',
-      'item-433',
-      'item-449',
-      'item-465',
-      'item-481',
-      'item-497',
-      'item-161',
     ]
 
     expect(selected.sort()).toEqual(expected.sort())

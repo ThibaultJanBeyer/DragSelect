@@ -25,22 +25,20 @@ export default class Selector {
     this.HTMLNode.classList.add(selectorClass)
 
     this.DS.subscribe('Interaction:start', this.start)
-    this.DS.subscribe('PointerStore:updated', this.update)
-    this.DS.subscribe('Area:scroll', this.update)
+    this.DS.subscribe('Interaction:update', this.update)
     this.DS.subscribe('Interaction:end', this.stop)
   }
 
   start = () => {
     const {
-      stores: { ScrollStore, PointerStore },
+      stores: { PointerStore },
     } = this.DS
-    const pPos = PointerStore.currentValArea
-    const scroll = ScrollStore.currentVal
+    const pPos = PointerStore.initialValArea
     updateElementStylePos(this.HTMLNode, {
-      x: pPos.x + scroll.x,
-      y: pPos.y + scroll.y,
-      w: 0,
-      h: 0,
+      x: pPos.x,
+      y: pPos.y,
+      w: 1,
+      h: 1,
     })
     this.HTMLNode.style.display = 'block'
   }
