@@ -2,7 +2,7 @@
 import '../types'
 import DragSelect from '../DragSelect'
 
-import { isElementTouching, isCollision } from '../methods'
+import { isCollision } from '../methods'
 
 export default class Selection {
   /**

@@ -371,7 +371,7 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
  * @property {boolean} [multiSelectToggling=true] Whether or not to toggle already active elements while multi-selecting
  * @property {DSMultiSelectKeys} [multiSelectKeys=['Control', 'Shift', 'Meta']] Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
- * @property {boolean} [stopForMove=true] When a user is dragging on an already selected element, the selection is not fired. This is required to plug-in drag-and-drop functionality.
+ * @property {boolean} [stopForMove=false] When a user is dragging on an already selected element, the selection is not fired. This is required to plug-in drag-and-drop functionality.
  * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
@@ -1536,11 +1536,40 @@ var Selection = /*#__PURE__*/function () {
       return _this._checkIfInsideSelection();
     });
 
+    _defineProperty(this, "_webWorker", function (elements) {
+      // create blob from JavaScript code (ES6 template literal)
+      var blob = new Blob([
+      /*javascript*/
+      "\n        onmessage = function(event) {\n          const elements = event.data\n          const elPosCombo = elements.map(\n            (element) => {\n              const rect = element.getBoundingClientRect()\n              const pos = {\n                y: rect.top,\n                x: rect.left,\n                h: rect.height,\n                w: rect.width,\n              }\n              return [element, pos]\n            }\n          )\n\n          postMessage(elPosCombo)\n        }\n      "]); // create blob url from blob
+
+      var blobURL = window.URL.createObjectURL(blob); // create web worker from blob url
+
+      var worker = new Worker(blobURL); // send event to web worker
+
+      worker.postMessage({
+        elements: elements
+      }); // listen to message event from web worker
+
+      worker.addEventListener('message', function (event) {
+        var data = event.data;
+        console.log('walala', data);
+      });
+      worker.addEventListener('error', function (error) {
+        return console.log(error);
+      });
+      worker.addEventListener('messageerror', function (error) {
+        return console.log(error);
+      });
+    });
+
     _defineProperty(this, "_checkIfInsideSelection", function (force, event) {
       var _this$DS = _this.DS,
           SelectableSet = _this$DS.SelectableSet,
           SelectorArea = _this$DS.SelectorArea,
           Selector = _this$DS.Selector;
+
+      _this._webWorker(SelectableSet.elements);
+
       var elPosCombo =
       /** @type {[[DSElement, DSElementPos]]} */
       SelectableSet.elements.map(function (element) {
@@ -2384,7 +2413,7 @@ var DragSelect = /*#__PURE__*/function () {
         _ref$selector = _ref.selector,
         selector = _ref$selector === void 0 ? undefined : _ref$selector,
         _ref$stopForMove = _ref.stopForMove,
-        stopForMove = _ref$stopForMove === void 0 ? true : _ref$stopForMove,
+        stopForMove = _ref$stopForMove === void 0 ? false : _ref$stopForMove,
         _ref$hoverClass = _ref.hoverClass,
         hoverClass = _ref$hoverClass === void 0 ? 'ds-hover' : _ref$hoverClass,
         _ref$selectableClass = _ref.selectableClass,
