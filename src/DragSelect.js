@@ -75,6 +75,7 @@ class DragSelect {
     multiSelectToggling = true,
     multiSelectKeys = ['Control', 'Shift', 'Meta'],
     selector = undefined,
+    stopForMove = false,
     hoverClass = 'ds-hover',
     selectableClass = 'ds-selectable',
     selectedClass = 'ds-selected',
@@ -148,7 +149,11 @@ class DragSelect {
     })
 
     // Interaction
-    this.Interaction = new Interaction({ areaElement: area, DS: this })
+    this.Interaction = new Interaction({
+      areaElement: area,
+      DS: this,
+      stopForMove,
+    })
 
     // Subscriber Aliases
     this.subscribe('Selected:added', ({ items, item }) =>

@@ -8,16 +8,23 @@ export default class Interaction {
    * @private
    * */
   _areaElement
+  /**
+   * @type {boolean}
+   * @private
+   * */
+  _stopForMove
 
   /**
    * @constructor Interaction
    * @param {Object} obj
    * @param {DSArea} obj.areaElement
+   * @param {boolean} obj.stopForMove
    * @param {DragSelect} obj.DS
    * @ignore
    */
-  constructor({ areaElement, DS }) {
+  constructor({ areaElement, DS, stopForMove }) {
     this._areaElement = areaElement
+    this._stopForMove = stopForMove
     this.DS = DS
     this.DS.subscribe('PointerStore:updated', this.update)
     this.DS.subscribe('Area:scroll', this.update)
@@ -35,6 +42,12 @@ export default class Interaction {
   start = (event) => {
     if (event.type === 'touchstart') event.preventDefault() // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
     if (/** @type {*} */ (event).button === 2) return // right-clicks
+    if (
+      this._stopForMove &&
+      !this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) &&
+      this.DS.SelectedSet.has(event.target)
+    )
+      return // wants to drag
 
     this.isInteracting = true
     this.DS.publish('Interaction:start', { event })

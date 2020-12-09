@@ -2,7 +2,7 @@
 import '../types'
 import DragSelect from '../DragSelect'
 
-import { isElementTouching } from '../methods'
+import { isElementTouching, isCollision } from '../methods'
 
 export default class Selection {
   /**
@@ -106,18 +106,32 @@ export default class Selection {
   _checkIfInsideSelection = (force, event) => {
     const { SelectableSet, SelectorArea, Selector } = this.DS
 
-    let anyInside = false
-    SelectableSet.forEach((element) => {
-      if (!SelectorArea.isInside(element)) return
-
-      if (isElementTouching(element, Selector.HTMLNode)) {
-        this._handleSelection(element, force, event)
-        anyInside = true
-      } else {
-        this._handleUnselection(element, force)
+    const elPosCombo = /** @type {[[DSElement, DSElementPos]]} */ (SelectableSet.elements.map(
+      (element) => {
+        const rect = element.getBoundingClientRect()
+        const pos = {
+          y: rect.top,
+          x: rect.left,
+          h: rect.height,
+          w: rect.width,
+        }
+        return [element, pos]
       }
-    })
-    return anyInside
+    ))
+
+    const select = []
+    const unselect = []
+
+    for (const [element, elPosition] of elPosCombo) {
+      if (!SelectorArea.isInside(element, elPosition)) continue
+      if (isCollision(elPosition, Selector.position)) select.push(element)
+      else unselect.push(element)
+    }
+
+    select.forEach((element) => this._handleSelection(element, force, event))
+    unselect.forEach((element) => this._handleUnselection(element, force))
+
+    return select.length > -1
   }
 
   /**
@@ -128,12 +142,13 @@ export default class Selection {
    * @private
    */
   _handleSelection(element, force, event) {
+    if (element.className.indexOf(this._hoverClassName) > 0 && !force)
+      return false
+
     const {
       SelectedSet,
       stores: { KeyStore },
     } = this.DS
-
-    if (element.classList.contains(this._hoverClassName) && !force) return false
 
     if (!SelectedSet.has(element)) SelectedSet.add(element)
     else if (
@@ -152,10 +167,10 @@ export default class Selection {
    * @private
    */
   _handleUnselection(element, force) {
-    const { SelectedSet } = this.DS
-
-    if (!element.classList.contains(this._hoverClassName) && !force)
+    if (element.className.indexOf(this._hoverClassName) < 0 && !force)
       return false
+
+    const { SelectedSet } = this.DS
 
     const inSelection = SelectedSet.has(element)
     const inPrevSelection = this._prevSelected.has(element)

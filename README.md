@@ -41,7 +41,7 @@ easily add a selection algorithm to your application/website.
 - Great browser support, works even like a charm on IE10
 - Lightweight, only ![gzip size](http://img.badgesize.io/https://thibaultjanbeyer.github.io/DragSelect/ds.min.js?compression=gzip)
 - Popular: ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) on npm
-- DragSelect was written with Performance in mind
+- DragSelect was written with Performance in mind (can easily select >15.000 Elements)
 - Supports SVG
 - Supports mobile (touch interaction)
 - Free & open source under MIT License
@@ -176,6 +176,7 @@ Here are some properties for your convenience. Note, all properties are optional
 |multiSelectToggling |boolean |Whether or not to toggle already active elements while multi-selecting. |`true` (MacOS selection behavior)
 |multiSelectKeys |array |Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality. |`['Control', 'Shift', 'Meta']`
 |selector |single DOM element (node) |The square that will be used to draw the selection. | Auto-created HTML Element
+|stopForMove |boolean |When a user is dragging on an already selected element, the selection is not fired. This is required when you want to plug-in drag-and-drop functionality. |`false`
 |selectedClass |string |The class name assigned to the selected items. |[see classes](#classes)
 |hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)
 |selectorClass |string |The class name assigned to the square selector helper. |[see classes](#classes)

@@ -10,6 +10,7 @@
  * @property {boolean} [multiSelectToggling=true] Whether or not to toggle already active elements while multi-selecting
  * @property {DSMultiSelectKeys} [multiSelectKeys=['Control', 'Shift', 'Meta']] Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
+ * @property {boolean} [stopForMove=false] When a user is dragging on an already selected element, the selection is not fired. This is required to plug-in drag-and-drop functionality.
  * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items

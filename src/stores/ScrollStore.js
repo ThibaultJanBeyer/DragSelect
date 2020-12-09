@@ -1,15 +1,25 @@
 // @ts-check
 import '../types'
 import DragSelect from '../DragSelect'
-import { getCurrentScroll, vect2 } from '../methods'
+import { getCurrentScroll, vect2, canScroll } from '../methods'
 
 export default class ScrollStore {
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private */
   _initialVal
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private */
   _currentVal
-  /** @type {DSArea} @private */
+  /**
+   * @type {DSArea}
+   * @private */
   _areaElement
+  /**
+   * @type {boolean}
+   * @private */
+  _canScroll
 
   /** @param {{ DS:DragSelect, areaElement: DSArea, zoom:number }} p */
   constructor({ DS, areaElement, zoom }) {
@@ -34,11 +44,17 @@ export default class ScrollStore {
   stop = () => {
     this._areaElement.removeEventListener('scroll', this.update)
     this._initialVal = { x: 0, y: 0 }
+    this._canScroll = null
   }
 
   reset = () => {
     this.stop()
     this.start()
+  }
+
+  get canScroll() {
+    if (typeof this._canScroll === 'boolean') return this._canScroll
+    return (this._canScroll = canScroll(this._areaElement))
   }
 
   get scrollAmount() {

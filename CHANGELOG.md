@@ -85,15 +85,19 @@ However, that means that the key names have changes. Following keys should be re
 - Instead of `"shiftKey"` use `"Shift"` now
 - Instead of `"metaKey"` use `"Meta"` now
 
-## Increased performance
+## Impressive performance improvements
 
 This version is an (almost) complete rewrite of DragSelect. Of course the main reason is to improve the ease to add new features and maintain existing ones but that also gave the opportunity to add some performance improvements.
 
 The setup used to measure this is the performance test which runs DragSelect over 25.000 selectable Nodes.
 We compared the accumulated average execution times before and after the changes. Before the changes that was an average of 3s/run.
 
-- 4.27% faster by caching calculations
-- 12,82% faster by using an interaction pub/sub mechanism
+- 4.09% faster by caching calculations
+- 11.36% faster by using an interaction pub/sub mechanism
+- 15.86% faster by caching element positions (each update) & using more performant css class manipulations
+- 28.36% faster by caching by bundling reflows and repaints
+---
+59,67% performance increase
 
 # 1.15.0
 

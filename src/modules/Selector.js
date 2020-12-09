@@ -1,14 +1,21 @@
 // @ts-check
 import '../types.js'
-
-import {
-  getSelectorPosition,
-  updateElementStylePos,
-  createSelectorElement,
-} from '../methods'
 import DragSelect from '../DragSelect'
 
+import {
+  createSelectorElement,
+  getPosition,
+  getSelectorPosition,
+  updateElementStylePos,
+} from '../methods'
+
 export default class Selector {
+  /**
+   * @type {DSElementPos}
+   * @private
+   */
+  _position
+
   /**
    * @constructor Selector
    * @param {Object} p
@@ -41,6 +48,7 @@ export default class Selector {
       h: 1,
     })
     this.HTMLNode.style.display = 'block'
+    this._position = null
   }
 
   stop = () => {
@@ -60,5 +68,11 @@ export default class Selector {
       pointerPos: PointerStore.currentValArea,
     })
     updateElementStylePos(this.HTMLNode, pos)
+    this._position = null
+  }
+
+  get position() {
+    if (this._position) return this._position
+    return (this._position = getPosition(this.HTMLNode))
   }
 }

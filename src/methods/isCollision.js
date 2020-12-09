@@ -19,8 +19,8 @@ import '../types'
  * 4. b02 > b11 (bottom border pos box1 larger than top border pos box2)
  * {@link https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box Wikipedia}
  * {@link https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection MDN}
- * @param {DSElementPos} a
- * @param {DSElementPos} b
+ * @param {DSElementPos} el1
+ * @param {DSElementPos} el2
  */
 export default (el1, el2) => {
   if (
@@ -28,9 +28,8 @@ export default (el1, el2) => {
     el1.x + el1.w > el2.x && // 2.
     el1.y < el2.y + el2.h && // 3.
     el1.h + el1.y > el2.y // 4.
-  ) {
-    return true // collision detected!
-  } else {
-    return false
-  }
+  )
+    return true
+  // collision detected!
+  else return false
 }

@@ -3,9 +3,9 @@ import '../types.js'
 import DragSelect from '../DragSelect'
 import {
   createSelectorAreaElement,
+  getPosition,
   isCollision,
   isCursorNearEdges,
-  isInsideElement,
 } from '../methods'
 
 export default class SelectorArea {
@@ -19,6 +19,11 @@ export default class SelectorArea {
    * @private
    * */
   _scrollInterval
+  /**
+   * @type {DSElementPos}
+   * @private
+   */
+  _position
 
   /**
    * @class SelectorArea
@@ -42,6 +47,7 @@ export default class SelectorArea {
 
   /** Updates the selectorAreas positions to match the areas */
   updatePos = () => {
+    this._position = null
     const rect = this.DS.Area.boundingClientRect
     const border = this.DS.Area.computedBorder
     const { style } = this.HTMLNode
@@ -85,10 +91,17 @@ export default class SelectorArea {
    * Checks if the element is either inside the Selector Area
    * (as a reachable child or touching the area)
    * @param {DSElement} element
+   * @param {DSElementPos} [elementPos] - slight performance improvements
    * @returns {boolean}
    */
-  isInside = (element) =>
-    isInsideElement(element, this.DS.Area.HTMLNode, this.HTMLNode)
+  isInside = (element, elementPos) => {
+    if (
+      this.DS.Area.HTMLNode.contains(element) &&
+      this.DS.stores.ScrollStore.canScroll
+    )
+      return true
+    return isCollision(this.position, elementPos || getPosition(element))
+  }
 
   /**
    * checks if the click was triggered on the area.
@@ -106,15 +119,11 @@ export default class SelectorArea {
       h: 0,
     }
 
-    const boundingClientRect = this.HTMLNode.getBoundingClientRect()
+    return isCollision(cPos, this.position)
+  }
 
-    const areaRect = {
-      x: boundingClientRect.left,
-      y: boundingClientRect.top,
-      w: this.HTMLNode.offsetWidth,
-      h: this.HTMLNode.offsetHeight,
-    }
-
-    return isCollision(cPos, areaRect)
+  get position() {
+    if (this._position) return this._position
+    return (this._position = getPosition(this.HTMLNode))
   }
 }
