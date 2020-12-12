@@ -105,7 +105,6 @@ export default class Selection {
    */
   _checkIfInsideSelection = (force, event) => {
     const { SelectableSet, SelectorArea, Selector } = this.DS
-    const selectables = SelectableSet.elements
 
     /** @type {any} */
     const elPosCombo = SelectableSet.elements.map((element) => {

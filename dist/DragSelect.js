@@ -1451,7 +1451,6 @@
             SelectableSet = _this$DS.SelectableSet,
             SelectorArea = _this$DS.SelectorArea,
             Selector = _this$DS.Selector;
-        var selectables = SelectableSet.elements;
         /** @type {any} */
 
         var elPosCombo = SelectableSet.elements.map(function (element) {
