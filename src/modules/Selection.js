@@ -105,27 +105,30 @@ export default class Selection {
    */
   _checkIfInsideSelection = (force, event) => {
     const { SelectableSet, SelectorArea, Selector } = this.DS
+    const selectables = SelectableSet.elements
 
-    const elPosCombo = /** @type {[[DSElement, DSElementPos]]} */ (SelectableSet.elements.map(
-      (element) => {
-        const rect = element.getBoundingClientRect()
-        const pos = {
+    /** @type {any} */
+    const elPosCombo = SelectableSet.elements.map((element) => {
+      const rect = element.getBoundingClientRect()
+      return [
+        element,
+        {
           y: rect.top,
           x: rect.left,
           h: rect.height,
           w: rect.width,
-        }
-        return [element, pos]
-      }
-    ))
+        },
+      ]
+    })
 
     const select = []
     const unselect = []
 
-    for (const [element, elPosition] of elPosCombo) {
-      if (!SelectorArea.isInside(element, elPosition)) continue
-      if (isCollision(elPosition, Selector.position)) select.push(element)
-      else unselect.push(element)
+    for (let i = 0, il = elPosCombo.length; i < il; i++) {
+      if (!SelectorArea.isInside(elPosCombo[i][0], elPosCombo[i][1])) continue
+      if (isCollision(elPosCombo[i][1], Selector.position))
+        select.push(elPosCombo[i][0])
+      else unselect.push(elPosCombo[i][0])
     }
 
     select.forEach((element) => this._handleSelection(element, force, event))

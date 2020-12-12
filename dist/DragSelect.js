@@ -236,10 +236,6 @@
     return _get(target, property, receiver || target);
   }
 
-  function _slicedToArray(arr, i) {
-    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
-  }
-
   function _toConsumableArray(arr) {
     return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
   }
@@ -248,39 +244,8 @@
     if (Array.isArray(arr)) return _arrayLikeToArray(arr);
   }
 
-  function _arrayWithHoles(arr) {
-    if (Array.isArray(arr)) return arr;
-  }
-
   function _iterableToArray(iter) {
     if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
-  }
-
-  function _iterableToArrayLimit(arr, i) {
-    if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
-    var _arr = [];
-    var _n = true;
-    var _d = false;
-    var _e = undefined;
-
-    try {
-      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-        _arr.push(_s.value);
-
-        if (i && _arr.length === i) break;
-      }
-    } catch (err) {
-      _d = true;
-      _e = err;
-    } finally {
-      try {
-        if (!_n && _i["return"] != null) _i["return"]();
-      } finally {
-        if (_d) throw _e;
-      }
-    }
-
-    return _arr;
   }
 
   function _unsupportedIterableToArray(o, minLen) {
@@ -302,67 +267,6 @@
 
   function _nonIterableSpread() {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-  }
-
-  function _nonIterableRest() {
-    throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-  }
-
-  function _createForOfIteratorHelper(o, allowArrayLike) {
-    var it;
-
-    if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
-      if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-        if (it) o = it;
-        var i = 0;
-
-        var F = function () {};
-
-        return {
-          s: F,
-          n: function () {
-            if (i >= o.length) return {
-              done: true
-            };
-            return {
-              done: false,
-              value: o[i++]
-            };
-          },
-          e: function (e) {
-            throw e;
-          },
-          f: F
-        };
-      }
-
-      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-    }
-
-    var normalCompletion = true,
-        didErr = false,
-        err;
-    return {
-      s: function () {
-        it = o[Symbol.iterator]();
-      },
-      n: function () {
-        var step = it.next();
-        normalCompletion = step.done;
-        return step;
-      },
-      e: function (e) {
-        didErr = true;
-        err = e;
-      },
-      f: function () {
-        try {
-          if (!normalCompletion && it.return != null) it.return();
-        } finally {
-          if (didErr) throw err;
-        }
-      }
-    };
   }
 
   /**
@@ -1542,71 +1446,29 @@
         return _this._checkIfInsideSelection();
       });
 
-      _defineProperty(this, "_webWorker", function (elements) {
-        // create blob from JavaScript code (ES6 template literal)
-        var blob = new Blob([
-        /*javascript*/
-        "\n        onmessage = function(event) {\n          const elements = event.data\n          const elPosCombo = elements.map(\n            (element) => {\n              const rect = element.getBoundingClientRect()\n              const pos = {\n                y: rect.top,\n                x: rect.left,\n                h: rect.height,\n                w: rect.width,\n              }\n              return [element, pos]\n            }\n          )\n\n          postMessage(elPosCombo)\n        }\n      "]); // create blob url from blob
-
-        var blobURL = window.URL.createObjectURL(blob); // create web worker from blob url
-
-        var worker = new Worker(blobURL); // send event to web worker
-
-        worker.postMessage({
-          elements: elements
-        }); // listen to message event from web worker
-
-        worker.addEventListener('message', function (event) {
-          var data = event.data;
-          console.log('walala', data);
-        });
-        worker.addEventListener('error', function (error) {
-          return console.log(error);
-        });
-        worker.addEventListener('messageerror', function (error) {
-          return console.log(error);
-        });
-      });
-
       _defineProperty(this, "_checkIfInsideSelection", function (force, event) {
         var _this$DS = _this.DS,
             SelectableSet = _this$DS.SelectableSet,
             SelectorArea = _this$DS.SelectorArea,
             Selector = _this$DS.Selector;
+        var selectables = SelectableSet.elements;
+        /** @type {any} */
 
-        _this._webWorker(SelectableSet.elements);
-
-        var elPosCombo =
-        /** @type {[[DSElement, DSElementPos]]} */
-        SelectableSet.elements.map(function (element) {
+        var elPosCombo = SelectableSet.elements.map(function (element) {
           var rect = element.getBoundingClientRect();
-          var pos = {
+          return [element, {
             y: rect.top,
             x: rect.left,
             h: rect.height,
             w: rect.width
-          };
-          return [element, pos];
+          }];
         });
         var select = [];
         var unselect = [];
 
-        var _iterator = _createForOfIteratorHelper(elPosCombo),
-            _step;
-
-        try {
-          for (_iterator.s(); !(_step = _iterator.n()).done;) {
-            var _step$value = _slicedToArray(_step.value, 2),
-                element = _step$value[0],
-                elPosition = _step$value[1];
-
-            if (!SelectorArea.isInside(element, elPosition)) continue;
-            if (isCollision(elPosition, Selector.position)) select.push(element);else unselect.push(element);
-          }
-        } catch (err) {
-          _iterator.e(err);
-        } finally {
-          _iterator.f();
+        for (var i = 0, il = elPosCombo.length; i < il; i++) {
+          if (!SelectorArea.isInside(elPosCombo[i][0], elPosCombo[i][1])) continue;
+          if (isCollision(elPosCombo[i][1], Selector.position)) select.push(elPosCombo[i][0]);else unselect.push(elPosCombo[i][0]);
         }
 
         select.forEach(function (element) {
