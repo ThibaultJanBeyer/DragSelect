@@ -48,13 +48,13 @@
 /_____/_/   \__,_/\__, //____/\___/_/\___/\___/\__/  
                  /____/                              
 
- {*} {*} STAR THIS PLUGIN ON GITHUB: {*} {*}
+ {*} {*} STAR THIS PLUGIN ON GITHUB {*} {*}
 
  https://github.com/ThibaultJanBeyer/DragSelect
  Please give it a like, this is what makes me happy :-)
  Thank You
 
- {*} {*} STAR THIS PLUGIN ON GITHUB: {*} {*}
+ {*} {*} STAR THIS PLUGIN ON GITHUB {*} {*}
 
  ******************************************
  ********* The MIT License (MIT) **********
@@ -94,7 +94,7 @@ import {
   Selector,
   SelectorArea,
 } from './modules'
-import { PointerStore, ScrollStore } from './stores'
+import { PointerStore, ScrollStore, KeyStore } from './stores'
 import { toArray, vect2 } from './methods'
 
 // Setup
@@ -108,23 +108,24 @@ class DragSelect {
    */
   constructor({
     area = document,
-    autoScrollSpeed = 50,
+    selectables = [],
+    autoScrollSpeed = 10,
+    zoom = 1,
     customStyles = false,
-    hoverClass = 'ds-hover',
-    multiSelectKeys = ['ctrlKey', 'shiftKey', 'metaKey'],
     multiSelectMode = false,
     multiSelectToggling = true,
-    selectableClass = 'ds-selectable',
-    selectables = [],
-    selectedClass = 'ds-selected',
+    multiSelectKeys = ['Control', 'Shift', 'Meta'],
     selector = undefined,
+    stopForMove = false,
+    hoverClass = 'ds-hover',
+    selectableClass = 'ds-selectable',
+    selectedClass = 'ds-selected',
     selectorClass = 'ds-selector',
     selectorAreaClass = 'ds-selector-area',
-    zoom = 1,
     callback,
     onDragMove,
-    onDragStart,
     onDragStartBegin,
+    onDragStart,
     onElementSelect,
     onElementUnselect,
   }) {
@@ -144,12 +145,9 @@ class DragSelect {
 
     // stores
     this.stores = {
-      PointerStore: new PointerStore({
-        DS: this,
-        multiSelectMode,
-        multiSelectKeys,
-      }),
+      PointerStore: new PointerStore({ DS: this }),
       ScrollStore: new ScrollStore({ DS: this, areaElement: area, zoom }),
+      KeyStore: new KeyStore({ DS: this, multiSelectKeys, multiSelectMode }),
     }
 
     // Area
@@ -192,7 +190,11 @@ class DragSelect {
     })
 
     // Interaction
-    this.Interaction = new Interaction({ areaElement: area, DS: this })
+    this.Interaction = new Interaction({
+      areaElement: area,
+      DS: this,
+      stopForMove,
+    })
 
     // Subscriber Aliases
     this.subscribe('Selected:added', ({ items, item }) =>
@@ -201,12 +203,11 @@ class DragSelect {
     this.subscribe('Selected:removed', ({ items, item }) =>
       this.publish('elementunselect', { items, item })
     )
-    this.subscribe('PointerStore:updated', ({ event }) =>
-      this.publish('dragmove', {
-        items: this.getSelection(),
-        event,
-      })
-    )
+    this.subscribe('Interaction:update', ({ event, data }) => {
+      if (event &amp;&amp; !data)
+        this.publish('dragmove', { items: this.getSelection(), event })
+      if (!event &amp;&amp; data) this.publish('autoscroll', { data })
+    })
     this.subscribe('Interaction:start', ({ event }) =>
       this.publish('dragstart', {
         items: this.getSelection(),
@@ -220,12 +221,6 @@ class DragSelect {
     this.start()
   }
 
-  /**
-   * Initializes the functionality. Automatically triggered when created.
-   * Also, reset the functionality after a teardown
-   */
-  start = () => this.Interaction.init()
-
   // @TODO: remove after deprecation
   _callbacksTemp({
     callback,
@@ -237,7 +232,7 @@ class DragSelect {
   }) {
     const warnMessage = (name, newName) =>
       console.warn(
-        `[DragSelect] ${name} is being deprecated. Use DragSelect.subscribe("${newName}", (callbackObject) => {}) instead. See docs for more info`
+        `[DragSelect] ${name} is deprecated. Use DragSelect.subscribe("${newName}", (callbackObject) => {}) instead. Act Now! See docs for more info`
       )
     if (callback) {
       warnMessage('callback', 'callback')
@@ -274,9 +269,13 @@ class DragSelect {
       )
     }
   }
-
   // Useful methods for the user
   //////////////////////////////////////////////////////////////////////////////////////
+  /**
+   * Initializes the functionality. Automatically triggered when created.
+   * Also, reset the functionality after a teardown
+   */
+  start = () => this.Interaction.init()
   /**
    * Complete function teardown
    * Will teardown/stop the whole functionality
@@ -290,6 +289,9 @@ class DragSelect {
     this.Interaction.stop()
     this.Selector.stop()
     this.Area.stop()
+    this.stores.KeyStore.stop()
+    this.stores.PointerStore.stop()
+    this.stores.ScrollStore.stop()
 
     if (remove) this.SelectableSet.clear()
     if (fromSelection) this.SelectedSet.clear()
@@ -419,8 +421,18 @@ class DragSelect {
   getCurrentCursorPosition = () => this.stores.PointerStore.currentVal
   /** The previous position of the cursor/selector @return {Vect2} */
   getPreviousCursorPosition = () => this.stores.PointerStore.lastVal
-  /** Whether the multi-selection key was pressed @return {boolean} */
-  isMultiSelect = () => this.stores.PointerStore.isMultiSelect
+  /** The starting/initial position of the cursor/selector @return {Vect2} */
+  getInitialCursorPositionArea = () => this.stores.PointerStore.initialValArea
+  /** The last seen position of the cursor/selector @return {Vect2} */
+  getCurrentCursorPositionArea = () => this.stores.PointerStore.currentValArea
+  /** The previous position of the cursor/selector @return {Vect2} */
+  getPreviousCursorPositionArea = () => this.stores.PointerStore.lastValArea
+  /**
+   * Whether the multi-selection key was pressed
+   * @param {DSEvent|KeyboardEvent} [event]
+   * @return {boolean}
+   */
+  isMultiSelect = (event) => this.stores.KeyStore.isMultiSelectKeyPressed(event)
   /**
    * Returns the cursor position difference between start and now
    * If usePreviousCursorDifference is passed,
@@ -450,7 +462,7 @@ export default DragSelect
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Mon Dec 07 2020 18:40:18 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Sat Dec 12 2020 19:09:36 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

@@ -267,16 +267,18 @@ function _nonIterableSpread() {
  * The Settings to be passed to the Class
  * @typedef {Object} Settings
  * @property {HTMLElement|SVGElement|HTMLDocument} [area=document] area in which you can drag. If not provided it will be the whole document
- * @property {number} [autoScrollSpeed=10] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
+ * @property {DSInputElements} [selectables=[]] the elements that can be selected
+ * @property {number} [autoScrollSpeed=50] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
  * @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom.
  * @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
- * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them
  * @property {boolean} [multiSelectToggling=true] Whether or not to toggle already active elements while multi-selecting
- * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
- * @property {DSInputElements} [selectables=[]] the elements that can be selected
- * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
+ * @property {DSMultiSelectKeys} [multiSelectKeys=['Control', 'Shift', 'Meta']] Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
+ * @property {boolean} [stopForMove=false] When a user is dragging on an already selected element, the selection is not fired. This is required to plug-in drag-and-drop functionality.
+ * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
+ * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
+ * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
  * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
  * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
  * @property {DSCallbackEvent} [callback] Deprecated: please use DragSelect.subscribe('callback', callback) instead
@@ -285,7 +287,6 @@ function _nonIterableSpread() {
  * @property {DSDragStartEvent} [onDragStart]  Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
  * @property {DSElementSelectEvent} [onElementSelect]  Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
  * @property {DSElementUnSelectEvent} [onElementUnselect]  Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
- * @property {Array.<'ctrlKey'|'shiftKey'|'metaKey'>} [multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  */
 
 /**
@@ -349,11 +350,11 @@ function _nonIterableSpread() {
 
 /** @typedef {MouseEvent|TouchEvent} DSEvent en event from a touch or mouse interaction */
 
-/** @typedef {Array.<'ctrlKey'|'shiftKey'|'metaKey'>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
+/** @typedef {Array.<'Shift'|'Control'|'Meta'|string>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
 
-/** @typedef {'dragmove'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
+/** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
 
-/** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'} DSInternalEventNames */
+/** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'} DSInternalEventNames */
 
 /** @typedef {DSEventNames|DSInternalEventNames} DSCallbackNames the name of the callback */
 
@@ -446,11 +447,11 @@ var canScroll = (function (area) {
   var scroll = getCurrentScroll(area);
   if (scroll.x || scroll.y) return true;
 
-  var _area = area instanceof HTMLDocument ? area.documentElement : area;
+  if (area instanceof HTMLDocument) {
+    if (area.body) return !!(area.body.scrollTop = 1);else return !!(area.documentElement.scrollTop = 1);
+  }
 
-  _area.scrollTop = 1;
-  if (_area.scrollTop) return true;
-  return false;
+  return !!(area.scrollTop = 1);
 });
 
 // @ts-check
@@ -601,6 +602,23 @@ var getPointerPos = (function (_ref) {
 
 // @ts-check
 /**
+ * Returns cursor x, y position based on event object
+ * @param {DSElement} element
+ * @return {DSElementPos}
+ */
+
+var getPosition = (function (element) {
+  var boundingClientRect = element.getBoundingClientRect();
+  return {
+    x: boundingClientRect.left,
+    y: boundingClientRect.top,
+    w: boundingClientRect.width,
+    h: boundingClientRect.height
+  };
+});
+
+// @ts-check
+/**
  * Reliably returns the exact x,y,w,h positions of the selector element
  * @param {{ scrollAmount:Vect2, initialPointerPos:Vect2, pointerPos:Vect2 }} p
  * @returns {DSElementPos}
@@ -696,8 +714,8 @@ var getSelectorPosition = (function (_ref) {
  * 4. b02 > b11 (bottom border pos box1 larger than top border pos box2)
  * {@link https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box Wikipedia}
  * {@link https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection MDN}
- * @param {DSElementPos} a
- * @param {DSElementPos} b
+ * @param {DSElementPos} el1
+ * @param {DSElementPos} el2
  */
 
 var isCollision = (function (el1, el2) {
@@ -705,11 +723,8 @@ var isCollision = (function (el1, el2) {
   el1.x + el1.w > el2.x && // 2.
   el1.y < el2.y + el2.h && // 3.
   el1.h + el1.y > el2.y // 4.
-  ) {
-      return true; // collision detected!
-    } else {
-    return false;
-  }
+  ) return true; // collision detected!
+  else return false;
 });
 
 // @ts-check
@@ -735,62 +750,6 @@ var isCursorNearEdges = (function (_ref) {
     /** @type {DSEdges} */
     edges
   );
-});
-
-// @ts-check
-/**
- * Checks if there is a collision between the element and the selector
- * (whether they touch each other)
- * @param {DSElement} element
- * @param {HTMLElement} selector
- * @return {boolean}
- */
-
-var isElementTouching = (function (element, selector) {
-  var selectionRect = {
-    y: selector.getBoundingClientRect().top,
-    x: selector.getBoundingClientRect().left,
-    h: selector.offsetHeight,
-    w: selector.offsetWidth
-  };
-  var rect = element.getBoundingClientRect();
-  var elementRect = {
-    y: rect.top,
-    x: rect.left,
-    h: rect.height,
-    w: rect.width
-  };
-  if (isCollision(selectionRect, elementRect)) return true;
-  return false;
-});
-
-// @ts-check
-/**
- * Checks if there is a collision between the element and the selector
- * (whether they touch each other)
- * @param {DSElement} element
- * @param {DSArea} area
- * @param {DSSelectorArea} selectorArea
- * @return {boolean}
- */
-
-var isInsideElement = (function (element, area, selectorArea) {
-  if (area.contains(element) && canScroll(area)) return true;
-  var selectorAreaRect = {
-    y: selectorArea.getBoundingClientRect().top,
-    x: selectorArea.getBoundingClientRect().left,
-    h: selectorArea.offsetHeight,
-    w: selectorArea.offsetWidth
-  };
-  var rect = element.getBoundingClientRect();
-  var elementRect = {
-    y: rect.top,
-    x: rect.left,
-    h: rect.height,
-    w: rect.width
-  };
-  if (isCollision(selectorAreaRect, elementRect)) return true;
-  return false;
 });
 
 // @ts-check
@@ -955,7 +914,12 @@ var Area = /*#__PURE__*/function () {
     _defineProperty(this, "scroll", function (directions, multiplier) {
       scrollElement(_this._node, directions, multiplier);
 
-      _this.PubSub.publish('Area:scroll', {});
+      _this.PubSub.publish('Area:scroll', {
+        data: {
+          directions: directions,
+          multiplier: multiplier
+        }
+      });
     });
 
     this._node = area;
@@ -1070,9 +1034,15 @@ var Interaction =
  * */
 
 /**
+ * @type {boolean}
+ * @private
+ * */
+
+/**
  * @constructor Interaction
  * @param {Object} obj
  * @param {DSArea} obj.areaElement
+ * @param {boolean} obj.stopForMove
  * @param {DragSelect} obj.DS
  * @ignore
  */
@@ -1080,11 +1050,14 @@ function Interaction(_ref) {
   var _this = this;
 
   var areaElement = _ref.areaElement,
-      DS = _ref.DS;
+      DS = _ref.DS,
+      stopForMove = _ref.stopForMove;
 
   _classCallCheck(this, Interaction);
 
   _defineProperty(this, "_areaElement", void 0);
+
+  _defineProperty(this, "_stopForMove", void 0);
 
   _defineProperty(this, "init", function () {
     _this.stop();
@@ -1105,6 +1078,10 @@ function Interaction(_ref) {
     /** @type {*} */
     event.button === 2) return; // right-clicks
 
+    if (_this._stopForMove && !_this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) && _this.DS.SelectedSet.has(event.target)) return; // wants to drag
+
+    _this.isInteracting = true;
+
     _this.DS.publish('Interaction:start', {
       event: event
     });
@@ -1114,6 +1091,8 @@ function Interaction(_ref) {
   });
 
   _defineProperty(this, "stop", function () {
+    _this.isInteracting = false;
+
     _this._areaElement.removeEventListener('mousedown', _this.start);
 
     _this._areaElement.removeEventListener('touchstart', _this.start, {
@@ -1125,10 +1104,20 @@ function Interaction(_ref) {
     document.removeEventListener('touchend', _this.reset);
   });
 
+  _defineProperty(this, "update", function (_ref2) {
+    var event = _ref2.event,
+        data = _ref2.data;
+    if (_this.isInteracting) _this.DS.publish('Interaction:update', {
+      event: event,
+      data: data
+    });
+  });
+
   _defineProperty(this, "reset", function (event) {
     _this.stop();
 
-    _this.init();
+    _this.init(); // debounce, make sure that the end event is put at the end of the event loop
+
 
     _this.DS.publish('Interaction:end', {
       event: event
@@ -1136,7 +1125,10 @@ function Interaction(_ref) {
   });
 
   this._areaElement = areaElement;
+  this._stopForMove = stopForMove;
   this.DS = DS;
+  this.DS.subscribe('PointerStore:updated', this.update);
+  this.DS.subscribe('Area:scroll', this.update);
 };
 
 var PubSub = function PubSub() {
@@ -1436,32 +1428,49 @@ var Selection = /*#__PURE__*/function () {
       return _this.handleClick(event);
     });
 
-    _defineProperty(this, "start", function () {
-      _this._storePrevious();
+    _defineProperty(this, "start", function (_ref3) {
+      var event = _ref3.event;
 
-      _this._checkIfInsideSelection(true);
+      _this._storePrevious(event);
+
+      _this._checkIfInsideSelection(true, event);
     });
 
     _defineProperty(this, "update", function () {
       return _this._checkIfInsideSelection();
     });
 
-    _defineProperty(this, "_checkIfInsideSelection", function (force) {
+    _defineProperty(this, "_checkIfInsideSelection", function (force, event) {
       var _this$DS = _this.DS,
           SelectableSet = _this$DS.SelectableSet,
           SelectorArea = _this$DS.SelectorArea,
           Selector = _this$DS.Selector;
-      var anyInside = false;
-      SelectableSet.forEach(function (element) {
-        if (SelectorArea.isInside(element) && isElementTouching(element, Selector.HTMLNode)) {
-          _this._handleSelection(element, force);
+      /** @type {any} */
 
-          anyInside = true;
-        } else {
-          _this._handleUnselection(element, force);
-        }
+      var elPosCombo = SelectableSet.elements.map(function (element) {
+        var rect = element.getBoundingClientRect();
+        return [element, {
+          y: rect.top,
+          x: rect.left,
+          h: rect.height,
+          w: rect.width
+        }];
       });
-      return anyInside;
+      var select = [];
+      var unselect = [];
+
+      for (var i = 0, il = elPosCombo.length; i < il; i++) {
+        if (!SelectorArea.isInside(elPosCombo[i][0], elPosCombo[i][1])) continue;
+        if (isCollision(elPosCombo[i][1], Selector.position)) select.push(elPosCombo[i][0]);else unselect.push(elPosCombo[i][0]);
+      }
+
+      select.forEach(function (element) {
+        return _this._handleSelection(element, force, event);
+      });
+      unselect.forEach(function (element) {
+        return _this._handleUnselection(element, force);
+      });
+      return select.length > -1;
     });
 
     this._hoverClassName = hoverClassName;
@@ -1469,22 +1478,22 @@ var Selection = /*#__PURE__*/function () {
     this.DS = DS;
     this.DS.subscribe('Selectable:click', this._onClick);
     this.DS.subscribe('Interaction:start', this.start);
-    this.DS.subscribe('PointerStore:updated', this.update);
-    this.DS.subscribe('Area:scroll', this.update);
+    this.DS.subscribe('Interaction:update', this.update);
   }
   /**
    * Stores the previous selection (solves #9)
+   * @param {DSEvent} event
    * @private
    * */
 
 
   _createClass(Selection, [{
     key: "_storePrevious",
-    value: function _storePrevious() {
+    value: function _storePrevious(event) {
       var _this$DS2 = this.DS,
-          PointerStore = _this$DS2.stores.PointerStore,
+          KeyStore = _this$DS2.stores.KeyStore,
           SelectedSet = _this$DS2.SelectedSet;
-      if (PointerStore.isMultiSelect) this._prevSelected = new Set(SelectedSet);else this._prevSelected = new Set();
+      if (KeyStore.isMultiSelectKeyPressed(event)) this._prevSelected = new Set(SelectedSet);else this._prevSelected = new Set();
     }
     /**
      * If an element is clicked (via keyboard) @param {{ event:MouseEvent }} p
@@ -1503,7 +1512,9 @@ var Selection = /*#__PURE__*/function () {
      */
     value: function handleClick(event) {
       var _this$DS3 = this.DS,
-          PointerStore = _this$DS3.stores.PointerStore,
+          _this$DS3$stores = _this$DS3.stores,
+          PointerStore = _this$DS3$stores.PointerStore,
+          KeyStore = _this$DS3$stores.KeyStore,
           SelectorArea = _this$DS3.SelectorArea,
           SelectableSet = _this$DS3.SelectableSet,
           SelectedSet = _this$DS3.SelectedSet,
@@ -1518,12 +1529,14 @@ var Selection = /*#__PURE__*/function () {
       event.target;
       if (!SelectableSet.has(node)) return;
       if (!SelectorArea.isInside(node)) return;
-      if (!PointerStore.isMultiSelect) SelectedSet.clear();
+      if (!KeyStore.isMultiSelectKeyPressed(event)) SelectedSet.clear();
       SelectedSet.toggle(node);
       publish('Interaction:end', {
         event: event
       }); // simulate mouse-up (that does not exist on keyboard)
     }
+    /** @param {{event:DSEvent}} event */
+
   }, {
     key: "_handleSelection",
 
@@ -1531,14 +1544,15 @@ var Selection = /*#__PURE__*/function () {
      * Logic when an element is selected
      * @param {DSElement} element
      * @param {boolean} force
+     * @param {DSEvent} [event]
      * @private
      */
-    value: function _handleSelection(element, force) {
+    value: function _handleSelection(element, force, event) {
+      if (element.className.indexOf(this._hoverClassName) > 0 && !force) return false;
       var _this$DS4 = this.DS,
           SelectedSet = _this$DS4.SelectedSet,
-          PointerStore = _this$DS4.stores.PointerStore;
-      if (element.classList.contains(this._hoverClassName) && !force) return false;
-      if (!SelectedSet.has(element)) SelectedSet.add(element);else if (PointerStore.isMultiSelect && this._multiSelectToggling) SelectedSet["delete"](element);
+          KeyStore = _this$DS4.stores.KeyStore;
+      if (!SelectedSet.has(element)) SelectedSet.add(element);else if (KeyStore.isMultiSelectKeyPressed(event) && this._multiSelectToggling) SelectedSet["delete"](element);
       element.classList.add(this._hoverClassName);
     }
     /**
@@ -1551,8 +1565,8 @@ var Selection = /*#__PURE__*/function () {
   }, {
     key: "_handleUnselection",
     value: function _handleUnselection(element, force) {
+      if (element.className.indexOf(this._hoverClassName) < 0 && !force) return false;
       var SelectedSet = this.DS.SelectedSet;
-      if (!element.classList.contains(this._hoverClassName) && !force) return false;
       var inSelection = SelectedSet.has(element);
 
       var inPrevSelection = this._prevSelected.has(element);
@@ -1573,67 +1587,83 @@ var Selection = /*#__PURE__*/function () {
   return Selection;
 }();
 
-var Selector =
-/**
- * @constructor Selector
- * @param {Object} p
- * @param {DragSelect} p.DS
- * @param {HTMLElement} p.selector
- * @param {string} p.selectorClass
- * @param {boolean} p.customStyles
- * @ignore
- */
-function Selector(_ref) {
-  var _this = this;
+var Selector = /*#__PURE__*/function () {
+  /**
+   * @type {DSElementPos}
+   * @private
+   */
 
-  var DS = _ref.DS,
-      selector = _ref.selector,
-      selectorClass = _ref.selectorClass,
-      customStyles = _ref.customStyles;
+  /**
+   * @constructor Selector
+   * @param {Object} p
+   * @param {DragSelect} p.DS
+   * @param {HTMLElement} p.selector
+   * @param {string} p.selectorClass
+   * @param {boolean} p.customStyles
+   * @ignore
+   */
+  function Selector(_ref) {
+    var _this = this;
 
-  _classCallCheck(this, Selector);
+    var DS = _ref.DS,
+        selector = _ref.selector,
+        selectorClass = _ref.selectorClass,
+        customStyles = _ref.customStyles;
 
-  _defineProperty(this, "start", function () {
-    var _this$DS$stores = _this.DS.stores,
-        ScrollStore = _this$DS$stores.ScrollStore,
-        PointerStore = _this$DS$stores.PointerStore;
-    var pPos = PointerStore.currentValArea;
-    var scroll = ScrollStore.currentVal;
-    updateElementStylePos(_this.HTMLNode, {
-      x: pPos.x + scroll.x,
-      y: pPos.y + scroll.y,
-      w: 0,
-      h: 0
+    _classCallCheck(this, Selector);
+
+    _defineProperty(this, "_position", void 0);
+
+    _defineProperty(this, "start", function () {
+      var PointerStore = _this.DS.stores.PointerStore;
+      var pPos = PointerStore.initialValArea;
+      updateElementStylePos(_this.HTMLNode, {
+        x: pPos.x,
+        y: pPos.y,
+        w: 1,
+        h: 1
+      });
+      _this.HTMLNode.style.display = 'block';
+      _this._position = null;
     });
-    _this.HTMLNode.style.display = 'block';
-  });
 
-  _defineProperty(this, "stop", function () {
-    _this.HTMLNode.style.width = '0';
-    _this.HTMLNode.style.height = '0';
-    _this.HTMLNode.style.display = 'none';
-  });
-
-  _defineProperty(this, "update", function () {
-    var _this$DS$stores2 = _this.DS.stores,
-        ScrollStore = _this$DS$stores2.ScrollStore,
-        PointerStore = _this$DS$stores2.PointerStore;
-    var pos = getSelectorPosition({
-      scrollAmount: ScrollStore.scrollAmount,
-      initialPointerPos: PointerStore.initialValArea,
-      pointerPos: PointerStore.currentValArea
+    _defineProperty(this, "stop", function () {
+      _this.HTMLNode.style.width = '0';
+      _this.HTMLNode.style.height = '0';
+      _this.HTMLNode.style.display = 'none';
     });
-    updateElementStylePos(_this.HTMLNode, pos);
-  });
 
-  this.DS = DS;
-  this.HTMLNode = selector || createSelectorElement(customStyles);
-  this.HTMLNode.classList.add(selectorClass);
-  this.DS.subscribe('Interaction:start', this.start);
-  this.DS.subscribe('PointerStore:updated', this.update);
-  this.DS.subscribe('Area:scroll', this.update);
-  this.DS.subscribe('Interaction:end', this.stop);
-};
+    _defineProperty(this, "update", function () {
+      var _this$DS$stores = _this.DS.stores,
+          ScrollStore = _this$DS$stores.ScrollStore,
+          PointerStore = _this$DS$stores.PointerStore;
+      var pos = getSelectorPosition({
+        scrollAmount: ScrollStore.scrollAmount,
+        initialPointerPos: PointerStore.initialValArea,
+        pointerPos: PointerStore.currentValArea
+      });
+      updateElementStylePos(_this.HTMLNode, pos);
+      _this._position = null;
+    });
+
+    this.DS = DS;
+    this.HTMLNode = selector || createSelectorElement(customStyles);
+    this.HTMLNode.classList.add(selectorClass);
+    this.DS.subscribe('Interaction:start', this.start);
+    this.DS.subscribe('Interaction:update', this.update);
+    this.DS.subscribe('Interaction:end', this.stop);
+  }
+
+  _createClass(Selector, [{
+    key: "position",
+    get: function get() {
+      if (this._position) return this._position;
+      return this._position = getPosition(this.HTMLNode);
+    }
+  }]);
+
+  return Selector;
+}();
 
 var SelectorArea = /*#__PURE__*/function () {
   /**
@@ -1645,6 +1675,11 @@ var SelectorArea = /*#__PURE__*/function () {
    * @type {*}
    * @private
    * */
+
+  /**
+   * @type {DSElementPos}
+   * @private
+   */
 
   /**
    * @class SelectorArea
@@ -1665,7 +1700,10 @@ var SelectorArea = /*#__PURE__*/function () {
 
     _defineProperty(this, "_scrollInterval", void 0);
 
+    _defineProperty(this, "_position", void 0);
+
     _defineProperty(this, "updatePos", function () {
+      _this._position = null;
       var rect = _this.DS.Area.boundingClientRect;
       var border = _this.DS.Area.computedBorder;
       var style = _this.HTMLNode.style;
@@ -1700,8 +1738,9 @@ var SelectorArea = /*#__PURE__*/function () {
       return clearInterval(_this._scrollInterval);
     });
 
-    _defineProperty(this, "isInside", function (element) {
-      return isInsideElement(element, _this.DS.Area.HTMLNode, _this.HTMLNode);
+    _defineProperty(this, "isInside", function (element, elementPos) {
+      if (_this.DS.Area.HTMLNode.contains(element) && _this.DS.stores.ScrollStore.canScroll) return true;
+      return isCollision(_this.position, elementPos || getPosition(element));
     });
 
     this._autoScrollSpeed = autoScrollSpeed;
@@ -1732,29 +1771,144 @@ var SelectorArea = /*#__PURE__*/function () {
         w: 0,
         h: 0
       };
-      var boundingClientRect = this.HTMLNode.getBoundingClientRect();
-      var areaRect = {
-        x: boundingClientRect.left,
-        y: boundingClientRect.top,
-        w: this.HTMLNode.offsetWidth,
-        h: this.HTMLNode.offsetHeight
-      };
-      return isCollision(cPos, areaRect);
+      return isCollision(cPos, this.position);
+    }
+  }, {
+    key: "position",
+    get: function get() {
+      if (this._position) return this._position;
+      return this._position = getPosition(this.HTMLNode);
     }
   }]);
 
   return SelectorArea;
 }();
 
+var KeyStore = /*#__PURE__*/function () {
+  /**
+   * @type {boolean}
+   * @private
+   * */
+
+  /**
+   * @type {DSMultiSelectKeys}
+   * @private
+   * */
+
+  /**
+   * @type {Set<string>}
+   * @private
+   * */
+
+  /**
+   * @type {{control:string,shift:string,meta:string}}
+   * @private
+   * */
+
+  /**
+   * @class KeyStore
+   * @constructor KeyStore
+   * @param {{DS:DragSelect,multiSelectKeys:DSMultiSelectKeys,multiSelectMode:boolean}} p
+   */
+  function KeyStore(_ref) {
+    var _this = this;
+
+    var DS = _ref.DS,
+        multiSelectKeys = _ref.multiSelectKeys,
+        multiSelectMode = _ref.multiSelectMode;
+
+    _classCallCheck(this, KeyStore);
+
+    _defineProperty(this, "_multiSelectMode", void 0);
+
+    _defineProperty(this, "_multiSelectKeys", void 0);
+
+    _defineProperty(this, "_currentValues", new Set());
+
+    _defineProperty(this, "_keyMapping", {
+      control: 'ctrlKey',
+      shift: 'shiftKey',
+      meta: 'metaKey'
+    });
+
+    _defineProperty(this, "init", function () {
+      document.addEventListener('keydown', _this.keydown);
+      document.addEventListener('keyup', _this.keyup);
+      window.addEventListener('blur', _this.reset);
+    });
+
+    _defineProperty(this, "keydown", function (event) {
+      return _this._currentValues.add(event.key.toLowerCase());
+    });
+
+    _defineProperty(this, "keyup", function (event) {
+      return _this._currentValues["delete"](event.key.toLowerCase());
+    });
+
+    _defineProperty(this, "stop", function () {
+      document.removeEventListener('keydown', _this.keydown);
+      document.removeEventListener('keyup', _this.reset);
+      window.removeEventListener('blur', _this.reset);
+
+      _this.reset();
+    });
+
+    _defineProperty(this, "reset", function () {
+      _this._currentValues.clear();
+
+      _this._isMultiSelect = false;
+    });
+
+    this.DS = DS;
+    this._multiSelectMode = multiSelectMode; // @TODO: remove after deprecation
+
+    this._multiSelectKeys = multiSelectKeys.map(function (key) {
+      var deprecatedKeys = {
+        ctrlKey: 'Control',
+        shiftKey: 'Shift',
+        metaKey: 'Meta'
+      };
+      /** @type {string} */
+
+      var newName = deprecatedKeys[key];
+
+      if (newName) {
+        console.warn("[DragSelect] ".concat(key, " is deprecated. Use \"").concat(newName, "\" instead. Act Now!. See docs for more info"));
+        return newName.toLowerCase();
+      }
+
+      return key.toLowerCase();
+    });
+    this.DS.subscribe('Interaction:init', this.init);
+  }
+
+  _createClass(KeyStore, [{
+    key: "isMultiSelectKeyPressed",
+
+    /** @param {KeyboardEvent|MouseEvent|TouchEvent} [event] */
+    value: function isMultiSelectKeyPressed(event) {
+      var _this2 = this;
+
+      if (this._multiSelectMode) return true;
+      if (this.currentValues.some(function (key) {
+        return _this2._multiSelectKeys.includes(key);
+      })) return true;
+      if (event && this._multiSelectKeys.some(function (key) {
+        return event[_this2._keyMapping[key]];
+      })) return true;
+      return false;
+    }
+  }, {
+    key: "currentValues",
+    get: function get() {
+      return Array.from(this._currentValues.values());
+    }
+  }]);
+
+  return KeyStore;
+}();
+
 var PointerStore = /*#__PURE__*/function () {
-  // multiselect
-
-  /** @type {boolean} @private */
-
-  /** @type {DSMultiSelectKeys} @private */
-
-  /** @type {boolean} */
-
   /** @type {boolean} */
   // Pointer Positions within Area
 
@@ -1773,21 +1927,17 @@ var PointerStore = /*#__PURE__*/function () {
 
   /** @type {TouchEvent} @private */
 
-  /** @param {{DS:DragSelect,multiSelectKeys:DSMultiSelectKeys,multiSelectMode:boolean}} p */
+  /**
+   * @class PointerStore
+   * @constructor PointerStore
+   * @param {{DS:DragSelect}} p
+   */
   function PointerStore(_ref) {
     var _this = this;
 
-    var DS = _ref.DS,
-        multiSelectKeys = _ref.multiSelectKeys,
-        multiSelectMode = _ref.multiSelectMode;
+    var DS = _ref.DS;
 
     _classCallCheck(this, PointerStore);
-
-    _defineProperty(this, "_multiSelectMode", void 0);
-
-    _defineProperty(this, "_multiSelectKeys", void 0);
-
-    _defineProperty(this, "_isMultiSelect", false);
 
     _defineProperty(this, "_isMouseInteraction", false);
 
@@ -1805,65 +1955,70 @@ var PointerStore = /*#__PURE__*/function () {
 
     _defineProperty(this, "_lastTouch", void 0);
 
+    _defineProperty(this, "init", function () {
+      document.addEventListener('mousemove', _this.update);
+      document.addEventListener('touchmove', _this.update, {
+        // @ts-ignore
+        passive: false
+      });
+    });
+
     _defineProperty(this, "update", function (event) {
       if (!event) return;
       _this.currentVal = getPointerPos({
         event: _this._normalizedEvent(event)
       });
+      if (!_this._isMouseInteraction) return;
 
       _this.DS.publish('PointerStore:updated', {
         event: event
       });
     });
 
-    _defineProperty(this, "stop", function (event) {
-      if (!event) return;
+    _defineProperty(this, "stop", function () {
       document.removeEventListener('mousemove', _this.update);
       document.removeEventListener('touchmove', _this.update, {
         // @ts-ignore
         passive: false
-      });
-      _this.currentVal = _this.lastVal = getPointerPos({
-        event: _this._normalizedEvent(event)
-      });
-      _this.initialVal = {
-        x: 0,
-        y: 0
-      }; // debounce in order "onClick" to work
+      }); // debounce in order "onClick" to work
 
       setTimeout(function () {
         return _this._isMouseInteraction = false;
       }, 100);
     });
 
+    _defineProperty(this, "reset", function (event) {
+      if (!event) return;
+      _this.currentVal = _this.lastVal = getPointerPos({
+        event: _this._normalizedEvent(event)
+      });
+
+      _this.stop();
+
+      _this.init();
+    });
+
     this.DS = DS;
-    this._multiSelectKeys = multiSelectKeys;
-    this._multiSelectMode = multiSelectMode;
+    this.DS.subscribe('Interaction:init', this.init);
     this.DS.subscribe('Interaction:start', function (_ref2) {
       var event = _ref2.event;
       return _this.start(event);
     });
     this.DS.subscribe('Interaction:end', function (_ref3) {
       var event = _ref3.event;
-      return _this.stop(event);
+      return _this.reset(event);
     });
   }
-  /** @param {DSEvent} [event] */
-
 
   _createClass(PointerStore, [{
     key: "start",
+
+    /** @param {DSEvent} [event] */
     value: function start(event) {
       if (!event) return;
       this._isMouseInteraction = true;
-      this._isMultiSelect = this._isMultiSelectKeyPressed(event);
       this.currentVal = this.initialVal = getPointerPos({
         event: this._normalizedEvent(event)
-      });
-      document.addEventListener('mousemove', this.update);
-      document.addEventListener('touchmove', this.update, {
-        // @ts-ignore
-        passive: false
       });
     }
     /** @param {DSEvent} [event] */
@@ -1882,25 +2037,6 @@ var PointerStore = /*#__PURE__*/function () {
       // we need .touches[0] from that event instead
 
       return 'touches' in event ? this._lastTouch.touches[0] : event;
-    }
-    /**
-     * @param {DSEvent} event
-     * @return {boolean}
-     * @private
-     */
-
-  }, {
-    key: "_isMultiSelectKeyPressed",
-    value: function _isMultiSelectKeyPressed(event) {
-      if (this._multiSelectMode) return true;
-      return this._multiSelectKeys.some(function (mKey) {
-        return event[mKey];
-      });
-    }
-  }, {
-    key: "isMultiSelect",
-    get: function get() {
-      return this._isMultiSelect;
     }
   }, {
     key: "isMouseInteraction",
@@ -1991,11 +2127,21 @@ var PointerStore = /*#__PURE__*/function () {
 }();
 
 var ScrollStore = /*#__PURE__*/function () {
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private */
 
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private */
 
-  /** @type {DSArea} @private */
+  /**
+   * @type {DSArea}
+   * @private */
+
+  /**
+   * @type {boolean}
+   * @private */
 
   /** @param {{ DS:DragSelect, areaElement: DSArea, zoom:number }} p */
   function ScrollStore(_ref) {
@@ -2013,6 +2159,12 @@ var ScrollStore = /*#__PURE__*/function () {
 
     _defineProperty(this, "_areaElement", void 0);
 
+    _defineProperty(this, "_canScroll", void 0);
+
+    _defineProperty(this, "init", function () {
+      return _this._areaElement.addEventListener('scroll', _this.update);
+    });
+
     _defineProperty(this, "start", function () {
       _this._currentVal = _this._initialVal = getCurrentScroll(_this._areaElement);
 
@@ -2020,7 +2172,7 @@ var ScrollStore = /*#__PURE__*/function () {
     });
 
     _defineProperty(this, "update", function () {
-      _this._currentVal = getCurrentScroll(_this._areaElement);
+      return _this._currentVal = getCurrentScroll(_this._areaElement);
     });
 
     _defineProperty(this, "stop", function () {
@@ -2030,20 +2182,34 @@ var ScrollStore = /*#__PURE__*/function () {
         x: 0,
         y: 0
       };
+      _this._canScroll = null;
+    });
+
+    _defineProperty(this, "reset", function () {
+      _this.stop();
+
+      _this.start();
     });
 
     this._areaElement = areaElement;
     this.DS = DS;
     this.zoom = zoom;
+    this.DS.subscribe('Interaction:init', this.init);
     this.DS.subscribe('Interaction:start', function () {
       return _this.start();
     });
     this.DS.subscribe('Interaction:end', function () {
-      return _this.stop();
+      return _this.reset();
     });
   }
 
   _createClass(ScrollStore, [{
+    key: "canScroll",
+    get: function get() {
+      if (typeof this._canScroll === 'boolean') return this._canScroll;
+      return this._canScroll = canScroll(this._areaElement);
+    }
+  }, {
     key: "scrollAmount",
     get: function get() {
       var scrollDiff = calc(this.currentVal, '-', this.initialVal); // if area is zoomed, the scroll values are skewed, we need to fix that manually :(
@@ -2091,36 +2257,38 @@ var DragSelect = /*#__PURE__*/function () {
 
     var _ref$area = _ref.area,
         area = _ref$area === void 0 ? document : _ref$area,
+        _ref$selectables = _ref.selectables,
+        selectables = _ref$selectables === void 0 ? [] : _ref$selectables,
         _ref$autoScrollSpeed = _ref.autoScrollSpeed,
-        autoScrollSpeed = _ref$autoScrollSpeed === void 0 ? 50 : _ref$autoScrollSpeed,
+        autoScrollSpeed = _ref$autoScrollSpeed === void 0 ? 10 : _ref$autoScrollSpeed,
+        _ref$zoom = _ref.zoom,
+        zoom = _ref$zoom === void 0 ? 1 : _ref$zoom,
         _ref$customStyles = _ref.customStyles,
         customStyles = _ref$customStyles === void 0 ? false : _ref$customStyles,
-        _ref$hoverClass = _ref.hoverClass,
-        hoverClass = _ref$hoverClass === void 0 ? 'ds-hover' : _ref$hoverClass,
-        _ref$multiSelectKeys = _ref.multiSelectKeys,
-        multiSelectKeys = _ref$multiSelectKeys === void 0 ? ['ctrlKey', 'shiftKey', 'metaKey'] : _ref$multiSelectKeys,
         _ref$multiSelectMode = _ref.multiSelectMode,
         multiSelectMode = _ref$multiSelectMode === void 0 ? false : _ref$multiSelectMode,
         _ref$multiSelectToggl = _ref.multiSelectToggling,
         multiSelectToggling = _ref$multiSelectToggl === void 0 ? true : _ref$multiSelectToggl,
-        _ref$selectableClass = _ref.selectableClass,
-        selectableClass = _ref$selectableClass === void 0 ? 'ds-selectable' : _ref$selectableClass,
-        _ref$selectables = _ref.selectables,
-        selectables = _ref$selectables === void 0 ? [] : _ref$selectables,
-        _ref$selectedClass = _ref.selectedClass,
-        selectedClass = _ref$selectedClass === void 0 ? 'ds-selected' : _ref$selectedClass,
+        _ref$multiSelectKeys = _ref.multiSelectKeys,
+        multiSelectKeys = _ref$multiSelectKeys === void 0 ? ['Control', 'Shift', 'Meta'] : _ref$multiSelectKeys,
         _ref$selector = _ref.selector,
         selector = _ref$selector === void 0 ? undefined : _ref$selector,
+        _ref$stopForMove = _ref.stopForMove,
+        stopForMove = _ref$stopForMove === void 0 ? false : _ref$stopForMove,
+        _ref$hoverClass = _ref.hoverClass,
+        hoverClass = _ref$hoverClass === void 0 ? 'ds-hover' : _ref$hoverClass,
+        _ref$selectableClass = _ref.selectableClass,
+        selectableClass = _ref$selectableClass === void 0 ? 'ds-selectable' : _ref$selectableClass,
+        _ref$selectedClass = _ref.selectedClass,
+        selectedClass = _ref$selectedClass === void 0 ? 'ds-selected' : _ref$selectedClass,
         _ref$selectorClass = _ref.selectorClass,
         selectorClass = _ref$selectorClass === void 0 ? 'ds-selector' : _ref$selectorClass,
         _ref$selectorAreaClas = _ref.selectorAreaClass,
         selectorAreaClass = _ref$selectorAreaClas === void 0 ? 'ds-selector-area' : _ref$selectorAreaClas,
-        _ref$zoom = _ref.zoom,
-        zoom = _ref$zoom === void 0 ? 1 : _ref$zoom,
         callback = _ref.callback,
         onDragMove = _ref.onDragMove,
-        onDragStart = _ref.onDragStart,
         onDragStartBegin = _ref.onDragStartBegin,
+        onDragStart = _ref.onDragStart,
         onElementSelect = _ref.onElementSelect,
         onElementUnselect = _ref.onElementUnselect;
 
@@ -2150,8 +2318,20 @@ var DragSelect = /*#__PURE__*/function () {
       return _this.stores.PointerStore.lastVal;
     });
 
-    _defineProperty(this, "isMultiSelect", function () {
-      return _this.stores.PointerStore.isMultiSelect;
+    _defineProperty(this, "getInitialCursorPositionArea", function () {
+      return _this.stores.PointerStore.initialValArea;
+    });
+
+    _defineProperty(this, "getCurrentCursorPositionArea", function () {
+      return _this.stores.PointerStore.currentValArea;
+    });
+
+    _defineProperty(this, "getPreviousCursorPositionArea", function () {
+      return _this.stores.PointerStore.lastValArea;
+    });
+
+    _defineProperty(this, "isMultiSelect", function (event) {
+      return _this.stores.KeyStore.isMultiSelectKeyPressed(event);
     });
 
     // Pub-Sub
@@ -2172,14 +2352,17 @@ var DragSelect = /*#__PURE__*/function () {
 
     this.stores = {
       PointerStore: new PointerStore({
-        DS: this,
-        multiSelectMode: multiSelectMode,
-        multiSelectKeys: multiSelectKeys
+        DS: this
       }),
       ScrollStore: new ScrollStore({
         DS: this,
         areaElement: area,
         zoom: zoom
+      }),
+      KeyStore: new KeyStore({
+        DS: this,
+        multiSelectKeys: multiSelectKeys,
+        multiSelectMode: multiSelectMode
       })
     }; // Area
 
@@ -2222,7 +2405,8 @@ var DragSelect = /*#__PURE__*/function () {
 
     this.Interaction = new Interaction({
       areaElement: area,
-      DS: this
+      DS: this,
+      stopForMove: stopForMove
     }); // Subscriber Aliases
 
     this.subscribe('Selected:added', function (_ref2) {
@@ -2241,11 +2425,15 @@ var DragSelect = /*#__PURE__*/function () {
         item: item
       });
     });
-    this.subscribe('PointerStore:updated', function (_ref4) {
-      var event = _ref4.event;
-      return _this.publish('dragmove', {
+    this.subscribe('Interaction:update', function (_ref4) {
+      var event = _ref4.event,
+          data = _ref4.data;
+      if (event && !data) _this.publish('dragmove', {
         items: _this.getSelection(),
         event: event
+      });
+      if (!event && data) _this.publish('autoscroll', {
+        data: data
       });
     });
     this.subscribe('Interaction:start', function (_ref5) {
@@ -2263,16 +2451,11 @@ var DragSelect = /*#__PURE__*/function () {
       });
     });
     this.start();
-  }
-  /**
-   * Initializes the functionality. Automatically triggered when created.
-   * Also, reset the functionality after a teardown
-   */
+  } // @TODO: remove after deprecation
 
 
   _createClass(DragSelect, [{
     key: "_callbacksTemp",
-    // @TODO: remove after deprecation
     value: function _callbacksTemp(_ref7) {
       var callback = _ref7.callback,
           onDragMove = _ref7.onDragMove,
@@ -2282,7 +2465,7 @@ var DragSelect = /*#__PURE__*/function () {
           onElementUnselect = _ref7.onElementUnselect;
 
       var warnMessage = function warnMessage(name, newName) {
-        return console.warn("[DragSelect] ".concat(name, " is being deprecated. Use DragSelect.subscribe(\"").concat(newName, "\", (callbackObject) => {}) instead. See docs for more info"));
+        return console.warn("[DragSelect] ".concat(name, " is deprecated. Use DragSelect.subscribe(\"").concat(newName, "\", (callbackObject) => {}) instead. Act Now! See docs for more info"));
       };
 
       if (callback) {
@@ -2348,15 +2531,20 @@ var DragSelect = /*#__PURE__*/function () {
     //////////////////////////////////////////////////////////////////////////////////////
 
     /**
+     * Initializes the functionality. Automatically triggered when created.
+     * Also, reset the functionality after a teardown
+     */
+
+  }, {
+    key: "stop",
+
+    /**
      * Complete function teardown
      * Will teardown/stop the whole functionality
      * @param {boolean} [remove=true] - if elements should be removed.
      * @param {boolean} [fromSelection=true] - if elements should also be added/removed to the selection.
      * @param {boolean} [withCallback] - if elements should also be added/removed to the selection.
      */
-
-  }, {
-    key: "stop",
     value: function stop() {
       var remove = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       var fromSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
@@ -2367,6 +2555,9 @@ var DragSelect = /*#__PURE__*/function () {
       this.Interaction.stop();
       this.Selector.stop();
       this.Area.stop();
+      this.stores.KeyStore.stop();
+      this.stores.PointerStore.stop();
+      this.stores.ScrollStore.stop();
       if (remove) this.SelectableSet.clear();
       if (fromSelection) this.SelectedSet.clear();
     }

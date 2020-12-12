@@ -43,16 +43,18 @@
  * The Settings to be passed to the Class
  * @typedef {Object} Settings
  * @property {HTMLElement|SVGElement|HTMLDocument} [area=document] area in which you can drag. If not provided it will be the whole document
- * @property {number} [autoScrollSpeed=10] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
+ * @property {DSInputElements} [selectables=[]] the elements that can be selected
+ * @property {number} [autoScrollSpeed=50] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
  * @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom.
  * @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
- * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them
  * @property {boolean} [multiSelectToggling=true] Whether or not to toggle already active elements while multi-selecting
- * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
- * @property {DSInputElements} [selectables=[]] the elements that can be selected
- * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
+ * @property {DSMultiSelectKeys} [multiSelectKeys=['Control', 'Shift', 'Meta']] Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for &lt;kbd>Control&lt;/kbd>, &lt;kbd>Shift&lt;/kbd> and &lt;kbd>Meta&lt;/kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
+ * @property {boolean} [stopForMove=false] When a user is dragging on an already selected element, the selection is not fired. This is required to plug-in drag-and-drop functionality.
+ * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
+ * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
+ * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
  * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
  * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
  * @property {DSCallbackEvent} [callback] Deprecated: please use DragSelect.subscribe('callback', callback) instead
@@ -61,7 +63,6 @@
  * @property {DSDragStartEvent} [onDragStart]  Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
  * @property {DSElementSelectEvent} [onElementSelect]  Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
  * @property {DSElementUnSelectEvent} [onElementUnselect]  Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
- * @property {Array.&lt;'ctrlKey'|'shiftKey'|'metaKey'>} [multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: &lt;kbd>ctrlKey&lt;/kbd>, &lt;kbd>shiftKey&lt;/kbd>, &lt;kbd>metaKey&lt;/kbd> and &lt;kbd>altKey&lt;/kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  */
 
 /**
@@ -110,10 +111,10 @@
 /** @typedef {Array.&lt;HTMLElement|SVGElement>} DSElements the elements that can be selected */
 /** @typedef {HTMLElement|SVGElement} DSElement a single element that can be selected */
 /** @typedef {MouseEvent|TouchEvent} DSEvent en event from a touch or mouse interaction */
-/** @typedef {Array.&lt;'ctrlKey'|'shiftKey'|'metaKey'>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
+/** @typedef {Array.&lt;'Shift'|'Control'|'Meta'|string>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
 
-/** @typedef {'dragmove'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
-/** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'} DSInternalEventNames */
+/** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
+/** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'} DSInternalEventNames */
 /** @typedef {DSEventNames|DSInternalEventNames} DSCallbackNames the name of the callback */
 
 /** @typedef {{top:number,left:number,bottom:number,right:number,width:number,height:number}} DSBoundingRect */
@@ -134,7 +135,7 @@
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Mon Dec 07 2020 18:40:18 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Sat Dec 12 2020 19:09:36 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
