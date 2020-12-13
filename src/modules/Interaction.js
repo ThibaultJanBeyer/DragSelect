@@ -13,6 +13,16 @@ export default class Interaction {
    * @private
    * */
   _stopForMove
+  /**
+   * @type {boolean}
+   * @private
+   * */
+  isInteracting
+  /**
+   * @type {boolean}
+   * @private
+   * */
+  isDragging
 
   /**
    * @constructor Interaction
@@ -42,15 +52,16 @@ export default class Interaction {
   start = (event) => {
     if (event.type === 'touchstart') event.preventDefault() // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
     if (/** @type {*} */ (event).button === 2) return // right-clicks
+
     if (
       this._stopForMove &&
       !this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) &&
       this.DS.SelectedSet.has(event.target)
     )
-      return // wants to drag
+      this.isDragging = true
 
     this.isInteracting = true
-    this.DS.publish('Interaction:start', { event })
+    this.DS.publish('Interaction:start', { event, isDragging: this.isDragging })
 
     document.addEventListener('mouseup', this.reset)
     document.addEventListener('touchend', this.reset)
@@ -58,6 +69,7 @@ export default class Interaction {
 
   stop = () => {
     this.isInteracting = false
+    this.isDragging = false
     this._areaElement.removeEventListener('mousedown', this.start)
     this._areaElement.removeEventListener('touchstart', this.start, {
       // @ts-ignore
@@ -69,7 +81,11 @@ export default class Interaction {
 
   update = ({ event, data }) => {
     if (this.isInteracting)
-      this.DS.publish('Interaction:update', { event, data })
+      this.DS.publish('Interaction:update', {
+        event,
+        data,
+        isDragging: this.isDragging,
+      })
   }
 
   reset = (event) => {

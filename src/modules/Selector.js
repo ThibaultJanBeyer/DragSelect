@@ -36,7 +36,8 @@ export default class Selector {
     this.DS.subscribe('Interaction:end', this.stop)
   }
 
-  start = () => {
+  start = ({ isDragging }) => {
+    if (isDragging) return
     const {
       stores: { PointerStore },
     } = this.DS
@@ -58,7 +59,8 @@ export default class Selector {
   }
 
   /** Moves the selection to the correct place */
-  update = () => {
+  update = ({ isDragging }) => {
+    if (isDragging) return
     const {
       stores: { ScrollStore, PointerStore },
     } = this.DS

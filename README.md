@@ -34,10 +34,12 @@ easily add a selection algorithm to your application/website.
 # Key-Features
 
 - **No dependencies** [![No Dependency](https://david-dm.org/ThibaultJanBeyer/DragSelect.svg)](https://david-dm.org/ThibaultJanBeyer/DragSelect)
+- Replicates operating system drag-selection in the browser
 - Accessibility (a11y)
 - Add drag selection
 - Use modifier keys to make multiple independent selections
 - Choose which elements can be selected
+- Selected elements can be dragged and dropped
 - Great browser support, works even like a charm on IE10
 - Lightweight, only ![gzip size](http://img.badgesize.io/https://thibaultjanbeyer.github.io/DragSelect/ds.min.js?compression=gzip)
 - Popular: ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) on npm
@@ -169,14 +171,15 @@ Here are some properties for your convenience. Note, all properties are optional
 |--- |--- |--- |--- |
 |area |single DOM element (node) |The square in which you are able to select |document
 |selectables |DOM elements (nodes) |The elements that can be selected | []
-|autoScrollSpeed |number |The speed in which the area scrolls while selecting (if available). The unit is arbitrary (interval aims for 30fps). Set to `0.0001` to disable auto-scrolling. |`50`
+|autoScrollSpeed |number |The speed in which the area scrolls while selecting (if available). The unit is arbitrary (interval aims for 30fps). Set to `0.0001` to disable auto-scrolling. |`5`
 |zoom |number |Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom. |`1`
 |customStyles |boolean |If true, no styles will be automatically applied to the selector element (except position: absolute). |`false`
 |multiSelectMode |boolean |Add newly selected elements to the selection instead of replacing them. |`false`
 |multiSelectToggling |boolean |Whether or not to toggle already active elements while multi-selecting. |`true` (MacOS selection behavior)
 |multiSelectKeys |array |Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality. |`['Control', 'Shift', 'Meta']`
 |selector |single DOM element (node) |The square that will be used to draw the selection. | Auto-created HTML Element
-|stopForMove |boolean |When a user is dragging on an already selected element, the selection is not fired. This is required when you want to plug-in drag-and-drop functionality. |`false`
+|draggability |boolean |When a user is dragging on an already selected element, the selection is dragged. |`true`
+|useTransform |boolean |Whether to use the more performant hardware accelerated css transforms when dragging instead of the top/left positions. |`true`
 |selectedClass |string |The class name assigned to the selected items. |[see classes](#classes)
 |hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)
 |selectorClass |string |The class name assigned to the square selector helper. |[see classes](#classes)

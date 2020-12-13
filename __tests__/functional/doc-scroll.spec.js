@@ -10,7 +10,7 @@ describe('Document Scroll', () => {
     const mouse = page.mouse
     await mouse.move(50, docHeight - 100)
     await mouse.down()
-    await mouse.move(50, docHeight + 100, { steps: 50 })
+    await mouse.move(50, docHeight + 150, { steps: 50 })
     await mouse.up()
 
     const { selected } = await page.evaluate(() => ({
@@ -27,7 +27,6 @@ describe('Document Scroll', () => {
       'item-257',
       'item-273',
       'item-289',
-      'item-305',
     ]
 
     expect(selected.sort()).toEqual(expected.sort())

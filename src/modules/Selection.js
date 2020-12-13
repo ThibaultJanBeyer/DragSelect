@@ -88,13 +88,17 @@ export default class Selection {
     publish('Interaction:end', { event }) // simulate mouse-up (that does not exist on keyboard)
   }
 
-  /** @param {{event:DSEvent}} event */
-  start = ({ event }) => {
+  /** @param {{event:DSEvent,isDragging:boolean}} event */
+  start = ({ event, isDragging }) => {
+    if (isDragging) return
     this._storePrevious(event)
     this._checkIfInsideSelection(true, event)
   }
 
-  update = () => this._checkIfInsideSelection()
+  update = ({ isDragging }) => {
+    if (isDragging) return
+    this._checkIfInsideSelection()
+  }
 
   /**
    * Checks if any selectable element is inside selection.

@@ -45,6 +45,7 @@
 import './types'
 import {
   Area,
+  Drag,
   Interaction,
   PubSub,
   SelectableSet,
@@ -68,14 +69,15 @@ class DragSelect {
   constructor({
     area = document,
     selectables = [],
-    autoScrollSpeed = 10,
+    autoScrollSpeed = 5,
     zoom = 1,
     customStyles = false,
     multiSelectMode = false,
     multiSelectToggling = true,
     multiSelectKeys = ['Control', 'Shift', 'Meta'],
     selector = undefined,
-    stopForMove = false,
+    draggability = true,
+    useTransform = true,
     hoverClass = 'ds-hover',
     selectableClass = 'ds-selectable',
     selectedClass = 'ds-selected',
@@ -88,7 +90,6 @@ class DragSelect {
     onElementSelect,
     onElementUnselect,
   }) {
-    // Pub-Sub
     this.PubSub = new PubSub()
     this.subscribe = this.PubSub.subscribe
     this.unsubscribe = this.PubSub.unsubscribe
@@ -102,17 +103,14 @@ class DragSelect {
       onElementUnselect,
     })
 
-    // stores
     this.stores = {
       PointerStore: new PointerStore({ DS: this }),
       ScrollStore: new ScrollStore({ DS: this, areaElement: area, zoom }),
       KeyStore: new KeyStore({ DS: this, multiSelectKeys, multiSelectMode }),
     }
 
-    // Area
     this.Area = new Area({ area, PS: this.PubSub, zoom })
 
-    // Selector
     this.Selector = new Selector({
       DS: this,
       selector,
@@ -120,14 +118,12 @@ class DragSelect {
       customStyles,
     })
 
-    // SelectorArea
     this.SelectorArea = new SelectorArea({
       DS: this,
       selectorAreaClass,
       autoScrollSpeed,
     })
 
-    // Selectables
     this.SelectableSet = new SelectableSet({
       elements: selectables,
       DS: this,
@@ -135,24 +131,26 @@ class DragSelect {
       hoverClassName: hoverClass,
     })
 
-    // Selected
     this.SelectedSet = new SelectedSet({
       DS: this,
       className: selectedClass,
     })
 
-    // Selection
     this.Selection = new Selection({
       DS: this,
       hoverClassName: hoverClass,
       multiSelectToggling,
     })
 
-    // Interaction
+    this.Drag = new Drag({
+      DS: this,
+      useTransform,
+    })
+
     this.Interaction = new Interaction({
       areaElement: area,
       DS: this,
-      stopForMove,
+      stopForMove: draggability,
     })
 
     // Subscriber Aliases
@@ -398,6 +396,7 @@ class DragSelect {
    * it will output the cursor position difference between the previous selection and now
    * @param {boolean} [usePreviousCursorDifference]
    * @return {Vect2}
+   * @deprecated
    */
   getCursorPositionDifference(usePreviousCursorDifference) {
     var posA = this.getCurrentCursorPosition()

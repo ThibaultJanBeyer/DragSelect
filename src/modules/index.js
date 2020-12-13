@@ -1,4 +1,5 @@
 export { default as Area } from './Area'
+export { default as Drag } from './Drag'
 export { default as Interaction } from './Interaction'
 export { default as PubSub } from './PubSub'
 export { default as SelectableSet } from './SelectableSet'

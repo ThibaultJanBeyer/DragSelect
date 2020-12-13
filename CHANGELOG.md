@@ -1,8 +1,8 @@
 # 2.0.0
 
-## Grant more control to multi-selection behavior
+## Added Draggability! (solves #24)
 
-- Added `multiSelectToggling` which let's you control how the multi-selection behaves (solves #58)
+- You can now drag and drop elements after selection
 
 ## Improved Selector (Potential Breaking Change)
 
@@ -73,6 +73,7 @@ Public methods that were removed:
 - `.isCursorNearEdge`
 - `.toggle` (use `.toggleSelection` instead)
 - `.select` (use `.setSelection` or `.addSelection` instead)
+- `.getCursorPositionDifference` (is deprecated, calculate yourself instead. i.e. `.getCurrentCursorPosition().x - .getInitialCursorPosition().x`)
 
 ## Fixing Multi-Select-Keys issue & adding more available keys (Breaking Change)
 
