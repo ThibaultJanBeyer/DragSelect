@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>modules/Selector.js - Documentation</title>
+    <title>modules/Drag.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">modules/Selector.js</h1>
+    <h1 class="page-title">modules/Drag.js</h1>
     
 
     
@@ -40,83 +40,79 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>// @ts-check
-import '../types.js'
+import '../types'
 import DragSelect from '../DragSelect'
 
-import {
-  createSelectorElement,
-  getPosition,
-  getSelectorPosition,
-  updateElementStylePos,
-} from '../methods'
+import { getStylePosition, setStylePosition, vect2 } from '../methods'
 
-export default class Selector {
+export default class Drag {
   /**
-   * @type {DSElementPos}
+   * @type {boolean}
    * @private
    */
-  _position
+  _useTransform
+  /**
+   * @type {Vect2}
+   * @private
+   */
+  _prevCursorPos
+  /**
+   * @type {Vect2}
+   * @private
+   */
+  _prevScrollPos
 
   /**
-   * @constructor Selector
    * @param {Object} p
    * @param {DragSelect} p.DS
-   * @param {HTMLElement} p.selector
-   * @param {string} p.selectorClass
-   * @param {boolean} p.customStyles
-   * @ignore
+   * @param {boolean} p.useTransform
    */
-  constructor({ DS, selector, selectorClass, customStyles }) {
+  constructor({ DS, useTransform }) {
     this.DS = DS
-
-    this.HTMLNode = selector || createSelectorElement(customStyles)
-    this.HTMLNode.classList.add(selectorClass)
-
+    this._useTransform = useTransform
     this.DS.subscribe('Interaction:start', this.start)
     this.DS.subscribe('Interaction:update', this.update)
-    this.DS.subscribe('Interaction:end', this.stop)
   }
 
-  start = ({ isDragging }) => {
-    if (isDragging) return
-    const {
-      stores: { PointerStore },
-    } = this.DS
-    const pPos = PointerStore.initialValArea
-    updateElementStylePos(this.HTMLNode, {
-      x: pPos.x,
-      y: pPos.y,
-      w: 1,
-      h: 1,
-    })
-    this.HTMLNode.style.display = 'block'
-    this._position = null
+  start = () => {
+    this._prevCursorPos = null
+    this._prevScrollPos = null
   }
 
-  stop = () => {
-    this.HTMLNode.style.width = '0'
-    this.HTMLNode.style.height = '0'
-    this.HTMLNode.style.display = 'none'
-  }
-
-  /** Moves the selection to the correct place */
   update = ({ isDragging }) => {
-    if (isDragging) return
-    const {
-      stores: { ScrollStore, PointerStore },
-    } = this.DS
-    const pos = getSelectorPosition({
-      scrollAmount: ScrollStore.scrollAmount,
-      initialPointerPos: PointerStore.initialValArea,
-      pointerPos: PointerStore.currentValArea,
+    if (!isDragging) return
+
+    const posDiff = this._getPositionDifference(
+      this.DS.stores.PointerStore.currentVal,
+      this.DS.stores.ScrollStore.currentVal
+    )
+
+    const selected = this.DS.getSelection()
+    selected.forEach((element) => {
+      const elementPos = getStylePosition(element, this._useTransform)
+      const newPos = vect2.calc(elementPos, '+', posDiff)
+      setStylePosition(element, newPos, this._useTransform)
     })
-    updateElementStylePos(this.HTMLNode, pos)
-    this._position = null
   }
 
-  get position() {
-    if (this._position) return this._position
-    return (this._position = getPosition(this.HTMLNode))
+  /**
+   * Difference value between two point of the cursor or scroll
+   * @param {Vect2} currentPointerVal
+   * @param {Vect2} currentScrollVal
+   * @private
+   */
+  _getPositionDifference(currentPointerVal, currentScrollVal) {
+    const cursorDiff = this._prevCursorPos
+      ? vect2.calc(currentPointerVal, '-', this._prevCursorPos)
+      : { x: 0, y: 0 }
+    this._prevCursorPos = currentPointerVal
+
+    const scrollDiff = this._prevScrollPos
+      ? vect2.calc(currentScrollVal, '-', this._prevScrollPos)
+      : { x: 0, y: 0 }
+    this._prevScrollPos = currentScrollVal
+
+    return vect2.calc(cursorDiff, '+', scrollDiff)
   }
 }
 </code></pre>

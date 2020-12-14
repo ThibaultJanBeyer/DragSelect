@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>modules/Selector.js - Documentation</title>
+    <title>exports - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,99 +29,258 @@
 
 <div id="main">
     
-    <h1 class="page-title">modules/Selector.js</h1>
+    <h1 class="page-title">exports</h1>
     
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>// @ts-check
-import '../types.js'
-import DragSelect from '../DragSelect'
+        <h2>
+        exports
+        </h2>
+        
+    
+</header>
 
-import {
-  createSelectorElement,
-  getPosition,
-  getSelectorPosition,
-  updateElementStylePos,
-} from '../methods'
+<article>
+    <div class="container-overview">
+    
+        
+<div class="section-method">
 
-export default class Selector {
-  /**
-   * @type {DSElementPos}
-   * @private
-   */
-  _position
+    
 
-  /**
-   * @constructor Selector
-   * @param {Object} p
-   * @param {DragSelect} p.DS
-   * @param {HTMLElement} p.selector
-   * @param {string} p.selectorClass
-   * @param {boolean} p.customStyles
-   * @ignore
-   */
-  constructor({ DS, selector, selectorClass, customStyles }) {
-    this.DS = DS
+    <h4 class="name" id="exports"><span class="type-signature"></span>new exports<span class="signature">(p)</span><span class="type-signature"></span></h4>
 
-    this.HTMLNode = selector || createSelectorElement(customStyles)
-    this.HTMLNode.classList.add(selectorClass)
+    
 
-    this.DS.subscribe('Interaction:start', this.start)
-    this.DS.subscribe('Interaction:update', this.update)
-    this.DS.subscribe('Interaction:end', this.stop)
-  }
 
-  start = ({ isDragging }) => {
-    if (isDragging) return
-    const {
-      stores: { PointerStore },
-    } = this.DS
-    const pPos = PointerStore.initialValArea
-    updateElementStylePos(this.HTMLNode, {
-      x: pPos.x,
-      y: pPos.y,
-      w: 1,
-      h: 1,
-    })
-    this.HTMLNode.style.display = 'block'
-    this._position = null
-  }
 
-  stop = () => {
-    this.HTMLNode.style.width = '0'
-    this.HTMLNode.style.height = '0'
-    this.HTMLNode.style.display = 'none'
-  }
 
-  /** Moves the selection to the correct place */
-  update = ({ isDragging }) => {
-    if (isDragging) return
-    const {
-      stores: { ScrollStore, PointerStore },
-    } = this.DS
-    const pos = getSelectorPosition({
-      scrollAmount: ScrollStore.scrollAmount,
-      initialPointerPos: PointerStore.initialValArea,
-      pointerPos: PointerStore.currentValArea,
-    })
-    updateElementStylePos(this.HTMLNode, pos)
-    this._position = null
-  }
 
-  get position() {
-    if (this._position) return this._position
-    return (this._position = getPosition(this.HTMLNode))
-  }
-}
-</code></pre>
-        </article>
-    </section>
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modules_Drag.js.html">modules/Drag.js</a>, <a href="modules_Drag.js.html#line29">line 29</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>p</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Object</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                
+                
+                    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>DS</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code><a href="DragSelect.html">DragSelect</a></code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                
+                
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>useTransform</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>boolean</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                
+                
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+                
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

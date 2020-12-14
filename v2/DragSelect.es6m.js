@@ -268,14 +268,15 @@ function _nonIterableSpread() {
  * @typedef {Object} Settings
  * @property {HTMLElement|SVGElement|HTMLDocument} [area=document] area in which you can drag. If not provided it will be the whole document
  * @property {DSInputElements} [selectables=[]] the elements that can be selected
- * @property {number} [autoScrollSpeed=50] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
+ * @property {number} [autoScrollSpeed=5] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
  * @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom.
  * @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
  * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them
  * @property {boolean} [multiSelectToggling=true] Whether or not to toggle already active elements while multi-selecting
  * @property {DSMultiSelectKeys} [multiSelectKeys=['Control', 'Shift', 'Meta']] Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
- * @property {boolean} [stopForMove=false] When a user is dragging on an already selected element, the selection is not fired. This is required to plug-in drag-and-drop functionality.
+ * @property {boolean} [draggability=true] When a user is dragging on an already selected element, the selection is dragged.
+ * @property {boolean} [useTransform=true] Whether to use hardware accelerated css transforms when dragging or top/left instead
  * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
@@ -354,7 +355,7 @@ function _nonIterableSpread() {
 
 /** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
 
-/** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'} DSInternalEventNames */
+/** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:dragstart'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'} DSInternalEventNames */
 
 /** @typedef {DSEventNames|DSInternalEventNames} DSCallbackNames the name of the callback */
 
@@ -696,6 +697,90 @@ var getSelectorPosition = (function (_ref) {
 
 // @ts-check
 /**
+ * @param {DSElement} element
+ * @return {Vect2}
+ */
+
+var getComputedTranslatePositions = function getComputedTranslatePositions(element) {
+  var computed = window.getComputedStyle(element);
+  if (!computed.transform || computed.transform === 'none') return {
+    x: 0,
+    y: 0
+  };
+
+  if (computed.transform.indexOf('3d') >= 0) {
+    var matched = computed.transform.match( // matches the values inside translate(3d)
+    /(?<=matrix3d\()(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?)(?=\))/);
+    return {
+      x: parseInt(matched[13]) || 0,
+      y: parseInt(matched[14]) || 0
+    };
+  } else {
+    var _matched = computed.transform.match( // matches the values inside translate(3d)
+    /(?<=matrix\()(.*?),(.*?),(.*?),(.*?),(.*?),(.*?)(?=\))/);
+
+    return {
+      x: parseInt(_matched[5]) || 0,
+      y: parseInt(_matched[6]) || 0
+    };
+  }
+};
+/**
+ * @param {DSElement} element
+ * @return {Vect2}
+ */
+
+
+var getTranslatedPositions = function getTranslatedPositions(element) {
+  var transform = element.style.transform;
+  if (!transform || transform.indexOf('translate') < 0) return getComputedTranslatePositions(element);
+  var regex = transform.indexOf('3d') >= 0 ? /(?<=translate3d\()(.*?),(.*?),(.*?)(?=\))/ : /(?<=translate\()(.*?),(.*?)(?=\))/;
+  var translate = transform.match(regex);
+  var position = {
+    x: parseInt(translate[1]) || 0,
+    y: parseInt(translate[2]) || 0
+  };
+  if (!position.x && !position.x) return getComputedTranslatePositions(element);
+  return position;
+};
+/**
+ * @param {DSElement} element
+ * @return {Vect2}
+ */
+
+
+var getTopLeftPosition = function getTopLeftPosition(element) {
+  var style = element.style;
+  var position = {
+    x: parseInt(style.left) || 0,
+    y: parseInt(style.top) || 0
+  }; // initial positions
+
+  if (!position.x && !position.x) {
+    var computed = window.getComputedStyle(element);
+    return {
+      x: parseInt(computed.left) || 0,
+      y: parseInt(computed.top) || 0
+    };
+  }
+
+  return position;
+};
+/**
+ * Returns the X and Y coordinates based on styles
+ * Can handle translate and top/left
+ * @param {DSElement} element
+ * @param {boolean} [useTranslate]
+ * @return {Vect2}
+ */
+
+
+var getStylePosition = (function (element, useTranslate) {
+  if (useTranslate) return getTranslatedPositions(element);else return getTopLeftPosition(element);
+});
+
+// @ts-check
+/**
  * Axis-Aligned Bounding Box Collision Detection.
  * Imagine following Example:
  *
@@ -791,6 +876,28 @@ var scrollElement = (function (element, directions, multiplier) {
   if (scrollBot) _element.scrollTop += 1 * multiplier;
   if (scrollLeft) _element.scrollLeft -= 1 * multiplier;
   if (scrollRight) _element.scrollLeft += 1 * multiplier;
+});
+
+// @ts-check
+/**
+ * Sets the style position to the X and Y coordinates
+ * Can handle translate and top/left
+ * @param {DSElement} element
+ * @param {Vect2} values
+ * @param {boolean} [useTranslate]
+ * @return {DSElement}
+ */
+
+var setStylePosition = (function (element, values, useTranslate) {
+  if (useTranslate) {
+    var prevTransform = element.style.transform;
+    element.style.transform = "translate3d(".concat(values.x, "px,").concat(values.y, "px,1px) ").concat(prevTransform.replace(/translate.*?\)/g, ''));
+  } else {
+    element.style.left = "".concat(values.x, "px");
+    element.style.top = "".concat(values.y, "px");
+  }
+
+  return element;
 });
 
 /**
@@ -1027,9 +1134,107 @@ var Area = /*#__PURE__*/function () {
   return Area;
 }();
 
+var Drag = /*#__PURE__*/function () {
+  /**
+   * @type {boolean}
+   * @private
+   */
+
+  /**
+   * @type {Vect2}
+   * @private
+   */
+
+  /**
+   * @type {Vect2}
+   * @private
+   */
+
+  /**
+   * @param {Object} p
+   * @param {DragSelect} p.DS
+   * @param {boolean} p.useTransform
+   */
+  function Drag(_ref) {
+    var _this = this;
+
+    var DS = _ref.DS,
+        useTransform = _ref.useTransform;
+
+    _classCallCheck(this, Drag);
+
+    _defineProperty(this, "_useTransform", void 0);
+
+    _defineProperty(this, "_prevCursorPos", void 0);
+
+    _defineProperty(this, "_prevScrollPos", void 0);
+
+    _defineProperty(this, "start", function () {
+      _this._prevCursorPos = null;
+      _this._prevScrollPos = null;
+    });
+
+    _defineProperty(this, "update", function (_ref2) {
+      var isDragging = _ref2.isDragging;
+      if (!isDragging) return;
+
+      var posDiff = _this._getPositionDifference(_this.DS.stores.PointerStore.currentVal, _this.DS.stores.ScrollStore.currentVal);
+
+      var selected = _this.DS.getSelection();
+
+      selected.forEach(function (element) {
+        var elementPos = getStylePosition(element, _this._useTransform);
+        var newPos = calc(elementPos, '+', posDiff);
+        setStylePosition(element, newPos, _this._useTransform);
+      });
+    });
+
+    this.DS = DS;
+    this._useTransform = useTransform;
+    this.DS.subscribe('Interaction:start', this.start);
+    this.DS.subscribe('Interaction:update', this.update);
+  }
+
+  _createClass(Drag, [{
+    key: "_getPositionDifference",
+
+    /**
+     * Difference value between two point of the cursor or scroll
+     * @param {Vect2} currentPointerVal
+     * @param {Vect2} currentScrollVal
+     * @private
+     */
+    value: function _getPositionDifference(currentPointerVal, currentScrollVal) {
+      var cursorDiff = this._prevCursorPos ? calc(currentPointerVal, '-', this._prevCursorPos) : {
+        x: 0,
+        y: 0
+      };
+      this._prevCursorPos = currentPointerVal;
+      var scrollDiff = this._prevScrollPos ? calc(currentScrollVal, '-', this._prevScrollPos) : {
+        x: 0,
+        y: 0
+      };
+      this._prevScrollPos = currentScrollVal;
+      return calc(cursorDiff, '+', scrollDiff);
+    }
+  }]);
+
+  return Drag;
+}();
+
 var Interaction =
 /**
  * @type {DSArea}
+ * @private
+ * */
+
+/**
+ * @type {boolean}
+ * @private
+ * */
+
+/**
+ * @type {boolean}
  * @private
  * */
 
@@ -1059,6 +1264,10 @@ function Interaction(_ref) {
 
   _defineProperty(this, "_stopForMove", void 0);
 
+  _defineProperty(this, "isInteracting", void 0);
+
+  _defineProperty(this, "isDragging", void 0);
+
   _defineProperty(this, "init", function () {
     _this.stop();
 
@@ -1078,12 +1287,12 @@ function Interaction(_ref) {
     /** @type {*} */
     event.button === 2) return; // right-clicks
 
-    if (_this._stopForMove && !_this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) && _this.DS.SelectedSet.has(event.target)) return; // wants to drag
-
+    if (_this._stopForMove && !_this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) && _this.DS.SelectedSet.has(event.target)) _this.isDragging = true;
     _this.isInteracting = true;
 
     _this.DS.publish('Interaction:start', {
-      event: event
+      event: event,
+      isDragging: _this.isDragging
     });
 
     document.addEventListener('mouseup', _this.reset);
@@ -1092,6 +1301,7 @@ function Interaction(_ref) {
 
   _defineProperty(this, "stop", function () {
     _this.isInteracting = false;
+    _this.isDragging = false;
 
     _this._areaElement.removeEventListener('mousedown', _this.start);
 
@@ -1109,7 +1319,8 @@ function Interaction(_ref) {
         data = _ref2.data;
     if (_this.isInteracting) _this.DS.publish('Interaction:update', {
       event: event,
-      data: data
+      data: data,
+      isDragging: _this.isDragging
     });
   });
 
@@ -1429,15 +1640,20 @@ var Selection = /*#__PURE__*/function () {
     });
 
     _defineProperty(this, "start", function (_ref3) {
-      var event = _ref3.event;
+      var event = _ref3.event,
+          isDragging = _ref3.isDragging;
+      if (isDragging) return;
 
       _this._storePrevious(event);
 
       _this._checkIfInsideSelection(true, event);
     });
 
-    _defineProperty(this, "update", function () {
-      return _this._checkIfInsideSelection();
+    _defineProperty(this, "update", function (_ref4) {
+      var isDragging = _ref4.isDragging;
+      if (isDragging) return;
+
+      _this._checkIfInsideSelection();
     });
 
     _defineProperty(this, "_checkIfInsideSelection", function (force, event) {
@@ -1535,7 +1751,7 @@ var Selection = /*#__PURE__*/function () {
         event: event
       }); // simulate mouse-up (that does not exist on keyboard)
     }
-    /** @param {{event:DSEvent}} event */
+    /** @param {{event:DSEvent,isDragging:boolean}} event */
 
   }, {
     key: "_handleSelection",
@@ -1614,7 +1830,9 @@ var Selector = /*#__PURE__*/function () {
 
     _defineProperty(this, "_position", void 0);
 
-    _defineProperty(this, "start", function () {
+    _defineProperty(this, "start", function (_ref2) {
+      var isDragging = _ref2.isDragging;
+      if (isDragging) return;
       var PointerStore = _this.DS.stores.PointerStore;
       var pPos = PointerStore.initialValArea;
       updateElementStylePos(_this.HTMLNode, {
@@ -1633,7 +1851,9 @@ var Selector = /*#__PURE__*/function () {
       _this.HTMLNode.style.display = 'none';
     });
 
-    _defineProperty(this, "update", function () {
+    _defineProperty(this, "update", function (_ref3) {
+      var isDragging = _ref3.isDragging;
+      if (isDragging) return;
       var _this$DS$stores = _this.DS.stores,
           ScrollStore = _this$DS$stores.ScrollStore,
           PointerStore = _this$DS$stores.PointerStore;
@@ -2260,7 +2480,7 @@ var DragSelect = /*#__PURE__*/function () {
         _ref$selectables = _ref.selectables,
         selectables = _ref$selectables === void 0 ? [] : _ref$selectables,
         _ref$autoScrollSpeed = _ref.autoScrollSpeed,
-        autoScrollSpeed = _ref$autoScrollSpeed === void 0 ? 10 : _ref$autoScrollSpeed,
+        autoScrollSpeed = _ref$autoScrollSpeed === void 0 ? 5 : _ref$autoScrollSpeed,
         _ref$zoom = _ref.zoom,
         zoom = _ref$zoom === void 0 ? 1 : _ref$zoom,
         _ref$customStyles = _ref.customStyles,
@@ -2273,8 +2493,10 @@ var DragSelect = /*#__PURE__*/function () {
         multiSelectKeys = _ref$multiSelectKeys === void 0 ? ['Control', 'Shift', 'Meta'] : _ref$multiSelectKeys,
         _ref$selector = _ref.selector,
         selector = _ref$selector === void 0 ? undefined : _ref$selector,
-        _ref$stopForMove = _ref.stopForMove,
-        stopForMove = _ref$stopForMove === void 0 ? false : _ref$stopForMove,
+        _ref$draggability = _ref.draggability,
+        draggability = _ref$draggability === void 0 ? true : _ref$draggability,
+        _ref$useTransform = _ref.useTransform,
+        useTransform = _ref$useTransform === void 0 ? true : _ref$useTransform,
         _ref$hoverClass = _ref.hoverClass,
         hoverClass = _ref$hoverClass === void 0 ? 'ds-hover' : _ref$hoverClass,
         _ref$selectableClass = _ref.selectableClass,
@@ -2334,7 +2556,6 @@ var DragSelect = /*#__PURE__*/function () {
       return _this.stores.KeyStore.isMultiSelectKeyPressed(event);
     });
 
-    // Pub-Sub
     this.PubSub = new PubSub();
     this.subscribe = this.PubSub.subscribe;
     this.unsubscribe = this.PubSub.unsubscribe;
@@ -2347,8 +2568,7 @@ var DragSelect = /*#__PURE__*/function () {
       onDragStartBegin: onDragStartBegin,
       onElementSelect: onElementSelect,
       onElementUnselect: onElementUnselect
-    }); // stores
-
+    });
 
     this.stores = {
       PointerStore: new PointerStore({
@@ -2364,49 +2584,46 @@ var DragSelect = /*#__PURE__*/function () {
         multiSelectKeys: multiSelectKeys,
         multiSelectMode: multiSelectMode
       })
-    }; // Area
-
+    };
     this.Area = new Area({
       area: area,
       PS: this.PubSub,
       zoom: zoom
-    }); // Selector
-
+    });
     this.Selector = new Selector({
       DS: this,
       selector: selector,
       selectorClass: selectorClass,
       customStyles: customStyles
-    }); // SelectorArea
-
+    });
     this.SelectorArea = new SelectorArea({
       DS: this,
       selectorAreaClass: selectorAreaClass,
       autoScrollSpeed: autoScrollSpeed
-    }); // Selectables
-
+    });
     this.SelectableSet = new SelectableSet({
       elements: selectables,
       DS: this,
       className: selectableClass,
       hoverClassName: hoverClass
-    }); // Selected
-
+    });
     this.SelectedSet = new SelectedSet({
       DS: this,
       className: selectedClass
-    }); // Selection
-
+    });
     this.Selection = new Selection({
       DS: this,
       hoverClassName: hoverClass,
       multiSelectToggling: multiSelectToggling
-    }); // Interaction
-
+    });
+    this.Drag = new Drag({
+      DS: this,
+      useTransform: useTransform
+    });
     this.Interaction = new Interaction({
       areaElement: area,
       DS: this,
-      stopForMove: stopForMove
+      stopForMove: draggability
     }); // Subscriber Aliases
 
     this.subscribe('Selected:added', function (_ref2) {
@@ -2719,6 +2936,7 @@ var DragSelect = /*#__PURE__*/function () {
      * it will output the cursor position difference between the previous selection and now
      * @param {boolean} [usePreviousCursorDifference]
      * @return {Vect2}
+     * @deprecated
      */
     value: function getCursorPositionDifference(usePreviousCursorDifference) {
       var posA = this.getCurrentCursorPosition();
