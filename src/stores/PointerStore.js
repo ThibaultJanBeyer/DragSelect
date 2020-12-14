@@ -142,7 +142,7 @@ export default class PointerStore {
         value,
         '-',
         vect2.calc(
-          vect2.rect2vect(this.DS.Area.boundingClientRect),
+          vect2.rect2vect(this.DS.Area.rect),
           '+',
           vect2.rect2vect(this.DS.Area.computedBorder)
         )
@@ -157,7 +157,7 @@ export default class PointerStore {
         value,
         '-',
         vect2.calc(
-          vect2.rect2vect(this.DS.Area.boundingClientRect),
+          vect2.rect2vect(this.DS.Area.rect),
           '+',
           vect2.rect2vect(this.DS.Area.computedBorder)
         )
@@ -172,7 +172,7 @@ export default class PointerStore {
         value,
         '-',
         vect2.calc(
-          vect2.rect2vect(this.DS.Area.boundingClientRect),
+          vect2.rect2vect(this.DS.Area.rect),
           '+',
           vect2.rect2vect(this.DS.Area.computedBorder)
         )

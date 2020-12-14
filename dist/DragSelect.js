@@ -342,7 +342,7 @@
 
   /** @typedef {{x: number, y: number}} Vect2 */
 
-  /** @typedef {{x:number,y:number,w:number,h:number}} DSElementPos */
+  /** @typedef {{x:number,y:number,w:number,h:number,r:number,b:number}} DSElementPos */
 
   /** @typedef {Array.<'top'|'bottom'|'left'|'right'|undefined>} DSEdges */
 
@@ -611,26 +611,9 @@
 
   // @ts-check
   /**
-   * Returns cursor x, y position based on event object
-   * @param {DSElement} element
-   * @return {DSElementPos}
-   */
-
-  var getPosition = (function (element) {
-    var boundingClientRect = element.getBoundingClientRect();
-    return {
-      x: boundingClientRect.left,
-      y: boundingClientRect.top,
-      w: boundingClientRect.width,
-      h: boundingClientRect.height
-    };
-  });
-
-  // @ts-check
-  /**
    * Reliably returns the exact x,y,w,h positions of the selector element
    * @param {{ scrollAmount:Vect2, initialPointerPos:Vect2, pointerPos:Vect2 }} p
-   * @returns {DSElementPos}
+   * @returns {{left:number,top:number,width:number,height:number}}
    */
 
   var getSelectorPosition = (function (_ref) {
@@ -680,24 +663,24 @@
 
     if (pointerPos.x > initialPointerPos.x - scrollAmount.x) {
       // 1.
-      selectorPos.x = initialPointerPos.x - scrollAmount.x; // 2.
+      selectorPos.left = initialPointerPos.x - scrollAmount.x; // 2.
 
-      selectorPos.w = pointerPos.x - initialPointerPos.x + scrollAmount.x; // 3.
+      selectorPos.width = pointerPos.x - initialPointerPos.x + scrollAmount.x; // 3.
       // left
     } else {
       // 1b.
-      selectorPos.x = pointerPos.x; // 2b.
+      selectorPos.left = pointerPos.x; // 2b.
 
-      selectorPos.w = initialPointerPos.x - pointerPos.x - scrollAmount.x; // 3b.
+      selectorPos.width = initialPointerPos.x - pointerPos.x - scrollAmount.x; // 3b.
     } // bottom
 
 
     if (pointerPos.y > initialPointerPos.y - scrollAmount.y) {
-      selectorPos.y = initialPointerPos.y - scrollAmount.y;
-      selectorPos.h = pointerPos.y - initialPointerPos.y + scrollAmount.y; // top
+      selectorPos.top = initialPointerPos.y - scrollAmount.y;
+      selectorPos.height = pointerPos.y - initialPointerPos.y + scrollAmount.y; // top
     } else {
-      selectorPos.y = pointerPos.y;
-      selectorPos.h = initialPointerPos.y - pointerPos.y - scrollAmount.y;
+      selectorPos.top = pointerPos.y;
+      selectorPos.height = initialPointerPos.y - pointerPos.y - scrollAmount.y;
     }
 
     return selectorPos;
@@ -789,6 +772,54 @@
 
   // @ts-check
   /**
+   * pushes element back the overflow amount
+   * (top - top gives overflow, then new position pushed back by overflow)
+   * @param {Object} p
+   * @param {DSElement} p.element
+   * @param {DSBoundingRect} p.elementRect
+   * @param {DSBoundingRect} p.containerRect
+   * @param {Vect2} p.elementPos
+   * @param {boolean} p.useTransform
+   */
+
+  var handleDragOverflow = (function (_ref) {
+    var element = _ref.element,
+        elementRect = _ref.elementRect,
+        containerRect = _ref.containerRect,
+        elementPos = _ref.elementPos,
+        useTransform = _ref.useTransform;
+
+    if (elementRect.top < containerRect.top) {
+      setStylePosition(element, {
+        y: elementPos.y + containerRect.top - elementRect.top,
+        x: elementPos.x
+      }, useTransform);
+    }
+
+    if (elementRect.left < containerRect.left) {
+      setStylePosition(element, {
+        y: elementPos.y,
+        x: elementPos.x + containerRect.left - elementRect.left
+      }, useTransform);
+    }
+
+    if (elementRect.bottom > containerRect.bottom) {
+      setStylePosition(element, {
+        y: elementPos.y + containerRect.bottom - elementRect.bottom,
+        x: elementPos.x
+      }, useTransform);
+    }
+
+    if (elementRect.right > containerRect.right) {
+      setStylePosition(element, {
+        y: elementPos.y,
+        x: elementPos.x + containerRect.right - elementRect.right
+      }, useTransform);
+    }
+  });
+
+  // @ts-check
+  /**
    * Axis-Aligned Bounding Box Collision Detection.
    * Imagine following Example:
    *
@@ -807,15 +838,16 @@
    * 4. b02 > b11 (bottom border pos box1 larger than top border pos box2)
    * {@link https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box Wikipedia}
    * {@link https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection MDN}
-   * @param {DSElementPos} el1
-   * @param {DSElementPos} el2
+   * @param {{left:number,right:number,top:number,bottom:number}} el1
+   * @param {{left:number,right:number,top:number,bottom:number}} el2
+   * @returns {boolean}
    */
 
   var isCollision = (function (el1, el2) {
-    if (el1.x < el2.x + el2.w && // 1.
-    el1.x + el1.w > el2.x && // 2.
-    el1.y < el2.y + el2.h && // 3.
-    el1.h + el1.y > el2.y // 4.
+    if (el1.left < el2.right && // 1.
+    el1.right > el2.left && // 2.
+    el1.top < el2.bottom && // 3.
+    el1.bottom > el2.top // 4.
     ) return true; // collision detected!
     else return false;
   });
@@ -831,8 +863,8 @@
     var position = _ref.position,
         boundingRect = _ref.boundingRect;
     var tolerance = {
-      x: 10,
-      y: 10
+      x: 25,
+      y: 25
     };
     var edges = [];
     if (position.y < tolerance.y) edges.push('top');
@@ -925,14 +957,14 @@
    * Updates element style left, top, width, height values
    * according to pos input object.
    * @param {HTMLElement} element
-   * @param {DSElementPos} pos
+   * @param {{left:number,top:number,width:number,height:number}} pos
    */
 
   var updateElementStylePos = (function (element, pos) {
-    element.style.left = "".concat(pos.x, "px");
-    element.style.top = "".concat(pos.y, "px");
-    element.style.width = "".concat(pos.w, "px");
-    element.style.height = "".concat(pos.h, "px");
+    element.style.left = "".concat(pos.left, "px");
+    element.style.top = "".concat(pos.top, "px");
+    element.style.width = "".concat(pos.width, "px");
+    element.style.height = "".concat(pos.height, "px");
   });
 
   var Area = /*#__PURE__*/function () {
@@ -1007,7 +1039,7 @@
 
       _defineProperty(this, "_computedBorder", void 0);
 
-      _defineProperty(this, "_boundingClientRect", void 0);
+      _defineProperty(this, "_rect", void 0);
 
       _defineProperty(this, "start", function () {
         addModificationObservers(_this.parentNodes, _this._modificationCallback, _this._modificationObserver);
@@ -1015,7 +1047,7 @@
 
       _defineProperty(this, "reset", function () {
         _this._computedStyle = undefined;
-        _this._boundingClientRect = undefined;
+        _this._rect = undefined;
         _this._computedBorder = undefined;
         _this._parentNodes = undefined;
       });
@@ -1109,10 +1141,10 @@
        */
 
     }, {
-      key: "boundingClientRect",
+      key: "rect",
       get: function get() {
-        if (this._boundingClientRect) return this._boundingClientRect;
-        return this._boundingClientRect = getAreaRect(this.HTMLNode, this._zoom);
+        if (this._rect) return this._rect;
+        return this._rect = getAreaRect(this.HTMLNode, this._zoom);
       }
     }, {
       key: "parentNodes",
@@ -1216,6 +1248,13 @@
           var elementPos = getStylePosition(element, _this._useTransform);
           var newPos = calc(elementPos, '+', posDiff);
           setStylePosition(element, newPos, _this._useTransform);
+          handleDragOverflow({
+            element: element,
+            elementRect: element.getBoundingClientRect(),
+            containerRect: _this.DS.SelectorArea.rect,
+            elementPos: newPos,
+            useTransform: _this._useTransform
+          });
         });
       });
 
@@ -1326,7 +1365,6 @@
         if (!_this._canInteract(event)) return;
         _this.isInteracting = true;
         _this.isDragging = _this.isDragEvent(event);
-        console.log('5', _this.isDragging);
 
         _this.DS.publish('Interaction:start', {
           event: event,
@@ -1787,20 +1825,14 @@
         /** @type {any} */
 
         var elPosCombo = SelectableSet.elements.map(function (element) {
-          var rect = element.getBoundingClientRect();
-          return [element, {
-            y: rect.top,
-            x: rect.left,
-            h: rect.height,
-            w: rect.width
-          }];
+          return [element, element.getBoundingClientRect()];
         });
         var select = [];
         var unselect = [];
 
         for (var i = 0, il = elPosCombo.length; i < il; i++) {
           if (!SelectorArea.isInside(elPosCombo[i][0], elPosCombo[i][1])) continue;
-          if (isCollision(elPosCombo[i][1], Selector.position)) select.push(elPosCombo[i][0]);else unselect.push(elPosCombo[i][0]);
+          if (isCollision(elPosCombo[i][1], Selector.rect)) select.push(elPosCombo[i][0]);else unselect.push(elPosCombo[i][0]);
         }
 
         select.forEach(function (element) {
@@ -1887,7 +1919,7 @@
 
   var Selector = /*#__PURE__*/function () {
     /**
-     * @type {DSElementPos}
+     * @type {DSBoundingRect}
      * @private
      */
 
@@ -1910,7 +1942,7 @@
 
       _classCallCheck(this, Selector);
 
-      _defineProperty(this, "_position", void 0);
+      _defineProperty(this, "_rect", void 0);
 
       _defineProperty(this, "start", function (_ref2) {
         var isDragging = _ref2.isDragging;
@@ -1918,13 +1950,13 @@
         var PointerStore = _this.DS.stores.PointerStore;
         var pPos = PointerStore.initialValArea;
         updateElementStylePos(_this.HTMLNode, {
-          x: pPos.x,
-          y: pPos.y,
-          w: 1,
-          h: 1
+          left: pPos.x,
+          top: pPos.y,
+          width: 1,
+          height: 1
         });
         _this.HTMLNode.style.display = 'block';
-        _this._position = null;
+        _this._rect = null;
       });
 
       _defineProperty(this, "stop", function () {
@@ -1945,7 +1977,7 @@
           pointerPos: PointerStore.currentValArea
         });
         updateElementStylePos(_this.HTMLNode, pos);
-        _this._position = null;
+        _this._rect = null;
       });
 
       this.DS = DS;
@@ -1957,10 +1989,10 @@
     }
 
     _createClass(Selector, [{
-      key: "position",
+      key: "rect",
       get: function get() {
-        if (this._position) return this._position;
-        return this._position = getPosition(this.HTMLNode);
+        if (this._rect) return this._rect;
+        return this._rect = this.HTMLNode.getBoundingClientRect();
       }
     }]);
 
@@ -1979,7 +2011,7 @@
      * */
 
     /**
-     * @type {DSElementPos}
+     * @type {DSBoundingRect}
      * @private
      */
 
@@ -2002,11 +2034,11 @@
 
       _defineProperty(this, "_scrollInterval", void 0);
 
-      _defineProperty(this, "_position", void 0);
+      _defineProperty(this, "_rect", void 0);
 
       _defineProperty(this, "updatePos", function () {
-        _this._position = null;
-        var rect = _this.DS.Area.boundingClientRect;
+        _this._rect = null;
+        var rect = _this.DS.Area.rect;
         var border = _this.DS.Area.computedBorder;
         var style = _this.HTMLNode.style;
         var top = "".concat(rect.top + border.top, "px");
@@ -2031,7 +2063,7 @@
             Area = _this$DS.Area;
         var currentEdges = isCursorNearEdges({
           position: PointerStore.currentValArea,
-          boundingRect: Area.boundingClientRect
+          boundingRect: Area.rect
         });
         if (currentEdges.length) Area.scroll(currentEdges, _this._autoScrollSpeed);
       });
@@ -2040,9 +2072,9 @@
         return clearInterval(_this._scrollInterval);
       });
 
-      _defineProperty(this, "isInside", function (element, elementPos) {
+      _defineProperty(this, "isInside", function (element, elementRect) {
         if (_this.DS.Area.HTMLNode.contains(element) && _this.DS.stores.ScrollStore.canScroll) return true;
-        return isCollision(_this.position, elementPos || getPosition(element));
+        return isCollision(_this.rect, elementRect || element.getBoundingClientRect());
       });
 
       this._autoScrollSpeed = autoScrollSpeed;
@@ -2053,7 +2085,11 @@
       document[docEl].append(this.HTMLNode);
       this.DS.subscribe('Area:modified', this.updatePos);
       this.DS.subscribe('Interaction:start', this.startAutoScroll);
-      this.DS.subscribe('Interaction:end', this.stopAutoScroll);
+      this.DS.subscribe('Interaction:end', function () {
+        _this.updatePos();
+
+        _this.stopAutoScroll();
+      });
     }
     /** Updates the selectorAreas positions to match the areas */
 
@@ -2067,19 +2103,18 @@
        */
       value: function isClicked() {
         var PointerStore = this.DS.stores.PointerStore;
-        var cPos = {
-          x: PointerStore.initialVal.x,
-          y: PointerStore.initialVal.y,
-          w: 0,
-          h: 0
-        };
-        return isCollision(cPos, this.position);
+        return isCollision({
+          left: PointerStore.initialVal.x,
+          top: PointerStore.initialVal.y,
+          right: PointerStore.initialVal.x,
+          bottom: PointerStore.initialVal.y
+        }, this.rect);
       }
     }, {
-      key: "position",
+      key: "rect",
       get: function get() {
-        if (this._position) return this._position;
-        return this._position = getPosition(this.HTMLNode);
+        if (this._rect) return this._rect;
+        return this._rect = this.HTMLNode.getBoundingClientRect();
       }
     }]);
 
@@ -2388,7 +2423,7 @@
       ,
       set: function set(value) {
         this._initialVal = value;
-        this._initialValArea = value && calc(value, '-', calc(rect2vect(this.DS.Area.boundingClientRect), '+', rect2vect(this.DS.Area.computedBorder)));
+        this._initialValArea = value && calc(value, '-', calc(rect2vect(this.DS.Area.rect), '+', rect2vect(this.DS.Area.computedBorder)));
       }
     }, {
       key: "currentVal",
@@ -2403,7 +2438,7 @@
       ,
       set: function set(value) {
         this._currentVal = value;
-        this._currentValArea = value && calc(value, '-', calc(rect2vect(this.DS.Area.boundingClientRect), '+', rect2vect(this.DS.Area.computedBorder)));
+        this._currentValArea = value && calc(value, '-', calc(rect2vect(this.DS.Area.rect), '+', rect2vect(this.DS.Area.computedBorder)));
       }
     }, {
       key: "lastVal",
@@ -2416,7 +2451,7 @@
       },
       set: function set(value) {
         this._lastVal = value;
-        this._lastValArea = value && calc(value, '-', calc(rect2vect(this.DS.Area.boundingClientRect), '+', rect2vect(this.DS.Area.computedBorder)));
+        this._lastValArea = value && calc(value, '-', calc(rect2vect(this.DS.Area.rect), '+', rect2vect(this.DS.Area.computedBorder)));
       }
     }]);
 

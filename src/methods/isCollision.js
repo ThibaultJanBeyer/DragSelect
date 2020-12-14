@@ -19,15 +19,16 @@ import '../types'
  * 4. b02 > b11 (bottom border pos box1 larger than top border pos box2)
  * {@link https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box Wikipedia}
  * {@link https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection MDN}
- * @param {DSElementPos} el1
- * @param {DSElementPos} el2
+ * @param {{left:number,right:number,top:number,bottom:number}} el1
+ * @param {{left:number,right:number,top:number,bottom:number}} el2
+ * @returns {boolean}
  */
 export default (el1, el2) => {
   if (
-    el1.x < el2.x + el2.w && // 1.
-    el1.x + el1.w > el2.x && // 2.
-    el1.y < el2.y + el2.h && // 3.
-    el1.h + el1.y > el2.y // 4.
+    el1.left < el2.right && // 1.
+    el1.right > el2.left && // 2.
+    el1.top < el2.bottom && // 3.
+    el1.bottom > el2.top // 4.
   )
     return true
   // collision detected!

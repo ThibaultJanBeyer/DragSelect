@@ -50,7 +50,7 @@ export default class Area {
    * @type {DSBoundingRect}
    * @private
    * */
-  _boundingClientRect
+  _rect
 
   /**
    * @constructor Area
@@ -100,7 +100,7 @@ export default class Area {
 
   reset = () => {
     this._computedStyle = undefined
-    this._boundingClientRect = undefined
+    this._rect = undefined
     this._computedBorder = undefined
     this._parentNodes = undefined
   }
@@ -164,9 +164,9 @@ export default class Area {
    * The element rect (caches result) (without scrollbar or borders)
    * @type {DSBoundingRect}
    */
-  get boundingClientRect() {
-    if (this._boundingClientRect) return this._boundingClientRect
-    return (this._boundingClientRect = getAreaRect(this.HTMLNode, this._zoom))
+  get rect() {
+    if (this._rect) return this._rect
+    return (this._rect = getAreaRect(this.HTMLNode, this._zoom))
   }
 
   get parentNodes() {

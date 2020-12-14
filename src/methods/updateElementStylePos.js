@@ -5,11 +5,11 @@ import '../types'
  * Updates element style left, top, width, height values
  * according to pos input object.
  * @param {HTMLElement} element
- * @param {DSElementPos} pos
+ * @param {{left:number,top:number,width:number,height:number}} pos
  */
 export default (element, pos) => {
-  element.style.left = `${pos.x}px`
-  element.style.top = `${pos.y}px`
-  element.style.width = `${pos.w}px`
-  element.style.height = `${pos.h}px`
+  element.style.left = `${pos.left}px`
+  element.style.top = `${pos.top}px`
+  element.style.width = `${pos.width}px`
+  element.style.height = `${pos.height}px`
 }

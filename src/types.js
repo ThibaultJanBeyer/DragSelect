@@ -63,7 +63,7 @@
  */
 
 /** @typedef {{x: number, y: number}} Vect2 */
-/** @typedef {{x:number,y:number,w:number,h:number}} DSElementPos */
+/** @typedef {{x:number,y:number,w:number,h:number,r:number,b:number}} DSElementPos */
 /** @typedef {Array.<'top'|'bottom'|'left'|'right'|undefined>} DSEdges */
 
 /** @typedef {HTMLElement|SVGElement|HTMLDocument} DSArea area within which you can drag */

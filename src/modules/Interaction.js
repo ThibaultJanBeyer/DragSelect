@@ -79,7 +79,6 @@ export default class Interaction {
 
     this.isInteracting = true
     this.isDragging = this.isDragEvent(event)
-    console.log('5', this.isDragging)
 
     this.DS.publish('Interaction:start', { event, isDragging: this.isDragging })
 

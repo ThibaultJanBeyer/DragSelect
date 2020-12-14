@@ -6,6 +6,7 @@
 - Add tests for drag and drop 
 - Add tests for SVG
 - Add tests for touch interaction
+- Test in various browsers
 
 ## Drag and Drop
 
@@ -17,9 +18,6 @@
 - move end should fire a drop event (not selection callback)
 
 ### Constrained
-
-#### Constrain area (V2.0)
-- Constrain drag to area
 
 #### Constrain direction
 - User can set in which direction the element can be dragged

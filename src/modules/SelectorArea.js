@@ -3,7 +3,6 @@ import '../types.js'
 import DragSelect from '../DragSelect'
 import {
   createSelectorAreaElement,
-  getPosition,
   isCollision,
   isCursorNearEdges,
 } from '../methods'
@@ -20,10 +19,10 @@ export default class SelectorArea {
    * */
   _scrollInterval
   /**
-   * @type {DSElementPos}
+   * @type {DSBoundingRect}
    * @private
    */
-  _position
+  _rect
 
   /**
    * @class SelectorArea
@@ -42,13 +41,16 @@ export default class SelectorArea {
 
     this.DS.subscribe('Area:modified', this.updatePos)
     this.DS.subscribe('Interaction:start', this.startAutoScroll)
-    this.DS.subscribe('Interaction:end', this.stopAutoScroll)
+    this.DS.subscribe('Interaction:end', () => {
+      this.updatePos()
+      this.stopAutoScroll()
+    })
   }
 
   /** Updates the selectorAreas positions to match the areas */
   updatePos = () => {
-    this._position = null
-    const rect = this.DS.Area.boundingClientRect
+    this._rect = null
+    const rect = this.DS.Area.rect
     const border = this.DS.Area.computedBorder
     const { style } = this.HTMLNode
     const top = `${rect.top + border.top}px`
@@ -76,7 +78,7 @@ export default class SelectorArea {
 
     const currentEdges = isCursorNearEdges({
       position: PointerStore.currentValArea,
-      boundingRect: Area.boundingClientRect,
+      boundingRect: Area.rect,
     })
 
     if (currentEdges.length) Area.scroll(currentEdges, this._autoScrollSpeed)
@@ -91,16 +93,19 @@ export default class SelectorArea {
    * Checks if the element is either inside the Selector Area
    * (as a reachable child or touching the area)
    * @param {DSElement} element
-   * @param {DSElementPos} [elementPos] - slight performance improvements
+   * @param {DSBoundingRect} [elementRect] - slight performance improvements
    * @returns {boolean}
    */
-  isInside = (element, elementPos) => {
+  isInside = (element, elementRect) => {
     if (
       this.DS.Area.HTMLNode.contains(element) &&
       this.DS.stores.ScrollStore.canScroll
     )
       return true
-    return isCollision(this.position, elementPos || getPosition(element))
+    return isCollision(
+      this.rect,
+      elementRect || element.getBoundingClientRect()
+    )
   }
 
   /**
@@ -112,18 +117,19 @@ export default class SelectorArea {
       stores: { PointerStore },
     } = this.DS
 
-    const cPos = {
-      x: PointerStore.initialVal.x,
-      y: PointerStore.initialVal.y,
-      w: 0,
-      h: 0,
-    }
-
-    return isCollision(cPos, this.position)
+    return isCollision(
+      {
+        left: PointerStore.initialVal.x,
+        top: PointerStore.initialVal.y,
+        right: PointerStore.initialVal.x,
+        bottom: PointerStore.initialVal.y,
+      },
+      this.rect
+    )
   }
 
-  get position() {
-    if (this._position) return this._position
-    return (this._position = getPosition(this.HTMLNode))
+  get rect() {
+    if (this._rect) return this._rect
+    return (this._rect = this.HTMLNode.getBoundingClientRect())
   }
 }

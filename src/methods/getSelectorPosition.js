@@ -3,7 +3,7 @@ import '../types'
 /**
  * Reliably returns the exact x,y,w,h positions of the selector element
  * @param {{ scrollAmount:Vect2, initialPointerPos:Vect2, pointerPos:Vect2 }} p
- * @returns {DSElementPos}
+ * @returns {{left:number,top:number,width:number,height:number}}
  */
 export default ({ scrollAmount, initialPointerPos, pointerPos }) => {
   /** check for direction
@@ -49,23 +49,23 @@ export default ({ scrollAmount, initialPointerPos, pointerPos }) => {
   // right
   if (pointerPos.x > initialPointerPos.x - scrollAmount.x) {
     // 1.
-    selectorPos.x = initialPointerPos.x - scrollAmount.x // 2.
-    selectorPos.w = pointerPos.x - initialPointerPos.x + scrollAmount.x // 3.
+    selectorPos.left = initialPointerPos.x - scrollAmount.x // 2.
+    selectorPos.width = pointerPos.x - initialPointerPos.x + scrollAmount.x // 3.
     // left
   } else {
     // 1b.
-    selectorPos.x = pointerPos.x // 2b.
-    selectorPos.w = initialPointerPos.x - pointerPos.x - scrollAmount.x // 3b.
+    selectorPos.left = pointerPos.x // 2b.
+    selectorPos.width = initialPointerPos.x - pointerPos.x - scrollAmount.x // 3b.
   }
 
   // bottom
   if (pointerPos.y > initialPointerPos.y - scrollAmount.y) {
-    selectorPos.y = initialPointerPos.y - scrollAmount.y
-    selectorPos.h = pointerPos.y - initialPointerPos.y + scrollAmount.y
+    selectorPos.top = initialPointerPos.y - scrollAmount.y
+    selectorPos.height = pointerPos.y - initialPointerPos.y + scrollAmount.y
     // top
   } else {
-    selectorPos.y = pointerPos.y
-    selectorPos.h = initialPointerPos.y - pointerPos.y - scrollAmount.y
+    selectorPos.top = pointerPos.y
+    selectorPos.height = initialPointerPos.y - pointerPos.y - scrollAmount.y
   }
 
   return selectorPos

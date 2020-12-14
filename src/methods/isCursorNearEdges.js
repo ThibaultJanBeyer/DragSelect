@@ -8,8 +8,8 @@ import '../types'
  */
 export default ({ position, boundingRect }) => {
   const tolerance = {
-    x: 10,
-    y: 10,
+    x: 25,
+    y: 25,
   }
 
   const edges = []

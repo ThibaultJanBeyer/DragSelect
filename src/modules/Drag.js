@@ -2,7 +2,12 @@
 import '../types'
 import DragSelect from '../DragSelect'
 
-import { getStylePosition, setStylePosition, vect2 } from '../methods'
+import {
+  getStylePosition,
+  handleDragOverflow,
+  setStylePosition,
+  vect2,
+} from '../methods'
 
 export default class Drag {
   /**
@@ -80,6 +85,14 @@ export default class Drag {
       const elementPos = getStylePosition(element, this._useTransform)
       const newPos = vect2.calc(elementPos, '+', posDiff)
       setStylePosition(element, newPos, this._useTransform)
+
+      handleDragOverflow({
+        element,
+        elementRect: element.getBoundingClientRect(),
+        containerRect: this.DS.SelectorArea.rect,
+        elementPos: newPos,
+        useTransform: this._useTransform,
+      })
     })
   }
 

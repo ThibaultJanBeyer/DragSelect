@@ -75,16 +75,7 @@ export default class Selection {
 
     /** @type {any} */
     const elPosCombo = SelectableSet.elements.map((element) => {
-      const rect = element.getBoundingClientRect()
-      return [
-        element,
-        {
-          y: rect.top,
-          x: rect.left,
-          h: rect.height,
-          w: rect.width,
-        },
-      ]
+      return [element, element.getBoundingClientRect()]
     })
 
     const select = []
@@ -92,7 +83,7 @@ export default class Selection {
 
     for (let i = 0, il = elPosCombo.length; i < il; i++) {
       if (!SelectorArea.isInside(elPosCombo[i][0], elPosCombo[i][1])) continue
-      if (isCollision(elPosCombo[i][1], Selector.position))
+      if (isCollision(elPosCombo[i][1], Selector.rect))
         select.push(elPosCombo[i][0])
       else unselect.push(elPosCombo[i][0])
     }

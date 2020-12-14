@@ -4,17 +4,16 @@ import DragSelect from '../DragSelect'
 
 import {
   createSelectorElement,
-  getPosition,
   getSelectorPosition,
   updateElementStylePos,
 } from '../methods'
 
 export default class Selector {
   /**
-   * @type {DSElementPos}
+   * @type {DSBoundingRect}
    * @private
    */
-  _position
+  _rect
 
   /**
    * @constructor Selector
@@ -43,13 +42,13 @@ export default class Selector {
     } = this.DS
     const pPos = PointerStore.initialValArea
     updateElementStylePos(this.HTMLNode, {
-      x: pPos.x,
-      y: pPos.y,
-      w: 1,
-      h: 1,
+      left: pPos.x,
+      top: pPos.y,
+      width: 1,
+      height: 1,
     })
     this.HTMLNode.style.display = 'block'
-    this._position = null
+    this._rect = null
   }
 
   stop = () => {
@@ -70,11 +69,11 @@ export default class Selector {
       pointerPos: PointerStore.currentValArea,
     })
     updateElementStylePos(this.HTMLNode, pos)
-    this._position = null
+    this._rect = null
   }
 
-  get position() {
-    if (this._position) return this._position
-    return (this._position = getPosition(this.HTMLNode))
+  get rect() {
+    if (this._rect) return this._rect
+    return (this._rect = this.HTMLNode.getBoundingClientRect())
   }
 }
