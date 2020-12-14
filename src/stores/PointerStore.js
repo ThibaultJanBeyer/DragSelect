@@ -98,10 +98,6 @@ export default class PointerStore {
     return 'touches' in event ? this._lastTouch.touches[0] : event
   }
 
-  get isMouseInteraction() {
-    return this._isMouseInteraction
-  }
-
   /** First recorded pointer position within the area */
   get initialValArea() {
     if (!this._initialValArea) return { x: 0, y: 0 }

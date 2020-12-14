@@ -77,6 +77,7 @@ class DragSelect {
     multiSelectKeys = ['Control', 'Shift', 'Meta'],
     selector = undefined,
     draggability = true,
+    immediateDrag = true,
     useTransform = true,
     hoverClass = 'ds-hover',
     selectableClass = 'ds-selectable',
@@ -150,7 +151,8 @@ class DragSelect {
     this.Interaction = new Interaction({
       areaElement: area,
       DS: this,
-      stopForMove: draggability,
+      draggability,
+      immediateDrag,
     })
 
     // Subscriber Aliases
@@ -244,8 +246,9 @@ class DragSelect {
     if (withCallback) this.publish('callback', { items: this.getSelection() })
 
     this.Interaction.stop()
-    this.Selector.stop()
     this.Area.stop()
+    this.Drag.stop()
+    this.Selector.stop()
     this.stores.KeyStore.stop()
     this.stores.PointerStore.stop()
     this.stores.ScrollStore.stop()

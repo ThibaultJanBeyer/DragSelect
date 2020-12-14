@@ -31,7 +31,6 @@ export default class Selection {
     this._multiSelectToggling = multiSelectToggling
 
     this.DS = DS
-    this.DS.subscribe('Selectable:click', this._onClick)
     this.DS.subscribe('Interaction:start', this.start)
     this.DS.subscribe('Interaction:update', this.update)
   }
@@ -50,42 +49,6 @@ export default class Selection {
     if (KeyStore.isMultiSelectKeyPressed(event))
       this._prevSelected = new Set(SelectedSet)
     else this._prevSelected = new Set()
-  }
-
-  /**
-   * If an element is clicked (via keyboard) @param {{ event:MouseEvent }} p
-   * @private
-   * */
-  _onClick = ({ event }) => this.handleClick(event)
-  /**
-   * Triggers when a node is actively selected.
-   * This might be an "onClick" method but it also triggers when
-   * <button> nodes are pressed via the keyboard.
-   * Making DragSelect accessible for everyone!
-   * @param {MouseEvent} event
-   */
-  handleClick(event) {
-    const {
-      stores: { PointerStore, KeyStore },
-      SelectorArea,
-      SelectableSet,
-      SelectedSet,
-      publish,
-    } = this.DS
-
-    if (event.button === 2) return // right-click
-    if (PointerStore.isMouseInteraction) return // fix firefox doubleclick issue
-
-    PointerStore.start(event)
-
-    const node = /** @type {any} */ (event.target)
-    if (!SelectableSet.has(node)) return
-    if (!SelectorArea.isInside(node)) return
-
-    if (!KeyStore.isMultiSelectKeyPressed(event)) SelectedSet.clear()
-    SelectedSet.toggle(node)
-
-    publish('Interaction:end', { event }) // simulate mouse-up (that does not exist on keyboard)
   }
 
   /** @param {{event:DSEvent,isDragging:boolean}} event */

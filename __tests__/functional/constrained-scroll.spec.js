@@ -5,6 +5,8 @@ describe('Constrained Scroll', () => {
     await page.goto(`${baseUrl}/constrained-scroll.html`)
 
     const mouse = page.mouse
+    const keyboard = page.keyboard
+    await keyboard.down('Shift')
     await mouse.move(110, 110)
     await mouse.down()
     await mouse.move(400, 400, { steps: 60 })

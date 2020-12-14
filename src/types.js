@@ -11,6 +11,7 @@
  * @property {DSMultiSelectKeys} [multiSelectKeys=['Control', 'Shift', 'Meta']] Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
  * @property {boolean} [draggability=true] When a user is dragging on an already selected element, the selection is dragged.
+ * @property {boolean} [immediateDrag=true] Whether an element is draggable from the start or needs to be selected first
  * @property {boolean} [useTransform=true] Whether to use hardware accelerated css transforms when dragging or top/left instead
  * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
@@ -74,7 +75,7 @@
 /** @typedef {Array.<'Shift'|'Control'|'Meta'|string>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
 
 /** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
-/** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:dragstart'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'} DSInternalEventNames */
+/** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:dragstart'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'|'Selectable:pointer'} DSInternalEventNames */
 /** @typedef {DSEventNames|DSInternalEventNames} DSCallbackNames the name of the callback */
 
 /** @typedef {{top:number,left:number,bottom:number,right:number,width:number,height:number}} DSBoundingRect */

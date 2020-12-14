@@ -24,8 +24,9 @@ export default class SelectedSet extends Set {
 
   /** @param {DSElement} element */
   add(element) {
-    element.classList.add(this._className)
+    if (super.has(element)) return
     super.add(element)
+    element.classList.add(this._className)
     this.DS.publish('Selected:added', {
       items: this.elements,
       item: element,
@@ -36,8 +37,9 @@ export default class SelectedSet extends Set {
 
   /** @param {DSElement} element */
   delete(element) {
-    element.classList.remove(this._className)
+    if (!super.has(element)) return
     const deleted = super.delete(element)
+    element.classList.remove(this._className)
     this.DS.publish('Selected:removed', {
       items: this.elements,
       item: element,

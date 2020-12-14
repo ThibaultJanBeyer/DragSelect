@@ -20,6 +20,11 @@ export default class Drag {
    * @private
    */
   _prevScrollPos
+  /**
+   * @type {DSElements}
+   * @private
+   */
+  _elements = []
 
   /**
    * @param {Object} p
@@ -30,24 +35,48 @@ export default class Drag {
     this.DS = DS
     this._useTransform = useTransform
     this.DS.subscribe('Interaction:start', this.start)
+    this.DS.subscribe('Interaction:end', this.stop)
     this.DS.subscribe('Interaction:update', this.update)
   }
 
-  start = () => {
+  start = ({ isDragging }) => {
+    if (!isDragging) return
+
     this._prevCursorPos = null
     this._prevScrollPos = null
+
+    this._elements = this.DS.getSelection()
+    this._elements.forEach(
+      (element) =>
+        (element.style.zIndex = `${
+          (parseInt(element.style.zIndex) || 0) + 9999
+        }`)
+    )
   }
 
-  update = ({ isDragging }) => {
-    if (!isDragging) return
+  stop = () => {
+    this._prevCursorPos = null
+    this._prevScrollPos = null
+
+    this._elements.forEach(
+      (element) =>
+        (element.style.zIndex = `${
+          (parseInt(element.style.zIndex) || 0) - 9998
+        }`)
+    )
+
+    this._elements = []
+  }
+
+  update = () => {
+    if (!this._elements.length) return
 
     const posDiff = this._getPositionDifference(
       this.DS.stores.PointerStore.currentVal,
       this.DS.stores.ScrollStore.currentVal
     )
 
-    const selected = this.DS.getSelection()
-    selected.forEach((element) => {
+    this._elements.forEach((element) => {
       const elementPos = getStylePosition(element, this._useTransform)
       const newPos = vect2.calc(elementPos, '+', posDiff)
       setStylePosition(element, newPos, this._useTransform)

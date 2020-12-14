@@ -2,7 +2,9 @@
 
 ## Added Draggability! (solves #24)
 
-- You can now drag and drop elements after selection
+- You can now also drag and drop selectable elements
+- Set `immediateDrag` to `false` if you want draggability only after a selection was made
+- You can turn off that functionality by setting `draggability` to `false`
 
 ## Improved Selector (Potential Breaking Change)
 

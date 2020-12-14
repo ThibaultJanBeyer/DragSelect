@@ -46,6 +46,11 @@ export default class SelectableSet extends Set {
   add(element) {
     element.classList.add(this._className)
     element.addEventListener('click', this._onClick)
+    element.addEventListener('mousedown', this._onPointer)
+    element.addEventListener('touchstart', this._onPointer, {
+      // @ts-ignore
+      passive: false,
+    })
     return super.add(element)
   }
 
@@ -54,12 +59,18 @@ export default class SelectableSet extends Set {
     element.classList.remove(this._className)
     element.classList.remove(this._hoverClassName)
     element.removeEventListener('click', this._onClick)
+    element.removeEventListener('mousedown', this._onPointer)
+    element.removeEventListener('touchstart', this._onPointer, {
+      // @ts-ignore
+      passive: false,
+    })
     return super.delete(element)
   }
 
   clear = () => this.forEach((el) => this.delete(el))
 
   _onClick = (event) => this.DS.publish('Selectable:click', { event })
+  _onPointer = (event) => this.DS.publish('Selectable:pointer', { event })
 
   /** @param {DSElements} elements */
   addAll = (elements) => elements.forEach((el) => this.add(el))

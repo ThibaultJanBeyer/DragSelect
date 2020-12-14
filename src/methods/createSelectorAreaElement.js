@@ -11,6 +11,7 @@ export default (selectorAreaClass) => {
   node.style.position = 'fixed'
   node.style.overflow = 'hidden'
   node.style.pointerEvents = 'none'
+  node.style.zIndex = '999999999999999999'
   node.classList.add(selectorAreaClass)
   return node
 }
