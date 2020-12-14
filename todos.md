@@ -1,9 +1,5 @@
 # TODOs
 ## General
-### Z-Index management
-- Increase z-index of selected elements
-- Increase z-index of dragged elements
-- Maybe reset z-index after drag/selection?
 ## Drag and Drop
 ### Add element events
 - Elements to dispatch  events when dragged, dropped etc (own callbacks)

@@ -30,6 +30,7 @@ export default class SelectedSet extends Set {
       items: this.elements,
       item: element,
     })
+    element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) + 1}`
     return this
   }
 
@@ -41,6 +42,7 @@ export default class SelectedSet extends Set {
       items: this.elements,
       item: element,
     })
+    element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) - 1}`
     return deleted
   }
 

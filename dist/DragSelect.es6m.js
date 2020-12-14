@@ -1555,6 +1555,7 @@ var SelectedSet = /*#__PURE__*/function (_Set) {
         items: this.elements,
         item: element
       });
+      element.style.zIndex = "".concat((parseInt(element.style.zIndex) || 0) + 1);
       return this;
     }
     /** @param {DSElement} element */
@@ -1570,6 +1571,7 @@ var SelectedSet = /*#__PURE__*/function (_Set) {
         items: this.elements,
         item: element
       });
+      element.style.zIndex = "".concat((parseInt(element.style.zIndex) || 0) - 1);
       return deleted;
     }
   }, {
