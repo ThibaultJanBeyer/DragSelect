@@ -269,6 +269,7 @@ function _nonIterableSpread() {
  * @property {HTMLElement|SVGElement|HTMLDocument} [area=document] area in which you can drag. If not provided it will be the whole document
  * @property {DSInputElements} [selectables=[]] the elements that can be selected
  * @property {number} [autoScrollSpeed=5] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
+ * @property {Vect2} [overflowTolerance={x:25,y:25}] Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start)
  * @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom.
  * @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
  * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them
@@ -405,6 +406,23 @@ var rect2vect = function rect2vect(rect) {
   return {
     x: rect.left,
     y: rect.top
+  };
+};
+/**
+ * @param {Vect2} vect
+ * @param {number} dimension
+ * @returns {DSBoundingRect}
+ */
+
+var vect2rect = function vect2rect(vect) {
+  var dimension = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  return {
+    left: vect.x,
+    top: vect.y,
+    right: vect.x,
+    bottom: vect.y,
+    width: dimension,
+    height: dimension
   };
 };
 /**
@@ -585,6 +603,35 @@ var getCurrentScroll = (function (area) {
     x: area.scrollLeft >= 0 ? area.scrollLeft : documentScroll().x,
     y: area.scrollTop >= 0 ? area.scrollTop : documentScroll().y
   };
+});
+
+// @ts-check
+/**
+ * Returns the edges that an element is overflowing
+ * @param {Object} p
+ * @param {DSBoundingRect} p.elementRect
+ * @param {DSBoundingRect} p.containerRect
+ * @param {Vect2} [p.tolerance]
+ * @returns {DSEdges}
+ */
+
+var getOverflowEdges = (function (_ref) {
+  var elementRect = _ref.elementRect,
+      containerRect = _ref.containerRect,
+      _ref$tolerance = _ref.tolerance,
+      tolerance = _ref$tolerance === void 0 ? {
+    x: 0,
+    y: 0
+  } : _ref$tolerance;
+  var edges = [];
+  if (elementRect.top - tolerance.y < containerRect.top) edges.push('top');
+  if (elementRect.left - tolerance.x < containerRect.left) edges.push('left');
+  if (elementRect.bottom + tolerance.y > containerRect.bottom) edges.push('bottom');
+  if (elementRect.right + tolerance.y > containerRect.right) edges.push('right');
+  return (
+    /** @type {DSEdges} */
+    edges
+  );
 });
 
 // @ts-check
@@ -776,35 +823,39 @@ var getStylePosition = (function (element, useTranslate) {
  * @param {boolean} p.useTransform
  */
 
-var handleDragOverflow = (function (_ref) {
+var handleElementOverflow = (function (_ref) {
   var element = _ref.element,
       elementRect = _ref.elementRect,
       containerRect = _ref.containerRect,
       elementPos = _ref.elementPos,
       useTransform = _ref.useTransform;
+  var edges = getOverflowEdges({
+    elementRect: elementRect,
+    containerRect: containerRect
+  });
 
-  if (elementRect.top < containerRect.top) {
+  if (edges.includes('top')) {
     setStylePosition(element, {
       y: elementPos.y + containerRect.top - elementRect.top,
       x: elementPos.x
     }, useTransform);
   }
 
-  if (elementRect.left < containerRect.left) {
+  if (edges.includes('left')) {
     setStylePosition(element, {
       y: elementPos.y,
       x: elementPos.x + containerRect.left - elementRect.left
     }, useTransform);
   }
 
-  if (elementRect.bottom > containerRect.bottom) {
+  if (edges.includes('bottom')) {
     setStylePosition(element, {
       y: elementPos.y + containerRect.bottom - elementRect.bottom,
       x: elementPos.x
     }, useTransform);
   }
 
-  if (elementRect.right > containerRect.right) {
+  if (edges.includes('right')) {
     setStylePosition(element, {
       y: elementPos.y,
       x: elementPos.x + containerRect.right - elementRect.right
@@ -844,31 +895,6 @@ var isCollision = (function (el1, el2) {
   el1.bottom > el2.top // 4.
   ) return true; // collision detected!
   else return false;
-});
-
-// @ts-check
-/**
- * Check if the selector is near a edges of the area
- * @param {{position:Vect2,boundingRect:DSBoundingRect}} props
- * @return {DSEdges}
- */
-
-var isCursorNearEdges = (function (_ref) {
-  var position = _ref.position,
-      boundingRect = _ref.boundingRect;
-  var tolerance = {
-    x: 25,
-    y: 25
-  };
-  var edges = [];
-  if (position.y < tolerance.y) edges.push('top');
-  if (boundingRect.height - position.y < tolerance.y) edges.push('bottom');
-  if (boundingRect.width - position.x < tolerance.x) edges.push('right');
-  if (position.x < tolerance.x) edges.push('left');
-  return (
-    /** @type {DSEdges} */
-    edges
-  );
 });
 
 // @ts-check
@@ -1242,7 +1268,7 @@ var Drag = /*#__PURE__*/function () {
         var elementPos = getStylePosition(element, _this._useTransform);
         var newPos = calc(elementPos, '+', posDiff);
         setStylePosition(element, newPos, _this._useTransform);
-        handleDragOverflow({
+        handleElementOverflow({
           element: element,
           elementRect: element.getBoundingClientRect(),
           containerRect: _this.DS.SelectorArea.rect,
@@ -1943,12 +1969,7 @@ var Selector = /*#__PURE__*/function () {
       if (isDragging) return;
       var PointerStore = _this.DS.stores.PointerStore;
       var pPos = PointerStore.initialValArea;
-      updateElementStylePos(_this.HTMLNode, {
-        left: pPos.x,
-        top: pPos.y,
-        width: 1,
-        height: 1
-      });
+      updateElementStylePos(_this.HTMLNode, vect2rect(pPos, 1));
       _this.HTMLNode.style.display = 'block';
       _this._rect = null;
     });
@@ -2010,9 +2031,19 @@ var SelectorArea = /*#__PURE__*/function () {
    */
 
   /**
+   * @type {DSEdges}
+   * @private
+   */
+
+  /**
+   * @type {Vect2}
+   * @private
+   */
+
+  /**
    * @class SelectorArea
    * @constructor SelectorArea
-   * @param {{ DS:DragSelect, selectorAreaClass:string, autoScrollSpeed:number}} obj
+   * @param {{ DS:DragSelect, selectorAreaClass:string, autoScrollSpeed:number, overflowTolerance:Vect2}} obj
    * @ignore
    */
   function SelectorArea(_ref) {
@@ -2020,7 +2051,8 @@ var SelectorArea = /*#__PURE__*/function () {
 
     var DS = _ref.DS,
         selectorAreaClass = _ref.selectorAreaClass,
-        autoScrollSpeed = _ref.autoScrollSpeed;
+        autoScrollSpeed = _ref.autoScrollSpeed,
+        overflowTolerance = _ref.overflowTolerance;
 
     _classCallCheck(this, SelectorArea);
 
@@ -2029,6 +2061,10 @@ var SelectorArea = /*#__PURE__*/function () {
     _defineProperty(this, "_scrollInterval", void 0);
 
     _defineProperty(this, "_rect", void 0);
+
+    _defineProperty(this, "currentEdges", []);
+
+    _defineProperty(this, "_overflowTolerance", void 0);
 
     _defineProperty(this, "updatePos", function () {
       _this._rect = null;
@@ -2046,7 +2082,8 @@ var SelectorArea = /*#__PURE__*/function () {
     });
 
     _defineProperty(this, "startAutoScroll", function () {
-      return _this._scrollInterval = setInterval(function () {
+      _this.currentEdges = [];
+      _this._scrollInterval = setInterval(function () {
         return _this.handleAutoScroll();
       }, 16);
     });
@@ -2055,15 +2092,17 @@ var SelectorArea = /*#__PURE__*/function () {
       var _this$DS = _this.DS,
           PointerStore = _this$DS.stores.PointerStore,
           Area = _this$DS.Area;
-      var currentEdges = isCursorNearEdges({
-        position: PointerStore.currentValArea,
-        boundingRect: Area.rect
+      _this.currentEdges = getOverflowEdges({
+        elementRect: vect2rect(PointerStore.currentVal),
+        containerRect: _this.rect,
+        tolerance: _this._overflowTolerance
       });
-      if (currentEdges.length) Area.scroll(currentEdges, _this._autoScrollSpeed);
+      if (_this.currentEdges.length) Area.scroll(_this.currentEdges, _this._autoScrollSpeed);
     });
 
     _defineProperty(this, "stopAutoScroll", function () {
-      return clearInterval(_this._scrollInterval);
+      _this.currentEdges = [];
+      clearInterval(_this._scrollInterval);
     });
 
     _defineProperty(this, "isInside", function (element, elementRect) {
@@ -2072,6 +2111,7 @@ var SelectorArea = /*#__PURE__*/function () {
     });
 
     this._autoScrollSpeed = autoScrollSpeed;
+    this._overflowTolerance = overflowTolerance;
     this.DS = DS;
     this.HTMLNode = createSelectorAreaElement(selectorAreaClass);
     this.HTMLNode.append(this.DS.Selector.HTMLNode);
@@ -2587,6 +2627,11 @@ var DragSelect = /*#__PURE__*/function () {
         selectables = _ref$selectables === void 0 ? [] : _ref$selectables,
         _ref$autoScrollSpeed = _ref.autoScrollSpeed,
         autoScrollSpeed = _ref$autoScrollSpeed === void 0 ? 5 : _ref$autoScrollSpeed,
+        _ref$overflowToleranc = _ref.overflowTolerance,
+        overflowTolerance = _ref$overflowToleranc === void 0 ? {
+      x: 25,
+      y: 25
+    } : _ref$overflowToleranc,
         _ref$zoom = _ref.zoom,
         zoom = _ref$zoom === void 0 ? 1 : _ref$zoom,
         _ref$customStyles = _ref.customStyles,
@@ -2707,7 +2752,8 @@ var DragSelect = /*#__PURE__*/function () {
     this.SelectorArea = new SelectorArea({
       DS: this,
       selectorAreaClass: selectorAreaClass,
-      autoScrollSpeed: autoScrollSpeed
+      autoScrollSpeed: autoScrollSpeed,
+      overflowTolerance: overflowTolerance
     });
     this.SelectableSet = new SelectableSet({
       elements: selectables,

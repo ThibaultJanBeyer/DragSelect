@@ -4,6 +4,7 @@
  * @property {HTMLElement|SVGElement|HTMLDocument} [area=document] area in which you can drag. If not provided it will be the whole document
  * @property {DSInputElements} [selectables=[]] the elements that can be selected
  * @property {number} [autoScrollSpeed=5] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
+ * @property {Vect2} [overflowTolerance={x:25,y:25}] Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start)
  * @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom.
  * @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
  * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them

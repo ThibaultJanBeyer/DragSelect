@@ -1,7 +1,7 @@
 // @ts-check
 import '../types'
 
-import { setStylePosition } from './'
+import { setStylePosition, getOverflowEdges } from './'
 
 /**
  * pushes element back the overflow amount
@@ -20,7 +20,11 @@ export default ({
   elementPos,
   useTransform,
 }) => {
-  if (elementRect.top < containerRect.top) {
+  const edges = getOverflowEdges({
+    elementRect,
+    containerRect,
+  })
+  if (edges.includes('top')) {
     setStylePosition(
       element,
       {
@@ -30,7 +34,7 @@ export default ({
       useTransform
     )
   }
-  if (elementRect.left < containerRect.left) {
+  if (edges.includes('left')) {
     setStylePosition(
       element,
       {
@@ -40,7 +44,7 @@ export default ({
       useTransform
     )
   }
-  if (elementRect.bottom > containerRect.bottom) {
+  if (edges.includes('bottom')) {
     setStylePosition(
       element,
       {
@@ -50,7 +54,7 @@ export default ({
       useTransform
     )
   }
-  if (elementRect.right > containerRect.right) {
+  if (edges.includes('right')) {
     setStylePosition(
       element,
       {

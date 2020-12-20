@@ -18,6 +18,7 @@ The selector element is now not rendered inside of the area instead we generate 
 - selection can be drawn outside of the area which makes auto-scrolling and selection easier
 - you can still target that area overlay if you want use the class `ds-selector-area`
 - Area can now be scrolled in each direction simultaneously
+- You can now set the tolerance for the scroll via `overflowTolerance` property
 
 ## Improved inside area checker (Potential Breaking Change)
 

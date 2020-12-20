@@ -172,6 +172,7 @@ Here are some properties for your convenience. Note, all properties are optional
 |area |single DOM element (node) |The square in which you are able to select |document
 |selectables |DOM elements (nodes) |The elements that can be selected | []
 |autoScrollSpeed |number |The speed in which the area scrolls while selecting (if available). The unit is arbitrary (interval aims for 30fps). Set to `0.0001` to disable auto-scrolling. |`5`
+|overflowTolerance |{x:number,y:number} |Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start) |`{x:25,y:25}`
 |zoom |number |Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom. |`1`
 |customStyles |boolean |If true, no styles will be automatically applied to the selector element (except position: absolute). |`false`
 |multiSelectMode |boolean |Add newly selected elements to the selection instead of replacing them. |`false`

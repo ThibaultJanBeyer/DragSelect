@@ -4,7 +4,8 @@ import DragSelect from '../DragSelect'
 import {
   createSelectorAreaElement,
   isCollision,
-  isCursorNearEdges,
+  getOverflowEdges,
+  vect2,
 } from '../methods'
 
 export default class SelectorArea {
@@ -23,15 +24,26 @@ export default class SelectorArea {
    * @private
    */
   _rect
+  /**
+   * @type {DSEdges}
+   * @private
+   */
+  currentEdges = []
+  /**
+   * @type {Vect2}
+   * @private
+   */
+  _overflowTolerance
 
   /**
    * @class SelectorArea
    * @constructor SelectorArea
-   * @param {{ DS:DragSelect, selectorAreaClass:string, autoScrollSpeed:number}} obj
+   * @param {{ DS:DragSelect, selectorAreaClass:string, autoScrollSpeed:number, overflowTolerance:Vect2}} obj
    * @ignore
    */
-  constructor({ DS, selectorAreaClass, autoScrollSpeed }) {
+  constructor({ DS, selectorAreaClass, autoScrollSpeed, overflowTolerance }) {
     this._autoScrollSpeed = autoScrollSpeed
+    this._overflowTolerance = overflowTolerance
     this.DS = DS
 
     this.HTMLNode = createSelectorAreaElement(selectorAreaClass)
@@ -66,8 +78,10 @@ export default class SelectorArea {
   //////////////////////////////////////////////////////////////////////////////////////
   // AutoScroll
 
-  startAutoScroll = () =>
-    (this._scrollInterval = setInterval(() => this.handleAutoScroll(), 16))
+  startAutoScroll = () => {
+    this.currentEdges = []
+    this._scrollInterval = setInterval(() => this.handleAutoScroll(), 16)
+  }
 
   /** Creates an interval that auto-scrolls while the cursor is near the edge */
   handleAutoScroll = () => {
@@ -76,15 +90,20 @@ export default class SelectorArea {
       Area,
     } = this.DS
 
-    const currentEdges = isCursorNearEdges({
-      position: PointerStore.currentValArea,
-      boundingRect: Area.rect,
+    this.currentEdges = getOverflowEdges({
+      elementRect: vect2.vect2rect(PointerStore.currentVal),
+      containerRect: this.rect,
+      tolerance: this._overflowTolerance,
     })
 
-    if (currentEdges.length) Area.scroll(currentEdges, this._autoScrollSpeed)
+    if (this.currentEdges.length)
+      Area.scroll(this.currentEdges, this._autoScrollSpeed)
   }
 
-  stopAutoScroll = () => clearInterval(this._scrollInterval)
+  stopAutoScroll = () => {
+    this.currentEdges = []
+    clearInterval(this._scrollInterval)
+  }
 
   //////////////////////////////////////////////////////////////////////////////////////
   // Booleans

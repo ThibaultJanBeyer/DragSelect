@@ -70,6 +70,7 @@ class DragSelect {
     area = document,
     selectables = [],
     autoScrollSpeed = 5,
+    overflowTolerance = { x: 25, y: 25 },
     zoom = 1,
     customStyles = false,
     multiSelectMode = false,
@@ -123,6 +124,7 @@ class DragSelect {
       DS: this,
       selectorAreaClass,
       autoScrollSpeed,
+      overflowTolerance,
     })
 
     this.SelectableSet = new SelectableSet({

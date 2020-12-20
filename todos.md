@@ -17,8 +17,6 @@
 - Elements to dispatch  events when dragged, dropped etc (own callbacks)
 - move end should fire a drop event (not selection callback)
 
-### Constrained
-
 #### Constrain direction
 - User can set in which direction the element can be dragged
 

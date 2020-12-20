@@ -6,6 +6,7 @@ import {
   createSelectorElement,
   getSelectorPosition,
   updateElementStylePos,
+  vect2,
 } from '../methods'
 
 export default class Selector {
@@ -41,12 +42,7 @@ export default class Selector {
       stores: { PointerStore },
     } = this.DS
     const pPos = PointerStore.initialValArea
-    updateElementStylePos(this.HTMLNode, {
-      left: pPos.x,
-      top: pPos.y,
-      width: 1,
-      height: 1,
-    })
+    updateElementStylePos(this.HTMLNode, vect2.vect2rect(pPos, 1))
     this.HTMLNode.style.display = 'block'
     this._rect = null
   }

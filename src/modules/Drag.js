@@ -4,7 +4,7 @@ import DragSelect from '../DragSelect'
 
 import {
   getStylePosition,
-  handleDragOverflow,
+  handleElementOverflow,
   setStylePosition,
   vect2,
 } from '../methods'
@@ -86,7 +86,7 @@ export default class Drag {
       const newPos = vect2.calc(elementPos, '+', posDiff)
       setStylePosition(element, newPos, this._useTransform)
 
-      handleDragOverflow({
+      handleElementOverflow({
         element,
         elementRect: element.getBoundingClientRect(),
         containerRect: this.DS.SelectorArea.rect,

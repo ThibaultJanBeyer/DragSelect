@@ -31,6 +31,19 @@ export const calc = ({ x: x1, y: y1 }, operator, { x: x2, y: y2 }) => {
  */
 export const rect2vect = (rect) => ({ x: rect.left, y: rect.top })
 /**
+ * @param {Vect2} vect
+ * @param {number} dimension
+ * @returns {DSBoundingRect}
+ */
+export const vect2rect = (vect, dimension = 0) => ({
+  left: vect.x,
+  top: vect.y,
+  right: vect.x,
+  bottom: vect.y,
+  width: dimension,
+  height: dimension,
+})
+/**
  * @param {number} n
  * @returns {Vect2}
  */
