@@ -284,6 +284,7 @@
    * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
    * @property {boolean} [draggability=true] When a user is dragging on an already selected element, the selection is dragged.
    * @property {boolean} [immediateDrag=true] Whether an element is draggable from the start or needs to be selected first
+   * @property {DSDragKeys} [dragKeys={up:['ArrowUp'],down:['ArrowDown'],left:['ArrowLeft'],righ:['ArrowRight']}] The keys available to drag element using the keyboard.
    * @property {boolean} [useTransform=true] Whether to use hardware accelerated css transforms when dragging or top/left instead
    * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
    * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
@@ -363,11 +364,13 @@
 
   /** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
 
-  /** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'|'Selectable:pointer'} DSInternalEventNames */
+  /** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'|'Selectable:pointer'|'KeyStore:down'|'KeyStore:up'} DSInternalEventNames */
 
   /** @typedef {DSEventNames|DSInternalEventNames} DSCallbackNames the name of the callback */
 
   /** @typedef {{top:number,left:number,bottom:number,right:number,width:number,height:number}} DSBoundingRect */
+
+  /** @typedef {{up:string[],down:string[],left:string[],right:string[]}} DSDragKeys */
 
   /**
    * @callback DSModificationCallback
@@ -823,6 +826,7 @@
    * (top - top gives overflow, then new position pushed back by overflow)
    * @param {Object} p
    * @param {DSElement} p.element
+   * @param {DSEdges} p.edges
    * @param {DSBoundingRect} p.elementRect
    * @param {DSBoundingRect} p.containerRect
    * @param {Vect2} p.elementPos
@@ -831,14 +835,11 @@
 
   var handleElementOverflow = (function (_ref) {
     var element = _ref.element,
+        edges = _ref.edges,
         elementRect = _ref.elementRect,
         containerRect = _ref.containerRect,
         elementPos = _ref.elementPos,
         useTransform = _ref.useTransform;
-    var edges = getOverflowEdges({
-      elementRect: elementRect,
-      containerRect: containerRect
-    });
 
     if (edges.includes('top')) {
       setStylePosition(element, {
@@ -901,6 +902,39 @@
     el1.bottom > el2.top // 4.
     ) return true; // collision detected!
     else return false;
+  });
+
+  // @ts-check
+  /**
+   * Moves the element in a posDirection
+   * @param {Object} p
+   * @param {DSElement} p.element
+   * @param {Vect2} p.posDirection
+   * @param {DSBoundingRect} p.containerRect
+   * @param {boolean} p.useTransform
+   */
+
+  var moveElement = (function (_ref) {
+    var element = _ref.element,
+        posDirection = _ref.posDirection,
+        containerRect = _ref.containerRect,
+        useTransform = _ref.useTransform;
+    var elementPos = getStylePosition(element, useTransform);
+    var newPos = calc(elementPos, '+', posDirection);
+    setStylePosition(element, newPos, useTransform);
+    var elementRect = element.getBoundingClientRect();
+    var edges = getOverflowEdges({
+      elementRect: elementRect,
+      containerRect: containerRect
+    });
+    handleElementOverflow({
+      element: element,
+      edges: edges,
+      elementRect: elementRect,
+      containerRect: containerRect,
+      elementPos: newPos,
+      useTransform: useTransform
+    });
   });
 
   // @ts-check
@@ -1222,15 +1256,27 @@
      */
 
     /**
+     * @type {DSDragKeys}
+     * @private
+     */
+
+    /**
+     * @type {string[]}
+     * @private
+     */
+
+    /**
      * @param {Object} p
      * @param {DragSelect} p.DS
      * @param {boolean} p.useTransform
+     * @param {DSDragKeys} p.dragKeys
      */
     function Drag(_ref) {
       var _this = this;
 
       var DS = _ref.DS,
-          useTransform = _ref.useTransform;
+          useTransform = _ref.useTransform,
+          dragKeys = _ref.dragKeys;
 
       _classCallCheck(this, Drag);
 
@@ -1242,76 +1288,122 @@
 
       _defineProperty(this, "_elements", []);
 
-      _defineProperty(this, "start", function (_ref2) {
-        var isDragging = _ref2.isDragging;
+      _defineProperty(this, "_dragKeys", void 0);
+
+      _defineProperty(this, "_dragKeysFlat", void 0);
+
+      _defineProperty(this, "keyboardDrag", function (_ref2) {
+        var key = _ref2.key;
+        if (!_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size) return;
+        _this._elements = _this.DS.getSelection();
+
+        _this.handleZIndex(true);
+
+        var posDirection = {
+          x: 0,
+          y: 0
+        };
+        var increase = _this.DS.stores.KeyStore.currentValues.includes('shift') ? 40 : 10;
+        if (_this._dragKeys.left.includes(key)) posDirection.x = _this._scrollDiff.x || -increase;
+        if (_this._dragKeys.right.includes(key)) posDirection.x = _this._scrollDiff.x || increase;
+        if (_this._dragKeys.up.includes(key)) posDirection.y = _this._scrollDiff.y || -increase;
+        if (_this._dragKeys.down.includes(key)) posDirection.y = _this._scrollDiff.y || increase;
+        console.log(key, _this._elements, posDirection, _this._scrollDiff.x, _this._scrollDiff.y);
+
+        _this._elements.forEach(function (element) {
+          return moveElement({
+            element: element,
+            posDirection: posDirection,
+            containerRect: _this.DS.SelectorArea.rect,
+            useTransform: _this._useTransform
+          });
+        });
+      });
+
+      _defineProperty(this, "start", function (_ref3) {
+        var isDragging = _ref3.isDragging;
         if (!isDragging) return;
         _this._prevCursorPos = null;
         _this._prevScrollPos = null;
         _this._elements = _this.DS.getSelection();
 
-        _this._elements.forEach(function (element) {
-          return element.style.zIndex = "".concat((parseInt(element.style.zIndex) || 0) + 9999);
-        });
+        _this.handleZIndex(true);
       });
 
       _defineProperty(this, "stop", function () {
         _this._prevCursorPos = null;
         _this._prevScrollPos = null;
 
-        _this._elements.forEach(function (element) {
-          return element.style.zIndex = "".concat((parseInt(element.style.zIndex) || 0) - 9998);
-        });
+        _this.handleZIndex(false);
 
         _this._elements = [];
       });
 
-      _defineProperty(this, "update", function () {
-        if (!_this._elements.length) return;
-
-        var posDiff = _this._getPositionDifference(_this.DS.stores.PointerStore.currentVal, _this.DS.stores.ScrollStore.currentVal);
+      _defineProperty(this, "update", function (_ref4) {
+        var isDragging = _ref4.isDragging;
+        if (!isDragging || !_this._elements.length) return;
+        var posDirection = calc(_this._cursorDiff, '+', _this._scrollDiff);
 
         _this._elements.forEach(function (element) {
-          var elementPos = getStylePosition(element, _this._useTransform);
-          var newPos = calc(elementPos, '+', posDiff);
-          setStylePosition(element, newPos, _this._useTransform);
-          handleElementOverflow({
+          return moveElement({
             element: element,
-            elementRect: element.getBoundingClientRect(),
+            posDirection: posDirection,
             containerRect: _this.DS.SelectorArea.rect,
-            elementPos: newPos,
             useTransform: _this._useTransform
           });
         });
       });
 
+      _defineProperty(this, "handleZIndex", function (add) {
+        _this._elements.forEach(function (element) {
+          return element.style.zIndex = "".concat((parseInt(element.style.zIndex) || 0) + add ? 9999 : -9998);
+        });
+      });
+
       this.DS = DS;
       this._useTransform = useTransform;
+      this._dragKeys = {
+        up: dragKeys.up.map(function (k) {
+          return k.toLowerCase();
+        }),
+        down: dragKeys.down.map(function (k) {
+          return k.toLowerCase();
+        }),
+        left: dragKeys.left.map(function (k) {
+          return k.toLowerCase();
+        }),
+        right: dragKeys.right.map(function (k) {
+          return k.toLowerCase();
+        })
+      };
+      this._dragKeysFlat = [].concat(_toConsumableArray(this._dragKeys.up), _toConsumableArray(this._dragKeys.down), _toConsumableArray(this._dragKeys.left), _toConsumableArray(this._dragKeys.right));
       this.DS.subscribe('Interaction:start', this.start);
       this.DS.subscribe('Interaction:end', this.stop);
       this.DS.subscribe('Interaction:update', this.update);
+      this.DS.subscribe('KeyStore:down', this.keyboardDrag);
     }
 
     _createClass(Drag, [{
-      key: "_getPositionDifference",
-
-      /**
-       * Difference value between two point of the cursor or scroll
-       * @param {Vect2} currentPointerVal
-       * @param {Vect2} currentScrollVal
-       * @private
-       */
-      value: function _getPositionDifference(currentPointerVal, currentScrollVal) {
+      key: "_cursorDiff",
+      get: function get() {
+        var currentPointerVal = this.DS.stores.PointerStore.currentVal;
         var cursorDiff = this._prevCursorPos ? calc(currentPointerVal, '-', this._prevCursorPos) : {
           x: 0,
           y: 0
         };
         this._prevCursorPos = currentPointerVal;
+        return cursorDiff;
+      }
+    }, {
+      key: "_scrollDiff",
+      get: function get() {
+        var currentScrollVal = this.DS.stores.ScrollStore.currentVal;
         var scrollDiff = this._prevScrollPos ? calc(currentScrollVal, '-', this._prevScrollPos) : {
           x: 0,
           y: 0
         };
         this._prevScrollPos = currentScrollVal;
-        return calc(cursorDiff, '+', scrollDiff);
+        return scrollDiff;
       }
     }]);
 
@@ -2209,11 +2301,23 @@
       });
 
       _defineProperty(this, "keydown", function (event) {
-        return _this._currentValues.add(event.key.toLowerCase());
+        var key = event.key.toLowerCase();
+
+        _this._currentValues.add(key);
+
+        _this.DS.publish('KeyStore:down', {
+          key: key
+        });
       });
 
       _defineProperty(this, "keyup", function (event) {
-        return _this._currentValues["delete"](event.key.toLowerCase());
+        var key = event.key.toLowerCase();
+
+        _this._currentValues["delete"](key);
+
+        _this.DS.publish('KeyStore:up', {
+          key: key
+        });
       });
 
       _defineProperty(this, "stop", function () {
@@ -2597,10 +2701,7 @@
     }, {
       key: "currentVal",
       get: function get() {
-        if (!this._currentVal) return {
-          x: 0,
-          y: 0
-        };
+        if (!this._currentVal) this._currentVal = getCurrentScroll(this._areaElement);
         return this._currentVal;
       }
     }]);
@@ -2646,6 +2747,7 @@
           draggability = _ref$draggability === void 0 ? true : _ref$draggability,
           _ref$immediateDrag = _ref.immediateDrag,
           immediateDrag = _ref$immediateDrag === void 0 ? true : _ref$immediateDrag,
+          dragKeys = _ref.dragKeys,
           _ref$useTransform = _ref.useTransform,
           useTransform = _ref$useTransform === void 0 ? true : _ref$useTransform,
           _ref$hoverClass = _ref.hoverClass,
@@ -2774,7 +2876,13 @@
       });
       this.Drag = new Drag({
         DS: this,
-        useTransform: useTransform
+        useTransform: useTransform,
+        dragKeys: Object.assign({
+          up: ['ArrowUp'],
+          down: ['ArrowDown'],
+          left: ['ArrowLeft'],
+          right: ['ArrowRight']
+        }, dragKeys)
       });
       this.Interaction = new Interaction({
         areaElement: area,
@@ -2812,7 +2920,6 @@
           data: data,
           isDragging: isDragging
         });
-        console.log(data);
       });
       this.subscribe('Interaction:start', function (_ref5) {
         var event = _ref5.event,

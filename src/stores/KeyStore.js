@@ -65,10 +65,18 @@ export default class KeyStore {
   }
 
   /** @param {KeyboardEvent} event */
-  keydown = (event) => this._currentValues.add(event.key.toLowerCase())
+  keydown = (event) => {
+    const key = event.key.toLowerCase()
+    this._currentValues.add(key)
+    this.DS.publish('KeyStore:down', { key })
+  }
 
   /** @param {KeyboardEvent} event */
-  keyup = (event) => this._currentValues.delete(event.key.toLowerCase())
+  keyup = (event) => {
+    const key = event.key.toLowerCase()
+    this._currentValues.delete(key)
+    this.DS.publish('KeyStore:up', { key })
+  }
 
   stop = () => {
     document.removeEventListener('keydown', this.keydown)

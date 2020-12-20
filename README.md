@@ -34,10 +34,12 @@ easily add a selection algorithm to your application/website.
 # Key-Features
 
 - **No dependencies** [![No Dependency](https://david-dm.org/ThibaultJanBeyer/DragSelect.svg)](https://david-dm.org/ThibaultJanBeyer/DragSelect)
+- Hyper customizable
 - Replicates operating system drag-selection in the browser
 - Accessibility (a11y)
 - Add drag selection
 - Use modifier keys to make multiple independent selections
+- Select, Drag and Drop also via keyboard
 - Choose which elements can be selected
 - Selected elements can be dragged and dropped
 - Great browser support, works even like a charm on IE10
@@ -154,25 +156,30 @@ In 99% of the use-cases, this is what you want. If DragSelect is only one part o
 
 ## Accessibility (a11y)
 
-DragSelect is accessibly by default:  
+**DragSelect is accessible by default**:  
 
-> TLDR; => Your `selectables` should be buttons: `<button type="button"></button>`.  
+> TLDR;  
+> => Your `selectables` should be buttons: `<button type="button"></button>`.  
+> => <kbd>ArrowKeys</kbd> are used for keyboard dragging.  
 
-Obviously, keyboard users won’t get the full visual experience but it works similarly to the OS default behavior. You can select items using the default select keys (usually space or enter) and also multi-select when using a modifier key at the same time (unfortunately this does not work in firefox for now since FF doesn’t add the modifier key in the event object when using the keyboard). There is one little thing you have to do tho’: the `selectables` have to be pressable (clickable)! To achieve this, they should be of type `<button type="button"></button>`.  
+Obviously, keyboard users won’t get the full visual experience but it works similarly to the OS default behavior.  
+
+1. Selection: You can select items using the default select keys (usually space or enter) and also multi-select when using a modifier key at the same time. There is one little thing you have to do tho’: the `selectables` have to be pressable (clickable)! To achieve this, they should be of type `<button type="button"></button>`.  
+
+2. Drag: You can drag elements using the keyboard arrow keys, this will also scroll the area by default. You can press <kbd>Shift</kbd> in combination with an arrow i.e. <kbd>Shift</kbd>+<kbd>ArrowRight</kbd> to move the element 4x faster to the right and also not scroll the area
 
 <p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="html,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">DragSelect</a> on CodePen.</p>
 
 # Constructor Properties:
 
-Full list of properties to pass to the constructor object is found in **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**  
-Here are some properties for your convenience. Note, all properties are optional:  
+*DragSelect is hyper customizable*. Note, all properties are optional. See **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)** for more info. Here is the full list:  
 
 | property | type | usage | default |
 |--- |--- |--- |--- |
 |area |single DOM element (node) |The square in which you are able to select |document
 |selectables |DOM elements (nodes) |The elements that can be selected | []
 |autoScrollSpeed |number |The speed in which the area scrolls while selecting (if available). The unit is arbitrary (interval aims for 30fps). Set to `0.0001` to disable auto-scrolling. |`5`
-|overflowTolerance |{x:number,y:number} |Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start) |`{x:25,y:25}`
+|overflowTolerance |{ x:number, y:number } |Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start) |`{x:25,y:25}`
 |zoom |number |Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom. |`1`
 |customStyles |boolean |If true, no styles will be automatically applied to the selector element (except position: absolute). |`false`
 |multiSelectMode |boolean |Add newly selected elements to the selection instead of replacing them. |`false`
@@ -181,6 +188,7 @@ Here are some properties for your convenience. Note, all properties are optional
 |selector |single DOM element (node) |The square that will be used to draw the selection. | Auto-created HTML Element
 |draggability |boolean |When a user is dragging on an already selected element, the selection is dragged. |`true`
 |immediateDrag |boolean |Whether a selectable element is draggable before being selected or needs to be selected first |`true`
+|dragKeys |{ up:string[], down:string[], left:string[], righ:string[] } |The keys available to drag element using the keyboard. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). |`{ up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], righ: ['ArrowRight'] }`
 |useTransform |boolean |Whether to use the more performant hardware accelerated css transforms when dragging instead of the top/left positions. |`true`
 |selectedClass |string |The class name assigned to the selected items. |[see classes](#classes)
 |hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)

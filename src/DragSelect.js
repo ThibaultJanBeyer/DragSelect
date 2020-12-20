@@ -79,6 +79,7 @@ class DragSelect {
     selector = undefined,
     draggability = true,
     immediateDrag = true,
+    dragKeys,
     useTransform = true,
     hoverClass = 'ds-hover',
     selectableClass = 'ds-selectable',
@@ -148,6 +149,15 @@ class DragSelect {
     this.Drag = new Drag({
       DS: this,
       useTransform,
+      dragKeys: Object.assign(
+        {
+          up: ['ArrowUp'],
+          down: ['ArrowDown'],
+          left: ['ArrowLeft'],
+          right: ['ArrowRight'],
+        },
+        dragKeys
+      ),
     })
 
     this.Interaction = new Interaction({
@@ -172,7 +182,6 @@ class DragSelect {
           isDragging,
         })
       if (!event && data) this.publish('autoscroll', { data, isDragging })
-      console.log(data)
     })
     this.subscribe('Interaction:start', ({ event, isDragging }) =>
       this.publish('dragstart', {

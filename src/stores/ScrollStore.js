@@ -80,7 +80,8 @@ export default class ScrollStore {
   }
 
   get currentVal() {
-    if (!this._currentVal) return { x: 0, y: 0 }
+    if (!this._currentVal)
+      this._currentVal = getCurrentScroll(this._areaElement)
     return this._currentVal
   }
 }
