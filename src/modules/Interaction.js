@@ -18,15 +18,9 @@ export default class Interaction {
    * @private
    * */
   _immediateDrag
-  /**
-   * @type {boolean}
-   * @private
-   * */
+  /** @type {boolean} */
   isInteracting
-  /**
-   * @type {boolean}
-   * @private
-   * */
+  /** @type {boolean} */
   isDragging
 
   /**

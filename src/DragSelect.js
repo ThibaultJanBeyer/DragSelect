@@ -164,19 +164,29 @@ class DragSelect {
     this.subscribe('Selected:removed', ({ items, item }) =>
       this.publish('elementunselect', { items, item })
     )
-    this.subscribe('Interaction:update', ({ event, data }) => {
+    this.subscribe('Interaction:update', ({ event, data, isDragging }) => {
       if (event && !data)
-        this.publish('dragmove', { items: this.getSelection(), event })
-      if (!event && data) this.publish('autoscroll', { data })
+        this.publish('dragmove', {
+          items: this.getSelection(),
+          event,
+          isDragging,
+        })
+      if (!event && data) this.publish('autoscroll', { data, isDragging })
+      console.log(data)
     })
-    this.subscribe('Interaction:start', ({ event }) =>
+    this.subscribe('Interaction:start', ({ event, isDragging }) =>
       this.publish('dragstart', {
         items: this.getSelection(),
         event,
+        isDragging,
       })
     )
-    this.subscribe('Interaction:end', ({ event }) =>
-      this.publish('callback', { items: this.getSelection(), event })
+    this.subscribe('Interaction:end', ({ event, isDragging }) =>
+      this.publish('callback', {
+        items: this.getSelection(),
+        event,
+        isDragging,
+      })
     )
 
     this.start()
@@ -410,6 +420,11 @@ class DragSelect {
       : this.getInitialCursorPosition()
     return vect2.calc(posA, '-', posB)
   }
+  /**
+   * Whether the user is currently drag n dropping elements (instead of selection)
+   * @return {boolean}
+   */
+  isDragging = () => this.Interaction.isDragging
 }
 
 export default DragSelect

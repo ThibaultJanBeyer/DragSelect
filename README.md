@@ -23,7 +23,7 @@ easily add a selection algorithm to your application/website.
 - [Installation](#installation)
 - [Usage](#usage)
 - [Constructor Properties](#constructor-properties)
-- [Callbacks](#callbacks)
+- [Event Callbacks](#event-callbacks)
 - [Methods](#methods)
 - [Classes](#classes)
 
@@ -187,28 +187,42 @@ Here are some properties for your convenience. Note, all properties are optional
 |selectorClass |string |The class name assigned to the square selector helper. |[see classes](#classes)
 |selectableClass |string |The class name assigned to the elements that can be selected. |[see classes](#classes)
 
-# Callbacks
+# Event Callbacks
 
-Callbacks are used like this:
+Event Callbacks are used like this:
 
 ```JavaScript
-ds.subscribe('<callback_name>', (callback_object) => {})
+ds.subscribe('<event_name>', (callback_object) => {})
 ```
 
-DragSelect offers a lot of useful callbacks to react to changes, check out **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**. Here are some for your convenience:  
+## Events
 
-|callback_name |callback_object |description |
+|event_name |callback_object |description |
 |--- |--- |---
-|callback |`{ items, event }` |Fired after the selection (i.e. on mouse-up). 
-|dragstart |`{ items, event }` |Fired when the selection starts (i.e. on mouse-down). 
-|dragmove |`{ items, event }` |Fired when the mouse moves while dragging (i.e. on mouse-move).
-|autoscroll |`{ data }` |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
+|callback |`{ items, event, isDragging }` |Fired after the selection (i.e. on mouse-up). 
+|dragstart |`{ items, event, isDragging }` |Fired when the selection starts (i.e. on mouse-down). 
+|dragmove |`{ items, event, isDragging }` |Fired when the mouse moves while dragging (i.e. on mouse-move).
+|autoscroll |`{ data:{directions,multiplier}, isDragging }` |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
 |elementselect |`{ items, item }` |Fired when an element is added to the selection.
 |elementunselect |`{ items, item }` |Fired when an element is removed from the selection.
 
+### Callback Object Keys
+
+|callback_object_keys |type |description |
+|--- |--- |---
+|items |`Array.<HTMLElement|SVGElement|*>` |Current selected elements
+|event |`MouseEvent|TouchEvent` |The native HTML Event, depending on the situational context
+|isDragging |`boolean` |If true, the user is dragging the selected elements, if false the user is drawing a selection
+|data |`Object` |Extra data depending on situational context 
+|data.directions |`Array.<'top'|'bottom'|'left'|'right'|undefined>` |The direction in which the event is happening (i.e. scroll direction)
+|data.multiplier |`number` |Speed
+|item |`HTMLElement|SVGElement|*` |The element currently being interacted
+
+*Note: almost all object keys could also be undefined*
+
 # Methods:
 When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions.  
-There are way more than listed here. You can find all in **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**. Here are just the most usable:  
+Also check **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)** for more info.
 
 | method | properties | usage |
 |--- |--- |--- |
@@ -231,7 +245,8 @@ There are way more than listed here. You can find all in **[the docs](https://th
 |getCurrentCursorPositionArea |/ |Returns current x, y coordinates of the cursor relative to the area
 |getPreviousCursorPositionArea |/ |Returns last registered x, y coordinates of the cursor relative to the area (after last callback) 
 |getCursorPositionDifference |Boolean (usePreviousCursorDifference) |Returns object with the x, y difference between the initial and the last cursor position. If the argument is set to true, it will instead return the x, y difference to the previous coordinates |
-|isMultiSelect |/ |Whether the multi-select key is currently pressed
+|isMultiSelect |\[event:KeyboardEvent|MouseEvent|TouchEvent\] (optional) |Whether the multi-select key is currently pressed
+|isDragging |/ |Whether the user is currently drag n dropping elements (instead of selection)
 
 # Classes
 | name | trigger |

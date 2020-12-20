@@ -363,7 +363,7 @@
 
   /** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
 
-  /** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:dragstart'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'|'Selectable:pointer'} DSInternalEventNames */
+  /** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'|'Selectable:pointer'} DSInternalEventNames */
 
   /** @typedef {DSEventNames|DSInternalEventNames} DSCallbackNames the name of the callback */
 
@@ -1334,15 +1334,9 @@
      * @private
      * */
 
-    /**
-     * @type {boolean}
-     * @private
-     * */
+    /** @type {boolean} */
 
-    /**
-     * @type {boolean}
-     * @private
-     * */
+    /** @type {boolean} */
 
     /**
      * @constructor Interaction
@@ -2231,9 +2225,7 @@
       });
 
       _defineProperty(this, "reset", function () {
-        _this._currentValues.clear();
-
-        _this._isMultiSelect = false;
+        return _this._currentValues.clear();
       });
 
       this.DS = DS;
@@ -2715,6 +2707,10 @@
         return _this.stores.KeyStore.isMultiSelectKeyPressed(event);
       });
 
+      _defineProperty(this, "isDragging", function () {
+        return _this.Interaction.isDragging;
+      });
+
       this.PubSub = new PubSub();
       this.subscribe = this.PubSub.subscribe;
       this.unsubscribe = this.PubSub.unsubscribe;
@@ -2805,27 +2801,35 @@
       });
       this.subscribe('Interaction:update', function (_ref4) {
         var event = _ref4.event,
-            data = _ref4.data;
+            data = _ref4.data,
+            isDragging = _ref4.isDragging;
         if (event && !data) _this.publish('dragmove', {
           items: _this.getSelection(),
-          event: event
+          event: event,
+          isDragging: isDragging
         });
         if (!event && data) _this.publish('autoscroll', {
-          data: data
+          data: data,
+          isDragging: isDragging
         });
+        console.log(data);
       });
       this.subscribe('Interaction:start', function (_ref5) {
-        var event = _ref5.event;
+        var event = _ref5.event,
+            isDragging = _ref5.isDragging;
         return _this.publish('dragstart', {
           items: _this.getSelection(),
-          event: event
+          event: event,
+          isDragging: isDragging
         });
       });
       this.subscribe('Interaction:end', function (_ref6) {
-        var event = _ref6.event;
+        var event = _ref6.event,
+            isDragging = _ref6.isDragging;
         return _this.publish('callback', {
           items: _this.getSelection(),
-          event: event
+          event: event,
+          isDragging: isDragging
         });
       });
       this.start();
@@ -3105,6 +3109,11 @@
         var posB = usePreviousCursorDifference ? this.getPreviousCursorPosition() : this.getInitialCursorPosition();
         return calc(posA, '-', posB);
       }
+      /**
+       * Whether the user is currently drag n dropping elements (instead of selection)
+       * @return {boolean}
+       */
+
     }]);
 
     return DragSelect;
