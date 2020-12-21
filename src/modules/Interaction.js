@@ -156,8 +156,9 @@ export default class Interaction {
   }
 
   reset = (event) => {
+    const isDragging = this.isDragging
     this.stop()
     this.init()
-    this.DS.publish('Interaction:end', { event })
+    this.DS.publish('Interaction:end', { event, isDragging })
   }
 }

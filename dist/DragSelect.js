@@ -285,6 +285,7 @@
    * @property {boolean} [draggability=true] When a user is dragging on an already selected element, the selection is dragged.
    * @property {boolean} [immediateDrag=true] Whether an element is draggable from the start or needs to be selected first
    * @property {DSDragKeys} [dragKeys={up:['ArrowUp'],down:['ArrowDown'],left:['ArrowLeft'],righ:['ArrowRight']}] The keys available to drag element using the keyboard.
+   * @property {number} [keyboardDragSpeed=10] The speed at which elements are dragged using the keyboard. In pixels per keydown.
    * @property {boolean} [useTransform=true] Whether to use hardware accelerated css transforms when dragging or top/left instead
    * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
    * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
@@ -1266,17 +1267,24 @@
      */
 
     /**
+     * @type {number}
+     * @private
+     */
+
+    /**
      * @param {Object} p
      * @param {DragSelect} p.DS
      * @param {boolean} p.useTransform
      * @param {DSDragKeys} p.dragKeys
+     * @param {number} p.keyboardDragSpeed
      */
     function Drag(_ref) {
       var _this = this;
 
       var DS = _ref.DS,
           useTransform = _ref.useTransform,
-          dragKeys = _ref.dragKeys;
+          dragKeys = _ref.dragKeys,
+          keyboardDragSpeed = _ref.keyboardDragSpeed;
 
       _classCallCheck(this, Drag);
 
@@ -1292,9 +1300,19 @@
 
       _defineProperty(this, "_dragKeysFlat", void 0);
 
+      _defineProperty(this, "_keyboardDragSpeed", void 0);
+
       _defineProperty(this, "keyboardDrag", function (_ref2) {
-        var key = _ref2.key;
+        var event = _ref2.event,
+            key = _ref2.key;
         if (!_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size) return;
+        _this._isKeyboard = true;
+
+        _this.DS.publish('Interaction:start', {
+          event: event,
+          isDragging: true
+        });
+
         _this._elements = _this.DS.getSelection();
 
         _this.handleZIndex(true);
@@ -1303,12 +1321,11 @@
           x: 0,
           y: 0
         };
-        var increase = _this.DS.stores.KeyStore.currentValues.includes('shift') ? 40 : 10;
+        var increase = _this.DS.stores.KeyStore.currentValues.includes('shift') ? _this._keyboardDragSpeed * 4 : _this._keyboardDragSpeed;
         if (_this._dragKeys.left.includes(key)) posDirection.x = _this._scrollDiff.x || -increase;
         if (_this._dragKeys.right.includes(key)) posDirection.x = _this._scrollDiff.x || increase;
         if (_this._dragKeys.up.includes(key)) posDirection.y = _this._scrollDiff.y || -increase;
         if (_this._dragKeys.down.includes(key)) posDirection.y = _this._scrollDiff.y || increase;
-        console.log(key, _this._elements, posDirection, _this._scrollDiff.x, _this._scrollDiff.y);
 
         _this._elements.forEach(function (element) {
           return moveElement({
@@ -1318,11 +1335,32 @@
             useTransform: _this._useTransform
           });
         });
+
+        _this.DS.publish('Interaction:update', {
+          event: event,
+          isDragging: true
+        });
+
+        _this._isKeyboard = false;
       });
 
-      _defineProperty(this, "start", function (_ref3) {
-        var isDragging = _ref3.isDragging;
-        if (!isDragging) return;
+      _defineProperty(this, "keyboardEnd", function (_ref3) {
+        var event = _ref3.event,
+            key = _ref3.key;
+        if (!_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size) return;
+        _this._isKeyboard = true;
+
+        _this.DS.publish('Interaction:end', {
+          event: event,
+          isDragging: true
+        });
+
+        _this._isKeyboard = false;
+      });
+
+      _defineProperty(this, "start", function (_ref4) {
+        var isDragging = _ref4.isDragging;
+        if (!isDragging || _this._isKeyboard) return;
         _this._prevCursorPos = null;
         _this._prevScrollPos = null;
         _this._elements = _this.DS.getSelection();
@@ -1331,6 +1369,7 @@
       });
 
       _defineProperty(this, "stop", function () {
+        if (_this._isKeyboard) return;
         _this._prevCursorPos = null;
         _this._prevScrollPos = null;
 
@@ -1339,9 +1378,9 @@
         _this._elements = [];
       });
 
-      _defineProperty(this, "update", function (_ref4) {
-        var isDragging = _ref4.isDragging;
-        if (!isDragging || !_this._elements.length) return;
+      _defineProperty(this, "update", function (_ref5) {
+        var isDragging = _ref5.isDragging;
+        if (!isDragging || !_this._elements.length || _this._isKeyboard) return;
         var posDirection = calc(_this._cursorDiff, '+', _this._scrollDiff);
 
         _this._elements.forEach(function (element) {
@@ -1362,6 +1401,7 @@
 
       this.DS = DS;
       this._useTransform = useTransform;
+      this._keyboardDragSpeed = keyboardDragSpeed;
       this._dragKeys = {
         up: dragKeys.up.map(function (k) {
           return k.toLowerCase();
@@ -1381,6 +1421,7 @@
       this.DS.subscribe('Interaction:end', this.stop);
       this.DS.subscribe('Interaction:update', this.update);
       this.DS.subscribe('KeyStore:down', this.keyboardDrag);
+      this.DS.subscribe('KeyStore:up', this.keyboardEnd);
     }
 
     _createClass(Drag, [{
@@ -1557,12 +1598,15 @@
       });
 
       _defineProperty(this, "reset", function (event) {
+        var isDragging = _this.isDragging;
+
         _this.stop();
 
         _this.init();
 
         _this.DS.publish('Interaction:end', {
-          event: event
+          event: event,
+          isDragging: isDragging
         });
       });
 
@@ -2306,6 +2350,7 @@
         _this._currentValues.add(key);
 
         _this.DS.publish('KeyStore:down', {
+          event: event,
           key: key
         });
       });
@@ -2316,6 +2361,7 @@
         _this._currentValues["delete"](key);
 
         _this.DS.publish('KeyStore:up', {
+          event: event,
           key: key
         });
       });
@@ -2748,6 +2794,8 @@
           _ref$immediateDrag = _ref.immediateDrag,
           immediateDrag = _ref$immediateDrag === void 0 ? true : _ref$immediateDrag,
           dragKeys = _ref.dragKeys,
+          _ref$keyboardDragSpee = _ref.keyboardDragSpeed,
+          keyboardDragSpeed = _ref$keyboardDragSpee === void 0 ? 10 : _ref$keyboardDragSpee,
           _ref$useTransform = _ref.useTransform,
           useTransform = _ref$useTransform === void 0 ? true : _ref$useTransform,
           _ref$hoverClass = _ref.hoverClass,
@@ -2882,7 +2930,8 @@
           down: ['ArrowDown'],
           left: ['ArrowLeft'],
           right: ['ArrowRight']
-        }, dragKeys)
+        }, dragKeys),
+        keyboardDragSpeed: keyboardDragSpeed
       });
       this.Interaction = new Interaction({
         areaElement: area,
@@ -2896,7 +2945,8 @@
             item = _ref2.item;
         return _this.publish('elementselect', {
           items: items,
-          item: item
+          item: item,
+          isDragging: _this.Interaction.isDragging
         });
       });
       this.subscribe('Selected:removed', function (_ref3) {
@@ -2904,7 +2954,8 @@
             item = _ref3.item;
         return _this.publish('elementunselect', {
           items: items,
-          item: item
+          item: item,
+          isDragging: _this.Interaction.isDragging
         });
       });
       this.subscribe('Interaction:update', function (_ref4) {

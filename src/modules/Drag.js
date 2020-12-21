@@ -35,16 +35,23 @@ export default class Drag {
    * @private
    */
   _dragKeysFlat
+  /**
+   * @type {number}
+   * @private
+   */
+  _keyboardDragSpeed
 
   /**
    * @param {Object} p
    * @param {DragSelect} p.DS
    * @param {boolean} p.useTransform
    * @param {DSDragKeys} p.dragKeys
+   * @param {number} p.keyboardDragSpeed
    */
-  constructor({ DS, useTransform, dragKeys }) {
+  constructor({ DS, useTransform, dragKeys, keyboardDragSpeed }) {
     this.DS = DS
     this._useTransform = useTransform
+    this._keyboardDragSpeed = keyboardDragSpeed
 
     this._dragKeys = {
       up: dragKeys.up.map((k) => k.toLowerCase()),
@@ -63,18 +70,21 @@ export default class Drag {
     this.DS.subscribe('Interaction:end', this.stop)
     this.DS.subscribe('Interaction:update', this.update)
     this.DS.subscribe('KeyStore:down', this.keyboardDrag)
+    this.DS.subscribe('KeyStore:up', this.keyboardEnd)
   }
 
-  keyboardDrag = ({ key }) => {
+  keyboardDrag = ({ event, key }) => {
     if (!this._dragKeysFlat.includes(key) || !this.DS.SelectedSet.size) return
+    this._isKeyboard = true
+    this.DS.publish('Interaction:start', { event, isDragging: true })
 
     this._elements = this.DS.getSelection()
     this.handleZIndex(true)
 
     const posDirection = { x: 0, y: 0 }
     const increase = this.DS.stores.KeyStore.currentValues.includes('shift')
-      ? 40
-      : 10
+      ? this._keyboardDragSpeed * 4
+      : this._keyboardDragSpeed
     if (this._dragKeys.left.includes(key))
       posDirection.x = this._scrollDiff.x || -increase
     if (this._dragKeys.right.includes(key))
@@ -92,10 +102,20 @@ export default class Drag {
         useTransform: this._useTransform,
       })
     )
+
+    this.DS.publish('Interaction:update', { event, isDragging: true })
+    this._isKeyboard = false
+  }
+
+  keyboardEnd = ({ event, key }) => {
+    if (!this._dragKeysFlat.includes(key) || !this.DS.SelectedSet.size) return
+    this._isKeyboard = true
+    this.DS.publish('Interaction:end', { event, isDragging: true })
+    this._isKeyboard = false
   }
 
   start = ({ isDragging }) => {
-    if (!isDragging) return
+    if (!isDragging || this._isKeyboard) return
     this._prevCursorPos = null
     this._prevScrollPos = null
     this._elements = this.DS.getSelection()
@@ -103,6 +123,7 @@ export default class Drag {
   }
 
   stop = () => {
+    if (this._isKeyboard) return
     this._prevCursorPos = null
     this._prevScrollPos = null
     this.handleZIndex(false)
@@ -110,7 +131,7 @@ export default class Drag {
   }
 
   update = ({ isDragging }) => {
-    if (!isDragging || !this._elements.length) return
+    if (!isDragging || !this._elements.length || this._isKeyboard) return
 
     const posDirection = vect2.calc(this._cursorDiff, '+', this._scrollDiff)
 

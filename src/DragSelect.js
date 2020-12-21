@@ -80,6 +80,7 @@ class DragSelect {
     draggability = true,
     immediateDrag = true,
     dragKeys,
+    keyboardDragSpeed = 10,
     useTransform = true,
     hoverClass = 'ds-hover',
     selectableClass = 'ds-selectable',
@@ -158,6 +159,7 @@ class DragSelect {
         },
         dragKeys
       ),
+      keyboardDragSpeed,
     })
 
     this.Interaction = new Interaction({
@@ -169,10 +171,18 @@ class DragSelect {
 
     // Subscriber Aliases
     this.subscribe('Selected:added', ({ items, item }) =>
-      this.publish('elementselect', { items, item })
+      this.publish('elementselect', {
+        items,
+        item,
+        isDragging: this.Interaction.isDragging,
+      })
     )
     this.subscribe('Selected:removed', ({ items, item }) =>
-      this.publish('elementunselect', { items, item })
+      this.publish('elementunselect', {
+        items,
+        item,
+        isDragging: this.Interaction.isDragging,
+      })
     )
     this.subscribe('Interaction:update', ({ event, data, isDragging }) => {
       if (event && !data)

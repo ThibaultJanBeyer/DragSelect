@@ -189,6 +189,7 @@ Obviously, keyboard users won’t get the full visual experience but it works si
 |draggability |boolean |When a user is dragging on an already selected element, the selection is dragged. |`true`
 |immediateDrag |boolean |Whether a selectable element is draggable before being selected or needs to be selected first |`true`
 |dragKeys |{ up:string[], down:string[], left:string[], righ:string[] } |The keys available to drag element using the keyboard. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). |`{ up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], righ: ['ArrowRight'] }`
+|keyboardDragSpeed |number |The speed at which elements are dragged using the keyboard. In pixels per keyDown. |`10`
 |useTransform |boolean |Whether to use the more performant hardware accelerated css transforms when dragging instead of the top/left positions. |`true`
 |selectedClass |string |The class name assigned to the selected items. |[see classes](#classes)
 |hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)
@@ -219,7 +220,7 @@ ds.subscribe('<event_name>', (callback_object) => {})
 |callback_object_keys |type |description |
 |--- |--- |---
 |items |`Array.<HTMLElement|SVGElement|*>` |Current selected elements
-|event |`MouseEvent|TouchEvent` |The native HTML Event, depending on the situational context
+|event |`MouseEvent|TouchEvent|KeyboardEvent` |The native HTML Event, depending on the situational context
 |isDragging |`boolean` |If true, the user is dragging the selected elements, if false the user is drawing a selection
 |data |`Object` |Extra data depending on situational context 
 |data.directions |`Array.<'top'|'bottom'|'left'|'right'|undefined>` |The direction in which the event is happening (i.e. scroll direction)

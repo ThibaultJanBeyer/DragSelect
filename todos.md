@@ -1,11 +1,6 @@
 # TODOs
 ## General
 ### Testing (V2.0)
-- Add tests for drag and drop 
-- - Simple
-- - With Area
-- - With Scroll
-- - With Keyboard
 - Add test for SVG
 - Add test for touch interaction
 - Test in various browsers (browser compatibility)
