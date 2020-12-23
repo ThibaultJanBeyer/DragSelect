@@ -68,7 +68,7 @@
 <li><a href="#installation">Installation</a></li>
 <li><a href="#usage">Usage</a></li>
 <li><a href="#constructor-properties">Constructor Properties</a></li>
-<li><a href="#callbacks">Callbacks</a></li>
+<li><a href="#event-callbacks">Event Callbacks</a></li>
 <li><a href="#methods">Methods</a></li>
 <li><a href="#classes">Classes</a></li>
 </ul>
@@ -77,10 +77,12 @@
 <h1>Key-Features</h1>
 <ul>
 <li><strong>No dependencies</strong> <a href="https://david-dm.org/ThibaultJanBeyer/DragSelect"><img src="https://david-dm.org/ThibaultJanBeyer/DragSelect.svg" alt="No Dependency"></a></li>
+<li>Hyper customizable</li>
 <li>Replicates operating system drag-selection in the browser</li>
 <li>Accessibility (a11y)</li>
 <li>Add drag selection</li>
 <li>Use modifier keys to make multiple independent selections</li>
+<li>Select, Drag and Drop also via keyboard</li>
 <li>Choose which elements can be selected</li>
 <li>Selected elements can be dragged and dropped</li>
 <li>Great browser support, works even like a charm on IE10</li>
@@ -177,15 +179,24 @@ ds.start(); // reset the functionality after a teardown
 <p>Keep in mind that using DragSelect on a mobile/touch device will also turn off the default scroll behavior (on <code>click</code> + <code>drag</code> interaction).
 In 99% of the use-cases, this is what you want. If DragSelect is only one part of a website, and you still want to be able to scroll the page on mobile, you can use an <code>area</code> <a href="#constructor-properties">property</a>. This way the scroll behavior remains for all the rest of the page.</p>
 <h2>Accessibility (a11y)</h2>
-<p>DragSelect is accessibly by default:</p>
+<p><strong>DragSelect is accessible by default</strong>:</p>
 <blockquote>
-<p>TLDR; =&gt; Your <code>selectables</code> should be buttons: <code>&lt;button type=&quot;button&quot;&gt;&lt;/button&gt;</code>.</p>
+<p>TLDR;<br>
+=&gt; Your <code>selectables</code> should be buttons: <code>&lt;button type=&quot;button&quot;&gt;&lt;/button&gt;</code>.<br>
+=&gt; <kbd>ArrowKeys</kbd> are used for keyboard dragging.</p>
 </blockquote>
-<p>Obviously, keyboard users won’t get the full visual experience but it works similarly to the OS default behavior. You can select items using the default select keys (usually space or enter) and also multi-select when using a modifier key at the same time (unfortunately this does not work in firefox for now since FF doesn’t add the modifier key in the event object when using the keyboard). There is one little thing you have to do tho’: the <code>selectables</code> have to be pressable (clickable)! To achieve this, they should be of type <code>&lt;button type=&quot;button&quot;&gt;&lt;/button&gt;</code>.</p>
+<p>Obviously, keyboard users won’t get the full visual experience but it works similarly to the OS default behavior.</p>
+<ol>
+<li>
+<p>Selection: You can select items using the default select keys (usually space or enter) and also multi-select when using a modifier key at the same time. There is one little thing you have to do tho’: the <code>selectables</code> have to be pressable (clickable)! To achieve this, they should be of type <code>&lt;button type=&quot;button&quot;&gt;&lt;/button&gt;</code>.</p>
+</li>
+<li>
+<p>Drag: You can drag elements using the keyboard arrow keys, this will also scroll the area by default. You can press <kbd>Shift</kbd> in combination with an arrow i.e. <kbd>Shift</kbd>+<kbd>ArrowRight</kbd> to move the element 4x faster to the right and also not scroll the area</p>
+</li>
+</ol>
 <p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="html,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">DragSelect</a> on CodePen.</p>
 <h1>Constructor Properties:</h1>
-<p>Full list of properties to pass to the constructor object is found in <strong><a href="https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html">the docs</a></strong><br>
-Here are some properties for your convenience. Note, all properties are optional:</p>
+<p><em>DragSelect is hyper customizable</em>. Note, all properties are optional. See <strong><a href="https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html">the docs</a></strong> for more info. Here is the full list:</p>
 <table>
 <thead>
 <tr>
@@ -213,6 +224,12 @@ Here are some properties for your convenience. Note, all properties are optional
 <td>number</td>
 <td>The speed in which the area scrolls while selecting (if available). The unit is arbitrary (interval aims for 30fps). Set to <code>0.0001</code> to disable auto-scrolling.</td>
 <td><code>5</code></td>
+</tr>
+<tr>
+<td>overflowTolerance</td>
+<td>{ x:number, y:number }</td>
+<td>Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start)</td>
+<td><code>{x:25,y:25}</code></td>
 </tr>
 <tr>
 <td>zoom</td>
@@ -263,6 +280,18 @@ Here are some properties for your convenience. Note, all properties are optional
 <td><code>true</code></td>
 </tr>
 <tr>
+<td>dragKeys</td>
+<td>{ up:string[], down:string[], left:string[], righ:string[] }</td>
+<td>The keys available to drag element using the keyboard. Any key value is possible (<a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key">see MDN docs</a>).</td>
+<td><code>{ up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], righ: ['ArrowRight'] }</code></td>
+</tr>
+<tr>
+<td>keyboardDragSpeed</td>
+<td>number</td>
+<td>The speed at which elements are dragged using the keyboard. In pixels per keyDown.</td>
+<td><code>10</code></td>
+</tr>
+<tr>
 <td>useTransform</td>
 <td>boolean</td>
 <td>Whether to use the more performant hardware accelerated css transforms when dragging instead of the top/left positions.</td>
@@ -294,15 +323,15 @@ Here are some properties for your convenience. Note, all properties are optional
 </tr>
 </tbody>
 </table>
-<h1>Callbacks</h1>
-<p>Callbacks are used like this:</p>
-<pre class="prettyprint source lang-JavaScript"><code>ds.subscribe('&lt;callback_name>', (callback_object) => {})
+<h1>Event Callbacks</h1>
+<p>Event Callbacks are used like this:</p>
+<pre class="prettyprint source lang-JavaScript"><code>ds.subscribe('&lt;event_name>', (callback_object) => {})
 </code></pre>
-<p>DragSelect offers a lot of useful callbacks to react to changes, check out <strong><a href="https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html">the docs</a></strong>. Here are some for your convenience:</p>
+<h2>Events</h2>
 <table>
 <thead>
 <tr>
-<th>callback_name</th>
+<th>event_name</th>
 <th>callback_object</th>
 <th>description</th>
 </tr>
@@ -310,22 +339,22 @@ Here are some properties for your convenience. Note, all properties are optional
 <tbody>
 <tr>
 <td>callback</td>
-<td><code>{ items, event }</code></td>
+<td><code>{ items, event, isDragging }</code></td>
 <td>Fired after the selection (i.e. on mouse-up).</td>
 </tr>
 <tr>
 <td>dragstart</td>
-<td><code>{ items, event }</code></td>
+<td><code>{ items, event, isDragging }</code></td>
 <td>Fired when the selection starts (i.e. on mouse-down).</td>
 </tr>
 <tr>
 <td>dragmove</td>
-<td><code>{ items, event }</code></td>
+<td><code>{ items, event, isDragging }</code></td>
 <td>Fired when the mouse moves while dragging (i.e. on mouse-move).</td>
 </tr>
 <tr>
 <td>autoscroll</td>
-<td><code>{ data }</code></td>
+<td><code>{ data:{directions,multiplier}, isDragging }</code></td>
 <td>Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).</td>
 </tr>
 <tr>
@@ -340,9 +369,57 @@ Here are some properties for your convenience. Note, all properties are optional
 </tr>
 </tbody>
 </table>
+<h3>Callback Object Keys</h3>
+<table>
+<thead>
+<tr>
+<th>callback_object_keys</th>
+<th>type</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>items</td>
+<td><code>Array.&lt;HTMLElement|SVGElement|*&gt;</code></td>
+<td>Current selected elements</td>
+</tr>
+<tr>
+<td>event</td>
+<td><code>MouseEvent|TouchEvent|KeyboardEvent</code></td>
+<td>The native HTML Event, depending on the situational context</td>
+</tr>
+<tr>
+<td>isDragging</td>
+<td><code>boolean</code></td>
+<td>If true, the user is dragging the selected elements, if false the user is drawing a selection</td>
+</tr>
+<tr>
+<td>data</td>
+<td><code>Object</code></td>
+<td>Extra data depending on situational context</td>
+</tr>
+<tr>
+<td>data.directions</td>
+<td><code>Array.&lt;'top'|'bottom'|'left'|'right'|undefined&gt;</code></td>
+<td>The direction in which the event is happening (i.e. scroll direction)</td>
+</tr>
+<tr>
+<td>data.multiplier</td>
+<td><code>number</code></td>
+<td>Speed</td>
+</tr>
+<tr>
+<td>item</td>
+<td><code>HTMLElement|SVGElement|*</code></td>
+<td>The element currently being interacted</td>
+</tr>
+</tbody>
+</table>
+<p><em>Note: almost all object keys could also be undefined</em></p>
 <h1>Methods:</h1>
 <p>When the function is saved into a variable <code>var foo = new DragSelect()</code> you have access to all its inner functions.<br>
-There are way more than listed here. You can find all in <strong><a href="https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html">the docs</a></strong>. Here are just the most usable:</p>
+Also check <strong><a href="https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html">the docs</a></strong> for more info.</p>
 <table>
 <thead>
 <tr>
@@ -449,8 +526,13 @@ There are way more than listed here. You can find all in <strong><a href="https:
 </tr>
 <tr>
 <td>isMultiSelect</td>
+<td>[event:KeyboardEvent</td>
+<td>MouseEvent</td>
+</tr>
+<tr>
+<td>isDragging</td>
 <td>/</td>
-<td>Whether the multi-select key is currently pressed</td>
+<td>Whether the user is currently drag n dropping elements (instead of selection)</td>
 </tr>
 </tbody>
 </table>
@@ -508,7 +590,7 @@ Star this repo, tell all your friends and start contributing and/or <a href="htt
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Mon Dec 14 2020 22:52:31 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Wed Dec 23 2020 19:23:45 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
