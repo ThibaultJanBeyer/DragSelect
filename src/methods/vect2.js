@@ -3,7 +3,7 @@ import '../types'
 
 /**
  * @param {Vect2} v1
- * @param {'+'|'-'|'*'} operator
+ * @param {'+'|'-'|'*'|'/'} operator
  * @param {Vect2} v2
  * @return {Vect2}
  */
@@ -20,6 +20,10 @@ export const calc = ({ x: x1, y: y1 }, operator, { x: x2, y: y2 }) => {
     '*': {
       x: x1 * x2,
       y: y1 * y2,
+    },
+    '/': {
+      x: x1 / x2,
+      y: y1 / y2,
     },
   }
   return calculations[operator]

@@ -381,7 +381,7 @@
   // @ts-check
   /**
    * @param {Vect2} v1
-   * @param {'+'|'-'|'*'} operator
+   * @param {'+'|'-'|'*'|'/'} operator
    * @param {Vect2} v2
    * @return {Vect2}
    */
@@ -403,6 +403,10 @@
       '*': {
         x: x1 * x2,
         y: y1 * y2
+      },
+      '/': {
+        x: x1 / x2,
+        y: y1 / y2
       }
     };
     return calculations[operator];
@@ -596,8 +600,8 @@
       left: rect.left,
       bottom: rect.bottom,
       right: rect.right,
-      width: area.clientWidth * zoom,
-      height: area.clientHeight * zoom
+      width: (area.clientWidth || rect.width) * zoom,
+      height: (area.clientHeight || rect.height) * zoom
     };
   });
 
@@ -1272,11 +1276,17 @@
      */
 
     /**
+     * @type {number}
+     * @private
+     */
+
+    /**
      * @param {Object} p
      * @param {DragSelect} p.DS
      * @param {boolean} p.useTransform
      * @param {DSDragKeys} p.dragKeys
      * @param {number} p.keyboardDragSpeed
+     * @param {number} p.zoom
      */
     function Drag(_ref) {
       var _this = this;
@@ -1284,7 +1294,8 @@
       var DS = _ref.DS,
           useTransform = _ref.useTransform,
           dragKeys = _ref.dragKeys,
-          keyboardDragSpeed = _ref.keyboardDragSpeed;
+          keyboardDragSpeed = _ref.keyboardDragSpeed,
+          zoom = _ref.zoom;
 
       _classCallCheck(this, Drag);
 
@@ -1301,6 +1312,8 @@
       _defineProperty(this, "_dragKeysFlat", void 0);
 
       _defineProperty(this, "_keyboardDragSpeed", void 0);
+
+      _defineProperty(this, "_zoom", void 0);
 
       _defineProperty(this, "keyboardDrag", function (_ref2) {
         var event = _ref2.event,
@@ -1321,7 +1334,7 @@
           x: 0,
           y: 0
         };
-        var increase = _this.DS.stores.KeyStore.currentValues.includes('shift') ? _this._keyboardDragSpeed * 4 : _this._keyboardDragSpeed;
+        var increase = _this.DS.stores.KeyStore.currentValues.includes('shift') ? _this._keyboardDragSpeed * 4 * _this._zoom : _this._keyboardDragSpeed * _this._zoom;
         if (_this._dragKeys.left.includes(key)) posDirection.x = _this._scrollDiff.x || -increase;
         if (_this._dragKeys.right.includes(key)) posDirection.x = _this._scrollDiff.x || increase;
         if (_this._dragKeys.up.includes(key)) posDirection.y = _this._scrollDiff.y || -increase;
@@ -1402,6 +1415,7 @@
       this.DS = DS;
       this._useTransform = useTransform;
       this._keyboardDragSpeed = keyboardDragSpeed;
+      this._zoom = zoom;
       this._dragKeys = {
         up: dragKeys.up.map(function (k) {
           return k.toLowerCase();
@@ -2034,7 +2048,7 @@
        * @private
        */
       value: function _handleSelection(element, force, event) {
-        if (element.className.indexOf(this._hoverClassName) > 0 && !force) return false;
+        if (element.classList.contains(this._hoverClassName) && !force) return false;
         var _this$DS3 = this.DS,
             SelectedSet = _this$DS3.SelectedSet,
             KeyStore = _this$DS3.stores.KeyStore;
@@ -2051,7 +2065,7 @@
     }, {
       key: "_handleUnselection",
       value: function _handleUnselection(element, force) {
-        if (element.className.indexOf(this._hoverClassName) < 0 && !force) return false;
+        if (element.classList.contains(this._hoverClassName) && !force) return false;
         var SelectedSet = this.DS.SelectedSet;
         var inSelection = SelectedSet.has(element);
 
@@ -2931,6 +2945,7 @@
           left: ['ArrowLeft'],
           right: ['ArrowRight']
         }, dragKeys),
+        zoom: zoom,
         keyboardDragSpeed: keyboardDragSpeed
       });
       this.Interaction = new Interaction({

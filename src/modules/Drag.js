@@ -40,6 +40,11 @@ export default class Drag {
    * @private
    */
   _keyboardDragSpeed
+  /**
+   * @type {number}
+   * @private
+   */
+  _zoom
 
   /**
    * @param {Object} p
@@ -47,11 +52,13 @@ export default class Drag {
    * @param {boolean} p.useTransform
    * @param {DSDragKeys} p.dragKeys
    * @param {number} p.keyboardDragSpeed
+   * @param {number} p.zoom
    */
-  constructor({ DS, useTransform, dragKeys, keyboardDragSpeed }) {
+  constructor({ DS, useTransform, dragKeys, keyboardDragSpeed, zoom }) {
     this.DS = DS
     this._useTransform = useTransform
     this._keyboardDragSpeed = keyboardDragSpeed
+    this._zoom = zoom
 
     this._dragKeys = {
       up: dragKeys.up.map((k) => k.toLowerCase()),
@@ -83,8 +90,8 @@ export default class Drag {
 
     const posDirection = { x: 0, y: 0 }
     const increase = this.DS.stores.KeyStore.currentValues.includes('shift')
-      ? this._keyboardDragSpeed * 4
-      : this._keyboardDragSpeed
+      ? this._keyboardDragSpeed * 4 * this._zoom
+      : this._keyboardDragSpeed * this._zoom
     if (this._dragKeys.left.includes(key))
       posDirection.x = this._scrollDiff.x || -increase
     if (this._dragKeys.right.includes(key))

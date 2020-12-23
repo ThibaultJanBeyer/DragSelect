@@ -25,7 +25,7 @@ export default (area, zoom) => {
     left: rect.left,
     bottom: rect.bottom,
     right: rect.right,
-    width: area.clientWidth * zoom,
-    height: area.clientHeight * zoom,
+    width: (area.clientWidth || rect.width) * zoom,
+    height: (area.clientHeight || rect.height) * zoom,
   }
 }

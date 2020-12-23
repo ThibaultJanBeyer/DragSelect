@@ -102,8 +102,7 @@ export default class Selection {
    * @private
    */
   _handleSelection(element, force, event) {
-    if (element.className.indexOf(this._hoverClassName) > 0 && !force)
-      return false
+    if (element.classList.contains(this._hoverClassName) && !force) return false
 
     const {
       SelectedSet,
@@ -127,8 +126,7 @@ export default class Selection {
    * @private
    */
   _handleUnselection(element, force) {
-    if (element.className.indexOf(this._hoverClassName) < 0 && !force)
-      return false
+    if (element.classList.contains(this._hoverClassName) && !force) return false
 
     const { SelectedSet } = this.DS
 

@@ -159,6 +159,7 @@ class DragSelect {
         },
         dragKeys
       ),
+      zoom,
       keyboardDragSpeed,
     })
 

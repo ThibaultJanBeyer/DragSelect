@@ -1,8 +1,8 @@
 # TODOs
 ## General
+### Zoom Drag
+- Dragging when the area is zoomed is wrong
 ### Testing (V2.0)
-- Add test for SVG
-- Add test for touch interaction
 - Test in various browsers (browser compatibility)
 ## Drag and Drop
 #### Constrain direction

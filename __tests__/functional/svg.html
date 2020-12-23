@@ -1,0 +1,43 @@
+<body>
+<link rel="stylesheet" href="basics.css">
+<script src="../../dist/DragSelect.js"></script>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.3.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	style="overflow:visible" xml:space="preserve">
+<style type="text/css">
+	.st0{stroke:#ED1C24;stroke-miterlimit:10;}
+	.st1{stroke:green;fill:lightyellow;stroke-miterlimit:30;}
+</style>
+<g>
+    <rect id="area" x="10" y="10" class="st1" width="600.0" height="600.0"/>
+</g>
+<rect id="item-1" x="101.2" y="360.9" class="st0 item one" width="144.8" height="126.9"/>
+<rect id="item-2" x="246" y="57.5" class="st0 item two" width="96.6" height="74.5"/>
+<circle id="item-3" class="st0 item three" cx="146.9" cy="182.5" r="55.3"/>
+<polygon id="item-4" class="st0 item four" points="310.9,300.9 295.5,299.8 285.9,311.9 282.2,296.9 267.8,291.5 280.9,283.3 281.6,268 293.3,277.9 
+	308.2,273.8 302.4,288.1 "/>
+</svg>
+
+<script>
+    window.selected = [];
+    window.dragged = [];
+
+    window.getItemVect = (id) => {
+        const rect = document.querySelector(`#item-${id}`).getBoundingClientRect()
+        return { y: rect.top + (rect.height / 2), x: rect.left + (rect.width / 2) }
+    }
+
+    const ds = new DragSelect({
+        selectables: document.querySelectorAll('.item'),
+        area: document.querySelector('#area')
+    });
+    ds.subscribe('callback', ({ isDragging, items }) => {
+        window.dragged = []
+        window.selected = []
+
+        console.log('CB', isDragging, items)
+        window[isDragging ? 'dragged' : 'selected'] = items.map(item => item.id)
+    })
+</script>
+</body>
