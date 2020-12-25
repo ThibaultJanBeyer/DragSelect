@@ -47,9 +47,9 @@ export default class SelectorArea {
     this.DS = DS
 
     this.HTMLNode = createSelectorAreaElement(selectorAreaClass)
-    this.HTMLNode.append(this.DS.Selector.HTMLNode)
+    this.HTMLNode.appendChild(this.DS.Selector.HTMLNode)
     const docEl = document.body ? 'body' : 'documentElement'
-    document[docEl].append(this.HTMLNode)
+    document[docEl].appendChild(this.HTMLNode)
 
     this.DS.subscribe('Area:modified', this.updatePos)
     this.DS.subscribe('Interaction:start', this.startAutoScroll)

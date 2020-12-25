@@ -42,7 +42,6 @@ easily add a selection algorithm to your application/website.
 - Select, Drag and Drop also via keyboard
 - Choose which elements can be selected
 - Selected elements can be dragged and dropped
-- Great browser support, works even like a charm on IE10
 - Lightweight, only ![gzip size](http://img.badgesize.io/https://thibaultjanbeyer.github.io/DragSelect/ds.min.js?compression=gzip)
 - Popular: ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) on npm
 - DragSelect was written with Performance in mind (can easily select >15.000 Elements)

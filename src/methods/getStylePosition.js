@@ -6,28 +6,30 @@ import '../types'
  * @return {Vect2}
  */
 const getComputedTranslatePositions = (element) => {
+  const position = {
+    x: 0,
+    y: 0,
+  }
+
   const computed = window.getComputedStyle(element)
-  if (!computed.transform || computed.transform === 'none')
-    return { x: 0, y: 0 }
+  if (!computed.transform || computed.transform === 'none') return position
 
   if (computed.transform.indexOf('3d') >= 0) {
-    const matched = computed.transform.match(
-      // matches the values inside translate(3d)
-      /(?<=matrix3d\()(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?)(?=\))/
-    )
-    return {
-      x: parseInt(matched[13]) || 0,
-      y: parseInt(matched[14]) || 0,
+    const match = computed.transform.trim().match(/matrix3d\((.*?)\)/)
+    if (match && match.length) {
+      const values = match[1]?.split(',')
+      position.x = parseInt(values[12]) || 0
+      position.y = parseInt(values[13]) || 0
     }
+    return position
   } else {
-    const matched = computed.transform.match(
-      // matches the values inside translate(3d)
-      /(?<=matrix\()(.*?),(.*?),(.*?),(.*?),(.*?),(.*?)(?=\))/
-    )
-    return {
-      x: parseInt(matched[5]) || 0,
-      y: parseInt(matched[6]) || 0,
+    const match = computed.transform.trim().match(/matrix\((.*?)\)/)
+    if (match && match.length) {
+      const values = match[1]?.split(',')
+      position.x = parseInt(values[4]) || 0
+      position.y = parseInt(values[5]) || 0
     }
+    return position
   }
 }
 
@@ -41,15 +43,19 @@ const getTranslatedPositions = (element) => {
   if (!transform || transform.indexOf('translate') < 0)
     return getComputedTranslatePositions(element)
 
-  const regex =
-    transform.indexOf('3d') >= 0
-      ? /(?<=translate3d\()(.*?),(.*?),(.*?)(?=\))/
-      : /(?<=translate\()(.*?),(.*?)(?=\))/
-  const translate = transform.match(regex)
-
   const position = {
-    x: parseInt(translate[1]) || 0,
-    y: parseInt(translate[2]) || 0,
+    x: 0,
+    y: 0,
+  }
+
+  const match = transform.trim().match(/translate[3dD]*?\(.*?\)/)
+  if (match) {
+    const split = match[0]?.split('(')
+    if (split) {
+      const values = split[1]?.split(',')
+      position.x = parseInt(values[0]) || 0
+      position.y = parseInt(values[1]) || 0
+    }
   }
 
   if (!position.x && !position.x) return getComputedTranslatePositions(element)

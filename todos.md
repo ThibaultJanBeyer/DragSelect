@@ -1,10 +1,9 @@
 # TODOs
-## General
 ### Zoom Drag
 - Dragging when the area is zoomed is wrong
-### Testing (V2.0)
-- Test in various browsers (browser compatibility)
 ## Drag and Drop
+#### Keyboard scroll
+- Add keyboard scroll also for firefox
 #### Constrain direction
 - User can set in which direction the element can be dragged
 ### Add drop-zones

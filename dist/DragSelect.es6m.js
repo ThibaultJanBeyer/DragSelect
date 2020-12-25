@@ -742,27 +742,38 @@ var getSelectorPosition = (function (_ref) {
  */
 
 var getComputedTranslatePositions = function getComputedTranslatePositions(element) {
-  var computed = window.getComputedStyle(element);
-  if (!computed.transform || computed.transform === 'none') return {
+  var position = {
     x: 0,
     y: 0
   };
+  var computed = window.getComputedStyle(element);
+  if (!computed.transform || computed.transform === 'none') return position;
 
   if (computed.transform.indexOf('3d') >= 0) {
-    var matched = computed.transform.match( // matches the values inside translate(3d)
-    /(?<=matrix3d\()(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?)(?=\))/);
-    return {
-      x: parseInt(matched[13]) || 0,
-      y: parseInt(matched[14]) || 0
-    };
-  } else {
-    var _matched = computed.transform.match( // matches the values inside translate(3d)
-    /(?<=matrix\()(.*?),(.*?),(.*?),(.*?),(.*?),(.*?)(?=\))/);
+    var match = computed.transform.trim().match(/matrix3d\((.*?)\)/);
 
-    return {
-      x: parseInt(_matched[5]) || 0,
-      y: parseInt(_matched[6]) || 0
-    };
+    if (match && match.length) {
+      var _match$;
+
+      var values = (_match$ = match[1]) === null || _match$ === void 0 ? void 0 : _match$.split(',');
+      position.x = parseInt(values[12]) || 0;
+      position.y = parseInt(values[13]) || 0;
+    }
+
+    return position;
+  } else {
+    var _match = computed.transform.trim().match(/matrix\((.*?)\)/);
+
+    if (_match && _match.length) {
+      var _match$2;
+
+      var _values = (_match$2 = _match[1]) === null || _match$2 === void 0 ? void 0 : _match$2.split(',');
+
+      position.x = parseInt(_values[4]) || 0;
+      position.y = parseInt(_values[5]) || 0;
+    }
+
+    return position;
   }
 };
 /**
@@ -774,12 +785,26 @@ var getComputedTranslatePositions = function getComputedTranslatePositions(eleme
 var getTranslatedPositions = function getTranslatedPositions(element) {
   var transform = element.style.transform;
   if (!transform || transform.indexOf('translate') < 0) return getComputedTranslatePositions(element);
-  var regex = transform.indexOf('3d') >= 0 ? /(?<=translate3d\()(.*?),(.*?),(.*?)(?=\))/ : /(?<=translate\()(.*?),(.*?)(?=\))/;
-  var translate = transform.match(regex);
   var position = {
-    x: parseInt(translate[1]) || 0,
-    y: parseInt(translate[2]) || 0
+    x: 0,
+    y: 0
   };
+  var match = transform.trim().match(/translate[3dD]*?\(.*?\)/);
+
+  if (match) {
+    var _match$3;
+
+    var split = (_match$3 = match[0]) === null || _match$3 === void 0 ? void 0 : _match$3.split('(');
+
+    if (split) {
+      var _split$;
+
+      var values = (_split$ = split[1]) === null || _split$ === void 0 ? void 0 : _split$.split(',');
+      position.x = parseInt(values[0]) || 0;
+      position.y = parseInt(values[1]) || 0;
+    }
+  }
+
   if (!position.x && !position.x) return getComputedTranslatePositions(element);
   return position;
 };
@@ -2258,9 +2283,9 @@ var SelectorArea = /*#__PURE__*/function () {
     this._overflowTolerance = overflowTolerance;
     this.DS = DS;
     this.HTMLNode = createSelectorAreaElement(selectorAreaClass);
-    this.HTMLNode.append(this.DS.Selector.HTMLNode);
+    this.HTMLNode.appendChild(this.DS.Selector.HTMLNode);
     var docEl = document.body ? 'body' : 'documentElement';
-    document[docEl].append(this.HTMLNode);
+    document[docEl].appendChild(this.HTMLNode);
     this.DS.subscribe('Area:modified', this.updatePos);
     this.DS.subscribe('Interaction:start', this.startAutoScroll);
     this.DS.subscribe('Interaction:end', function () {
