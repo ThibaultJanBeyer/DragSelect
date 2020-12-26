@@ -292,12 +292,12 @@
    * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
    * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
    * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
-   * @property {DSCallbackEvent} [callback] Deprecated: please use DragSelect.subscribe('callback', callback) instead
-   * @property {DSDragMoveEvent} [onDragMove] Deprecated: please use DragSelect.subscribe('onDragMove', onDragMove) instead
-   * @property {DSDragMoveBeginEvent} [onDragStartBegin] Deprecated: please use DragSelect.subscribe('onDragStartBegin', onDragStartBegin) instead
-   * @property {DSDragStartEvent} [onDragStart] Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
-   * @property {DSElementSelectEvent} [onElementSelect] Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
-   * @property {DSElementUnSelectEvent} [onElementUnselect] Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
+   * @property {DSCallback} [callback] Deprecated: please use DragSelect.subscribe('callback', callback) instead
+   * @property {DSCallback} [onDragMove] Deprecated: please use DragSelect.subscribe('onDragMove', onDragMove) instead
+   * @property {DSCallback} [onDragStartBegin] Deprecated: please use DragSelect.subscribe('onDragStartBegin', onDragStartBegin) instead
+   * @property {DSCallback} [onDragStart] Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
+   * @property {DSCallback} [onElementSelect] Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
+   * @property {DSCallback} [onElementUnselect] Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
    */
 
   /**
@@ -314,36 +314,6 @@
   /**
    * @typedef {function} DSCallback
    * @param {CallbackObject} data
-   */
-
-  /**
-   * Callback function that gets fired when the element is selected.
-   * @typedef {DSCallback} DSCallbackEvent
-   */
-
-  /**
-   * Fired while the user drags.
-   * @typedef {DSCallback} DSDragMoveEvent
-   */
-
-  /**
-   * Fired while the user drags.
-   * @typedef {DSCallback} DSDragMoveBeginEvent
-   */
-
-  /**
-   * When the user clicks in the area.
-   * @typedef {DSCallback} DSDragStartEvent
-   */
-
-  /**
-   * Fired every time an element is selected.
-   * @typedef {DSCallback} DSElementSelectEvent
-   */
-
-  /**
-   * Fired every time an element is un-selected.
-   * @typedef {DSCallback} DSElementUnSelectEvent
    */
 
   /** @typedef {{x: number, y: number}} Vect2 */
