@@ -185,15 +185,25 @@ class DragSelect {
         isDragging: this.Interaction.isDragging,
       })
     )
-    this.subscribe('Interaction:update', ({ event, data, isDragging }) => {
-      if (event && !data)
+    this.subscribe('Interaction:update', ({ event, isDragging }) => {
+      if (event)
         this.publish('dragmove', {
           items: this.getSelection(),
           event,
           isDragging,
         })
-      if (!event && data) this.publish('autoscroll', { data, isDragging })
     })
+    this.subscribe(
+      'Area:scroll',
+      ({ scroll_directions, scroll_multiplier }) => {
+        this.publish('autoscroll', {
+          items: this.getSelection(),
+          scroll_directions,
+          scroll_multiplier,
+          isDragging: this.Interaction.isDragging,
+        })
+      }
+    )
     this.subscribe('Interaction:start', ({ event, isDragging }) =>
       this.publish('dragstart', {
         items: this.getSelection(),

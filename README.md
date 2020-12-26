@@ -223,7 +223,7 @@ ds.subscribe('<event_name>', (callback_object) => {})
 |callback |`{ items, event, isDragging }` |Fired after the selection (i.e. on mouse-up). 
 |dragstart |`{ items, event, isDragging }` |Fired when the selection starts (i.e. on mouse-down). 
 |dragmove |`{ items, event, isDragging }` |Fired when the mouse moves while dragging (i.e. on mouse-move).
-|autoscroll |`{ scroll_directions, scroll_multiplier, isDragging }` |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
+|autoscroll |`{ items, scroll_directions, scroll_multiplier, isDragging }` |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
 |elementselect |`{ items, item }` |Fired when an element is added to the selection.
 |elementunselect |`{ items, item }` |Fired when an element is removed from the selection.
 

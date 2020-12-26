@@ -61,9 +61,6 @@
     const ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
         area: document.querySelector('.area'),
-        callback: (n, e) => {
-          console.log(window.callbackIds)
-          window.callbackIds = n.map(n => n.id)
-        }
     });
+    ds.subscribe('callback', ({ items }) => window.callbackIds = items.map(n => n.id), window.itemIds)
 </script>

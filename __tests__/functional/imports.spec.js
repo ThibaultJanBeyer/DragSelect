@@ -73,8 +73,11 @@ describe('Imports', () => {
       await page.evaluate(() => {
         window.ds = new DragSelect({
           selectables: document.querySelectorAll('.item'),
-          callback: (items) => (window.callback = items.map((item) => item.id)),
         })
+        window.ds.subscribe(
+          'callback',
+          ({ items }) => (window.callback = items.map((item) => item.id))
+        )
       })
     }
 
@@ -119,7 +122,7 @@ describe('Imports', () => {
       await page.waitForFunction(() => 'require' in window)
       await page.evaluate((uri) => {
         window.dsScript = document.createElement('script')
-        window.dsScript.innerHTML = `
+        window.dsScript.innerHTML = /*javascript*/ `
           require.config({
             paths: {
               'DragSelect': '${uri}'
@@ -127,12 +130,10 @@ describe('Imports', () => {
             waitSeconds: 40
           });
           require(['DragSelect'], function (DragSelect) {
-              window.ds = new DragSelect({
-                selectables: document.getElementsByClassName('item'),
-                callback: items => window.callback = items.map(item => item.id)
-              });
-            }
-          );`
+            window.ds = new DragSelect({ selectables: document.querySelectorAll('.item') });
+            window.ds.subscribe('callback', ({ items }) => (window.callback = items.map((item) => item.id)))
+          });
+        `
         document.body.appendChild(window.dsScript)
         window.importScripts.push(window.dsScript)
       }, uri)
@@ -158,12 +159,11 @@ describe('Imports', () => {
       await page.evaluate((uri) => {
         window.dsScript = document.createElement('script')
         window.dsScript.setAttribute('type', 'module')
-        window.dsScript.innerHTML = `
+        window.dsScript.innerHTML = /*javascript*/ `
           import DragSelect from "${uri}";
-          window.ds = new DragSelect({
-            selectables: document.querySelectorAll('.item'),
-            callback: items => window.callback = items.map(item => item.id)
-          });`
+          window.ds = new DragSelect({ selectables: document.querySelectorAll('.item') });
+          window.ds.subscribe('callback', ({ items }) => (window.callback = items.map((item) => item.id)))
+          `
         document.body.appendChild(window.dsScript)
         window.importScripts.push(window.dsScript)
       }, uri)

@@ -14,6 +14,7 @@ describe('Callbacks', () => {
     await mouse.up()
 
     const executesFn = await page.evaluate(() => {
+      ds.Area.scroll(['right'], 1)
       return {
         onDragStartCalls: window.onDragStartCalls,
         onDragMoveCalls: window.onDragMoveCalls,

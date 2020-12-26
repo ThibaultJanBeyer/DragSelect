@@ -31,26 +31,24 @@ Multi-Select-Toggling: OFF
 <script>
     window.selected = [];
 
-    new DragSelect({
-        selectables: document.querySelectorAll('.item.a'),
-        callback: sel => window.selected = sel.map(sel => sel.id)
-    });
+    const ds1 = new DragSelect({ selectables: document.querySelectorAll('.item.a') });
+    ds1.subscribe('callback', ({items}) => window.selected = items.map(item => item.id))
 </script>
 <script>
     window.multiselected = [];
 
-    new DragSelect({
+    const ds2 = new DragSelect({
         selectables: document.querySelectorAll('.item.b'),
         multiSelectMode: true,
-        callback: sel => window.multiselected = sel.map(sel => sel.id)
     });
+    ds2.subscribe('callback', ({items}) => window.multiselected = items.map(item => item.id))
 </script>
 <script>
     window.multiSelectTogglingOff = [];
 
-    new DragSelect({
+    const ds3 = new DragSelect({
         selectables: document.querySelectorAll('.item.c'),
         multiSelectToggling: false,
-        callback: sel => window.multiSelectTogglingOff = sel.map(sel => sel.id)
     });
+    ds3.subscribe('callback', ({items}) => window.multiSelectTogglingOff = items.map(item => item.id))
 </script>

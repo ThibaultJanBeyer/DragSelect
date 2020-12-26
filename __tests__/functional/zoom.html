@@ -27,9 +27,9 @@
     ds = new DragSelect({
       selectables: document.getElementsByClassName('item'),
       area: document.getElementById('container'),
-      callback: function(e) { console.log("selected", e); },
       zoom: zoom
     });
+    ds.subscribe('callback', ({items}) => console.log("selected", items))
     document.getElementById('container').style = "transform: scale(" + zoom + ")";
     document.getElementById('zoomer').innerHTML = zoom*100;
   }

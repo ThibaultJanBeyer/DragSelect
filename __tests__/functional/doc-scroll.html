@@ -15,7 +15,7 @@
     const ds = new DragSelect({
         selectables: document.querySelectorAll('.generated-item'),
         immediateDrag: false,
-        callback: sel => { console.log(sel); window.selected = sel.map(sel => sel.id) }
     });
+    ds.subscribe('callback', ({ items }) => { console.log(items); window.selected = items.map(item => item.id) })
 </script>
 </body>

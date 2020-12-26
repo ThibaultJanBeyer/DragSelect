@@ -30,6 +30,6 @@
         customStyles: true,
         selectorClass: 'selectorrr',
         area: document.getElementById('lel'),
-        callback: items => callback = items.map(item => item.id)
     });
+    window.ds.subscribe('callback', ({items}) => window.callback = items.map(item => item.id))
 </script>

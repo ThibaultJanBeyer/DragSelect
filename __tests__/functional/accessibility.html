@@ -10,8 +10,8 @@
 <script>
     window.selected = [];
 
-    new DragSelect({
+    const ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
-        callback: sel => { console.log(sel); window.selected = sel.map(sel => sel.id) }
     });
+    ds.subscribe('callback', ({items}) => { console.log(items); window.selected = items.map(item => item.id) })
 </script>

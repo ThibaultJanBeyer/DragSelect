@@ -3111,30 +3111,36 @@
       });
       this.subscribe('Interaction:update', function (_ref4) {
         var event = _ref4.event,
-            data = _ref4.data,
             isDragging = _ref4.isDragging;
-        if (event && !data) _this.publish('dragmove', {
+        if (event) _this.publish('dragmove', {
           items: _this.getSelection(),
           event: event,
           isDragging: isDragging
         });
-        if (!event && data) _this.publish('autoscroll', {
-          data: data,
-          isDragging: isDragging
+      });
+      this.subscribe('Area:scroll', function (_ref5) {
+        var scroll_directions = _ref5.scroll_directions,
+            scroll_multiplier = _ref5.scroll_multiplier;
+
+        _this.publish('autoscroll', {
+          items: _this.getSelection(),
+          scroll_directions: scroll_directions,
+          scroll_multiplier: scroll_multiplier,
+          isDragging: _this.Interaction.isDragging
         });
       });
-      this.subscribe('Interaction:start', function (_ref5) {
-        var event = _ref5.event,
-            isDragging = _ref5.isDragging;
+      this.subscribe('Interaction:start', function (_ref6) {
+        var event = _ref6.event,
+            isDragging = _ref6.isDragging;
         return _this.publish('dragstart', {
           items: _this.getSelection(),
           event: event,
           isDragging: isDragging
         });
       });
-      this.subscribe('Interaction:end', function (_ref6) {
-        var event = _ref6.event,
-            isDragging = _ref6.isDragging;
+      this.subscribe('Interaction:end', function (_ref7) {
+        var event = _ref7.event,
+            isDragging = _ref7.isDragging;
         return _this.publish('callback', {
           items: _this.getSelection(),
           event: event,
@@ -3147,13 +3153,13 @@
 
     _createClass(DragSelect, [{
       key: "_callbacksTemp",
-      value: function _callbacksTemp(_ref7) {
-        var callback = _ref7.callback,
-            onDragMove = _ref7.onDragMove,
-            onDragStart = _ref7.onDragStart,
-            onDragStartBegin = _ref7.onDragStartBegin,
-            onElementSelect = _ref7.onElementSelect,
-            onElementUnselect = _ref7.onElementUnselect;
+      value: function _callbacksTemp(_ref8) {
+        var callback = _ref8.callback,
+            onDragMove = _ref8.onDragMove,
+            onDragStart = _ref8.onDragStart,
+            onDragStartBegin = _ref8.onDragStartBegin,
+            onElementSelect = _ref8.onElementSelect,
+            onElementUnselect = _ref8.onElementUnselect;
 
         var warnMessage = function warnMessage(name, newName) {
           return console.warn("[DragSelect] ".concat(name, " is deprecated. Use DragSelect.subscribe(\"").concat(newName, "\", (callbackObject) => {}) instead. Act Now! See docs for more info"));
@@ -3161,60 +3167,60 @@
 
         if (callback) {
           warnMessage('callback', 'callback');
-          this.subscribe('callback', function (_ref8) {
-            var items = _ref8.items,
-                item = _ref8.item,
-                event = _ref8.event;
+          this.subscribe('callback', function (_ref9) {
+            var items = _ref9.items,
+                item = _ref9.item,
+                event = _ref9.event;
             return callback(items, event);
           });
         }
 
         if (onDragMove) {
           warnMessage('onDragMove', 'dragmove');
-          this.subscribe('dragmove', function (_ref9) {
-            var items = _ref9.items,
-                item = _ref9.item,
-                event = _ref9.event;
+          this.subscribe('dragmove', function (_ref10) {
+            var items = _ref10.items,
+                item = _ref10.item,
+                event = _ref10.event;
             return onDragMove(event);
           });
         }
 
         if (onDragStart) {
           warnMessage('onDragStart', 'dragstart');
-          this.subscribe('dragstart', function (_ref10) {
-            var items = _ref10.items,
-                item = _ref10.item,
-                event = _ref10.event;
+          this.subscribe('dragstart', function (_ref11) {
+            var items = _ref11.items,
+                item = _ref11.item,
+                event = _ref11.event;
             return onDragStart(event);
           });
         }
 
         if (onDragStartBegin) {
           warnMessage('onDragStartBegin', 'dragstart');
-          this.subscribe('dragstart', function (_ref11) {
-            var items = _ref11.items,
-                item = _ref11.item,
-                event = _ref11.event;
+          this.subscribe('dragstart', function (_ref12) {
+            var items = _ref12.items,
+                item = _ref12.item,
+                event = _ref12.event;
             return onDragStartBegin(event);
           });
         }
 
         if (onElementSelect) {
           warnMessage('onElementSelect', 'elementselect');
-          this.subscribe('elementselect', function (_ref12) {
-            var items = _ref12.items,
-                item = _ref12.item,
-                event = _ref12.event;
+          this.subscribe('elementselect', function (_ref13) {
+            var items = _ref13.items,
+                item = _ref13.item,
+                event = _ref13.event;
             return onElementSelect(item, event);
           });
         }
 
         if (onElementUnselect) {
           warnMessage('onElementUnselect', 'elementunselect');
-          this.subscribe('elementunselect', function (_ref13) {
-            var items = _ref13.items,
-                item = _ref13.item,
-                event = _ref13.event;
+          this.subscribe('elementunselect', function (_ref14) {
+            var items = _ref14.items,
+                item = _ref14.item,
+                event = _ref14.event;
             return onElementUnselect(item, event);
           });
         }
