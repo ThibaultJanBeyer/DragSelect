@@ -55,9 +55,9 @@ easily add a selection algorithm to your application/website.
 
 # Why?
 
-Because apparently there is nothing that does not require jquery out there yet.  
-This is better than https://jqueryui.com/selectable/ and has no dependencies.
-We use it currently in a professional rich interface application where we have a file management system. The user can select files to organize them and change their metadata, with this plugin our users are able to select multiple files and perform batch/bulk-operations (applying changes to multiple files at once). We also started using it in production for a huge, graphical cloud hosting manager with a lot of active users. Users can select multiple servers, storages, etc. on an artboard to perform multi-operations, re-organize them or batch-delete. We’re running it since January 18' it’s super helpful and very stable, let’s keep it that way. I can easily think of dozens other possibilites this can be used for. I’m really keen to know how you use it in your projects, please let me know.
+Because apparently there was nothing that does not require jquery out there.  
+This is better than https://jqueryui.com/selectable/ or https://jqueryui.com/draggable/ and has no dependencies.
+We use it currently in a professional rich interface application where we have a file management system. The user can select files to organize them and change their metadata, with this plugin our users are able to select multiple files and perform batch/bulk-operations (applying changes to multiple files at once). We also started using it in production for a huge, graphical cloud hosting manager with a lot of active users. Users can select multiple servers, storages, etc. on an artboard to perform multi-operations, re-organize them, move them on the UI or batch-delete. We’re running it since January 18' it’s super helpful and very stable, let’s keep it that way. I can easily think of dozens other use-cases. I’m really keen to know how you use it in your projects, please let me know.
 
 # Supporters
 
@@ -66,10 +66,11 @@ Thanks to:
 | ![BrowserStack](https://thibaultjanbeyer.github.io/DragSelect/media/browserstack.jpg) | [You?](https://paypal.me/pools/c/8gF2a5szCP) |
 |--- |--- |
 |[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or [Get in touch](mailto:thibault.beyer@gmail.com) |
+
 # Installation
 ## global
 
-Just [download the file](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/docs/DragSelect.js) ([minified](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/docs/ds.min.js)) and add it to your document:
+Just [download the file](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/dist/DragSelect.js) ([minified](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/dist/ds.min.js)) and add it to your document:
 
 ```html
 <script src="https://thibaultjanbeyer.github.io/DragSelect/v2/ds.min.js"></script>
@@ -90,9 +91,9 @@ bower install --save dragselect
 ```
 
 That's it, you're ready to rock!  
-Of course you can also just include the code within your code to save a request.  
+Of course you can also just include the code within your code and bundle it to save a request.  
 
-DragSelect supports `module.exports`, `AMD Modules` with `define` and has a fallback to global namespace for maximum out of the box support.
+DragSelect supports `module.exports`, `AMD Modules` with `define`, `es6 modules` with `.es6m` versions and has a fallback to global namespace for maximum out of the box support.
 
 # Usage
 
@@ -113,7 +114,14 @@ new DragSelect({
 
 ## Within a scroll-able Area
 
-Here the selection is constrained. You can only use the selection inside of the container with the red border:
+Here the selection is constrained. You can only use the selection/drag inside of the area container:
+
+```javascript
+new DragSelect({
+  selectables: document.getElementsByClassName('selectable-nodes'),
+  area: document.getElementById('area')
+});
+```
 
 <p data-height="265" data-theme-id="0" data-slug-hash="Nvobgq" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect with Scrollable AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a> on CodePen.</p>
 
@@ -132,27 +140,31 @@ const ds = new DragSelect({
   // and many more, see "properties" section in the docs
 });
 
-// fired once the user releases the mouse. (items) = selected nodes.
+// if you add the function to a variable like we did, you have access to all its functions:
+
+// fired once the user releases the mouse. (items) = selected nodes:
 ds.subscribe('callback', ({ items, event }) => {})
 
-// if you add the function to a variable like we did, you have access to all its functions:
-ds.getSelection(); // returns all currently selected nodes
+// returns all currently selected nodes:
+ds.getSelection();
 
-// adds elements that can be selected. Won't add elements twice.
+// adds elements that can be selected. Won't add elements twice:
 ds.addSelectables(document.getElementsByClassName('selectable-node'));
 
-ds.stop(); // will teardown/stop the whole functionality
-ds.start(); // reset the functionality after a teardown
+// Teardown/stop the whole functionality:
+ds.stop();
+// Reset the functionality after a teardown:
+ds.start();
 
 // and many more, see "methods" section in documentation
 ```  
 
-*You can also use the "shift", "ctrl" or "command" key to make multiple independent selections.*
+> You can also use the "shift", "ctrl" or "command" key to make multiple independent selections.
 
 ## Mobile/Touch usage
 
 Keep in mind that using DragSelect on a mobile/touch device will also turn off the default scroll behavior (on `click` + `drag` interaction).
-In 99% of the use-cases, this is what you want. If DragSelect is only one part of a website, and you still want to be able to scroll the page on mobile, you can use an `area` [property](#constructor-properties). This way the scroll behavior remains for all the rest of the page.
+In 99% of the use-cases, this is what you want. If DragSelect is only one part of a website, and you still want to be able to scroll the page on mobile, you can use an `area` [property](#constructor-properties). This way the default scroll behavior remains intact for the rest of the page.
 
 ## Accessibility (a11y)
 
