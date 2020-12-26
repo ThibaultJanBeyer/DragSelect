@@ -68,7 +68,7 @@ Thanks to:
 |[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or [Get in touch](mailto:thibault.beyer@gmail.com) |
 
 # Installation
-## global
+## Global
 
 Just [download the file](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/dist/DragSelect.js) ([minified](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/dist/ds.min.js)) and add it to your document:
 
@@ -80,12 +80,12 @@ Just [download the file](https://github.com/ThibaultJanBeyer/DragSelect/blob/mas
 
 > We don't recommend the direct linking for production set-up since you'll not benefit from versioning. Please use `npm` or `bower` if you can.
 
-## npm
+## NPM
 ```console
 npm install --save dragselect
 ```
 
-## bower
+## Bower
 ```console
 bower install --save dragselect
 ```
@@ -99,7 +99,7 @@ DragSelect supports `module.exports`, `AMD Modules` with `define`, `es6 modules`
 
 Now in your JavaScript you can simply pass elements to the function like so:
 
-## simple
+## Simple
 
 The simplest possible usage.  
 Choose which elements can be selected:
@@ -110,7 +110,7 @@ new DragSelect({
 });
 ```
 
-<p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="prpwYG" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">prpwYG</a> on CodePen.</p>
+<p data-height="350" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="prpwYG" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">prpwYG</a> on CodePen.</p>
 
 ## Within a scroll-able Area
 
@@ -123,9 +123,9 @@ new DragSelect({
 });
 ```
 
-<p data-height="265" data-theme-id="0" data-slug-hash="Nvobgq" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect with Scrollable AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a> on CodePen.</p>
+<p data-height="350" data-theme-id="0" data-slug-hash="Nvobgq" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect with Scrollable AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a> on CodePen.</p>
 
-## extended
+## Extended
 
 All options are optional. You could also just initiate the Dragselect by `new DragSelect({});` without any option.  
 Find all possible properties and methods in **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**  
@@ -180,7 +180,7 @@ Obviously, keyboard users won’t get the full visual experience but it works si
 
 2. Drag: You can drag elements using the keyboard arrow keys, this will also scroll the area by default. You can press <kbd>Shift</kbd> in combination with an arrow i.e. <kbd>Shift</kbd>+<kbd>ArrowRight</kbd> to move the element 4x faster to the right and also not scroll the area
 
-<p data-height="265" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="html,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">DragSelect</a> on CodePen.</p>
+<p data-height="350" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="html,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">DragSelect</a> on CodePen.</p>
 
 # Constructor Properties:
 
@@ -223,7 +223,7 @@ ds.subscribe('<event_name>', (callback_object) => {})
 |callback |`{ items, event, isDragging }` |Fired after the selection (i.e. on mouse-up). 
 |dragstart |`{ items, event, isDragging }` |Fired when the selection starts (i.e. on mouse-down). 
 |dragmove |`{ items, event, isDragging }` |Fired when the mouse moves while dragging (i.e. on mouse-move).
-|autoscroll |`{ data:{directions,multiplier}, isDragging }` |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
+|autoscroll |`{ scroll_directions, scroll_multiplier, isDragging }` |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
 |elementselect |`{ items, item }` |Fired when an element is added to the selection.
 |elementunselect |`{ items, item }` |Fired when an element is removed from the selection.
 
@@ -234,12 +234,11 @@ ds.subscribe('<event_name>', (callback_object) => {})
 |items |`Array.<HTMLElement|SVGElement|*>` |Current selected elements
 |event |`MouseEvent|TouchEvent|KeyboardEvent` |The native HTML Event, depending on the situational context
 |isDragging |`boolean` |If true, the user is dragging the selected elements, if false the user is drawing a selection
-|data |`Object` |Extra data depending on situational context 
-|data.directions |`Array.<'top'|'bottom'|'left'|'right'|undefined>` |The direction in which the event is happening (i.e. scroll direction)
-|data.multiplier |`number` |Speed
+|scroll_directions |`Array.<'top'|'bottom'|'left'|'right'|undefined>` |The direction in which the event is happening (i.e. scroll direction)
+|scroll_multiplier |`number` |Speed
 |item |`HTMLElement|SVGElement|*` |The element currently being interacted
 
-*Note: almost all object keys could also be undefined*
+*Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first*
 
 # Methods:
 When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions.  

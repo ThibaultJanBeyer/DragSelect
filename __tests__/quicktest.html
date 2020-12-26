@@ -30,8 +30,8 @@
       border: 5px solid red;
       position: absolute;
       overflow: auto;
-      top: 15%;
-      left: 15%;
+      top: 2.5%;
+      left: 5%;
     }
 
     #container.oi {
@@ -164,11 +164,11 @@
   <!-- <script type="module">
     import DragSelect from "../docs/ds.es6m.min.js"; -->
   <script>
-  var ds = new DragSelect({
-    selectables: document.getElementsByClassName('item'),
-    area: document.getElementById('container'),
-    callback: function(e) { console.log("selected", e); },
-  });
+    const ds = new DragSelect({
+      selectables: document.getElementsByClassName('item'),
+      area: document.getElementById('container'),
+    });
+    ds.subscribe('callback', ({ items }) => console.log("items", items))
   </script>
 </body>
 </html>

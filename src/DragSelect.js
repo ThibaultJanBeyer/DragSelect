@@ -270,11 +270,11 @@ class DragSelect {
   /**
    * Complete function teardown
    * Will teardown/stop the whole functionality
-   * @param {boolean} [remove=true] - if elements should be removed.
-   * @param {boolean} [fromSelection=true] - if elements should also be added/removed to the selection.
+   * @param {boolean} [remove] - if elements should be removed.
+   * @param {boolean} [fromSelection] - if elements should also be added/removed to the selection.
    * @param {boolean} [withCallback] - if elements should also be added/removed to the selection.
    */
-  stop(remove = true, fromSelection = true, withCallback) {
+  stop(remove = true, fromSelection = true, withCallback = false) {
     if (withCallback) this.publish('callback', { items: this.getSelection() })
 
     this.Interaction.stop()
@@ -301,7 +301,11 @@ class DragSelect {
    * @param {boolean} [dontAddToSelectables] - if element should not be added to the list of selectable elements
    * @return {DSElements} all selected elements
    */
-  addSelection(elements, triggerCallback, dontAddToSelectables) {
+  addSelection(
+    elements,
+    triggerCallback = false,
+    dontAddToSelectables = false
+  ) {
     this.SelectedSet.addAll(toArray(elements))
     if (!dontAddToSelectables) this.addSelectables(elements)
     if (triggerCallback)
@@ -316,7 +320,11 @@ class DragSelect {
    * @param {boolean} [removeFromSelectables] - if element should be removed from the list of selectable elements
    * @return {DSElements} all selected elements
    */
-  removeSelection(elements, triggerCallback, removeFromSelectables) {
+  removeSelection(
+    elements,
+    triggerCallback = false,
+    removeFromSelectables = false
+  ) {
     this.SelectedSet.deleteAll(toArray(elements))
     if (removeFromSelectables) this.removeSelectables(elements)
     if (triggerCallback)
@@ -332,7 +340,7 @@ class DragSelect {
    * @param {boolean} [alsoSelectables] - if element should not be added/removed to the list of selectable elements accordingly
    * @return {DSElements} all selected elements
    */
-  toggleSelection(elements, triggerCallback, alsoSelectables) {
+  toggleSelection(elements, triggerCallback = false, alsoSelectables = false) {
     toArray(elements).forEach((el) =>
       this.SelectedSet.has(el)
         ? this.removeSelection(elements, triggerCallback, alsoSelectables)
@@ -350,7 +358,11 @@ class DragSelect {
    * @param {boolean} [dontAddToSelectables] - if element should not be added to the list of selectable elements
    * @return {DSElements}
    */
-  setSelection(elements, triggerCallback, dontAddToSelectables) {
+  setSelection(
+    elements,
+    triggerCallback = false,
+    dontAddToSelectables = false
+  ) {
     this.clearSelection()
     this.addSelection(elements, triggerCallback, dontAddToSelectables)
     return this.getSelection()
@@ -360,7 +372,7 @@ class DragSelect {
    * @param {boolean} [triggerCallback] - if callback should be called
    * @return {DSElements} this.selected, should be empty
    */
-  clearSelection(triggerCallback) {
+  clearSelection(triggerCallback = false) {
     this.SelectedSet.clear()
     if (triggerCallback)
       this.PubSub.publish('callback', { items: this.getSelection() })
@@ -372,7 +384,7 @@ class DragSelect {
    * @param {boolean} [addToSelection] if elements should also be added to current selection
    * @return {DSInputElements} the added element(s)
    */
-  addSelectables(elements, addToSelection) {
+  addSelectables(elements, addToSelection = false) {
     const els = toArray(elements)
     this.SelectableSet.addAll(els)
     if (addToSelection) this.SelectedSet.addAll(els)
@@ -392,7 +404,11 @@ class DragSelect {
    * @param {boolean} [addToSelection] if elements should also be added to current selection
    * @return {DSInputElements} elements – the added element(s)
    */
-  setSelectables(elements, removeFromSelection, addToSelection) {
+  setSelectables(
+    elements,
+    removeFromSelection = false,
+    addToSelection = false
+  ) {
     this.removeSelectables(elements, removeFromSelection)
     return this.addSelectables(elements, addToSelection)
   }
@@ -402,7 +418,7 @@ class DragSelect {
    * @param {boolean} [removeFromSelection] if elements should also be removed from current selection
    * @return {DSInputElements} the removed element(s)
    */
-  removeSelectables(elements, removeFromSelection) {
+  removeSelectables(elements, removeFromSelection = false) {
     this.SelectedSet.clear()
     if (removeFromSelection) this.SelectedSet.clear()
     return elements
@@ -427,13 +443,14 @@ class DragSelect {
   isMultiSelect = (event) => this.stores.KeyStore.isMultiSelectKeyPressed(event)
   /**
    * Returns the cursor position difference between start and now
-   * If usePreviousCursorDifference is passed,
-   * it will output the cursor position difference between the previous selection and now
-   * @param {boolean} [usePreviousCursorDifference]
+   * @param {boolean} [usePreviousCursorDifference] if true, it will output the cursor position difference between the previous selection and now
    * @return {Vect2}
    * @deprecated
    */
-  getCursorPositionDifference(usePreviousCursorDifference) {
+  getCursorPositionDifference(usePreviousCursorDifference = false) {
+    console.warn(
+      '[DragSelect] Using .getCursorPositionDifference is deprecated. Calculate yourself instead. i.e. `.getCurrentCursorPosition().x - .getInitialCursorPosition().x`'
+    )
     const posA = this.getCurrentCursorPosition()
     const posB = usePreviousCursorDifference
       ? this.getPreviousCursorPosition()

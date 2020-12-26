@@ -6,28 +6,50 @@ export default class PointerStore {
   _isMouseInteraction = false
 
   // Pointer Positions within Area
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private
+   * */
   _initialValArea
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private
+   * */
   _currentValArea
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private
+   * */
   _lastValArea
 
   // General Pointer Position
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private
+   * */
   _initialVal
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private
+   * */
   _currentVal
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private
+   * */
   _lastVal
 
-  /** @type {TouchEvent} @private */
+  /**
+   * @type {TouchEvent}
+   * @private
+   * */
   _lastTouch
 
   /**
    * @class PointerStore
    * @constructor PointerStore
    * @param {{DS:DragSelect}} p
+   * @ignore
    */
   constructor({ DS }) {
     this.DS = DS

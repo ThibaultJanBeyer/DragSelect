@@ -123,7 +123,10 @@ export default class Area {
    */
   scroll = (directions, multiplier) => {
     scrollElement(this._node, directions, multiplier)
-    this.PubSub.publish('Area:scroll', { data: { directions, multiplier } })
+    this.PubSub.publish('Area:scroll', {
+      scroll_directions: directions,
+      scroll_multiplier: multiplier,
+    })
   }
 
   //////////////////////////////////////////////////////////////////////////////////////

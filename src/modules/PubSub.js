@@ -10,7 +10,7 @@ export default class PubSub {
    * @function subscribe
    * @param {DSCallbackNames} eventName
    * @param {DSCallback} callback
-   * @returns {number} event id, can be used to unsubscribe
+   * @returns {number} event id, can be used to unsubscribe more efficiently
    */
   subscribe = (eventName, callback) => {
     if (!Array.isArray(this.subscribers[eventName]))
@@ -24,7 +24,7 @@ export default class PubSub {
    * @memberof DragSelect#
    * @function unsubscribe
    * @param {DSCallbackNames} eventName
-   * @param {DSCallback} [callback]
+   * @param {DSCallback} [callback] the callback method signature, has to be exactly the same as when subscribing. Consider using "id" instead.
    * @param {number} [id] event id returned when subscribed (more performant than callback search)
    */
   unsubscribe = (eventName, callback, id) => {

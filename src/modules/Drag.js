@@ -53,6 +53,7 @@ export default class Drag {
    * @param {DSDragKeys} p.dragKeys
    * @param {number} p.keyboardDragSpeed
    * @param {number} p.zoom
+   * @ignore
    */
   constructor({ DS, useTransform, dragKeys, keyboardDragSpeed, zoom }) {
     this.DS = DS

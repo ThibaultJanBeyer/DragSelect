@@ -21,7 +21,12 @@ export default class ScrollStore {
    * @private */
   _canScroll
 
-  /** @param {{ DS:DragSelect, areaElement: DSArea, zoom:number }} p */
+  /**
+   * @class ScrollStore
+   * @constructor ScrollStore
+   * @param {{ DS:DragSelect, areaElement: DSArea, zoom:number }} p
+   * @ignore
+   */
   constructor({ DS, areaElement, zoom }) {
     this._areaElement = areaElement
     this.DS = DS

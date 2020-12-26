@@ -32,6 +32,7 @@ export default class KeyStore {
    * @class KeyStore
    * @constructor KeyStore
    * @param {{DS:DragSelect,multiSelectKeys:DSMultiSelectKeys,multiSelectMode:boolean}} p
+   * @ignore
    */
   constructor({ DS, multiSelectKeys, multiSelectMode }) {
     this.DS = DS

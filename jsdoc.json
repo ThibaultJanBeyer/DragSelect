@@ -4,7 +4,7 @@
     "destination": "./docs"
   },
   "source": {
-    "include": ["./src", "./src/modules", "./README.md"],
+    "include": ["./src", "./src/modules/PubSub.js", "./README.md"],
     "includePattern": "\\.(jsx|js|ts|tsx)$"
   },
   "plugins": [

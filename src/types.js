@@ -23,22 +23,25 @@
  * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
  * @property {DSCallbackEvent} [callback] Deprecated: please use DragSelect.subscribe('callback', callback) instead
  * @property {DSDragMoveEvent} [onDragMove] Deprecated: please use DragSelect.subscribe('onDragMove', onDragMove) instead
- * @property {DSDragMoveBeginEvent} [onDragStartBegin]  Deprecated: please use DragSelect.subscribe('onDragStartBegin', onDragStartBegin) instead
- * @property {DSDragStartEvent} [onDragStart]  Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
- * @property {DSElementSelectEvent} [onElementSelect]  Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
- * @property {DSElementUnSelectEvent} [onElementUnselect]  Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
+ * @property {DSDragMoveBeginEvent} [onDragStartBegin] Deprecated: please use DragSelect.subscribe('onDragStartBegin', onDragStartBegin) instead
+ * @property {DSDragStartEvent} [onDragStart] Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
+ * @property {DSElementSelectEvent} [onElementSelect] Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
+ * @property {DSElementUnSelectEvent} [onElementUnselect] Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
  */
 
 /**
  * The Object that is passed back to any callback method
  * @typedef {Object} CallbackObject
- * @property {Array<HTMLElement|SVGElement|any>} items The items currently selected
+ * @property {Array<HTMLElement|SVGElement|any>} [items] The items currently selected
  * @property {MouseEvent|TouchEvent|Event} [event] The respective event object
  * @property {HTMLElement|SVGElement|any} [item] The single item currently interacted with
+ * @property {boolean} [isDragging] Whether the interaction is a drag or a select
+ * @property {Array.<'top'|'bottom'|'left'|'right'|undefined>} [scroll_directions]
+ * @property {number} [scroll_multiplier]
  */
 /**
  * @typedef {function} DSCallback
- * @param {CallbackObject} selected
+ * @param {CallbackObject} data
  */
 /**
  * Callback function that gets fired when the element is selected.
