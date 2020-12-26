@@ -434,8 +434,8 @@ class DragSelect {
    * @deprecated
    */
   getCursorPositionDifference(usePreviousCursorDifference) {
-    var posA = this.getCurrentCursorPosition()
-    var posB = usePreviousCursorDifference
+    const posA = this.getCurrentCursorPosition()
+    const posB = usePreviousCursorDifference
       ? this.getPreviousCursorPosition()
       : this.getInitialCursorPosition()
     return vect2.calc(posA, '-', posB)

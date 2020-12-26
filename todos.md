@@ -2,8 +2,6 @@
 ### Zoom Drag
 - Dragging when the area is zoomed is wrong
 ## Drag and Drop
-#### Keyboard scroll
-- Add keyboard scroll also for firefox
 #### Constrain direction
 - User can set in which direction the element can be dragged
 ### Add drop-zones

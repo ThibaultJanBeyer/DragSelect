@@ -896,6 +896,64 @@ var handleElementOverflow = (function (_ref) {
 
 // @ts-check
 /**
+ * @typedef {function} ScrollCallback
+ * @property {Array.<'top'|'bottom'|'left'|'right'|undefined>} directions
+ * @property {number} multiplier
+ */
+
+/**
+ * @param {Object} p
+ * @param {string} p.key the keyboard key that was pressed
+ * @param {boolean} p.shiftKey
+ * @param {boolean} p.canScroll
+ * @param {number} p.keyboardDragSpeed
+ * @param {number} p.zoom
+ * @param {ScrollCallback} p.scrollCallback
+ * @param {Vect2} p.scrollDiff
+ * @param {DSDragKeys} p.dragKeys
+ * @returns {Vect2}
+ */
+
+var handleKeyboardDragPosDifference = (function (_ref) {
+  var shiftKey = _ref.shiftKey,
+      keyboardDragSpeed = _ref.keyboardDragSpeed,
+      zoom = _ref.zoom,
+      key = _ref.key,
+      dragKeys = _ref.dragKeys,
+      scrollDiff = _ref.scrollDiff,
+      canScroll = _ref.canScroll,
+      scrollCallback = _ref.scrollCallback;
+  var posDirection = {
+    x: 0,
+    y: 0
+  };
+  var increase = shiftKey ? keyboardDragSpeed * 4 * zoom : keyboardDragSpeed * zoom;
+
+  if (dragKeys.left.includes(key)) {
+    posDirection.x = scrollDiff.x || -increase;
+    if (!shiftKey && !scrollDiff.x && canScroll) scrollCallback(['left'], keyboardDragSpeed);
+  }
+
+  if (dragKeys.right.includes(key)) {
+    posDirection.x = scrollDiff.x || increase;
+    if (!shiftKey && !scrollDiff.x && canScroll) scrollCallback(['right'], keyboardDragSpeed);
+  }
+
+  if (dragKeys.up.includes(key)) {
+    posDirection.y = scrollDiff.y || -increase;
+    if (!shiftKey && !scrollDiff.y && canScroll) scrollCallback(['top'], keyboardDragSpeed);
+  }
+
+  if (dragKeys.down.includes(key)) {
+    posDirection.y = scrollDiff.y || increase;
+    if (!shiftKey && !scrollDiff.y && canScroll) scrollCallback(['bottom'], keyboardDragSpeed);
+  }
+
+  return posDirection;
+});
+
+// @ts-check
+/**
  * Axis-Aligned Bounding Box Collision Detection.
  * Imagine following Example:
  *
@@ -1349,15 +1407,16 @@ var Drag = /*#__PURE__*/function () {
 
       _this.handleZIndex(true);
 
-      var posDirection = {
-        x: 0,
-        y: 0
-      };
-      var increase = _this.DS.stores.KeyStore.currentValues.includes('shift') ? _this._keyboardDragSpeed * 4 * _this._zoom : _this._keyboardDragSpeed * _this._zoom;
-      if (_this._dragKeys.left.includes(key)) posDirection.x = _this._scrollDiff.x || -increase;
-      if (_this._dragKeys.right.includes(key)) posDirection.x = _this._scrollDiff.x || increase;
-      if (_this._dragKeys.up.includes(key)) posDirection.y = _this._scrollDiff.y || -increase;
-      if (_this._dragKeys.down.includes(key)) posDirection.y = _this._scrollDiff.y || increase;
+      var posDirection = handleKeyboardDragPosDifference({
+        shiftKey: _this.DS.stores.KeyStore.currentValues.includes('shift'),
+        keyboardDragSpeed: _this._keyboardDragSpeed,
+        zoom: _this._zoom,
+        key: key,
+        scrollCallback: _this.DS.Area.scroll,
+        scrollDiff: _this._scrollDiff,
+        canScroll: _this.DS.stores.ScrollStore.canScroll,
+        dragKeys: _this._dragKeys
+      });
 
       _this._elements.forEach(function (element) {
         return moveElement({

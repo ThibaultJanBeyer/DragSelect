@@ -2,7 +2,7 @@
 import '../types'
 import DragSelect from '../DragSelect'
 
-import { vect2, moveElement } from '../methods'
+import { vect2, moveElement, handleKeyboardDragPosDifference } from '../methods'
 
 export default class Drag {
   /**
@@ -88,18 +88,16 @@ export default class Drag {
     this._elements = this.DS.getSelection()
     this.handleZIndex(true)
 
-    const posDirection = { x: 0, y: 0 }
-    const increase = this.DS.stores.KeyStore.currentValues.includes('shift')
-      ? this._keyboardDragSpeed * 4 * this._zoom
-      : this._keyboardDragSpeed * this._zoom
-    if (this._dragKeys.left.includes(key))
-      posDirection.x = this._scrollDiff.x || -increase
-    if (this._dragKeys.right.includes(key))
-      posDirection.x = this._scrollDiff.x || increase
-    if (this._dragKeys.up.includes(key))
-      posDirection.y = this._scrollDiff.y || -increase
-    if (this._dragKeys.down.includes(key))
-      posDirection.y = this._scrollDiff.y || increase
+    const posDirection = handleKeyboardDragPosDifference({
+      shiftKey: this.DS.stores.KeyStore.currentValues.includes('shift'),
+      keyboardDragSpeed: this._keyboardDragSpeed,
+      zoom: this._zoom,
+      key,
+      scrollCallback: this.DS.Area.scroll,
+      scrollDiff: this._scrollDiff,
+      canScroll: this.DS.stores.ScrollStore.canScroll,
+      dragKeys: this._dragKeys,
+    })
 
     this._elements.forEach((element) =>
       moveElement({

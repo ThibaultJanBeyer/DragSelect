@@ -1,7 +1,7 @@
 // @ts-check
 import '../types'
 
-import { setStylePosition, getOverflowEdges } from './'
+import { setStylePosition } from './'
 
 /**
  * pushes element back the overflow amount
