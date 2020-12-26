@@ -15,4 +15,4 @@ deploy:
   keep_history: true
   local_dir: docs
   on:
-    branch: version/2.0.0
+    branch: master
