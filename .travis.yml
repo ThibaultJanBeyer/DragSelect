@@ -14,5 +14,6 @@ deploy:
   github_token: $GH_TOKEN # Set in the settings page of your repository, as a secure variable
   keep_history: true
   local_dir: docs
+  fqdn: DragSelect.com
   on:
     branch: master
