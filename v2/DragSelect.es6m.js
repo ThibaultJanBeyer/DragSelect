@@ -896,6 +896,118 @@ var handleElementOverflow = (function (_ref) {
 
 // @ts-check
 /**
+ * @typedef {function} ScrollCallback
+ * @property {Array.<'top'|'bottom'|'left'|'right'|undefined>} directions
+ * @property {number} multiplier
+ */
+
+/**
+ * @param {Object} p
+ * @param {string} p.key the keyboard key that was pressed
+ * @param {boolean} p.shiftKey
+ * @param {boolean} p.canScroll
+ * @param {number} p.keyboardDragSpeed
+ * @param {number} p.zoom
+ * @param {ScrollCallback} p.scrollCallback
+ * @param {Vect2} p.scrollDiff
+ * @param {DSDragKeys} p.dragKeys
+ * @returns {Vect2}
+ */
+
+var handleKeyboardDragPosDifference = (function (_ref) {
+  var shiftKey = _ref.shiftKey,
+      keyboardDragSpeed = _ref.keyboardDragSpeed,
+      zoom = _ref.zoom,
+      key = _ref.key,
+      dragKeys = _ref.dragKeys,
+      scrollDiff = _ref.scrollDiff,
+      canScroll = _ref.canScroll,
+      scrollCallback = _ref.scrollCallback;
+  var posDirection = {
+    x: 0,
+    y: 0
+  };
+  var increase = shiftKey ? keyboardDragSpeed * 4 * zoom : keyboardDragSpeed * zoom;
+
+  if (dragKeys.left.includes(key)) {
+    posDirection.x = scrollDiff.x || -increase;
+    if (!shiftKey && !scrollDiff.x && canScroll) scrollCallback(['left'], keyboardDragSpeed);
+  }
+
+  if (dragKeys.right.includes(key)) {
+    posDirection.x = scrollDiff.x || increase;
+    if (!shiftKey && !scrollDiff.x && canScroll) scrollCallback(['right'], keyboardDragSpeed);
+  }
+
+  if (dragKeys.up.includes(key)) {
+    posDirection.y = scrollDiff.y || -increase;
+    if (!shiftKey && !scrollDiff.y && canScroll) scrollCallback(['top'], keyboardDragSpeed);
+  }
+
+  if (dragKeys.down.includes(key)) {
+    posDirection.y = scrollDiff.y || increase;
+    if (!shiftKey && !scrollDiff.y && canScroll) scrollCallback(['bottom'], keyboardDragSpeed);
+  }
+
+  return posDirection;
+});
+
+// @ts-check
+/**
+ * Logic when an element is selected
+ * @param {Object} p
+ * @param {DSElement} p.element
+ * @param {boolean} p.force
+ * @param {boolean} p.multiSelectionToggle
+ * @param {Set} p.SelectedSet
+ * @param {string} p.hoverClassName
+ */
+
+var handleSelection = (function (_ref) {
+  var element = _ref.element,
+      force = _ref.force,
+      multiSelectionToggle = _ref.multiSelectionToggle,
+      SelectedSet = _ref.SelectedSet,
+      hoverClassName = _ref.hoverClassName;
+  if (element.classList.contains(hoverClassName) && !force) return;
+  if (!SelectedSet.has(element)) SelectedSet.add(element);else if (multiSelectionToggle) SelectedSet["delete"](element);
+  element.classList.add(hoverClassName);
+});
+
+// @ts-check
+/**
+ * Logic when an element is de-selected
+ * @param {Object} p
+ * @param {DSElement} p.element
+ * @param {boolean} p.force
+ * @param {Set} p.SelectedSet
+ * @param {Set} p.PrevSelectedSet
+ * @param {string} p.hoverClassName
+ */
+
+var handleUnSelection = (function (_ref) {
+  var element = _ref.element,
+      force = _ref.force,
+      SelectedSet = _ref.SelectedSet,
+      PrevSelectedSet = _ref.PrevSelectedSet,
+      hoverClassName = _ref.hoverClassName;
+  if (!element.classList.contains(hoverClassName) && !force) return false;
+  var inSelection = SelectedSet.has(element);
+  var inPrevSelection = PrevSelectedSet.has(element);
+  /**
+   * Special for issue #9.
+   * if a multi-select-key is pressed, ds 'remembers' the last selection and reverts
+   * to that state if the selection is not kept, to mimic the natural OS behaviour
+   * = if item was selected and is not in selection anymore, reselect it
+   * = if item was not selected and is not in selection anymore, unselect it
+   */
+
+  if (inSelection && !inPrevSelection) SelectedSet["delete"](element);else if (!inSelection && inPrevSelection) SelectedSet.add(element);
+  element.classList.remove(hoverClassName);
+});
+
+// @ts-check
+/**
  * Axis-Aligned Bounding Box Collision Detection.
  * Imagine following Example:
  *
@@ -1349,15 +1461,16 @@ var Drag = /*#__PURE__*/function () {
 
       _this.handleZIndex(true);
 
-      var posDirection = {
-        x: 0,
-        y: 0
-      };
-      var increase = _this.DS.stores.KeyStore.currentValues.includes('shift') ? _this._keyboardDragSpeed * 4 * _this._zoom : _this._keyboardDragSpeed * _this._zoom;
-      if (_this._dragKeys.left.includes(key)) posDirection.x = _this._scrollDiff.x || -increase;
-      if (_this._dragKeys.right.includes(key)) posDirection.x = _this._scrollDiff.x || increase;
-      if (_this._dragKeys.up.includes(key)) posDirection.y = _this._scrollDiff.y || -increase;
-      if (_this._dragKeys.down.includes(key)) posDirection.y = _this._scrollDiff.y || increase;
+      var posDirection = handleKeyboardDragPosDifference({
+        shiftKey: _this.DS.stores.KeyStore.currentValues.includes('shift'),
+        keyboardDragSpeed: _this._keyboardDragSpeed,
+        zoom: _this._zoom,
+        key: key,
+        scrollCallback: _this.DS.Area.scroll,
+        scrollDiff: _this._scrollDiff,
+        canScroll: _this.DS.stores.ScrollStore.canScroll,
+        dragKeys: _this._dragKeys
+      });
 
       _this._elements.forEach(function (element) {
         return moveElement({
@@ -1983,7 +2096,7 @@ var Selection = /*#__PURE__*/function () {
 
     _classCallCheck(this, Selection);
 
-    _defineProperty(this, "_prevSelected", void 0);
+    _defineProperty(this, "_prevSelectedSet", void 0);
 
     _defineProperty(this, "_hoverClassName", void 0);
 
@@ -1996,17 +2109,17 @@ var Selection = /*#__PURE__*/function () {
 
       _this._storePrevious(event);
 
-      _this._checkIfInsideSelection(true, event);
+      _this._handleInsideSelection(true, event);
     });
 
     _defineProperty(this, "update", function (_ref3) {
       var isDragging = _ref3.isDragging;
       if (isDragging) return;
 
-      _this._checkIfInsideSelection();
+      _this._handleInsideSelection();
     });
 
-    _defineProperty(this, "_checkIfInsideSelection", function (force, event) {
+    _defineProperty(this, "_handleInsideSelection", function (force, event) {
       var _this$DS = _this.DS,
           SelectableSet = _this$DS.SelectableSet,
           SelectorArea = _this$DS.SelectorArea,
@@ -2024,13 +2137,26 @@ var Selection = /*#__PURE__*/function () {
         if (isCollision(elPosCombo[i][1], Selector.rect)) select.push(elPosCombo[i][0]);else unselect.push(elPosCombo[i][0]);
       }
 
+      var multiSelectionToggle = _this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) && _this._multiSelectToggling;
+
       select.forEach(function (element) {
-        return _this._handleSelection(element, force, event);
+        return handleSelection({
+          element: element,
+          force: force,
+          multiSelectionToggle: multiSelectionToggle,
+          SelectedSet: _this.DS.SelectedSet,
+          hoverClassName: _this._hoverClassName
+        });
       });
       unselect.forEach(function (element) {
-        return _this._handleUnselection(element, force);
+        return handleUnSelection({
+          element: element,
+          force: force,
+          SelectedSet: _this.DS.SelectedSet,
+          hoverClassName: _this._hoverClassName,
+          PrevSelectedSet: _this._prevSelectedSet
+        });
       });
-      return select.length > -1;
     });
 
     this._hoverClassName = hoverClassName;
@@ -2052,55 +2178,10 @@ var Selection = /*#__PURE__*/function () {
       var _this$DS2 = this.DS,
           KeyStore = _this$DS2.stores.KeyStore,
           SelectedSet = _this$DS2.SelectedSet;
-      if (KeyStore.isMultiSelectKeyPressed(event)) this._prevSelected = new Set(SelectedSet);else this._prevSelected = new Set();
+      if (KeyStore.isMultiSelectKeyPressed(event)) this._prevSelectedSet = new Set(SelectedSet);else this._prevSelectedSet = new Set();
     }
     /** @param {{event:DSEvent,isDragging:boolean}} event */
 
-  }, {
-    key: "_handleSelection",
-
-    /**
-     * Logic when an element is selected
-     * @param {DSElement} element
-     * @param {boolean} force
-     * @param {DSEvent} [event]
-     * @private
-     */
-    value: function _handleSelection(element, force, event) {
-      if (element.classList.contains(this._hoverClassName) && !force) return false;
-      var _this$DS3 = this.DS,
-          SelectedSet = _this$DS3.SelectedSet,
-          KeyStore = _this$DS3.stores.KeyStore;
-      if (!SelectedSet.has(element)) SelectedSet.add(element);else if (KeyStore.isMultiSelectKeyPressed(event) && this._multiSelectToggling) SelectedSet["delete"](element);
-      element.classList.add(this._hoverClassName);
-    }
-    /**
-     * Logic when an element is de-selected
-     * @param {DSElement} element
-     * @param {boolean} [force]
-     * @private
-     */
-
-  }, {
-    key: "_handleUnselection",
-    value: function _handleUnselection(element, force) {
-      if (element.classList.contains(this._hoverClassName) && !force) return false;
-      var SelectedSet = this.DS.SelectedSet;
-      var inSelection = SelectedSet.has(element);
-
-      var inPrevSelection = this._prevSelected.has(element);
-      /**
-       * Special for issue #9.
-       * if a multi-select-key is pressed, ds 'remembers' the last selection and reverts
-       * to that state if the selection is not kept, to mimic the natural OS behaviour
-       * = if item was selected and is not in selection anymore, reselect it
-       * = if item was not selected and is not in selection anymore, unselect it
-       */
-
-
-      if (inSelection && !inPrevSelection) SelectedSet["delete"](element);else if (!inSelection && inPrevSelection) SelectedSet.add(element);
-      element.classList.remove(this._hoverClassName);
-    }
   }]);
 
   return Selection;
