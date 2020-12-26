@@ -2,14 +2,14 @@
 import '../types'
 import DragSelect from '../DragSelect'
 
-import { isCollision } from '../methods'
+import { isCollision, handleSelection, handleUnSelection } from '../methods'
 
 export default class Selection {
   /**
    * @type {Set}
    * @private
    * */
-  _prevSelected
+  _prevSelectedSet
   /**
    * @type {string}
    * @private
@@ -47,30 +47,29 @@ export default class Selection {
     } = this.DS
 
     if (KeyStore.isMultiSelectKeyPressed(event))
-      this._prevSelected = new Set(SelectedSet)
-    else this._prevSelected = new Set()
+      this._prevSelectedSet = new Set(SelectedSet)
+    else this._prevSelectedSet = new Set()
   }
 
   /** @param {{event:DSEvent,isDragging:boolean}} event */
   start = ({ event, isDragging }) => {
     if (isDragging) return
     this._storePrevious(event)
-    this._checkIfInsideSelection(true, event)
+    this._handleInsideSelection(true, event)
   }
 
   update = ({ isDragging }) => {
     if (isDragging) return
-    this._checkIfInsideSelection()
+    this._handleInsideSelection()
   }
 
   /**
    * Checks if any selectable element is inside selection.
    * @param {boolean} [force]
    * @param {DSEvent} [event]
-   * @return {boolean}
    * @private
    */
-  _checkIfInsideSelection = (force, event) => {
+  _handleInsideSelection = (force, event) => {
     const { SelectableSet, SelectorArea, Selector } = this.DS
 
     /** @type {any} */
@@ -88,61 +87,27 @@ export default class Selection {
       else unselect.push(elPosCombo[i][0])
     }
 
-    select.forEach((element) => this._handleSelection(element, force, event))
-    unselect.forEach((element) => this._handleUnselection(element, force))
-
-    return select.length > -1
-  }
-
-  /**
-   * Logic when an element is selected
-   * @param {DSElement} element
-   * @param {boolean} force
-   * @param {DSEvent} [event]
-   * @private
-   */
-  _handleSelection(element, force, event) {
-    if (element.classList.contains(this._hoverClassName) && !force) return false
-
-    const {
-      SelectedSet,
-      stores: { KeyStore },
-    } = this.DS
-
-    if (!SelectedSet.has(element)) SelectedSet.add(element)
-    else if (
-      KeyStore.isMultiSelectKeyPressed(event) &&
+    const multiSelectionToggle =
+      this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) &&
       this._multiSelectToggling
+
+    select.forEach((element) =>
+      handleSelection({
+        element,
+        force,
+        multiSelectionToggle,
+        SelectedSet: this.DS.SelectedSet,
+        hoverClassName: this._hoverClassName,
+      })
     )
-      SelectedSet.delete(element)
-
-    element.classList.add(this._hoverClassName)
-  }
-
-  /**
-   * Logic when an element is de-selected
-   * @param {DSElement} element
-   * @param {boolean} [force]
-   * @private
-   */
-  _handleUnselection(element, force) {
-    if (element.classList.contains(this._hoverClassName) && !force) return false
-
-    const { SelectedSet } = this.DS
-
-    const inSelection = SelectedSet.has(element)
-    const inPrevSelection = this._prevSelected.has(element)
-
-    /**
-     * Special for issue #9.
-     * if a multi-select-key is pressed, ds 'remembers' the last selection and reverts
-     * to that state if the selection is not kept, to mimic the natural OS behaviour
-     * = if item was selected and is not in selection anymore, reselect it
-     * = if item was not selected and is not in selection anymore, unselect it
-     */
-    if (inSelection && !inPrevSelection) SelectedSet.delete(element)
-    else if (!inSelection && inPrevSelection) SelectedSet.add(element)
-
-    element.classList.remove(this._hoverClassName)
+    unselect.forEach((element) =>
+      handleUnSelection({
+        element,
+        force,
+        SelectedSet: this.DS.SelectedSet,
+        hoverClassName: this._hoverClassName,
+        PrevSelectedSet: this._prevSelectedSet,
+      })
+    )
   }
 }
