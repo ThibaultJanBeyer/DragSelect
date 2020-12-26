@@ -1,10 +1,11 @@
 # 2.0.0
 
-## Added Draggability! (solves #24)
+## Added Draggability! (solves #24) (Breaking Change)
 
 - You can now also drag and drop selectable elements
 - Set `immediateDrag` to `false` if you want draggability only after a selection was made
 - You can turn off that functionality by setting `draggability` to `false`
+- You can drag elements also solely using your keyboard. Which makes it accessible. You can set the keys that can be used for dragging via `dragKeys`.
 
 ## Improved Selector (Potential Breaking Change)
 
@@ -89,6 +90,11 @@ However, that means that the key names have changes. Following keys should be re
 - Instead of `"shiftKey"` use `"Shift"` now
 - Instead of `"metaKey"` use `"Meta"` now
 
+## Dropped IE Support
+
+- Internet explorer is no longer supported. Following other big libraries. Dropping IE Support drastically reduces bundle size and improves maintainability of the project. Also following Microsoft itself, which [stopped support for IE all together](https://www.independent.co.uk/life-style/gadgets-and-tech/news/microsoft-internet-explorer-out-use-11-edge-a9676176.html). If you need IE support, please use a build tool that gives you IE Support with necessary polyfills for now and write support request stating your use-case. You can also consider using any versions prior 2.
+We do support Edge and all other major browsers.
+
 ## Impressive performance improvements
 
 This version is an (almost) complete rewrite of DragSelect. Of course the main reason is to improve the ease to add new features and maintain existing ones but that also gave the opportunity to add some performance improvements.
@@ -101,7 +107,7 @@ We compared the accumulated average execution times before and after the changes
 - 15.86% faster by caching element positions (each update) & using more performant css class manipulations
 - 28.36% faster by caching by bundling reflows and repaints
 ---
-59,67% performance increase
+= 59,67% performance increase
 
 # 1.15.0
 
