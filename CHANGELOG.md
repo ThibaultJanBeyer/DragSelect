@@ -3,7 +3,7 @@
 ## Added Draggability! (solves #24) (Breaking Change)
 
 - You can now also drag and drop selectable elements
-- Set `immediateDrag` to `false` if you want draggability only after a selection was made
+- Set `immediateDrag` to `false` if you want drag-ability only after a selection was made
 - You can turn off that functionality by setting `draggability` to `false`
 - You can drag elements also solely using your keyboard. Which makes it accessible. You can set the keys that can be used for dragging via `dragKeys`.
 
@@ -54,13 +54,13 @@ const ds = new DragSelect({
 
 ### Now
 ```javascript
-const ds = new DragSelect()
+const ds = new DragSelect({})
 ds.subscribe('callback', ({ items, item, event }) => console.log("my callback", items, event))
 ds.subscribe('dragmove', ({ items, item, event }) => console.log("my callback", event))
-ds.subscribe('dragstartbegin', ({ items, item, event }) => console.log("my callback", event))
+// dragstartbegin was removed use dragstart instead
 ds.subscribe('dragstart', ({ items, item, event }) => console.log("my callback", event))
 ds.subscribe('elementselect', ({ items, item, event }) => console.log("my callback", item))
-ds.subscribe('callback', ({ items, item, event }) => console.log("my callback", item))
+ds.subscribe('elementunselect', ({ items, item, event }) => console.log("my callback", item))
 ```
 
 ## Removed private and public methods (Breaking Change)
@@ -100,7 +100,7 @@ We do support Edge and all other major browsers.
 This version is an (almost) complete rewrite of DragSelect. Of course the main reason is to improve the ease to add new features and maintain existing ones but that also gave the opportunity to add some performance improvements.
 
 The setup used to measure this is the performance test which runs DragSelect over 25.000 selectable Nodes.
-We compared the accumulated average execution times before and after the changes. Before the changes that was an average of 3s/run.
+We compared the accumulated average execution times before and after the changes. Before the changes that was an average of 3s/run. Now we lows of 1.5s.
 
 - 4.09% faster by caching calculations
 - 11.36% faster by using an interaction pub/sub mechanism
