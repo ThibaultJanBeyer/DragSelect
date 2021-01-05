@@ -1,3 +1,114 @@
+# 2.0.0
+
+## Added Draggability! (solves #24) (Breaking Change)
+
+- You can now also drag and drop selectable elements
+- Set `immediateDrag` to `false` if you want drag-ability only after a selection was made
+- You can turn off that functionality by setting `draggability` to `false`
+- You can drag elements also solely using your keyboard. Which makes it accessible. You can set the keys that can be used for dragging via `dragKeys`.
+
+## Improved Selector (Potential Breaking Change)
+
+The selector element is now not rendered inside of the area instead we generate a div overlaying the actual area and render the element inside that div. Which has a lot of benefits:
+
+- selector is not inside of the area itself (solves #63)
+- selector is now in a fresh selection area overlay (solves #26)
+- the overlay adapts size to always match the real area
+- most css modifications will work as the area is not affected
+- the overlay has no pointer-events and acts as a clip box
+- selection can be drawn outside of the area which makes auto-scrolling and selection easier
+- you can still target that area overlay if you want use the class `ds-selector-area`
+- Area can now be scrolled in each direction simultaneously
+- You can now set the tolerance for the scroll via `overflowTolerance` property
+
+## Improved inside area checker (Potential Breaking Change)
+
+There were various bugs before 2.0 which would bypass the area restrictions and user would still be able to select elements outside of the area.
+We now check whether the elements are inside of the area to know whether they are selectable or not.
+
+- Fixes bug where elements outside of area could still be selected with keyboard
+- Fixes bug where elements outside of area could still be selected with negative scroll
+
+## Improved callbacks (Breaking Change)
+
+Changed the callbacks to follow a pub/sub pattern. They're not events you can subscribe to and they will pass back an object always following the same pattern holding extra information. Currently DragSelect still supports setting callbacks in the constructor method to make it easier for you to transition. However, in future, only subscribers will work.
+
+- Adds 3 public methods: `subscribe` (listen to an event), `unsubscribe` (remove listener) and `publish` (publish an event yourself!)
+- Allows adding/removing events whenever and wherever you want
+- Makes it more flexible to add new events
+- Follows the pub/sub pattern from dom events (i.e. `addEventListener` is `subscribe`)
+
+Here is an example on what you'll have to change:
+
+### Before
+```javascript
+const ds = new DragSelect({
+  callback: (items, event) => console.log("my callback", items, event),
+  onDragMove: (event) => console.log("my callback", event),
+  onDragStartBegin: (event) => console.log("my callback", event),
+  onDragStart: (event) => console.log("my callback", event),
+  onElementSelect: (item) => console.log("my callback", item),
+  onElementUnselect:  (item) => console.log("my callback", item),
+})
+```
+
+### Now
+```javascript
+const ds = new DragSelect({})
+ds.subscribe('callback', ({ items, item, event }) => console.log("my callback", items, event))
+ds.subscribe('dragmove', ({ items, item, event }) => console.log("my callback", event))
+// dragstartbegin was removed use dragstart instead
+ds.subscribe('dragstart', ({ items, item, event }) => console.log("my callback", event))
+ds.subscribe('elementselect', ({ items, item, event }) => console.log("my callback", item))
+ds.subscribe('elementunselect', ({ items, item, event }) => console.log("my callback", item))
+```
+
+## Removed private and public methods (Breaking Change)
+
+Based on the changes, some methods did not make sense anymore. So we cleaned them up. Generally we want to move away from providing utility methods (like i.e. cursor position retrieval) instead we want to focus on the tool itself only. In case you still want any of the public method or a new one, feel free to open an issue.
+
+Public methods that were removed:
+
+- `.break` was removed
+- `.getCursorPos`
+- `.getScroll`
+- `.getAreaRect`
+- `.toArray`
+- `.isCursorNearEdge`
+- `.toggle` (use `.toggleSelection` instead)
+- `.select` (use `.setSelection` or `.addSelection` instead)
+- `.getCursorPositionDifference` (is deprecated, calculate yourself instead. i.e. `.getCurrentCursorPosition().x - .getInitialCursorPosition().x`)
+
+## Fixing Multi-Select-Keys issue & adding more available keys (Breaking Change)
+
+- Fixes the issue with multi-selection via Keyboard not working on Firefox.
+- You can now use **any** key to trigger multi-selection mode that is available under `event.key` on Keyboard Events ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key))
+
+However, that means that the key names have changes. Following keys should be replaced:
+
+- Instead of `"ctrlKey"` use `"Control"` now
+- Instead of `"shiftKey"` use `"Shift"` now
+- Instead of `"metaKey"` use `"Meta"` now
+
+## Dropped IE Support
+
+- Internet explorer is no longer supported. Following other big libraries. Dropping IE Support drastically reduces bundle size and improves maintainability of the project. Also following Microsoft itself, which [stopped support for IE all together](https://www.independent.co.uk/life-style/gadgets-and-tech/news/microsoft-internet-explorer-out-use-11-edge-a9676176.html). If you need IE support, please use a build tool that gives you IE Support with necessary polyfills for now and write support request stating your use-case. You can also consider using any versions prior 2.
+We do support Edge and all other major browsers.
+
+## Impressive performance improvements
+
+This version is an (almost) complete rewrite of DragSelect. Of course the main reason is to improve the ease to add new features and maintain existing ones but that also gave the opportunity to add some performance improvements.
+
+The setup used to measure this is the performance test which runs DragSelect over 25.000 selectable Nodes.
+We compared the accumulated average execution times before and after the changes. Before the changes that was an average of 3s/run. Now we lows of 1.5s.
+
+- 4.09% faster by caching calculations
+- 11.36% faster by using an interaction pub/sub mechanism
+- 15.86% faster by caching element positions (each update) & using more performant css class manipulations
+- 28.36% faster by caching by bundling reflows and repaints
+---
+= 59,67% performance increase
+
 # 1.15.1
 
 - This is a preparation to some code-refactoring and bigger changes aimed for v2

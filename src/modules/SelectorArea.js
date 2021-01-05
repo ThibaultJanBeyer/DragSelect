@@ -1,0 +1,154 @@
+// @ts-check
+import '../types.js'
+import DragSelect from '../DragSelect'
+import {
+  createSelectorAreaElement,
+  isCollision,
+  getOverflowEdges,
+  vect2,
+} from '../methods'
+
+export default class SelectorArea {
+  /**
+   * @type {number}
+   * @private
+   * */
+  _autoScrollSpeed
+  /**
+   * @type {*}
+   * @private
+   * */
+  _scrollInterval
+  /**
+   * @type {DSBoundingRect}
+   * @private
+   */
+  _rect
+  /**
+   * @type {DSEdges}
+   * @private
+   */
+  currentEdges = []
+  /**
+   * @type {Vect2}
+   * @private
+   */
+  _overflowTolerance
+
+  /**
+   * @class SelectorArea
+   * @constructor SelectorArea
+   * @param {{ DS:DragSelect, selectorAreaClass:string, autoScrollSpeed:number, overflowTolerance:Vect2}} obj
+   * @ignore
+   */
+  constructor({ DS, selectorAreaClass, autoScrollSpeed, overflowTolerance }) {
+    this._autoScrollSpeed = autoScrollSpeed
+    this._overflowTolerance = overflowTolerance
+    this.DS = DS
+
+    this.HTMLNode = createSelectorAreaElement(selectorAreaClass)
+    this.HTMLNode.appendChild(this.DS.Selector.HTMLNode)
+    const docEl = document.body ? 'body' : 'documentElement'
+    document[docEl].appendChild(this.HTMLNode)
+
+    this.DS.subscribe('Area:modified', this.updatePos)
+    this.DS.subscribe('Interaction:start', this.startAutoScroll)
+    this.DS.subscribe('Interaction:end', () => {
+      this.updatePos()
+      this.stopAutoScroll()
+    })
+  }
+
+  /** Updates the selectorAreas positions to match the areas */
+  updatePos = () => {
+    this._rect = null
+    const rect = this.DS.Area.rect
+    const border = this.DS.Area.computedBorder
+    const { style } = this.HTMLNode
+    const top = `${rect.top + border.top}px`
+    const left = `${rect.left + border.left}px`
+    const width = `${rect.width}px`
+    const height = `${rect.height}px`
+    if (style.top !== top) style.top = top
+    if (style.left !== left) style.left = left
+    if (style.width !== width) style.width = width
+    if (style.height !== height) style.height = height
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////
+  // AutoScroll
+
+  startAutoScroll = () => {
+    this.currentEdges = []
+    this._scrollInterval = setInterval(() => this.handleAutoScroll(), 16)
+  }
+
+  /** Creates an interval that auto-scrolls while the cursor is near the edge */
+  handleAutoScroll = () => {
+    const {
+      stores: { PointerStore },
+      Area,
+    } = this.DS
+
+    this.currentEdges = getOverflowEdges({
+      elementRect: vect2.vect2rect(PointerStore.currentVal),
+      containerRect: this.rect,
+      tolerance: this._overflowTolerance,
+    })
+
+    if (this.currentEdges.length)
+      Area.scroll(this.currentEdges, this._autoScrollSpeed)
+  }
+
+  stopAutoScroll = () => {
+    this.currentEdges = []
+    clearInterval(this._scrollInterval)
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////
+  // Booleans
+
+  /**
+   * Checks if the element is either inside the Selector Area
+   * (as a reachable child or touching the area)
+   * @param {DSElement} element
+   * @param {DSBoundingRect} [elementRect] - slight performance improvements
+   * @returns {boolean}
+   */
+  isInside = (element, elementRect) => {
+    if (
+      this.DS.Area.HTMLNode.contains(element) &&
+      this.DS.stores.ScrollStore.canScroll
+    )
+      return true
+    return isCollision(
+      this.rect,
+      elementRect || element.getBoundingClientRect()
+    )
+  }
+
+  /**
+   * checks if the click was triggered on the area.
+   * @returns {boolean}
+   */
+  isClicked() {
+    const {
+      stores: { PointerStore },
+    } = this.DS
+
+    return isCollision(
+      {
+        left: PointerStore.initialVal.x,
+        top: PointerStore.initialVal.y,
+        right: PointerStore.initialVal.x,
+        bottom: PointerStore.initialVal.y,
+      },
+      this.rect
+    )
+  }
+
+  get rect() {
+    if (this._rect) return this._rect
+    return (this._rect = this.HTMLNode.getBoundingClientRect())
+  }
+}

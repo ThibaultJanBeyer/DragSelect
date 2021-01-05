@@ -56,16 +56,16 @@
   <button type="button" id="six" class="item six">6</button>
 </div>
 
-<script src="../../docs/DragSelect.js"></script>
+<script src="../../dist/DragSelect.js"></script>
 <script>
     window.callbackIds = [];
     window.selectables = document.querySelectorAll('.item');
     window.itemIds = [...selectables].map(item => item.id);
 
-    new DragSelect({
+    const ds = new DragSelect({
         selectables,
         area: document.querySelector('.area'),
         autoScrollSpeed: 100,
-        callback: (n, e) => window.callbackIds = n.map(n => n.id)
     });
+    ds.subscribe('callback', ({ items }) => window.callbackIds = items.map(n => n.id), window.itemIds)
 </script>

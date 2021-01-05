@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="basics.css">
 <div id="container"></div>
-<script src="../../docs/DragSelect.js"></script>
+<script src="../../dist/DragSelect.js"></script>
 <script>
     window.selected = [];
 
@@ -12,9 +12,10 @@
         document.querySelector('#container').appendChild(child);
     }
 
-    new DragSelect({
+    const ds = new DragSelect({
         selectables: document.querySelectorAll('.generated-item'),
-        callback: sel => { selected = sel.map(sel => sel.id) }
+        draggability: false,
     });
+    ds.subscribe('callback', ({items}) => { console.log(items); window.selected = items.map(item => item.id) })
 
 </script>

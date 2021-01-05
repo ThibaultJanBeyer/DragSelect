@@ -1,0 +1,40 @@
+<body>
+<link rel="stylesheet" href="basics.css">
+<script src="../../dist/DragSelect.js"></script>
+<p>Draggable</p>
+<button id="item-1" class="item one">1</button>
+<button id="item-2" class="item two">2</button>
+<button id="item-3" class="item three">3</button>
+<button id="item-4" class="item four">4</button>
+<script>
+    window.selected = [];
+    window.dragged = [];
+    window.dragStart = [];
+    window.dragMove = [];
+
+    window.getItemVect = (id) => {
+        const rect = document.querySelector(`#item-${id}`).getBoundingClientRect()
+        return { y: rect.top + (rect.height / 2), x: rect.left + (rect.width / 2) }
+    }
+
+    const ds = new DragSelect({
+        selectables: document.querySelectorAll('.item'),
+        keyboardDragSpeed: 100
+    });
+    ds.subscribe('callback', ({ isDragging, items }) => {
+        window.dragged = []
+        window.selected = []
+
+        console.log('CB', isDragging, items)
+        window[isDragging ? 'dragged' : 'selected'] = items.map(item => item.id)
+    })
+    ds.subscribe('dragstart', ({ isDragging, items }) => {
+        console.log('dragstart', isDragging, items)
+        if(isDragging) window.dragStart.push(items.map(item => item.id))
+    })
+    ds.subscribe('dragmove', ({ isDragging, items }) => {
+        console.log('dragmove', isDragging, items)
+        if(isDragging) window.dragMove.push(items.map(item => item.id))
+    })
+</script>
+</body>

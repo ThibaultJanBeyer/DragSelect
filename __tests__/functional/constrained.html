@@ -39,7 +39,7 @@
 .area {
     background: grey;
     height: 150px;
-    left: 150px;
+    left: 140px;
     position: absolute;
     top: 110px;
     width: 150px;
@@ -54,13 +54,13 @@
 <button type="button" id="five" class="item five">5</button>
 <button type="button" id="six" class="item six">6</button>
 
-<script src="../../docs/DragSelect.js"></script>
+<script src="../../dist/DragSelect.js"></script>
 <script>
     window.callbackIds = [];
 
-    new DragSelect({
+    const ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
         area: document.querySelector('.area'),
-        callback: (n, e) => window.callbackIds = n.map(n => n.id)
     });
+    ds.subscribe('callback', ({ items }) => window.callbackIds = items.map(n => n.id), window.itemIds)
 </script>

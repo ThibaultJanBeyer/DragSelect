@@ -11,10 +11,9 @@ Thanks in advance!
 
 The project is kept as simple as possible, so it is very easy to set up.  
 Actually, you don’t need to do anything. You will find all work files under `src/`.  
-Regarding DragSelect, you should work on file `src/DragSelect.js`.
-Don’t touch the files in `docs/`. They are automatically generated.
+I.e. `src/DragSelect.js`. Don’t touch the files in `docs/` nor in `dist/`. They are automatically generated.
 
-For your ease of mind, you can run:
+Run:
 
 ```
 npm start
@@ -24,7 +23,7 @@ it will install dependencies & run the dev mode (& on osx open `tests/quicktest.
 
 *Note: opening quicktest will fail on other operating systems than Mac because I’m using the mac specific `open` command to open the file. However, that is not an issue and you can go on opening the file manually.*
 
-Now whenever you make a change to the `DragSelect.js` in `src/` it will be transpiled and updated in `docs/` automatically. This is important since all test files use the `docs/` version.
+Now whenever you make a change to the `DragSelect.js` in `src/` it will be transpiled and updated in `docs/` and `dist/` automatically. This is important since clients use those files.
 
 
 ## Testing

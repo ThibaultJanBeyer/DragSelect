@@ -30,8 +30,8 @@
       border: 5px solid red;
       position: absolute;
       overflow: auto;
-      top: 15%;
-      left: 15%;
+      top: 2.5%;
+      left: 5%;
     }
 
     #container.oi {
@@ -152,23 +152,23 @@
 </head>
 <body>
   <div id="container">
-  <button type="button" class="item one">1</button>
-  <button type="button" class="item two">2</button>
-  <button type="button" class="item three">3</button>
-  <button type="button" class="item four">4</button>
-  <button type="button" class="item five">5</button>
-  <button type="button" class="item six">6</button>
+  <button id="1" type="button" class="item one">1</button>
+  <button id="2" type="button" class="item two">2</button>
+  <button id="3" type="button" class="item three">3</button>
+  <button id="4" type="button" class="item four">4</button>
+  <button id="5" type="button" class="item five">5</button>
+  <button id="6" type="button" class="item six">6</button>
   </div>
 
-  <script src="../docs/DragSelect.js"></script>
+  <script src="../dist/DragSelect.js"></script>
   <!-- <script type="module">
-    import DragSelect from "../docs/ds.es6m.min.js"; -->
+    import DragSelect from "../dist/ds.es6m.min.js"; -->
   <script>
-  var ds = new DragSelect({
-    selectables: document.getElementsByClassName('item'),
-    area: document.getElementById('container'),
-    callback: function(e) { console.log("selected", e); }
-  });
+    const ds = new DragSelect({
+      selectables: document.getElementsByClassName('item'),
+      area: document.getElementById('container'),
+    });
+    ds.subscribe('callback', ({ items }) => console.log("items", items))
   </script>
 </body>
 </html>

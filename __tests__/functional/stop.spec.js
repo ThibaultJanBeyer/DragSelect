@@ -1,119 +1,119 @@
-const baseUrl = `file://${process.cwd()}/__tests__/functional`;
+const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
-describe('Scroll', () => {
+describe('Stop', () => {
   it('should stop the functionality', async () => {
-    await page.goto(`${baseUrl}/stop.html`);
+    await page.goto(`${baseUrl}/stop.html`)
     await page.evaluate(() => {
       window.ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
-        callback: function (elements, e) {
-          console.log('highlevel callback fired');
-          window.callback = elements;
-        }
-      });
-    });
+      })
+      window.ds.subscribe('callback', ({ items }) => {
+        console.log('highlevel callback fired')
+        window.callback = items
+      })
+    })
 
-    const mouse = page.mouse;
+    const mouse = page.mouse
 
-    await mouse.move(10, 10);
-    await mouse.down();
-    await mouse.move(50, 50);
-    await mouse.up();
+    await mouse.move(10, 10)
+    await mouse.down()
+    await mouse.move(50, 50)
+    await mouse.up()
 
-    var callback = await page.evaluate(() => callback);
-    expect(callback.length).toBe(1);
-    var callback = await page.evaluate(() => (callback = []));
+    var callback = await page.evaluate(() => callback)
+    expect(callback.length).toBe(1)
+    var callback = await page.evaluate(() => (callback = []))
 
-    await page.evaluate(() => ds.stop());
-    await mouse.move(10, 10);
-    await mouse.down();
-    await mouse.move(50, 50);
-    await mouse.up();
+    await page.evaluate(() => ds.stop())
+    await mouse.move(10, 10)
+    await mouse.down()
+    await mouse.move(50, 50)
+    await mouse.up()
 
-    var callback = await page.evaluate(() => callback);
-    expect(callback.length).toBe(0);
-  });
+    var callback = await page.evaluate(() => callback)
+    expect(callback.length).toBe(0)
+  })
 
   it('should stop the functionality in a callback', async () => {
-    await page.goto(`${baseUrl}/stop.html`);
+    await page.goto(`${baseUrl}/stop.html`)
     await page.evaluate(() => {
       window.ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
-        callback: function (elements, e) {
-          console.log('highlevel callback fired');
-          window.callback = elements;
-          this.stop();
-        }
-      });
-    });
+      })
+      window.ds.subscribe('callback', ({ items }) => {
+        console.log('highlevel callback fired', items)
+        window.callback = items
+        ds.stop()
+      })
+    })
 
-    const mouse = page.mouse;
+    const mouse = page.mouse
 
-    await mouse.move(10, 10);
-    await mouse.down();
-    await mouse.move(50, 50);
-    await mouse.up();
+    await mouse.move(10, 10)
+    await mouse.down()
+    await mouse.move(50, 50)
+    await mouse.up()
 
-    var callback = await page.evaluate(() => callback);
-    expect(callback.length).toBe(1);
-    var callback = await page.evaluate(() => (callback = []));
+    var callback = await page.evaluate(() => callback)
+    expect(callback.length).toBe(1)
+    var callback = await page.evaluate(() => (callback = []))
 
-    await mouse.move(10, 10);
-    await mouse.down();
-    await mouse.move(50, 50);
-    await mouse.up();
+    await mouse.move(10, 10)
+    await mouse.down()
+    await mouse.move(50, 50)
+    await mouse.up()
 
-    var callback = await page.evaluate(() => callback);
-    expect(callback.length).toBe(0);
-    await page.evaluate(() => ds.start());
+    var callback = await page.evaluate(() => callback)
+    expect(callback.length).toBe(0)
+    await page.evaluate(() => ds.start())
 
-    await mouse.move(10, 10);
-    await mouse.down();
-    await mouse.move(50, 50);
-    await mouse.up();
+    await mouse.move(10, 10)
+    await mouse.down()
+    await mouse.move(50, 50)
+    await mouse.up()
 
-    var callback = await page.evaluate(() => callback);
-    expect(callback.length).toBe(1);
-  });
+    var callback = await page.evaluate(() => callback)
+    expect(callback.length).toBe(1)
+  })
 
   it('should restart the functionality after a stop', async () => {
-    await page.goto(`${baseUrl}/stop.html`);
+    await page.goto(`${baseUrl}/stop.html`)
     await page.evaluate(() => {
       window.ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
-        callback: elements => (window.callback = elements)
-      });
-    });
+      })
+      window.ds.subscribe('callback', ({ items }) => (window.callback = items))
+    })
 
-    const mouse = page.mouse;
+    const mouse = page.mouse
 
-    await mouse.move(10, 10);
-    await mouse.down();
-    await mouse.move(50, 50);
-    await mouse.up();
+    await mouse.move(10, 10)
+    await mouse.down()
+    await mouse.move(50, 50)
+    await mouse.up()
 
-    var callback = await page.evaluate(() => callback);
-    expect(callback.length).toBe(1);
+    var callback = await page.evaluate(() => callback)
+    expect(callback.length).toBe(1)
     await page.evaluate(() => {
-      callback = [];
-      ds.stop();
-    });
+      callback = []
+      ds.stop()
+    })
 
-    await mouse.move(10, 10);
-    await mouse.down();
-    await mouse.move(50, 50);
-    await mouse.up();
+    await mouse.move(10, 10)
+    await mouse.down()
+    await mouse.move(50, 50)
+    await mouse.up()
 
-    var callback = await page.evaluate(() => callback);
-    expect(callback.length).toBe(0);
-    await page.evaluate(() => ds.start());
+    var callback = await page.evaluate(() => callback)
+    expect(callback.length).toBe(0)
+    await page.evaluate(() => ds.start())
 
-    await mouse.move(10, 10);
-    await mouse.down();
-    await mouse.move(50, 50);
-    await mouse.up();
+    await mouse.move(10, 10)
+    await mouse.down()
+    await mouse.move(50, 50)
+    await mouse.up()
 
-    var callback = await page.evaluate(() => callback);
-    expect(callback.length).toBe(1);
-  });
-});
+    var callback = await page.evaluate(() => callback)
+    expect(callback.length).toBe(1)
+  })
+})

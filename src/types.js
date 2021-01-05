@@ -1,38 +1,69 @@
 /**
-* The Settings to be passed to the Class
-* @typedef {Object} Settings
-* @property {HTMLElement | SVGElement | Document} [area=document] area in which you can drag. If not provided it will be the whole document
-* @property {number} [autoScrollSpeed=1] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. Default = 1
-* @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom. Default = 1
-* @property {DSCallback} [callback=() => {}] a callback function that gets fired when the element is dropped. This callback gets a property which is an array that holds all selected nodes. The second property passed is the event object.
-* @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
-* @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
-* @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them. Default = false
-* @property {DSGenericInteractionCallbackEvent} [onDragMove=()=>{}] It is fired when the user drags. This callback gets the event object. Executed before DragSelect function code ran, after getting the current mouse position.
-* @property {DSGenericInteractionCallbackEvent} [onDragStartBegin=()=>{}] Is fired when the user clicks in the area. This callback gets the event object. Executed *before* DragSelect function code ran.
-* @property {DSGenericInteractionCallbackEvent} [onDragStart=()=>{}] It is fired when the user clicks in the area. This callback gets the event object. Executed after DragSelect function code ran, before the setup of event listeners.
-* @property {DSInteractionCallbackEvent} [onElementSelect=()=>{}] It is fired every time an element is selected. This callback gets a property which is the just selected node
-* @property {DSInteractionCallbackEvent} [onElementUnselect=()=>{}] It is fired every time an element is de-selected. This callback gets a property which is the just de-selected node
-* @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
-* @property {HTMLElement[] | SVGElement[] | HTMLElement | SVGElement} [selectables=[]] the elements that can be selected
-* @property {string} [selectedClass=ds-selected] the class assigned to the selected items
-* @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
-* @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
-* @property {string[]} [multiSelectKeys=['ctrlKey', 'shiftKey', 'metaKey']] An array of keys that allows switching to the multi-select mode (see the @multiSelectMode option). The only possible values are keys that are provided via the event object. So far: <kbd>ctrlKey</kbd>, <kbd>shiftKey</kbd>, <kbd>metaKey</kbd> and <kbd>altKey</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
-*/
+ * The Settings to be passed to the Class
+ * @typedef {Object} Settings
+ * @property {HTMLElement|SVGElement|HTMLDocument} [area=document] area in which you can drag. If not provided it will be the whole document
+ * @property {DSInputElements} [selectables=[]] the elements that can be selected
+ * @property {number} [autoScrollSpeed=5] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
+ * @property {Vect2} [overflowTolerance={x:25,y:25}] Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start)
+ * @property {number} [zoom=1] Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom.
+ * @property {boolean} [customStyles=false] if set to true, no styles (except for position absolute) will be applied by default
+ * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them
+ * @property {boolean} [multiSelectToggling=true] Whether or not to toggle already active elements while multi-selecting
+ * @property {DSMultiSelectKeys} [multiSelectKeys=['Control', 'Shift', 'Meta']] Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
+ * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
+ * @property {boolean} [draggability=true] When a user is dragging on an already selected element, the selection is dragged.
+ * @property {boolean} [immediateDrag=true] Whether an element is draggable from the start or needs to be selected first
+ * @property {DSDragKeys} [dragKeys={up:['ArrowUp'],down:['ArrowDown'],left:['ArrowLeft'],righ:['ArrowRight']}] The keys available to drag element using the keyboard.
+ * @property {number} [keyboardDragSpeed=10] The speed at which elements are dragged using the keyboard. In pixels per keydown.
+ * @property {boolean} [useTransform=true] Whether to use hardware accelerated css transforms when dragging or top/left instead
+ * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
+ * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
+ * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
+ * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
+ * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
+ * @property {DSCallback} [callback] Deprecated: please use DragSelect.subscribe('callback', callback) instead
+ * @property {DSCallback} [onDragMove] Deprecated: please use DragSelect.subscribe('onDragMove', onDragMove) instead
+ * @property {DSCallback} [onDragStartBegin] Deprecated: please use DragSelect.subscribe('onDragStartBegin', onDragStartBegin) instead
+ * @property {DSCallback} [onDragStart] Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
+ * @property {DSCallback} [onElementSelect] Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
+ * @property {DSCallback} [onElementUnselect] Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
+ */
+
+/**
+ * The Object that is passed back to any callback method
+ * @typedef {Object} CallbackObject
+ * @property {Array<HTMLElement|SVGElement|any>} [items] The items currently selected
+ * @property {MouseEvent|TouchEvent|Event} [event] The respective event object
+ * @property {HTMLElement|SVGElement|any} [item] The single item currently interacted with
+ * @property {boolean} [isDragging] Whether the interaction is a drag or a select
+ * @property {Array.<'top'|'bottom'|'left'|'right'|undefined>} [scroll_directions]
+ * @property {number} [scroll_multiplier]
+ */
 /**
  * @typedef {function} DSCallback
- * @param {Array<HTMLElement|SVGElement|any>} selected - The selected items
- * @param {MouseEvent|TouchEvent|Event} [event]
- * @return {*}
+ * @param {CallbackObject} data
  */
+
+/** @typedef {{x: number, y: number}} Vect2 */
+/** @typedef {{x:number,y:number,w:number,h:number,r:number,b:number}} DSElementPos */
+/** @typedef {Array.<'top'|'bottom'|'left'|'right'|undefined>} DSEdges */
+
+/** @typedef {HTMLElement|SVGElement|HTMLDocument} DSArea area within which you can drag */
+/** @typedef {HTMLElement} DSSelectorArea area in which you can drag */
+/** @typedef {Array.<HTMLElement|SVGElement> | HTMLElement | SVGElement} DSInputElements the elements that can be selected */
+/** @typedef {Array.<HTMLElement|SVGElement>} DSElements the elements that can be selected */
+/** @typedef {HTMLElement|SVGElement} DSElement a single element that can be selected */
+/** @typedef {MouseEvent|TouchEvent} DSEvent en event from a touch or mouse interaction */
+/** @typedef {Array.<'Shift'|'Control'|'Meta'|string>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
+
+/** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
+/** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'|'Selectable:pointer'|'KeyStore:down'|'KeyStore:up'} DSInternalEventNames */
+/** @typedef {DSEventNames|DSInternalEventNames} DSCallbackNames the name of the callback */
+
+/** @typedef {{top:number,left:number,bottom:number,right:number,width:number,height:number}} DSBoundingRect */
+/** @typedef {{up:string[],down:string[],left:string[],right:string[]}} DSDragKeys */
+
 /**
- * @typedef {function} DSGenericInteractionCallbackEvent
- * @param {MouseEvent|TouchEvent|Event} [event]
- * @return {*}
- */
-/**
- * @typedef {function} DSInteractionCallbackEvent
- * @param {HTMLElement|SVGElement|any} item
- * @return {*}
+ * @callback DSModificationCallback
+ * @param {*} event
  */

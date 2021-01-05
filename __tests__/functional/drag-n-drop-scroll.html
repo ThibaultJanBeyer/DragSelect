@@ -1,0 +1,42 @@
+<link rel="stylesheet" href="basics.css">
+<style>
+#area {
+    background: grey;
+    height: 100px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100px;
+    overflow: scroll;
+}
+</style>
+<script src="../../dist/DragSelect.js"></script>
+<p>Draggable</p>
+<div id="area">
+    <button id="item-1" class="item one">1</button>
+    <button id="item-2" class="item two">2</button>
+    <button id="item-3" class="item three">3</button>
+    <button id="item-4" class="item four">4</button>
+</div>
+
+<script>
+    window.selected = [];
+    window.dragged = [];
+
+    window.getItemVect = (id) => {
+        const rect = document.querySelector(`#item-${id}`).getBoundingClientRect()
+        return { y: rect.top, x: rect.left }
+    }
+
+    const ds = new DragSelect({
+        selectables: document.querySelectorAll('.item'),
+        area: document.querySelector('#area')
+    });
+    ds.subscribe('callback', ({ isDragging, items }) => {
+        window.dragged = []
+        window.selected = []
+
+        console.log('CB', isDragging, items)
+        window[isDragging ? 'dragged' : 'selected'] = items.map(item => item.id)
+    })
+</script>

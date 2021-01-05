@@ -2,8 +2,8 @@
 <style>
 .item.one {
   background: #f25d0d;
-  top: 0;
-  left: 0;
+  top: 10px;
+  left: 10px;
 }
 
 .item.two {
@@ -44,7 +44,7 @@
 <button type="button" class="item five">5</button>
 <button type="button" class="item six">6</button>
 
-<script src="../../docs/DragSelect.js"></script>
+<script src="../../dist/DragSelect.js"></script>
 <script>
     window.onDragStartCalls = [];
     window.onDragMoveCalls = [];
@@ -52,7 +52,7 @@
     window.onElementUnselectCalls = [];
     window.callbackCalls = [];
 
-    new DragSelect({
+    const ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
         onDragStart: e => window.onDragStartCalls.push({element: e}),
         onDragMove: e => window.onDragMoveCalls.push({element: e}),
@@ -60,4 +60,19 @@
         onElementUnselect: e => window.onElementUnselectCalls.push({element: e}),
         callback: (n, e) => window.callbackCalls.push({elements: n, event: e})
     });
+
+    window.pubsub = {}
+    window.pubsub.onDragStartCalls = [];
+    window.pubsub.onDragMoveCalls = [];
+    window.pubsub.onElementSelectCalls = [];
+    window.pubsub.onElementUnselectCalls = [];
+    window.pubsub.callbackCalls = [];
+    window.pubsub.autoScrollCalls = [];
+
+    ds.subscribe('dragstart', (e) => { console.log(e); window.pubsub.onDragStartCalls.push(e) })
+    ds.subscribe('dragmove', (e) => { console.log(e); window.pubsub.onDragMoveCalls.push(e) })
+    ds.subscribe('elementselect', (e) => { console.log(e); window.pubsub.onElementSelectCalls.push(e) })
+    ds.subscribe('elementunselect', (e) => { console.log(e); window.pubsub.onElementUnselectCalls.push(e) })
+    ds.subscribe('callback', (e) => { console.log(e); window.pubsub.callbackCalls.push(e) })
+    ds.subscribe('autoscroll', (e) => { console.log(e); window.pubsub.autoScrollCalls.push(e) })
 </script>

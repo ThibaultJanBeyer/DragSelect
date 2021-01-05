@@ -6,12 +6,12 @@
 <button type="button" id="four" class="item four">4</button>
 <button type="button" id="five" class="item five">5</button>
 
-<script src="../../docs/DragSelect.js"></script>
+<script src="../../dist/DragSelect.js"></script>
 <script>
     window.selected = [];
 
-    new DragSelect({
+    const ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
-        callback: sel => { selected = sel.map(sel => sel.id) }
     });
+    ds.subscribe('callback', ({items}) => { console.log(items); window.selected = items.map(item => item.id) })
 </script>
