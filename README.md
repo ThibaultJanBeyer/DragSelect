@@ -7,9 +7,9 @@
                  /____/                              
 ```
 
-[GitHub](https://github.com/ThibaultJanBeyer/DragSelect/) | [NPM](https://www.npmjs.com/package/dragselect) | [Project-Page](https://thibaultjanbeyer.github.io/DragSelect/)  
+[GitHub](https://github.com/ThibaultJanBeyer/DragSelect/) | [NPM](https://www.npmjs.com/package/dragselect) | [Project-Page](https://dragselect.com/)  
 
-[![Build Status](https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master)](https://travis-ci.com/ThibaultJanBeyer/DragSelect) ![gzip size](http://img.badgesize.io/https://thibaultjanbeyer.github.io/DragSelect/v2/ds.min.js?compression=gzip) ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) [![No Dependency](https://david-dm.org/ThibaultJanBeyer/DragSelect.svg)](https://david-dm.org/ThibaultJanBeyer/DragSelect)
+[![Build Status](https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master)](https://travis-ci.com/ThibaultJanBeyer/DragSelect) ![gzip size](http://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip) ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) [![No Dependency](https://david-dm.org/ThibaultJanBeyer/DragSelect.svg)](https://david-dm.org/ThibaultJanBeyer/DragSelect)
 
 # DragSelect ![GitHub package.json version](https://img.shields.io/github/package-json/v/ThibaultJanBeyer/DragSelect.svg)
 easily add a selection algorithm to your application/website.
@@ -29,7 +29,7 @@ easily add a selection algorithm to your application/website.
 
 # Project Page: Demo & Info
 
-[https://thibaultjanbeyer.github.io/DragSelect/](https://thibaultjanbeyer.github.io/DragSelect/)
+[https://dragselect.com/](https://dragselect.com/)
 
 # Key-Features
 
@@ -43,7 +43,7 @@ easily add a selection algorithm to your application/website.
 - Choose which elements can be selected
 - Supports all major browsers
 - Selected elements can be dragged and dropped
-- Lightweight, only ![gzip size](http://img.badgesize.io/https://thibaultjanbeyer.github.io/DragSelect/v2/ds.min.js?compression=gzip)
+- Lightweight, only ![gzip size](http://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip)
 - Popular: ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) on npm
 - DragSelect was written with Performance in mind (can easily select >15.000 Elements)
 - Supports SVG
@@ -51,7 +51,7 @@ easily add a selection algorithm to your application/website.
 - Free & open source under MIT License
 - Ease of use
 
-![demo-gif](https://thibaultjanbeyer.github.io/DragSelect/media/dragselect.gif)
+![demo-gif](https://dragselect.com/media/dragselect.gif)
 
 # Why?
 
@@ -63,7 +63,7 @@ We use it currently in a professional rich interface application where we have a
 
 Thanks to:  
 
-| ![BrowserStack](https://thibaultjanbeyer.github.io/DragSelect/media/browserstack.jpg) | [You?](https://paypal.me/pools/c/8gF2a5szCP) |
+| ![BrowserStack](https://dragselect.com/media/browserstack.jpg) | [You?](https://paypal.me/pools/c/8gF2a5szCP) |
 |--- |--- |
 |[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or [Get in touch](mailto:thibault.beyer@gmail.com) |
 
@@ -73,7 +73,7 @@ Thanks to:
 Just [download the file](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/dist/DragSelect.js) ([minified](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/dist/ds.min.js)) and add it to your document:
 
 ```html
-<script src="https://thibaultjanbeyer.github.io/DragSelect/v2/ds.min.js"></script>
+<script src="https://dragselect.com/v2/ds.min.js"></script>
 ```
 
 > Note: if you are using `<script type=module` you can use the `DragSelect.es6m.js` or `ds.es6m.min.js` files as they include `export default DragSelect`
@@ -128,7 +128,7 @@ new DragSelect({
 ## Extended
 
 All options are optional. You could also just initiate the Dragselect by `new DragSelect({});` without any option.  
-Find all possible properties and methods in **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)**  
+Find all possible properties and methods in **[the docs](https://dragselect.com/DragSelect.html)**  
 
 ```javascript
 const ds = new DragSelect({
@@ -184,7 +184,7 @@ Obviously, keyboard users won’t get the full visual experience but it works si
 
 # Constructor Properties:
 
-*DragSelect is hyper customizable*. Note, all properties are optional. See **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)** for more info. Here is the full list:  
+*DragSelect is hyper customizable*. Note, all properties are optional. See **[the docs](https://dragselect.com/DragSelect.html)** for more info. Here is the full list:  
 
 | property | type | usage | default |
 |--- |--- |--- |--- |
@@ -242,7 +242,7 @@ ds.subscribe('<event_name>', (callback_object) => {})
 
 # Methods:
 When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions.  
-Also check **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)** for more info.
+Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 
 | method | properties | usage |
 |--- |--- |--- |
@@ -277,7 +277,7 @@ Also check **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect
 |.ds-selector-area |The overlay where the selector resides in
 |.ds-selectable |On elements that can be selected
 
-*note: you can change the class names setting the respective property on the constructor, see **[the docs](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)** properties section.*
+*note: you can change the class names setting the respective property on the constructor, see **[the docs](https://dragselect.com/DragSelect.html)** properties section.*
 
 # Have Fun!
 
@@ -285,7 +285,7 @@ Creating and maintaining useful tools is a lot of work.
 So don’t forget to give this repository a star if you find it useful.
 Star this repo, tell all your friends and start contributing and/or [donating 1$](https://paypal.me/pools/c/8gF2a5szCP) to keep it running. Thank you :)
 
-[![Typewriter Gif](https://thibaultjanbeyer.github.io/DragSelect/media/typewriter.gif)](http://thibaultjanbeyer.com/)
+[![Typewriter Gif](https://dragselect.com/media/typewriter.gif)](http://thibaultjanbeyer.com/)
 
 
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
@@ -293,4 +293,4 @@ Star this repo, tell all your friends and start contributing and/or [donating 1$
 <br>
 <br>
 
-[documentation](https://thibaultjanbeyer.github.io/DragSelect/DragSelect.html)
+[documentation](https://dragselect.com/DragSelect.html)
