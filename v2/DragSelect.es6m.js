@@ -286,55 +286,28 @@ function _nonIterableSpread() {
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
  * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
  * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
- * @property {DSCallbackEvent} [callback] Deprecated: please use DragSelect.subscribe('callback', callback) instead
- * @property {DSDragMoveEvent} [onDragMove] Deprecated: please use DragSelect.subscribe('onDragMove', onDragMove) instead
- * @property {DSDragMoveBeginEvent} [onDragStartBegin]  Deprecated: please use DragSelect.subscribe('onDragStartBegin', onDragStartBegin) instead
- * @property {DSDragStartEvent} [onDragStart]  Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
- * @property {DSElementSelectEvent} [onElementSelect]  Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
- * @property {DSElementUnSelectEvent} [onElementUnselect]  Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
+ * @property {DSCallback} [callback] Deprecated: please use DragSelect.subscribe('callback', callback) instead
+ * @property {DSCallback} [onDragMove] Deprecated: please use DragSelect.subscribe('onDragMove', onDragMove) instead
+ * @property {DSCallback} [onDragStartBegin] Deprecated: please use DragSelect.subscribe('onDragStartBegin', onDragStartBegin) instead
+ * @property {DSCallback} [onDragStart] Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
+ * @property {DSCallback} [onElementSelect] Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
+ * @property {DSCallback} [onElementUnselect] Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
  */
 
 /**
  * The Object that is passed back to any callback method
  * @typedef {Object} CallbackObject
- * @property {Array<HTMLElement|SVGElement|any>} items The items currently selected
+ * @property {Array<HTMLElement|SVGElement|any>} [items] The items currently selected
  * @property {MouseEvent|TouchEvent|Event} [event] The respective event object
  * @property {HTMLElement|SVGElement|any} [item] The single item currently interacted with
+ * @property {boolean} [isDragging] Whether the interaction is a drag or a select
+ * @property {Array.<'top'|'bottom'|'left'|'right'|undefined>} [scroll_directions]
+ * @property {number} [scroll_multiplier]
  */
 
 /**
  * @typedef {function} DSCallback
- * @param {CallbackObject} selected
- */
-
-/**
- * Callback function that gets fired when the element is selected.
- * @typedef {DSCallback} DSCallbackEvent
- */
-
-/**
- * Fired while the user drags.
- * @typedef {DSCallback} DSDragMoveEvent
- */
-
-/**
- * Fired while the user drags.
- * @typedef {DSCallback} DSDragMoveBeginEvent
- */
-
-/**
- * When the user clicks in the area.
- * @typedef {DSCallback} DSDragStartEvent
- */
-
-/**
- * Fired every time an element is selected.
- * @typedef {DSCallback} DSElementSelectEvent
- */
-
-/**
- * Fired every time an element is un-selected.
- * @typedef {DSCallback} DSElementUnSelectEvent
+ * @param {CallbackObject} data
  */
 
 /** @typedef {{x: number, y: number}} Vect2 */
@@ -1258,10 +1231,8 @@ var Area = /*#__PURE__*/function () {
       scrollElement(_this._node, directions, multiplier);
 
       _this.PubSub.publish('Area:scroll', {
-        data: {
-          directions: directions,
-          multiplier: multiplier
-        }
+        scroll_directions: directions,
+        scroll_multiplier: multiplier
       });
     });
 
@@ -1418,6 +1389,7 @@ var Drag = /*#__PURE__*/function () {
    * @param {DSDragKeys} p.dragKeys
    * @param {number} p.keyboardDragSpeed
    * @param {number} p.zoom
+   * @ignore
    */
   function Drag(_ref) {
     var _this = this;
@@ -2430,6 +2402,7 @@ var KeyStore = /*#__PURE__*/function () {
    * @class KeyStore
    * @constructor KeyStore
    * @param {{DS:DragSelect,multiSelectKeys:DSMultiSelectKeys,multiSelectMode:boolean}} p
+   * @ignore
    */
   function KeyStore(_ref) {
     var _this = this;
@@ -2545,25 +2518,47 @@ var PointerStore = /*#__PURE__*/function () {
   /** @type {boolean} */
   // Pointer Positions within Area
 
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private
+   * */
 
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private
+   * */
 
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private
+   * */
   // General Pointer Position
 
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private
+   * */
 
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private
+   * */
 
-  /** @type {Vect2} @private */
+  /**
+   * @type {Vect2}
+   * @private
+   * */
 
-  /** @type {TouchEvent} @private */
+  /**
+   * @type {TouchEvent}
+   * @private
+   * */
 
   /**
    * @class PointerStore
    * @constructor PointerStore
    * @param {{DS:DragSelect}} p
+   * @ignore
    */
   function PointerStore(_ref) {
     var _this = this;
@@ -2771,7 +2766,12 @@ var ScrollStore = /*#__PURE__*/function () {
    * @type {boolean}
    * @private */
 
-  /** @param {{ DS:DragSelect, areaElement: DSArea, zoom:number }} p */
+  /**
+   * @class ScrollStore
+   * @constructor ScrollStore
+   * @param {{ DS:DragSelect, areaElement: DSArea, zoom:number }} p
+   * @ignore
+   */
   function ScrollStore(_ref) {
     var _this = this;
 
@@ -3075,30 +3075,36 @@ var DragSelect = /*#__PURE__*/function () {
     });
     this.subscribe('Interaction:update', function (_ref4) {
       var event = _ref4.event,
-          data = _ref4.data,
           isDragging = _ref4.isDragging;
-      if (event && !data) _this.publish('dragmove', {
+      if (event) _this.publish('dragmove', {
         items: _this.getSelection(),
         event: event,
         isDragging: isDragging
       });
-      if (!event && data) _this.publish('autoscroll', {
-        data: data,
-        isDragging: isDragging
+    });
+    this.subscribe('Area:scroll', function (_ref5) {
+      var scroll_directions = _ref5.scroll_directions,
+          scroll_multiplier = _ref5.scroll_multiplier;
+
+      _this.publish('autoscroll', {
+        items: _this.getSelection(),
+        scroll_directions: scroll_directions,
+        scroll_multiplier: scroll_multiplier,
+        isDragging: _this.Interaction.isDragging
       });
     });
-    this.subscribe('Interaction:start', function (_ref5) {
-      var event = _ref5.event,
-          isDragging = _ref5.isDragging;
+    this.subscribe('Interaction:start', function (_ref6) {
+      var event = _ref6.event,
+          isDragging = _ref6.isDragging;
       return _this.publish('dragstart', {
         items: _this.getSelection(),
         event: event,
         isDragging: isDragging
       });
     });
-    this.subscribe('Interaction:end', function (_ref6) {
-      var event = _ref6.event,
-          isDragging = _ref6.isDragging;
+    this.subscribe('Interaction:end', function (_ref7) {
+      var event = _ref7.event,
+          isDragging = _ref7.isDragging;
       return _this.publish('callback', {
         items: _this.getSelection(),
         event: event,
@@ -3111,13 +3117,13 @@ var DragSelect = /*#__PURE__*/function () {
 
   _createClass(DragSelect, [{
     key: "_callbacksTemp",
-    value: function _callbacksTemp(_ref7) {
-      var callback = _ref7.callback,
-          onDragMove = _ref7.onDragMove,
-          onDragStart = _ref7.onDragStart,
-          onDragStartBegin = _ref7.onDragStartBegin,
-          onElementSelect = _ref7.onElementSelect,
-          onElementUnselect = _ref7.onElementUnselect;
+    value: function _callbacksTemp(_ref8) {
+      var callback = _ref8.callback,
+          onDragMove = _ref8.onDragMove,
+          onDragStart = _ref8.onDragStart,
+          onDragStartBegin = _ref8.onDragStartBegin,
+          onElementSelect = _ref8.onElementSelect,
+          onElementUnselect = _ref8.onElementUnselect;
 
       var warnMessage = function warnMessage(name, newName) {
         return console.warn("[DragSelect] ".concat(name, " is deprecated. Use DragSelect.subscribe(\"").concat(newName, "\", (callbackObject) => {}) instead. Act Now! See docs for more info"));
@@ -3125,60 +3131,60 @@ var DragSelect = /*#__PURE__*/function () {
 
       if (callback) {
         warnMessage('callback', 'callback');
-        this.subscribe('callback', function (_ref8) {
-          var items = _ref8.items,
-              item = _ref8.item,
-              event = _ref8.event;
+        this.subscribe('callback', function (_ref9) {
+          var items = _ref9.items,
+              item = _ref9.item,
+              event = _ref9.event;
           return callback(items, event);
         });
       }
 
       if (onDragMove) {
         warnMessage('onDragMove', 'dragmove');
-        this.subscribe('dragmove', function (_ref9) {
-          var items = _ref9.items,
-              item = _ref9.item,
-              event = _ref9.event;
+        this.subscribe('dragmove', function (_ref10) {
+          var items = _ref10.items,
+              item = _ref10.item,
+              event = _ref10.event;
           return onDragMove(event);
         });
       }
 
       if (onDragStart) {
         warnMessage('onDragStart', 'dragstart');
-        this.subscribe('dragstart', function (_ref10) {
-          var items = _ref10.items,
-              item = _ref10.item,
-              event = _ref10.event;
+        this.subscribe('dragstart', function (_ref11) {
+          var items = _ref11.items,
+              item = _ref11.item,
+              event = _ref11.event;
           return onDragStart(event);
         });
       }
 
       if (onDragStartBegin) {
         warnMessage('onDragStartBegin', 'dragstart');
-        this.subscribe('dragstart', function (_ref11) {
-          var items = _ref11.items,
-              item = _ref11.item,
-              event = _ref11.event;
+        this.subscribe('dragstart', function (_ref12) {
+          var items = _ref12.items,
+              item = _ref12.item,
+              event = _ref12.event;
           return onDragStartBegin(event);
         });
       }
 
       if (onElementSelect) {
         warnMessage('onElementSelect', 'elementselect');
-        this.subscribe('elementselect', function (_ref12) {
-          var items = _ref12.items,
-              item = _ref12.item,
-              event = _ref12.event;
+        this.subscribe('elementselect', function (_ref13) {
+          var items = _ref13.items,
+              item = _ref13.item,
+              event = _ref13.event;
           return onElementSelect(item, event);
         });
       }
 
       if (onElementUnselect) {
         warnMessage('onElementUnselect', 'elementunselect');
-        this.subscribe('elementunselect', function (_ref13) {
-          var items = _ref13.items,
-              item = _ref13.item,
-              event = _ref13.event;
+        this.subscribe('elementunselect', function (_ref14) {
+          var items = _ref14.items,
+              item = _ref14.item,
+              event = _ref14.event;
           return onElementUnselect(item, event);
         });
       }
@@ -3196,14 +3202,14 @@ var DragSelect = /*#__PURE__*/function () {
     /**
      * Complete function teardown
      * Will teardown/stop the whole functionality
-     * @param {boolean} [remove=true] - if elements should be removed.
-     * @param {boolean} [fromSelection=true] - if elements should also be added/removed to the selection.
+     * @param {boolean} [remove] - if elements should be removed.
+     * @param {boolean} [fromSelection] - if elements should also be added/removed to the selection.
      * @param {boolean} [withCallback] - if elements should also be added/removed to the selection.
      */
     value: function stop() {
       var remove = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       var fromSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-      var withCallback = arguments.length > 2 ? arguments[2] : undefined;
+      var withCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       if (withCallback) this.publish('callback', {
         items: this.getSelection()
       });
@@ -3233,7 +3239,9 @@ var DragSelect = /*#__PURE__*/function () {
      * @param {boolean} [dontAddToSelectables] - if element should not be added to the list of selectable elements
      * @return {DSElements} all selected elements
      */
-    value: function addSelection(elements, triggerCallback, dontAddToSelectables) {
+    value: function addSelection(elements) {
+      var triggerCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var dontAddToSelectables = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       this.SelectedSet.addAll(toArray(elements));
       if (!dontAddToSelectables) this.addSelectables(elements);
       if (triggerCallback) this.PubSub.publish('callback', {
@@ -3252,7 +3260,9 @@ var DragSelect = /*#__PURE__*/function () {
 
   }, {
     key: "removeSelection",
-    value: function removeSelection(elements, triggerCallback, removeFromSelectables) {
+    value: function removeSelection(elements) {
+      var triggerCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var removeFromSelectables = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       this.SelectedSet.deleteAll(toArray(elements));
       if (removeFromSelectables) this.removeSelectables(elements);
       if (triggerCallback) this.PubSub.publish('callback', {
@@ -3272,9 +3282,11 @@ var DragSelect = /*#__PURE__*/function () {
 
   }, {
     key: "toggleSelection",
-    value: function toggleSelection(elements, triggerCallback, alsoSelectables) {
+    value: function toggleSelection(elements) {
       var _this2 = this;
 
+      var triggerCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var alsoSelectables = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       toArray(elements).forEach(function (el) {
         return _this2.SelectedSet.has(el) ? _this2.removeSelection(elements, triggerCallback, alsoSelectables) : _this2.addSelection(elements, triggerCallback, alsoSelectables);
       });
@@ -3294,7 +3306,9 @@ var DragSelect = /*#__PURE__*/function () {
 
   }, {
     key: "setSelection",
-    value: function setSelection(elements, triggerCallback, dontAddToSelectables) {
+    value: function setSelection(elements) {
+      var triggerCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var dontAddToSelectables = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       this.clearSelection();
       this.addSelection(elements, triggerCallback, dontAddToSelectables);
       return this.getSelection();
@@ -3307,7 +3321,8 @@ var DragSelect = /*#__PURE__*/function () {
 
   }, {
     key: "clearSelection",
-    value: function clearSelection(triggerCallback) {
+    value: function clearSelection() {
+      var triggerCallback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
       this.SelectedSet.clear();
       if (triggerCallback) this.PubSub.publish('callback', {
         items: this.getSelection()
@@ -3323,7 +3338,8 @@ var DragSelect = /*#__PURE__*/function () {
 
   }, {
     key: "addSelectables",
-    value: function addSelectables(elements, addToSelection) {
+    value: function addSelectables(elements) {
+      var addToSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var els = toArray(elements);
       this.SelectableSet.addAll(els);
       if (addToSelection) this.SelectedSet.addAll(els);
@@ -3346,7 +3362,9 @@ var DragSelect = /*#__PURE__*/function () {
      * @param {boolean} [addToSelection] if elements should also be added to current selection
      * @return {DSInputElements} elements – the added element(s)
      */
-    value: function setSelectables(elements, removeFromSelection, addToSelection) {
+    value: function setSelectables(elements) {
+      var removeFromSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var addToSelection = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       this.removeSelectables(elements, removeFromSelection);
       return this.addSelectables(elements, addToSelection);
     }
@@ -3359,7 +3377,8 @@ var DragSelect = /*#__PURE__*/function () {
 
   }, {
     key: "removeSelectables",
-    value: function removeSelectables(elements, removeFromSelection) {
+    value: function removeSelectables(elements) {
+      var removeFromSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       this.SelectedSet.clear();
       if (removeFromSelection) this.SelectedSet.clear();
       return elements;
@@ -3371,13 +3390,13 @@ var DragSelect = /*#__PURE__*/function () {
 
     /**
      * Returns the cursor position difference between start and now
-     * If usePreviousCursorDifference is passed,
-     * it will output the cursor position difference between the previous selection and now
-     * @param {boolean} [usePreviousCursorDifference]
+     * @param {boolean} [usePreviousCursorDifference] if true, it will output the cursor position difference between the previous selection and now
      * @return {Vect2}
      * @deprecated
      */
-    value: function getCursorPositionDifference(usePreviousCursorDifference) {
+    value: function getCursorPositionDifference() {
+      var usePreviousCursorDifference = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      console.warn('[DragSelect] Using .getCursorPositionDifference is deprecated. Calculate yourself instead. i.e. `.getCurrentCursorPosition().x - .getInitialCursorPosition().x`');
       var posA = this.getCurrentCursorPosition();
       var posB = usePreviousCursorDifference ? this.getPreviousCursorPosition() : this.getInitialCursorPosition();
       return calc(posA, '-', posB);
