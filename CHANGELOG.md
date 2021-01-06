@@ -1,3 +1,7 @@
+# 2.0.1
+
+- Fix import issue caused by ignoring dist files
+
 # 2.0.0
 
 ## Added Draggability! (solves #24) (Breaking Change)
