@@ -9,6 +9,7 @@
     "start": "npm run open & npm run watch",
     "open": "open __tests__/quicktest.html -a 'Google Chrome'",
     "watch": "concurrently --kill-others \"npm run checkjs:watch\" \"npm run rollup:watch\" \"npm run test:watch\"",
+    "postcheckjs": "npm run docs && rm -rf docs",
     "checkjs": "tsc --lib es2019,dom -t es5 --allowJs --checkJs --noEmit src/*.js",
     "checkjs:watch": "tsc -w --lib es2019,dom -t es5 --allowJs --checkJs --noEmit src/*.js",
     "docs": "jsdoc -c jsdoc.json",
