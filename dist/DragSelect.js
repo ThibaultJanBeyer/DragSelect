@@ -1835,6 +1835,16 @@
      * */
 
     /**
+     * @type {boolean}
+     * @private
+     * */
+
+    /**
+     * @type {boolean}
+     * @private
+     * */
+
+    /**
      * @constructor SelectableSet
      * @param {Object} p
      * @param {DSInputElements} p.elements
@@ -1842,6 +1852,7 @@
      * @param {string} p.className
      * @param {string} p.hoverClassName
      * @param {boolean} p.useTransform
+     * @param {boolean} p.draggability
      * @ignore
      */
     function SelectableSet(_ref) {
@@ -1850,6 +1861,7 @@
       var _elements = _ref.elements,
           className = _ref.className,
           hoverClassName = _ref.hoverClassName,
+          draggability = _ref.draggability,
           useTransform = _ref.useTransform,
           DS = _ref.DS;
 
@@ -1862,6 +1874,10 @@
       _defineProperty(_assertThisInitialized(_this), "_className", void 0);
 
       _defineProperty(_assertThisInitialized(_this), "_hoverClassName", void 0);
+
+      _defineProperty(_assertThisInitialized(_this), "_useTransform", void 0);
+
+      _defineProperty(_assertThisInitialized(_this), "_draggability", void 0);
 
       _defineProperty(_assertThisInitialized(_this), "init", function () {
         return _this._initElements.forEach(function (el) {
@@ -1904,6 +1920,7 @@
       _this._className = className;
       _this._hoverClassName = hoverClassName;
       _this._useTransform = useTransform;
+      _this._draggability = draggability;
 
       _this.DS.subscribe('Interaction:init', _this.init);
 
@@ -1922,7 +1939,7 @@
           // @ts-ignore
           passive: false
         });
-        if (!this._useTransform) handleElementPositionAttribute({
+        if (this._draggability && !this._useTransform) handleElementPositionAttribute({
           computedStyle: window.getComputedStyle(element),
           node: element
         });
@@ -3055,7 +3072,8 @@
         DS: this,
         className: selectableClass,
         hoverClassName: hoverClass,
-        useTransform: useTransform
+        useTransform: useTransform,
+        draggability: draggability
       });
       this.SelectedSet = new SelectedSet({
         DS: this,
