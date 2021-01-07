@@ -1,6 +1,6 @@
 /***
 
- ~~~ Version 2.0.0 ~~~
+ ~~~ Version 2.0.2 ~~~
 
  ******************************************
 
@@ -869,6 +869,22 @@ var handleElementOverflow = (function (_ref) {
 
 // @ts-check
 /**
+ * Fix: some elements have to have a special position attribute for calculations
+ * @param {Object} p
+ * @param {CSSStyleDeclaration} p.computedStyle
+ * @param {DSArea} p.node
+ */
+
+var handleElementPositionAttribute = (function (_ref) {
+  var computedStyle = _ref.computedStyle,
+      node = _ref.node;
+  var position = computedStyle.position;
+  var isPositioned = position === 'absolute' || position === 'relative' || position === 'fixed';
+  if (!(node instanceof HTMLDocument) && !isPositioned) node.style.position = 'relative';
+});
+
+// @ts-check
+/**
  * @typedef {function} ScrollCallback
  * @property {Array.<'top'|'bottom'|'left'|'right'|undefined>} directions
  * @property {number} multiplier
@@ -1238,11 +1254,11 @@ var Area = /*#__PURE__*/function () {
 
     this._node = area;
     this._zoom = zoom;
-    this.PubSub = PS; // Fix: Area has to have a special position attribute for calculations
-
-    var position = this.computedStyle.position;
-    var isPositioned = position === 'absolute' || position === 'relative' || position === 'fixed';
-    if (!(this._node instanceof HTMLDocument) && !isPositioned) this._node.style.position = 'relative';
+    this.PubSub = PS;
+    handleElementPositionAttribute({
+      computedStyle: this.computedStyle,
+      node: this._node
+    });
     this._modificationCallback = debounce(function (event) {
       _this.reset();
 
@@ -1300,7 +1316,7 @@ var Area = /*#__PURE__*/function () {
     key: "computedStyle",
     get: function get() {
       if (this._computedStyle) return this._computedStyle;
-      if (this.HTMLNode instanceof HTMLDocument) return this._computedStyle = getComputedStyle(this.HTMLNode.body || this.HTMLNode.documentElement);else return this._computedStyle = getComputedStyle(this.HTMLNode);
+      if (this.HTMLNode instanceof HTMLDocument) return this._computedStyle = window.getComputedStyle(this.HTMLNode.body || this.HTMLNode.documentElement);else return this._computedStyle = window.getComputedStyle(this.HTMLNode);
     }
     /**
      * The element rect (caches result) (without scrollbar or borders)
@@ -1819,6 +1835,7 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
    * @param {DragSelect} p.DS
    * @param {string} p.className
    * @param {string} p.hoverClassName
+   * @param {boolean} p.useTransform
    * @ignore
    */
   function SelectableSet(_ref) {
@@ -1827,6 +1844,7 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
     var _elements = _ref.elements,
         className = _ref.className,
         hoverClassName = _ref.hoverClassName,
+        useTransform = _ref.useTransform,
         DS = _ref.DS;
 
     _classCallCheck(this, SelectableSet);
@@ -1879,6 +1897,7 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
     _this._initElements = toArray(_elements);
     _this._className = className;
     _this._hoverClassName = hoverClassName;
+    _this._useTransform = useTransform;
 
     _this.DS.subscribe('Interaction:init', _this.init);
 
@@ -1896,6 +1915,10 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
       element.addEventListener('touchstart', this._onPointer, {
         // @ts-ignore
         passive: false
+      });
+      if (!this._useTransform) handleElementPositionAttribute({
+        computedStyle: window.getComputedStyle(element),
+        node: element
       });
       return _get(_getPrototypeOf(SelectableSet.prototype), "add", this).call(this, element);
     }
@@ -3025,7 +3048,8 @@ var DragSelect = /*#__PURE__*/function () {
       elements: selectables,
       DS: this,
       className: selectableClass,
-      hoverClassName: hoverClass
+      hoverClassName: hoverClass,
+      useTransform: useTransform
     });
     this.SelectedSet = new SelectedSet({
       DS: this,
