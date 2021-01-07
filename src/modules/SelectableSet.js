@@ -2,7 +2,7 @@
 import '../types'
 import DragSelect from '../DragSelect'
 
-import { toArray } from '../methods'
+import { toArray, handleElementPositionAttribute } from '../methods'
 
 export default class SelectableSet extends Set {
   /**
@@ -28,14 +28,16 @@ export default class SelectableSet extends Set {
    * @param {DragSelect} p.DS
    * @param {string} p.className
    * @param {string} p.hoverClassName
+   * @param {boolean} p.useTransform
    * @ignore
    */
-  constructor({ elements, className, hoverClassName, DS }) {
+  constructor({ elements, className, hoverClassName, useTransform, DS }) {
     super()
     this.DS = DS
     this._initElements = toArray(elements)
     this._className = className
     this._hoverClassName = hoverClassName
+    this._useTransform = useTransform
 
     this.DS.subscribe('Interaction:init', this.init)
   }
@@ -51,6 +53,13 @@ export default class SelectableSet extends Set {
       // @ts-ignore
       passive: false,
     })
+
+    if (!this._useTransform)
+      handleElementPositionAttribute({
+        computedStyle: window.getComputedStyle(element),
+        node: element,
+      })
+
     return super.add(element)
   }
 

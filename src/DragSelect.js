@@ -134,6 +134,7 @@ class DragSelect {
       DS: this,
       className: selectableClass,
       hoverClassName: hoverClass,
+      useTransform,
     })
 
     this.SelectedSet = new SelectedSet({

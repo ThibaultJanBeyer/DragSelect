@@ -8,6 +8,7 @@ import {
   getAreaRect,
   removeModificationObservers,
   scrollElement,
+  handleElementPositionAttribute,
 } from '../methods'
 
 export default class Area {
@@ -65,12 +66,10 @@ export default class Area {
     this._zoom = zoom
     this.PubSub = PS
 
-    // Fix: Area has to have a special position attribute for calculations
-    const position = this.computedStyle.position
-    const isPositioned =
-      position === 'absolute' || position === 'relative' || position === 'fixed'
-    if (!(this._node instanceof HTMLDocument) && !isPositioned)
-      this._node.style.position = 'relative'
+    handleElementPositionAttribute({
+      computedStyle: this.computedStyle,
+      node: this._node,
+    })
 
     this._modificationCallback = debounce((event) => {
       this.reset()
@@ -157,10 +156,10 @@ export default class Area {
   get computedStyle() {
     if (this._computedStyle) return this._computedStyle
     if (this.HTMLNode instanceof HTMLDocument)
-      return (this._computedStyle = getComputedStyle(
+      return (this._computedStyle = window.getComputedStyle(
         this.HTMLNode.body || this.HTMLNode.documentElement
       ))
-    else return (this._computedStyle = getComputedStyle(this.HTMLNode))
+    else return (this._computedStyle = window.getComputedStyle(this.HTMLNode))
   }
 
   /**
