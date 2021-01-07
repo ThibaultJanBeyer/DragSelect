@@ -1,3 +1,7 @@
+# 2.0.2
+
+- Fix element position when `useTransform: false` issue
+
 # 2.0.1
 
 - Fix import issue caused by ignoring dist files
