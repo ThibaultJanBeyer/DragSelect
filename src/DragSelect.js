@@ -431,8 +431,8 @@ class DragSelect {
    * @return {DSInputElements} the removed element(s)
    */
   removeSelectables(elements, removeFromSelection = false) {
-    this.SelectedSet.clear()
-    if (removeFromSelection) this.SelectedSet.clear()
+    this.SelectableSet.deleteAll(toArray(elements))
+    if (removeFromSelection) this.removeSelection(elements)
     return elements
   }
   /** The starting/initial position of the cursor/selector @return {Vect2} */
