@@ -3421,8 +3421,8 @@ var DragSelect = /*#__PURE__*/function () {
     key: "removeSelectables",
     value: function removeSelectables(elements) {
       var removeFromSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      this.SelectedSet.clear();
-      if (removeFromSelection) this.SelectedSet.clear();
+      this.SelectableSet.deleteAll(toArray(elements));
+      if (removeFromSelection) this.removeSelection(elements);
       return elements;
     }
     /** The starting/initial position of the cursor/selector @return {Vect2} */

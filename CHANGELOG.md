@@ -1,3 +1,7 @@
+# 2.0.3
+
+- Correct the behavior of modules/SelectableSet.removeSelectables method, solves #90 thanks to @lchtao26 for the contribution!
+
 # 2.0.2
 
 - Fix element position when `useTransform: false` issue

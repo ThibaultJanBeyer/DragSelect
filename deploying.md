@@ -15,11 +15,9 @@ Tipically you don’t have to do this, since you most likely are not the project
 But if you are the project owner:
 
 1. do thorough testing
-2. bump version in .js file
-3. run `npm run build`
-4. you can deploy a new version by pushing to github
+2. `npm run rollup`
+3. you can deploy a new version by pushing to github (gh-pages will be build by travis)
 
-Since it uses the `docs/` folder for hosting on `github pages`.
 If this was successful, the next step is to publish the new version on `npm`:
 
 ```

@@ -3,7 +3,6 @@
   "version": "2.0.2",
   "description": "easy javascript drag select functionality for your projects",
   "main": "./dist/DragSelect.js",
-  "dependencies": {},
   "scripts": {
     "prestart": "npm i",
     "start": "npm run open & npm run watch",
