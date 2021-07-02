@@ -18,7 +18,7 @@
     "rm": "rm -rf dist docs",
     "prerollup": "npm run types",
     "rollup": "rollup -c",
-    "rollup:travis": "rollup -c --travis",
+    "rollup:travis": "npm run rollup -- --travis",
     "rollup:watch": "npm run rollup -- -w",
     "test": "npm run checkjs && jest --detectOpenHandles",
     "test:watch": "jest --watch",
