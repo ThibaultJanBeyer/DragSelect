@@ -151,6 +151,7 @@ class DragSelect {
 
     this.Drag = new Drag({
       DS: this,
+      draggability,
       useTransform,
       dragKeys: Object.assign(
         {
