@@ -11,10 +11,12 @@
     "postcheckjs": "npm run docs && rm -rf docs",
     "checkjs": "tsc --lib es2019,dom -t es5 --allowJs --checkJs --noEmit src/*.js",
     "checkjs:watch": "tsc -w --lib es2019,dom -t es5 --allowJs --checkJs --noEmit src/*.js",
+    "types": "tsc src/**/*.js --lib es2019,dom -t es5 --declaration --allowJs --emitDeclarationOnly --outDir dist",
     "docs": "jsdoc -c jsdoc.json",
     "media": "cp -R .media docs/media",
     "premedia": "rm -r docs/media &",
     "rm": "rm -rf dist docs",
+    "prerollup": "npm run types",
     "rollup": "rollup -c",
     "rollup:travis": "rollup -c --travis",
     "rollup:watch": "npm run rollup -- -w",
@@ -24,6 +26,7 @@
     "travis:test": "npm run rollup && npm run test"
   },
   "devDependencies": {
+    "ds": "dist/DragSelect.js",
     "@babel/cli": "^7.12.10",
     "@babel/compat-data": "^7.12.7",
     "@babel/core": "^7.12.10",
