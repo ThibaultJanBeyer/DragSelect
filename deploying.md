@@ -16,7 +16,7 @@ But if you are the project owner:
 
 1. do thorough testing
 2. `npm run rollup`
-3. you can deploy a new version by pushing to github (gh-pages will be build by travis)
+3. Travis will take care of deployment to gh-pages when you push/merge to github (gh-pages will be build by travis)
 
 If this was successful, the next step is to publish the new version on `npm`:
 
