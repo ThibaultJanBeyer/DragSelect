@@ -1,6 +1,8 @@
 # Next release
 
 - Fixes bug #83: keyboard dragging is not disabled when draggability is disabled
+- Adds typescript support by adding types files to dist as specified in issue #93
+- Un-track dist file
 
 # 2.0.3
 

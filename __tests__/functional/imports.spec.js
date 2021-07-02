@@ -1,6 +1,6 @@
-const { beforeAll, afterAll, it } = require('@jest/globals')
-const http = require('http')
-const fs = require('fs')
+import wait from '../helpers/wait'
+import http from 'http'
+import fs from 'fs'
 
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
@@ -156,6 +156,7 @@ describe('Imports', () => {
 
   describe('ESM Module', () => {
     const setup = async (uri = '../../dist/DragSelect.es6m.js') => {
+      await wait(500)
       await page.evaluate((uri) => {
         window.dsScript = document.createElement('script')
         window.dsScript.setAttribute('type', 'module')
@@ -165,8 +166,12 @@ describe('Imports', () => {
           window.ds.subscribe('callback', ({ items }) => (window.callback = items.map((item) => item.id)))
           `
         document.body.appendChild(window.dsScript)
-        window.importScripts.push(window.dsScript)
+        setTimeout(() => {
+          if (!window.importScripts) window.importScripts = []
+          window.importScripts.push(window.dsScript)
+        }, 500)
       }, uri)
+      await wait(500)
     }
 
     it('when importing the script as module, it should be available', async () => {
