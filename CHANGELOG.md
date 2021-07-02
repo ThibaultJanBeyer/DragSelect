@@ -1,3 +1,7 @@
+# Next release
+
+- Fixes bug #83: keyboard dragging is not disabled when draggability is disabled
+
 # 2.0.3
 
 - Correct the behavior of modules/SelectableSet.removeSelectables method, solves #90 thanks to @lchtao26 for the contribution!

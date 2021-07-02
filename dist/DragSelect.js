@@ -1385,6 +1385,11 @@
      */
 
     /**
+     * @type {boolean}
+     * @private
+     */
+
+    /**
      * @type {DSDragKeys}
      * @private
      */
@@ -1407,6 +1412,7 @@
     /**
      * @param {Object} p
      * @param {DragSelect} p.DS
+     * @param {boolean} p.draggability
      * @param {boolean} p.useTransform
      * @param {DSDragKeys} p.dragKeys
      * @param {number} p.keyboardDragSpeed
@@ -1417,9 +1423,10 @@
       var _this = this;
 
       var DS = _ref.DS,
-          useTransform = _ref.useTransform,
           dragKeys = _ref.dragKeys,
+          draggability = _ref.draggability,
           keyboardDragSpeed = _ref.keyboardDragSpeed,
+          useTransform = _ref.useTransform,
           zoom = _ref.zoom;
 
       _classCallCheck(this, Drag);
@@ -1432,6 +1439,8 @@
 
       _defineProperty(this, "_elements", []);
 
+      _defineProperty(this, "_draggability", void 0);
+
       _defineProperty(this, "_dragKeys", void 0);
 
       _defineProperty(this, "_dragKeysFlat", void 0);
@@ -1443,7 +1452,8 @@
       _defineProperty(this, "keyboardDrag", function (_ref2) {
         var event = _ref2.event,
             key = _ref2.key;
-        if (!_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size) return;
+        console.log(event, key, _this._draggability);
+        if (!_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size || !_this._draggability) return;
         _this._isKeyboard = true;
 
         _this.DS.publish('Interaction:start', {
@@ -1486,7 +1496,7 @@
       _defineProperty(this, "keyboardEnd", function (_ref3) {
         var event = _ref3.event,
             key = _ref3.key;
-        if (!_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size) return;
+        if (!_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size || !_this._draggability) return;
         _this._isKeyboard = true;
 
         _this.DS.publish('Interaction:end', {
@@ -1542,6 +1552,7 @@
       this._useTransform = useTransform;
       this._keyboardDragSpeed = keyboardDragSpeed;
       this._zoom = zoom;
+      this._draggability = draggability;
       this._dragKeys = {
         up: dragKeys.up.map(function (k) {
           return k.toLowerCase();
@@ -3086,6 +3097,7 @@
       });
       this.Drag = new Drag({
         DS: this,
+        draggability: draggability,
         useTransform: useTransform,
         dragKeys: Object.assign({
           up: ['ArrowUp'],

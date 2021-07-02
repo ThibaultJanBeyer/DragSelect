@@ -26,6 +26,11 @@ export default class Drag {
    */
   _elements = []
   /**
+   * @type {boolean}
+   * @private
+   */
+  _draggability
+  /**
    * @type {DSDragKeys}
    * @private
    */
@@ -49,17 +54,26 @@ export default class Drag {
   /**
    * @param {Object} p
    * @param {DragSelect} p.DS
+   * @param {boolean} p.draggability
    * @param {boolean} p.useTransform
    * @param {DSDragKeys} p.dragKeys
    * @param {number} p.keyboardDragSpeed
    * @param {number} p.zoom
    * @ignore
    */
-  constructor({ DS, useTransform, dragKeys, keyboardDragSpeed, zoom }) {
+  constructor({
+    DS,
+    dragKeys,
+    draggability,
+    keyboardDragSpeed,
+    useTransform,
+    zoom,
+  }) {
     this.DS = DS
     this._useTransform = useTransform
     this._keyboardDragSpeed = keyboardDragSpeed
     this._zoom = zoom
+    this._draggability = draggability
 
     this._dragKeys = {
       up: dragKeys.up.map((k) => k.toLowerCase()),
@@ -82,7 +96,14 @@ export default class Drag {
   }
 
   keyboardDrag = ({ event, key }) => {
-    if (!this._dragKeysFlat.includes(key) || !this.DS.SelectedSet.size) return
+    console.log(event, key, this._draggability)
+    if (
+      !this._dragKeysFlat.includes(key) ||
+      !this.DS.SelectedSet.size ||
+      !this._draggability
+    )
+      return
+
     this._isKeyboard = true
     this.DS.publish('Interaction:start', { event, isDragging: true })
 
@@ -114,7 +135,12 @@ export default class Drag {
   }
 
   keyboardEnd = ({ event, key }) => {
-    if (!this._dragKeysFlat.includes(key) || !this.DS.SelectedSet.size) return
+    if (
+      !this._dragKeysFlat.includes(key) ||
+      !this.DS.SelectedSet.size ||
+      !this._draggability
+    )
+      return
     this._isKeyboard = true
     this.DS.publish('Interaction:end', { event, isDragging: true })
     this._isKeyboard = false
