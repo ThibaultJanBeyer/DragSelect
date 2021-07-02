@@ -1,4 +1,4 @@
-# 2.1.0
+# 2.1.0-1
 
 - Fixes bug #83: keyboard dragging is not disabled when draggability is disabled
 - Adds **typescript support** by adding types files to dist as specified in issue #93

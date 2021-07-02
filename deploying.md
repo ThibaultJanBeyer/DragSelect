@@ -22,6 +22,7 @@ If this was successful, the next step is to publish the new version on `npm`:
 
 ```
 npm version patch
+npm run rollup
 npm publish
 ```
 
