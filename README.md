@@ -68,9 +68,17 @@ Thanks to:
 |[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or [Get in touch](mailto:thibault.beyer@gmail.com) |
 
 # Installation
+## NPM
+```console
+npm install --save dragselect
+```
+## Yarn
+```console
+yarn add dragselect
+```
 ## Global
 
-Just [download the file](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/dist/DragSelect.js) ([minified](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/dist/ds.min.js)) and add it to your document:
+Just [download the file](https://dragselect.com/v2/DragSelect.js) ([minified](https://dragselect.com/v2/ds.min.js)) and add it to your document:
 
 ```html
 <script src="https://dragselect.com/v2/ds.min.js"></script>
@@ -78,25 +86,20 @@ Just [download the file](https://github.com/ThibaultJanBeyer/DragSelect/blob/mas
 
 > Note: if you are using `<script type=module` you can use the `DragSelect.es6m.js` or `ds.es6m.min.js` files as they include `export default DragSelect`
 
-> We don't recommend the direct linking for production set-up since you'll not benefit from versioning. Please use `npm` or `bower` if you can.
-
-## NPM
-```console
-npm install --save dragselect
-```
-
-## Bower
+> We don't recommend the direct linking for production set-up since you'll not benefit from versioning. Please use `npm` if you can.
+## Bower (deprecated)
 ```console
 bower install --save dragselect
 ```
 
-That's it, you're ready to rock!  
+*Note: the Bower project is deprecated. Please use npm instead. If you have to use bower, you'll have to build the project after installing it via `npm run rollup`*
+
+## That's it, you're ready to rock!  
 Of course you can also just include the code within your code and bundle it to save a request.  
 
 DragSelect supports `module.exports`, `AMD Modules` with `define`, `es6 modules` with `.es6m` versions and has a fallback to global namespace for maximum out of the box support.
 
 # Usage
-
 Now in your JavaScript you can simply pass elements to the function like so:
 
 ## Simple
