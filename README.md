@@ -228,6 +228,7 @@ myCustomDrag.subscribe('finished', () => ds.start())
 |selector |single DOM element (node) |The square that will be used to draw the selection. | Auto-created HTML Element
 |draggability |boolean |When a user is dragging on an already selected element, the selection is dragged. |`true`
 |immediateDrag |boolean |Whether a selectable element is draggable before being selected or needs to be selected first |`true`
+|keyboardDrag |boolean |Whether or not the user can drag with the keyboard (Accessibility). |`true`
 |dragKeys |{ up:string[], down:string[], left:string[], righ:string[] } |The keys available to drag element using the keyboard. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). |`{ up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], righ: ['ArrowRight'] }`
 |keyboardDragSpeed |number |The speed at which elements are dragged using the keyboard. In pixels per keyDown. |`10`
 |useTransform |boolean |Whether to use the more performant hardware accelerated css transforms when dragging instead of the top/left positions. |`true`
