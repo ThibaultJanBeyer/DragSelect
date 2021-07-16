@@ -1,3 +1,10 @@
+# 2.2.0
+
+- Add new possible callback value: `isDraggingKeyboard`
+- Add new settings prop `keyboardDrag: false`
+- Add `pre` events for all events. i.e. `predragstart`, `predragmove`, etc.
+- Add information on 3rd party integration to the README. Solves #80
+
 # 2.1.0-1
 
 - Fixes bug #83: keyboard dragging is not disabled when draggability is disabled

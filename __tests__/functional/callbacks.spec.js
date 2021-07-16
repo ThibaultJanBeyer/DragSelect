@@ -1,3 +1,4 @@
+import wait from '../helpers/wait'
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 describe('Callbacks', () => {
@@ -22,6 +23,7 @@ describe('Callbacks', () => {
         onElementUnselectCalls: window.onElementUnselectCalls,
         callbackCalls: window.callbackCalls,
 
+        onPreDragStartCallsPS: window.pubsub.onPreDragStartCalls,
         onDragStartCallsPS: window.pubsub.onDragStartCalls,
         onDragMoveCallsPS: window.pubsub.onDragMoveCalls,
         onElementSelectCallsPS: window.pubsub.onElementSelectCalls,
@@ -37,6 +39,14 @@ describe('Callbacks', () => {
     expect(executesFn.onElementUnselectCalls.length).toBe(0)
     expect(executesFn.callbackCalls.length).toBe(1)
     expect(executesFn.callbackCalls[0].elements.length).toBe(2)
+
+    expect(executesFn.onPreDragStartCallsPS.length).toBe(1)
+    expect(executesFn.onPreDragStartCallsPS[0].isDragging).toBe(false)
+    expect(executesFn.onPreDragStartCallsPS[0].items).toBeDefined()
+    expect(executesFn.onPreDragStartCallsPS[0].item).not.toBeDefined()
+    expect(
+      executesFn.onPreDragStartCallsPS.isDraggingKeyboard
+    ).not.toBeDefined()
 
     expect(executesFn.onDragStartCallsPS.length).toBe(1)
     expect(executesFn.onDragMoveCallsPS.length).toBe(100)

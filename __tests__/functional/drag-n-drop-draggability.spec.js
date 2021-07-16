@@ -34,13 +34,27 @@ describe('Drag N Drop - draggability', () => {
     })
     await mouse.up()
 
-    const { d2, v12, v22, v32, v42 } = await page.evaluate((itemId) => ({
+    const {
+      d2,
+      v12,
+      v22,
+      v32,
+      v42,
+      dragged,
+      preDragStart,
+      dragStart,
+      dragMove,
+    } = await page.evaluate((itemId) => ({
       d2: window.dragged,
       s2: window.selected,
       v12: window.getItemVect(1),
       v22: window.getItemVect(2),
       v32: window.getItemVect(3),
       v42: window.getItemVect(4),
+      dragged: window.dragged,
+      preDragStart: window.preDragStart,
+      dragStart: window.dragStart,
+      dragMove: window.dragMove,
     }))
 
     expect(d2.length).toEqual(0)
@@ -48,6 +62,10 @@ describe('Drag N Drop - draggability', () => {
     expect(v22.y).toEqual(v2.y)
     expect(v32.x).toEqual(v3.x)
     expect(v42.y).toEqual(v4.y)
+    expect(dragged).toEqual([])
+    expect(preDragStart).toEqual([])
+    expect(dragStart).toEqual([])
+    expect(dragMove).toEqual([])
   })
 
   it('The items should NOT be draggable via keyboard', async () => {

@@ -55,7 +55,7 @@ import {
   SelectorArea,
 } from './modules'
 import { PointerStore, ScrollStore, KeyStore } from './stores'
-import { toArray, vect2 } from './methods'
+import { toArray, vect2, subscriberAliases } from './methods'
 
 // Setup
 //////////////////////////////////////////////////////////////////////////////////////
@@ -79,6 +79,7 @@ class DragSelect {
     selector = undefined,
     draggability = true,
     immediateDrag = true,
+    keyboardDrag = true,
     dragKeys,
     keyboardDragSpeed = 10,
     useTransform = true,
@@ -153,6 +154,7 @@ class DragSelect {
       DS: this,
       draggability,
       useTransform,
+      keyboardDrag,
       dragKeys: Object.assign(
         {
           up: ['ArrowUp'],
@@ -174,53 +176,12 @@ class DragSelect {
     })
 
     // Subscriber Aliases
-    this.subscribe('Selected:added', ({ items, item }) =>
-      this.publish('elementselect', {
-        items,
-        item,
-        isDragging: this.Interaction.isDragging,
-      })
-    )
-    this.subscribe('Selected:removed', ({ items, item }) =>
-      this.publish('elementunselect', {
-        items,
-        item,
-        isDragging: this.Interaction.isDragging,
-      })
-    )
-    this.subscribe('Interaction:update', ({ event, isDragging }) => {
-      if (event)
-        this.publish('dragmove', {
-          items: this.getSelection(),
-          event,
-          isDragging,
-        })
+    subscriberAliases({
+      subscribe: this.subscribe,
+      publish: this.publish,
+      SelectedSet: this.SelectedSet,
+      Interaction: this.Interaction,
     })
-    this.subscribe(
-      'Area:scroll',
-      ({ scroll_directions, scroll_multiplier }) => {
-        this.publish('autoscroll', {
-          items: this.getSelection(),
-          scroll_directions,
-          scroll_multiplier,
-          isDragging: this.Interaction.isDragging,
-        })
-      }
-    )
-    this.subscribe('Interaction:start', ({ event, isDragging }) =>
-      this.publish('dragstart', {
-        items: this.getSelection(),
-        event,
-        isDragging,
-      })
-    )
-    this.subscribe('Interaction:end', ({ event, isDragging }) =>
-      this.publish('callback', {
-        items: this.getSelection(),
-        event,
-        isDragging,
-      })
-    )
 
     this.start()
   }

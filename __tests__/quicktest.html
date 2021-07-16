@@ -168,7 +168,7 @@
       selectables: document.getElementsByClassName('item'),
       area: document.getElementById('container'),
     });
-    ds.subscribe('callback', ({ items }) => console.log("items", items))
+    ds.subscribe('callback', (data) => console.log("callback", data))
   </script>
 </body>
 </html>

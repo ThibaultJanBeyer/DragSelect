@@ -41,6 +41,11 @@ export default class Drag {
    */
   _dragKeysFlat
   /**
+   * @type {boolean}
+   * @private
+   */
+  _keyboardDrag
+  /**
    * @type {number}
    * @private
    */
@@ -57,6 +62,7 @@ export default class Drag {
    * @param {boolean} p.draggability
    * @param {boolean} p.useTransform
    * @param {DSDragKeys} p.dragKeys
+   * @param {boolean} p.keyboardDrag
    * @param {number} p.keyboardDragSpeed
    * @param {number} p.zoom
    * @ignore
@@ -65,6 +71,7 @@ export default class Drag {
     DS,
     dragKeys,
     draggability,
+    keyboardDrag,
     keyboardDragSpeed,
     useTransform,
     zoom,
@@ -72,6 +79,7 @@ export default class Drag {
     this.DS = DS
     this._useTransform = useTransform
     this._keyboardDragSpeed = keyboardDragSpeed
+    this._keyboardDrag = keyboardDrag
     this._zoom = zoom
     this._draggability = draggability
 
@@ -96,16 +104,19 @@ export default class Drag {
   }
 
   keyboardDrag = ({ event, key }) => {
-    console.log(event, key, this._draggability)
     if (
+      !this._keyboardDrag ||
       !this._dragKeysFlat.includes(key) ||
       !this.DS.SelectedSet.size ||
       !this._draggability
     )
       return
 
-    this._isKeyboard = true
-    this.DS.publish('Interaction:start', { event, isDragging: true })
+    this.DS.publish('Interaction:start', {
+      event,
+      isDragging: true,
+      isDraggingKeyboard: true,
+    })
 
     this._elements = this.DS.getSelection()
     this.handleZIndex(true)
@@ -130,40 +141,46 @@ export default class Drag {
       })
     )
 
-    this.DS.publish('Interaction:update', { event, isDragging: true })
-    this._isKeyboard = false
+    this.DS.publish('Interaction:update', {
+      event,
+      isDragging: true,
+      isDraggingKeyboard: true,
+    })
   }
 
   keyboardEnd = ({ event, key }) => {
     if (
+      !this._keyboardDrag ||
       !this._dragKeysFlat.includes(key) ||
       !this.DS.SelectedSet.size ||
       !this._draggability
     )
       return
-    this._isKeyboard = true
-    this.DS.publish('Interaction:end', { event, isDragging: true })
-    this._isKeyboard = false
+    this.DS.publish('Interaction:end', {
+      event,
+      isDragging: this._draggability,
+      isDraggingKeyboard: true,
+    })
   }
 
-  start = ({ isDragging }) => {
-    if (!isDragging || this._isKeyboard) return
+  start = ({ isDragging, isDraggingKeyboard }) => {
+    if (!isDragging || isDraggingKeyboard) return
     this._prevCursorPos = null
     this._prevScrollPos = null
     this._elements = this.DS.getSelection()
     this.handleZIndex(true)
   }
 
-  stop = () => {
-    if (this._isKeyboard) return
+  stop = (evt) => {
+    if (evt?.isKeyboard) return
     this._prevCursorPos = null
     this._prevScrollPos = null
     this.handleZIndex(false)
     this._elements = []
   }
 
-  update = ({ isDragging }) => {
-    if (!isDragging || !this._elements.length || this._isKeyboard) return
+  update = ({ isDragging, isDraggingKeyboard }) => {
+    if (!isDragging || !this._elements.length || isDraggingKeyboard) return
 
     const posDirection = vect2.calc(this._cursorDiff, '+', this._scrollDiff)
 

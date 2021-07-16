@@ -40,10 +40,11 @@ export default class PubSub {
    * @memberof DragSelect#
    * @function publish
    * @param {DSCallbackNames} eventName
-   * @param {CallbackObject|*} data passed to the subscription method
+   * @param {CallbackObject} data passed to the subscription method
    */
   publish = (eventName, data) => {
     if (!Array.isArray(this.subscribers[eventName])) return
-    this.subscribers[eventName].forEach((callback) => callback(data))
+    this.subscribers[`${eventName}:pre`]?.forEach((callback) => callback(data))
+    this.subscribers[eventName]?.forEach((callback) => callback(data))
   }
 }
