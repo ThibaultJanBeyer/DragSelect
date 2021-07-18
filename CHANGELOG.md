@@ -5,6 +5,11 @@
 - Add `pre` events for all events. i.e. `predragstart`, `predragmove`, etc.
 - Add information on 3rd party integration to the README. Solves #80
 
+# 2.1.2
+
+- Fixes build error bug introduced by typings. Solves [#100](https://github.com/ThibaultJanBeyer/DragSelect/issues/100)
+Issue: the JS-Docs files types.js was not included in d.ts files. Now rollup builds are force-including it.
+
 # 2.1.0-1
 
 - Fixes bug #83: keyboard dragging is not disabled when draggability is disabled

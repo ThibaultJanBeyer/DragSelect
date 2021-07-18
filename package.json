@@ -1,8 +1,9 @@
 {
   "name": "dragselect",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "easy javascript drag select functionality for your projects",
   "main": "./dist/DragSelect.js",
+  "types": "./dist/DragSelect.d.ts",
   "scripts": {
     "prestart": "npm i",
     "start": "npm run open & npm run watch",
@@ -11,7 +12,7 @@
     "postcheckjs": "npm run docs && rm -rf docs",
     "checkjs": "tsc --lib es2019,dom -t es5 --allowJs --checkJs --noEmit src/*.js",
     "checkjs:watch": "tsc -w --lib es2019,dom -t es5 --allowJs --checkJs --noEmit src/*.js",
-    "types": "tsc src/**/*.js --lib es2019,dom -t es5 --declaration --allowJs --emitDeclarationOnly --outDir dist",
+    "types": "tsc src/DragSelect.js --lib es2019,dom -t es5 --declaration --allowJs --emitDeclarationOnly --outDir dist",
     "docs": "jsdoc -c jsdoc.json",
     "media": "cp -R .media docs/media",
     "premedia": "rm -r docs/media &",
@@ -53,6 +54,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-standard": "^5.0.0",
+    "glob": "^7.1.7",
     "jest": "^26.6.3",
     "jest-puppeteer": "^4.4.0",
     "jsdoc": "^3.6.6",
