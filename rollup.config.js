@@ -1,9 +1,11 @@
 import babel from '@rollup/plugin-babel'
+import fs from 'fs'
+import glob from 'glob'
+import path from 'path'
 import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
-import fs from 'fs'
-import path from 'path'
 
+let typesDone = false
 const banner = `/***
 
  ~~~ Version ${process.env.npm_package_version} ~~~
@@ -85,6 +87,25 @@ export default {
         if (!fs.existsSync('docs/v2')) fs.mkdirSync('docs/v2')
         fs.copyFileSync(options.file, `docs/v2/${path.basename(options.file)}`)
         console.log(options.file, `docs/v2/${path.basename(options.file)}`)
+      },
+    },
+    {
+      name: 'add-types', // solves build issue caused by types (#100)
+      writeBundle() {
+        if (typesDone) return
+        typesDone = true
+        console.log(`Adding types to all ts files`)
+        glob('dist/**/*.d.ts', (er, files) => {
+          if (er) throw er
+          files.forEach((fileName) => {
+            if (fileName.includes('types.d.ts')) return
+            const depth = fileName.match(/\//g).length
+            const relativeDir = depth === 1 ? './' : '../'.repeat(depth - 1)
+            fs.appendFile(fileName, `import "${relativeDir}types"\n`, (err) => {
+              if (err) throw err
+            })
+          })
+        })
       },
     },
     {
