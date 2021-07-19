@@ -193,9 +193,11 @@ Obviously, keyboard users won’t get the full visual experience but it works si
 
 ## Use your own Drag And Drop
 
+### Using another plugin/tool (3rd party)
+
 DragSelect comes with a build-in dragNdrop. Before, `.break` was used for this. But with v2, using your own is now very simple: listen to any DragSelect event to `.stop` it. Then, re-`.start` it after your custom dragNdrop was performed. Check for `isDragging`, which indicates when the users drags (moving the element) and `isDraggingKeyboard` for the keyboard drag events. I.e. use `predragstart`.
 
-### Example
+#### Example
 
 ```JavaScript
 const ds = new DragSelect({ 
@@ -208,6 +210,39 @@ const myCustomDrag = new MyCustomDrag({/* …your settings… */})
 ds.subscribe('predragstart', ({ isDragging, isDraggingKeyboard }) =>
   isDragging && ds.stop(false, false))
 myCustomDrag.subscribe('finished', () => ds.start())
+```
+
+Disabling then re-enabling directly can also work (i.e. when your library has no callback):
+
+```JavaScript
+ds.subscribe('dragstart', ({ isDragging, isDraggingKeyboard }) => {
+   if(isDragging) {
+     ds.stop(false, false)
+     ds.start()
+   }
+})
+```
+
+### Writing a fully custom solution
+
+> /!\ only use this when you know what you're doing. Support is limited /!\
+
+In case you want to build something completely custom on top of DragSelect, we got you covered! You can use `.break` for this. You heard right, break is back baby :)  
+
+This utility to override DragSelects internal functionality allows you to write it all yourself: You can write your own drag and drop but you can also write your own selection:  
+
+#### Example
+
+```JavaScript
+ds.subscribe('predragmove', ({ isDragging, isDraggingKeyboard }) => {
+  if(isDragging || isDraggingKeyboard) {
+    ds.break()
+    /* your custom logic for drag handling here. */
+  } else {
+    ds.break()
+    /* your custom logic for selection handling here. */
+  }
+}
 ```
 
 # Constructor Properties:
@@ -299,6 +334,7 @@ Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 |getCursorPositionDifference |Boolean (usePreviousCursorDifference) |Returns object with the x, y difference between the initial and the last cursor position. If the argument is set to true, it will instead return the x, y difference to the previous coordinates |
 |isMultiSelect |\[event:KeyboardEvent|MouseEvent|TouchEvent\] (optional) |Whether the multi-select key is currently pressed
 |isDragging |/ |Whether the user is currently drag n dropping elements (instead of selection)
+|break |/ |Utility to override DragSelect internal functionality. Read [docs](#writing-a-fully-custom-solution) for more info.
 
 # Classes
 | name | trigger |

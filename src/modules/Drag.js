@@ -108,7 +108,8 @@ export default class Drag {
       !this._keyboardDrag ||
       !this._dragKeysFlat.includes(key) ||
       !this.DS.SelectedSet.size ||
-      !this._draggability
+      !this._draggability ||
+      this.DS.continue
     )
       return
 
@@ -180,7 +181,13 @@ export default class Drag {
   }
 
   update = ({ isDragging, isDraggingKeyboard }) => {
-    if (!isDragging || !this._elements.length || isDraggingKeyboard) return
+    if (
+      !isDragging ||
+      !this._elements.length ||
+      isDraggingKeyboard ||
+      this.DS.continue
+    )
+      return
 
     const posDirection = vect2.calc(this._cursorDiff, '+', this._scrollDiff)
 

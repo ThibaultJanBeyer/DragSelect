@@ -3,7 +3,10 @@
 - Add new possible callback value: `isDraggingKeyboard`
 - Add new settings prop `keyboardDrag: false`
 - Add `pre` events for all events. i.e. `predragstart`, `predragmove`, etc.
-- Add information on 3rd party integration to the README. Solves #80
+- Add information on 3rd party integration to the README.
+- Re-add `break` functionality to give maximum flexibility on 3rd party integration
+
+All these changes solve #80
 
 # 2.1.2
 
@@ -99,7 +102,7 @@ Based on the changes, some methods did not make sense anymore. So we cleaned the
 
 Public methods that were removed:
 
-- `.break` was removed
+- `.break` (use `.stop` and `.start` instead) (back in v2.2.0)
 - `.getCursorPos`
 - `.getScroll`
 - `.getAreaRect`
