@@ -73,7 +73,7 @@ export default class PointerStore {
     this.currentVal = this.initialVal = this.getPointerPosition(event)
   }
 
-  /** @param {DSEvent} [event] */
+  /** @param {DSEvent} event */
   getPointerPosition = (event) =>
     getPointerPos({
       event: this._normalizedEvent(event),
