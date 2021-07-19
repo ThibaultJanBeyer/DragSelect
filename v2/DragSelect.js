@@ -72,6 +72,40 @@
     return obj;
   }
 
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      if (enumerableOnly) symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+
+      if (i % 2) {
+        ownKeys(Object(source), true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(Object(source)).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+    }
+
+    return target;
+  }
+
   function _inherits(subClass, superClass) {
     if (typeof superClass !== "function" && superClass !== null) {
       throw new TypeError("Super expression must either be null or a function");
@@ -236,6 +270,10 @@
     return _get(target, property, receiver || target);
   }
 
+  function _slicedToArray(arr, i) {
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+  }
+
   function _toConsumableArray(arr) {
     return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
   }
@@ -244,8 +282,39 @@
     if (Array.isArray(arr)) return _arrayLikeToArray(arr);
   }
 
+  function _arrayWithHoles(arr) {
+    if (Array.isArray(arr)) return arr;
+  }
+
   function _iterableToArray(iter) {
     if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+  }
+
+  function _iterableToArrayLimit(arr, i) {
+    if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"] != null) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
   }
 
   function _unsupportedIterableToArray(o, minLen) {
@@ -269,6 +338,10 @@
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
+  function _nonIterableRest() {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
   /**
    * The Settings to be passed to the Class
    * @typedef {Object} Settings
@@ -284,6 +357,7 @@
    * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
    * @property {boolean} [draggability=true] When a user is dragging on an already selected element, the selection is dragged.
    * @property {boolean} [immediateDrag=true] Whether an element is draggable from the start or needs to be selected first
+   * @property {boolean} [keyboardDrag=true] Whether or not the user can drag with the keyboard (we don't recommend disabling it)
    * @property {DSDragKeys} [dragKeys={up:['ArrowUp'],down:['ArrowDown'],left:['ArrowLeft'],righ:['ArrowRight']}] The keys available to drag element using the keyboard.
    * @property {number} [keyboardDragSpeed=10] The speed at which elements are dragged using the keyboard. In pixels per keydown.
    * @property {boolean} [useTransform=true] Whether to use hardware accelerated css transforms when dragging or top/left instead
@@ -304,9 +378,11 @@
    * The Object that is passed back to any callback method
    * @typedef {Object} CallbackObject
    * @property {Array<HTMLElement|SVGElement|any>} [items] The items currently selected
-   * @property {MouseEvent|TouchEvent|Event} [event] The respective event object
+   * @property {MouseEvent|TouchEvent|KeyboardEvent|Event} [event] The respective event object
    * @property {HTMLElement|SVGElement|any} [item] The single item currently interacted with
    * @property {boolean} [isDragging] Whether the interaction is a drag or a select
+   * @property {boolean} [isDraggingKeyboard] Whether or not the drag interaction is via keyboard
+   * @property {string} [key] Pressed key (lowercase)
    * @property {Array.<'top'|'bottom'|'left'|'right'|undefined>} [scroll_directions]
    * @property {number} [scroll_multiplier]
    */
@@ -339,6 +415,8 @@
   /** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
 
   /** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'|'Selectable:pointer'|'KeyStore:down'|'KeyStore:up'} DSInternalEventNames */
+
+  /** @typedef {'Interaction:init:pre'|'Interaction:start:pre'|'Interaction:end:pre'|'Interaction:update:pre'|'Area:modified:pre'|'Area:scroll:pre'|'PointerStore:updated:pre'|'Selected:added:pre'|'Selected:removed:pre'|'Selectable:click:pre'|'Selectable:pointer:pre'|'KeyStore:down:pre'|'KeyStore:up:pre'|'Drag:keyboardDrag:pre'} DSInternalEventNamesPre */
 
   /** @typedef {DSEventNames|DSInternalEventNames} DSCallbackNames the name of the callback */
 
@@ -1132,6 +1210,90 @@
   });
 
   /**
+   * @typedef {function} DSSubscribe
+   * @param {DSCallbackNames} eventName
+   * @param {DSCallback} callback
+   * @returns {number} event id, can be used to unsubscribe more efficiently
+   */
+
+  /**
+   * @typedef {function} DSPublish
+   * @param {DSCallbackNames} eventName
+   * @param {CallbackObject} data passed to the subscription method
+   */
+
+  /**
+   * Maps internal events to external ones
+   *
+   * @param {Object} p
+   * @param {DSSubscribe} p.subscribe
+   * @param {DSPublish} p.publish
+   * @param {Interaction} p.Interaction
+   * @param {SelectedSet} p.SelectedSet
+   */
+
+  var subscriberAliases = (function (_ref) {
+    var subscribe = _ref.subscribe,
+        publish = _ref.publish,
+        Interaction = _ref.Interaction,
+        SelectedSet = _ref.SelectedSet;
+    var mapping = {
+      'Selected:added': [{
+        name: 'elementselect'
+      }],
+      'Selected:removed': [{
+        name: 'elementunselect'
+      }],
+      'Area:scroll': [{
+        name: 'autoscroll'
+      }],
+      // scroll_directions, scroll_multiplier
+      'Interaction:start': [{
+        name: 'dragstart'
+      }],
+      // event, isDraggingKeyboard
+      'Interaction:update': [{
+        name: 'dragmove',
+        condition: function condition(data) {
+          return data.event;
+        }
+      }],
+      // event, isDraggingKeyboard
+      'Interaction:end': [{
+        name: 'callback'
+      }],
+      // event, isDraggingKeyboard
+      'Drag:keyboardDrag': [{
+        name: 'dragstart'
+      }, {
+        name: 'dragmove'
+      }] // event, isDraggingKeyboard
+
+    };
+
+    var _loop = function _loop() {
+      var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+          sub_name = _Object$entries$_i[0],
+          pubs = _Object$entries$_i[1];
+
+      ['pre', false].forEach(function (filler) {
+        return subscribe(filler ? "".concat(sub_name, ":").concat(filler) : sub_name, function (data) {
+          return pubs.forEach(function (pub) {
+            return (!pub.condition || pub.condition(data)) && publish(filler ? "".concat(filler).concat(pub.name) : pub.name, _objectSpread2({
+              items: SelectedSet.elements,
+              isDragging: Interaction.isDragging
+            }, data));
+          });
+        });
+      });
+    };
+
+    for (var _i = 0, _Object$entries = Object.entries(mapping); _i < _Object$entries.length; _i++) {
+      _loop();
+    }
+  });
+
+  /**
    * Transforms any list or single item to an array so user doesn’t have to care.
    * @param {DSInputElements} items a single item, a Node-list or any element group
    * @return {DSElements}
@@ -1400,6 +1562,11 @@
      */
 
     /**
+     * @type {boolean}
+     * @private
+     */
+
+    /**
      * @type {number}
      * @private
      */
@@ -1415,6 +1582,7 @@
      * @param {boolean} p.draggability
      * @param {boolean} p.useTransform
      * @param {DSDragKeys} p.dragKeys
+     * @param {boolean} p.keyboardDrag
      * @param {number} p.keyboardDragSpeed
      * @param {number} p.zoom
      * @ignore
@@ -1425,6 +1593,7 @@
       var DS = _ref.DS,
           dragKeys = _ref.dragKeys,
           draggability = _ref.draggability,
+          keyboardDrag = _ref.keyboardDrag,
           keyboardDragSpeed = _ref.keyboardDragSpeed,
           useTransform = _ref.useTransform,
           zoom = _ref.zoom;
@@ -1445,6 +1614,8 @@
 
       _defineProperty(this, "_dragKeysFlat", void 0);
 
+      _defineProperty(this, "_keyboardDrag", void 0);
+
       _defineProperty(this, "_keyboardDragSpeed", void 0);
 
       _defineProperty(this, "_zoom", void 0);
@@ -1452,13 +1623,12 @@
       _defineProperty(this, "keyboardDrag", function (_ref2) {
         var event = _ref2.event,
             key = _ref2.key;
-        console.log(event, key, _this._draggability);
-        if (!_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size || !_this._draggability) return;
-        _this._isKeyboard = true;
+        if (!_this._keyboardDrag || !_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size || !_this._draggability || _this.DS["continue"]) return;
 
         _this.DS.publish('Interaction:start', {
           event: event,
-          isDragging: true
+          isDragging: true,
+          isDraggingKeyboard: true
         });
 
         _this._elements = _this.DS.getSelection();
@@ -1487,29 +1657,27 @@
 
         _this.DS.publish('Interaction:update', {
           event: event,
-          isDragging: true
+          isDragging: true,
+          isDraggingKeyboard: true
         });
-
-        _this._isKeyboard = false;
       });
 
       _defineProperty(this, "keyboardEnd", function (_ref3) {
         var event = _ref3.event,
             key = _ref3.key;
-        if (!_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size || !_this._draggability) return;
-        _this._isKeyboard = true;
+        if (!_this._keyboardDrag || !_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size || !_this._draggability) return;
 
         _this.DS.publish('Interaction:end', {
           event: event,
-          isDragging: true
+          isDragging: _this._draggability,
+          isDraggingKeyboard: true
         });
-
-        _this._isKeyboard = false;
       });
 
       _defineProperty(this, "start", function (_ref4) {
-        var isDragging = _ref4.isDragging;
-        if (!isDragging || _this._isKeyboard) return;
+        var isDragging = _ref4.isDragging,
+            isDraggingKeyboard = _ref4.isDraggingKeyboard;
+        if (!isDragging || isDraggingKeyboard) return;
         _this._prevCursorPos = null;
         _this._prevScrollPos = null;
         _this._elements = _this.DS.getSelection();
@@ -1517,8 +1685,8 @@
         _this.handleZIndex(true);
       });
 
-      _defineProperty(this, "stop", function () {
-        if (_this._isKeyboard) return;
+      _defineProperty(this, "stop", function (evt) {
+        if (evt !== null && evt !== void 0 && evt.isKeyboard) return;
         _this._prevCursorPos = null;
         _this._prevScrollPos = null;
 
@@ -1528,8 +1696,9 @@
       });
 
       _defineProperty(this, "update", function (_ref5) {
-        var isDragging = _ref5.isDragging;
-        if (!isDragging || !_this._elements.length || _this._isKeyboard) return;
+        var isDragging = _ref5.isDragging,
+            isDraggingKeyboard = _ref5.isDraggingKeyboard;
+        if (!isDragging || !_this._elements.length || isDraggingKeyboard || _this.DS["continue"]) return;
         var posDirection = calc(_this._cursorDiff, '+', _this._scrollDiff);
 
         _this._elements.forEach(function (element) {
@@ -1551,6 +1720,7 @@
       this.DS = DS;
       this._useTransform = useTransform;
       this._keyboardDragSpeed = keyboardDragSpeed;
+      this._keyboardDrag = keyboardDrag;
       this._zoom = zoom;
       this._draggability = draggability;
       this._dragKeys = {
@@ -1740,10 +1910,12 @@
 
       _defineProperty(this, "update", function (_ref3) {
         var event = _ref3.event,
-            data = _ref3.data;
+            scroll_directions = _ref3.scroll_directions,
+            scroll_multiplier = _ref3.scroll_multiplier;
         if (_this.isInteracting) _this.DS.publish('Interaction:update', {
           event: event,
-          data: data,
+          scroll_directions: scroll_directions,
+          scroll_multiplier: scroll_multiplier,
           isDragging: _this.isDragging
         });
       });
@@ -1817,9 +1989,13 @@
     });
 
     _defineProperty(this, "publish", function (eventName, data) {
-      if (!Array.isArray(_this.subscribers[eventName])) return;
+      var _this$subscribers$, _this$subscribers$eve;
 
-      _this.subscribers[eventName].forEach(function (callback) {
+      if (!Array.isArray(_this.subscribers[eventName])) return;
+      (_this$subscribers$ = _this.subscribers["".concat(eventName, ":pre")]) === null || _this$subscribers$ === void 0 ? void 0 : _this$subscribers$.forEach(function (callback) {
+        return callback(data);
+      });
+      (_this$subscribers$eve = _this.subscribers[eventName]) === null || _this$subscribers$eve === void 0 ? void 0 : _this$subscribers$eve.forEach(function (callback) {
         return callback(data);
       });
     });
@@ -2143,7 +2319,7 @@
 
       _defineProperty(this, "update", function (_ref3) {
         var isDragging = _ref3.isDragging;
-        if (isDragging) return;
+        if (isDragging || _this.DS["continue"]) return;
 
         _this._handleInsideSelection();
       });
@@ -2261,7 +2437,7 @@
 
       _defineProperty(this, "update", function (_ref3) {
         var isDragging = _ref3.isDragging;
-        if (isDragging) return;
+        if (isDragging || _this.DS["continue"]) return;
         var _this$DS$stores = _this.DS.stores,
             ScrollStore = _this$DS$stores.ScrollStore,
             PointerStore = _this$DS$stores.PointerStore;
@@ -2360,6 +2536,10 @@
         if (style.height !== height) style.height = height;
       });
 
+      _defineProperty(this, "stop", function () {
+        return _this.stopAutoScroll();
+      });
+
       _defineProperty(this, "startAutoScroll", function () {
         _this.currentEdges = [];
         _this._scrollInterval = setInterval(function () {
@@ -2368,6 +2548,7 @@
       });
 
       _defineProperty(this, "handleAutoScroll", function () {
+        if (_this.DS["continue"]) return;
         var _this$DS = _this.DS,
             PointerStore = _this$DS.stores.PointerStore,
             Area = _this$DS.Area;
@@ -2930,6 +3111,11 @@
 
   var DragSelect = /*#__PURE__*/function () {
     /**
+     * used to skip all current Selection and dragNdrop functionality
+     * @type {boolean}
+     */
+
+    /**
      * @class DragSelect
      * @constructor DragSelect
      * @param {Settings} settings
@@ -2964,6 +3150,8 @@
           draggability = _ref$draggability === void 0 ? true : _ref$draggability,
           _ref$immediateDrag = _ref.immediateDrag,
           immediateDrag = _ref$immediateDrag === void 0 ? true : _ref$immediateDrag,
+          _ref$keyboardDrag = _ref.keyboardDrag,
+          keyboardDrag = _ref$keyboardDrag === void 0 ? true : _ref$keyboardDrag,
           dragKeys = _ref.dragKeys,
           _ref$keyboardDragSpee = _ref.keyboardDragSpeed,
           keyboardDragSpeed = _ref$keyboardDragSpee === void 0 ? 10 : _ref$keyboardDragSpee,
@@ -2988,8 +3176,14 @@
 
       _classCallCheck(this, DragSelect);
 
+      _defineProperty(this, "continue", false);
+
       _defineProperty(this, "start", function () {
         return _this.Interaction.init();
+      });
+
+      _defineProperty(this, "break", function () {
+        return _this["continue"] = true;
       });
 
       _defineProperty(this, "getSelection", function () {
@@ -3099,6 +3293,7 @@
         DS: this,
         draggability: draggability,
         useTransform: useTransform,
+        keyboardDrag: keyboardDrag,
         dragKeys: Object.assign({
           up: ['ArrowUp'],
           down: ['ArrowDown'],
@@ -3115,61 +3310,14 @@
         immediateDrag: immediateDrag
       }); // Subscriber Aliases
 
-      this.subscribe('Selected:added', function (_ref2) {
-        var items = _ref2.items,
-            item = _ref2.item;
-        return _this.publish('elementselect', {
-          items: items,
-          item: item,
-          isDragging: _this.Interaction.isDragging
-        });
+      subscriberAliases({
+        subscribe: this.subscribe,
+        publish: this.publish,
+        SelectedSet: this.SelectedSet,
+        Interaction: this.Interaction
       });
-      this.subscribe('Selected:removed', function (_ref3) {
-        var items = _ref3.items,
-            item = _ref3.item;
-        return _this.publish('elementunselect', {
-          items: items,
-          item: item,
-          isDragging: _this.Interaction.isDragging
-        });
-      });
-      this.subscribe('Interaction:update', function (_ref4) {
-        var event = _ref4.event,
-            isDragging = _ref4.isDragging;
-        if (event) _this.publish('dragmove', {
-          items: _this.getSelection(),
-          event: event,
-          isDragging: isDragging
-        });
-      });
-      this.subscribe('Area:scroll', function (_ref5) {
-        var scroll_directions = _ref5.scroll_directions,
-            scroll_multiplier = _ref5.scroll_multiplier;
-
-        _this.publish('autoscroll', {
-          items: _this.getSelection(),
-          scroll_directions: scroll_directions,
-          scroll_multiplier: scroll_multiplier,
-          isDragging: _this.Interaction.isDragging
-        });
-      });
-      this.subscribe('Interaction:start', function (_ref6) {
-        var event = _ref6.event,
-            isDragging = _ref6.isDragging;
-        return _this.publish('dragstart', {
-          items: _this.getSelection(),
-          event: event,
-          isDragging: isDragging
-        });
-      });
-      this.subscribe('Interaction:end', function (_ref7) {
-        var event = _ref7.event,
-            isDragging = _ref7.isDragging;
-        return _this.publish('callback', {
-          items: _this.getSelection(),
-          event: event,
-          isDragging: isDragging
-        });
+      this.subscribe('Interaction:end', function () {
+        return _this["continue"] = false;
       });
       this.start();
     } // @TODO: remove after deprecation
@@ -3177,13 +3325,13 @@
 
     _createClass(DragSelect, [{
       key: "_callbacksTemp",
-      value: function _callbacksTemp(_ref8) {
-        var callback = _ref8.callback,
-            onDragMove = _ref8.onDragMove,
-            onDragStart = _ref8.onDragStart,
-            onDragStartBegin = _ref8.onDragStartBegin,
-            onElementSelect = _ref8.onElementSelect,
-            onElementUnselect = _ref8.onElementUnselect;
+      value: function _callbacksTemp(_ref2) {
+        var callback = _ref2.callback,
+            onDragMove = _ref2.onDragMove,
+            onDragStart = _ref2.onDragStart,
+            onDragStartBegin = _ref2.onDragStartBegin,
+            onElementSelect = _ref2.onElementSelect,
+            onElementUnselect = _ref2.onElementUnselect;
 
         var warnMessage = function warnMessage(name, newName) {
           return console.warn("[DragSelect] ".concat(name, " is deprecated. Use DragSelect.subscribe(\"").concat(newName, "\", (callbackObject) => {}) instead. Act Now! See docs for more info"));
@@ -3191,60 +3339,60 @@
 
         if (callback) {
           warnMessage('callback', 'callback');
-          this.subscribe('callback', function (_ref9) {
-            var items = _ref9.items,
-                item = _ref9.item,
-                event = _ref9.event;
+          this.subscribe('callback', function (_ref3) {
+            var items = _ref3.items,
+                item = _ref3.item,
+                event = _ref3.event;
             return callback(items, event);
           });
         }
 
         if (onDragMove) {
           warnMessage('onDragMove', 'dragmove');
-          this.subscribe('dragmove', function (_ref10) {
-            var items = _ref10.items,
-                item = _ref10.item,
-                event = _ref10.event;
+          this.subscribe('dragmove', function (_ref4) {
+            var items = _ref4.items,
+                item = _ref4.item,
+                event = _ref4.event;
             return onDragMove(event);
           });
         }
 
         if (onDragStart) {
           warnMessage('onDragStart', 'dragstart');
-          this.subscribe('dragstart', function (_ref11) {
-            var items = _ref11.items,
-                item = _ref11.item,
-                event = _ref11.event;
+          this.subscribe('dragstart', function (_ref5) {
+            var items = _ref5.items,
+                item = _ref5.item,
+                event = _ref5.event;
             return onDragStart(event);
           });
         }
 
         if (onDragStartBegin) {
           warnMessage('onDragStartBegin', 'dragstart');
-          this.subscribe('dragstart', function (_ref12) {
-            var items = _ref12.items,
-                item = _ref12.item,
-                event = _ref12.event;
+          this.subscribe('dragstart', function (_ref6) {
+            var items = _ref6.items,
+                item = _ref6.item,
+                event = _ref6.event;
             return onDragStartBegin(event);
           });
         }
 
         if (onElementSelect) {
           warnMessage('onElementSelect', 'elementselect');
-          this.subscribe('elementselect', function (_ref13) {
-            var items = _ref13.items,
-                item = _ref13.item,
-                event = _ref13.event;
+          this.subscribe('elementselect', function (_ref7) {
+            var items = _ref7.items,
+                item = _ref7.item,
+                event = _ref7.event;
             return onElementSelect(item, event);
           });
         }
 
         if (onElementUnselect) {
           warnMessage('onElementUnselect', 'elementunselect');
-          this.subscribe('elementunselect', function (_ref14) {
-            var items = _ref14.items,
-                item = _ref14.item,
-                event = _ref14.event;
+          this.subscribe('elementunselect', function (_ref8) {
+            var items = _ref8.items,
+                item = _ref8.item,
+                event = _ref8.event;
             return onElementUnselect(item, event);
           });
         }
@@ -3277,6 +3425,7 @@
         this.Area.stop();
         this.Drag.stop();
         this.Selector.stop();
+        this.SelectorArea.stop();
         this.stores.KeyStore.stop();
         this.stores.PointerStore.stop();
         this.stores.ScrollStore.stop();
@@ -3284,8 +3433,9 @@
         if (fromSelection) this.SelectedSet.clear();
       }
       /**
-       * Returns the current selected nodes
-       * @return {DSElements}
+       * Utility to override DragSelect internal functionality:
+       * Break will skip the selection or dragging functionality but let everything continue to run until after the callback.
+       * Useful utility to write your own functionality/move/dragNdrop based on DragSelect pointer positions.
        */
 
     }, {
@@ -3449,16 +3599,18 @@
       key: "getCursorPositionDifference",
 
       /**
-       * Returns the cursor position difference between start and now
+       * Utility method that returns the cursor position difference between start and now
        * @param {boolean} [usePreviousCursorDifference] if true, it will output the cursor position difference between the previous selection and now
+       * @param {boolean} [useAreaPositions] if true, it will use cursor positions relative to the area
        * @return {Vect2}
        * @deprecated
        */
       value: function getCursorPositionDifference() {
         var usePreviousCursorDifference = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+        var useAreaPositions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
         console.warn('[DragSelect] Using .getCursorPositionDifference is deprecated. Calculate yourself instead. i.e. `.getCurrentCursorPosition().x - .getInitialCursorPosition().x`');
-        var posA = this.getCurrentCursorPosition();
-        var posB = usePreviousCursorDifference ? this.getPreviousCursorPosition() : this.getInitialCursorPosition();
+        var posA = useAreaPositions ? this.getCurrentCursorPositionArea() : this.getCurrentCursorPosition();
+        var posB = usePreviousCursorDifference ? useAreaPositions ? this.getPreviousCursorPositionArea() : this.getPreviousCursorPosition() : useAreaPositions ? this.getInitialCursorPositionArea() : this.getInitialCursorPosition();
         return calc(posA, '-', posB);
       }
       /**

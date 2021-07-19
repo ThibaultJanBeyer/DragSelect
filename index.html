@@ -56,7 +56,7 @@
                  /____/                              
 </code></pre>
 <p><a href="https://github.com/ThibaultJanBeyer/DragSelect/">GitHub</a> | <a href="https://www.npmjs.com/package/dragselect">NPM</a> | <a href="https://dragselect.com/">Project-Page</a></p>
-<p><a href="https://travis-ci.com/ThibaultJanBeyer/DragSelect"><img src="https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master" alt="Build Status"></a> <img src="http://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip" alt="gzip size"> <img src="https://img.shields.io/npm/dt/dragselect.svg" alt="npm downloads count"> <a href="https://david-dm.org/ThibaultJanBeyer/DragSelect"><img src="https://david-dm.org/ThibaultJanBeyer/DragSelect.svg" alt="No Dependency"></a></p>
+<p><a href="https://travis-ci.com/ThibaultJanBeyer/DragSelect"><img src="https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master" alt="Build Status"></a> <img src="https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip" alt="gzip size"> <img src="https://img.shields.io/npm/dt/dragselect.svg" alt="npm downloads count"> <a href="https://david-dm.org/ThibaultJanBeyer/DragSelect"><img src="https://david-dm.org/ThibaultJanBeyer/DragSelect.svg" alt="No Dependency"></a></p>
 <h1>DragSelect <img src="https://img.shields.io/github/package-json/v/ThibaultJanBeyer/DragSelect.svg" alt="GitHub package.json version"></h1>
 <p>easily add a selection algorithm to your application/website.</p>
 <h1>TOC</h1>
@@ -67,6 +67,36 @@
 <li><a href="#supporters">Supporters</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#usage">Usage</a></li>
+<li>
+<ul>
+<li><a href="#simple">Simple</a></li>
+</ul>
+</li>
+<li>
+<ul>
+<li><a href="#within-a-scroll-able-area">Within a scroll-able Area</a></li>
+</ul>
+</li>
+<li>
+<ul>
+<li><a href="#extended">Extended</a></li>
+</ul>
+</li>
+<li>
+<ul>
+<li><a href="#mobile/touch-usage">Mobile/Touch usage</a></li>
+</ul>
+</li>
+<li>
+<ul>
+<li><a href="#accessibility-a11y">Accessibility (a11y)</a></li>
+</ul>
+</li>
+<li>
+<ul>
+<li><a href="#use-your-own-drag-and-drop">Use your own Drag And Drop</a></li>
+</ul>
+</li>
 <li><a href="#constructor-properties">Constructor Properties</a></li>
 <li><a href="#event-callbacks">Event Callbacks</a></li>
 <li><a href="#methods">Methods</a></li>
@@ -86,7 +116,7 @@
 <li>Choose which elements can be selected</li>
 <li>Supports all major browsers</li>
 <li>Selected elements can be dragged and dropped</li>
-<li>Lightweight, only <img src="http://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip" alt="gzip size"></li>
+<li>Lightweight, only <img src="https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip" alt="gzip size"></li>
 <li>Popular: <img src="https://img.shields.io/npm/dt/dragselect.svg" alt="npm downloads count"> on npm</li>
 <li>DragSelect was written with Performance in mind (can easily select &gt;15.000 Elements)</li>
 <li>Supports SVG</li>
@@ -210,6 +240,46 @@ In 99% of the use-cases, this is what you want. If DragSelect is only one part o
 </li>
 </ol>
 <p data-height="350" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="html,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">DragSelect</a> on CodePen.</p>
+<h2>Use your own Drag And Drop</h2>
+<h3>Using another plugin/tool (3rd party)</h3>
+<p>DragSelect comes with a build-in dragNdrop. Before, <code>.break</code> was used for this. But with v2, using your own is now very simple: listen to any DragSelect event to <code>.stop</code> it. Then, re-<code>.start</code> it after your custom dragNdrop was performed. Check for <code>isDragging</code>, which indicates when the users drags (moving the element) and <code>isDraggingKeyboard</code> for the keyboard drag events. I.e. use <code>predragstart</code>.</p>
+<h4>Example</h4>
+<pre class="prettyprint source lang-JavaScript"><code>const ds = new DragSelect({ 
+  keyboardDragSpeed: 0, 
+  // keyboardDrag: false, // if your library can not handle keyboard dragging
+  /* …other settings… */
+})
+const myCustomDrag = new MyCustomDrag({/* …your settings… */})
+
+ds.subscribe('predragstart', ({ isDragging, isDraggingKeyboard }) =>
+  isDragging && ds.stop(false, false))
+myCustomDrag.subscribe('finished', () => ds.start())
+</code></pre>
+<p>Disabling then re-enabling directly can also work (i.e. when your library has no callback):</p>
+<pre class="prettyprint source lang-JavaScript"><code>ds.subscribe('dragstart', ({ isDragging, isDraggingKeyboard }) => {
+   if(isDragging) {
+     ds.stop(false, false)
+     ds.start()
+   }
+})
+</code></pre>
+<h3>Writing a fully custom solution</h3>
+<p>In case you want to build something completely custom on top of DragSelect, we got you covered! You can use <code>.break</code> for this. You heard right, break is back baby :)</p>
+<p>This utility to override DragSelects internal functionality allows you to write it all yourself: You can write your own drag and drop but you can also write your own selection:</p>
+<h4>Example</h4>
+<blockquote>
+<p>/!\ only use break when you know what you're doing. Support is limited /!\</p>
+</blockquote>
+<pre class="prettyprint source lang-JavaScript"><code>ds.subscribe('predragmove', ({ isDragging, isDraggingKeyboard }) => {
+  if(isDragging || isDraggingKeyboard) {
+    ds.break()
+    /* your custom logic for drag handling here. */
+  } else {
+    ds.break()
+    /* your custom logic for selection handling here. */
+  }
+}
+</code></pre>
 <h1>Constructor Properties:</h1>
 <p><em>DragSelect is hyper customizable</em>. Note, all properties are optional. See <strong><a href="https://dragselect.com/DragSelect.html">the docs</a></strong> for more info. Here is the full list:</p>
 <table>
@@ -295,6 +365,12 @@ In 99% of the use-cases, this is what you want. If DragSelect is only one part o
 <td><code>true</code></td>
 </tr>
 <tr>
+<td>keyboardDrag</td>
+<td>boolean</td>
+<td>Whether or not the user can drag with the keyboard (Accessibility).</td>
+<td><code>true</code></td>
+</tr>
+<tr>
 <td>dragKeys</td>
 <td>{ up:string[], down:string[], left:string[], righ:string[] }</td>
 <td>The keys available to drag element using the keyboard. Any key value is possible (<a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key">see MDN docs</a>).</td>
@@ -354,36 +430,39 @@ In 99% of the use-cases, this is what you want. If DragSelect is only one part o
 <tbody>
 <tr>
 <td>callback</td>
-<td><code>{ items, event, isDragging }</code></td>
+<td><code>{ items, event, isDragging, … }</code></td>
 <td>Fired after the selection (i.e. on mouse-up).</td>
 </tr>
 <tr>
 <td>dragstart</td>
-<td><code>{ items, event, isDragging }</code></td>
+<td><code>{ items, event, isDragging, isDraggingKeyboard, … }</code></td>
 <td>Fired when the selection starts (i.e. on mouse-down).</td>
 </tr>
 <tr>
 <td>dragmove</td>
-<td><code>{ items, event, isDragging }</code></td>
+<td><code>{ items, event, isDragging, isDraggingKeyboard, … }</code></td>
 <td>Fired when the mouse moves while dragging (i.e. on mouse-move).</td>
 </tr>
 <tr>
 <td>autoscroll</td>
-<td><code>{ items, scroll_directions, scroll_multiplier, isDragging }</code></td>
+<td><code>{ items, isDragging, scroll_directions, scroll_multiplier, … }</code></td>
 <td>Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).</td>
 </tr>
 <tr>
 <td>elementselect</td>
-<td><code>{ items, item }</code></td>
+<td><code>{ items, item, … }</code></td>
 <td>Fired when an element is added to the selection.</td>
 </tr>
 <tr>
 <td>elementunselect</td>
-<td><code>{ items, item }</code></td>
+<td><code>{ items, item, … }</code></td>
 <td>Fired when an element is removed from the selection.</td>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p>Note: all your callbacks subscribers will run happen after the internal code ran. If you want to run something before everything else, use the <code>pre</code> prefix. I.e. <code>predragstart</code> is an event that runs before any internal start logic.</p>
+</blockquote>
 <h3>Callback Object Keys</h3>
 <table>
 <thead>
@@ -395,19 +474,24 @@ In 99% of the use-cases, this is what you want. If DragSelect is only one part o
 </thead>
 <tbody>
 <tr>
-<td>items</td>
-<td><code>Array.&lt;HTMLElement|SVGElement|*&gt;</code></td>
-<td>Current selected elements</td>
-</tr>
-<tr>
 <td>event</td>
 <td><code>MouseEvent|TouchEvent|KeyboardEvent</code></td>
 <td>The native HTML Event, depending on the situational context</td>
 </tr>
 <tr>
+<td>items</td>
+<td><code>Array.&lt;HTMLElement|SVGElement|*&gt;</code></td>
+<td>Current selected elements</td>
+</tr>
+<tr>
 <td>isDragging</td>
 <td><code>boolean</code></td>
 <td>If true, the user is dragging the selected elements, if false the user is drawing a selection</td>
+</tr>
+<tr>
+<td>isDraggingKeyboard</td>
+<td><code>boolean</code></td>
+<td>If true, the user is dragging the selected elements with the keyboard</td>
 </tr>
 <tr>
 <td>scroll_directions</td>
@@ -422,11 +506,13 @@ In 99% of the use-cases, this is what you want. If DragSelect is only one part o
 <tr>
 <td>item</td>
 <td><code>HTMLElement|SVGElement|*</code></td>
-<td>The element currently being interacted</td>
+<td>The single element currently being interacted with if any</td>
 </tr>
 </tbody>
 </table>
-<p><em>Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first</em></p>
+<blockquote>
+<p>Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first</p>
+</blockquote>
 <h1>Methods:</h1>
 <p>When the function is saved into a variable <code>var foo = new DragSelect()</code> you have access to all its inner functions.<br>
 Also check <strong><a href="https://dragselect.com/DragSelect.html">the docs</a></strong> for more info.</p>
@@ -544,6 +630,11 @@ Also check <strong><a href="https://dragselect.com/DragSelect.html">the docs</a>
 <td>/</td>
 <td>Whether the user is currently drag n dropping elements (instead of selection)</td>
 </tr>
+<tr>
+<td>break</td>
+<td>/</td>
+<td>Utility to override DragSelect internal functionality. Read <a href="#writing-a-fully-custom-solution">docs</a> for more info.</td>
+</tr>
 </tbody>
 </table>
 <h1>Classes</h1>
@@ -582,7 +673,7 @@ Also check <strong><a href="https://dragselect.com/DragSelect.html">the docs</a>
 <p>Creating and maintaining useful tools is a lot of work.
 So don’t forget to give this repository a star if you find it useful.
 Star this repo, tell all your friends and start contributing and/or <a href="https://paypal.me/pools/c/8gF2a5szCP">donating 1$</a> to keep it running. Thank you :)</p>
-<p><a href="http://thibaultjanbeyer.com/"><img src="https://dragselect.com/media/typewriter.gif" alt="Typewriter Gif"></a></p>
+<p><a href="https://thibaultjanbeyer.com/"><img src="https://dragselect.com/media/typewriter.gif" alt="Typewriter Gif"></a></p>
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 <br>
 <br>
@@ -600,7 +691,7 @@ Star this repo, tell all your friends and start contributing and/or <a href="htt
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Sun Jul 18 2021 18:43:07 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Mon Jul 19 2021 13:46:19 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
