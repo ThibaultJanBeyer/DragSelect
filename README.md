@@ -225,13 +225,13 @@ ds.subscribe('dragstart', ({ isDragging, isDraggingKeyboard }) => {
 
 ### Writing a fully custom solution
 
-> /!\ only use this when you know what you're doing. Support is limited /!\
-
 In case you want to build something completely custom on top of DragSelect, we got you covered! You can use `.break` for this. You heard right, break is back baby :)  
 
 This utility to override DragSelects internal functionality allows you to write it all yourself: You can write your own drag and drop but you can also write your own selection:  
 
 #### Example
+
+> /!\ only use break when you know what you're doing. Support is limited /!\
 
 ```JavaScript
 ds.subscribe('predragmove', ({ isDragging, isDraggingKeyboard }) => {
