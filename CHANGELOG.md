@@ -1,3 +1,8 @@
+# Next
+
+- Add a check whether the initial click was issued within the area
+- Fixes [#105](https://github.com/ThibaultJanBeyer/DragSelect/issues/105)
+
 # 2.2.1
 
 - removes dom-nodes when using .stop
