@@ -52,12 +52,24 @@ export default class Interaction {
     this.DS.publish('Interaction:init', {})
   }
 
+  /**
+   * @param {DSEvent} event
+   */
   _canInteract(event) {
+    const isKeyboardClick =
+      /** @type {MouseEvent} */ (event).clientX === 0 &&
+      /** @type {MouseEvent} */ (event).clientY === 0 &&
+      /** @type {MouseEvent} */ (event).detail === 0 &&
+      event.target
+
     if (
-      /* right-clicks */ event.button === 2 ||
-      /* fix double-click issues */ this.isInteracting ||
-      /* fix outside elements issue */ (event.target &&
-        !this.DS.SelectorArea.isInside(event.target))
+      /** @type {MouseEvent} */ (event).button === 2 || // right-clicks
+      this.isInteracting || // fix double-click issues
+      (event.target &&
+        !this.DS.SelectorArea.isInside(
+          /** @type {DSElement} */ (event.target)
+        )) || //fix outside elements issue
+      (!isKeyboardClick && !this.DS.SelectorArea.isClicked(event)) // make sure the mouse click is inside the area
     )
       return false
 

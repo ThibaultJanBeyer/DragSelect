@@ -146,19 +146,24 @@ export default class SelectorArea {
 
   /**
    * checks if the click was triggered on the area.
+   * @param {DSEvent} [event]
    * @returns {boolean}
    */
-  isClicked() {
+  isClicked(event) {
     const {
       stores: { PointerStore },
     } = this.DS
 
+    const initialVal = event
+      ? PointerStore.getPointerPosition(event)
+      : PointerStore.initialVal
+
     return isCollision(
       {
-        left: PointerStore.initialVal.x,
-        top: PointerStore.initialVal.y,
-        right: PointerStore.initialVal.x,
-        bottom: PointerStore.initialVal.y,
+        left: initialVal.x,
+        top: initialVal.y,
+        right: initialVal.x,
+        bottom: initialVal.y,
       },
       this.rect
     )
