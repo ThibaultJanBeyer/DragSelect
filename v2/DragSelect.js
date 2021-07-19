@@ -1948,14 +1948,27 @@
 
     _createClass(Interaction, [{
       key: "_canInteract",
+
+      /**
+       * @param {DSEvent} event
+       */
       value: function _canInteract(event) {
+        var isKeyboardClick =
+        /** @type {MouseEvent} */
+        event.clientX === 0 &&
+        /** @type {MouseEvent} */
+        event.clientY === 0 &&
+        /** @type {MouseEvent} */
+        event.detail === 0 && event.target;
         if (
-        /* right-clicks */
-        event.button === 2 ||
-        /* fix double-click issues */
-        this.isInteracting ||
-        /* fix outside elements issue */
-        event.target && !this.DS.SelectorArea.isInside(event.target)) return false;
+        /** @type {MouseEvent} */
+        event.button === 2 || // right-clicks
+        this.isInteracting || // fix double-click issues
+        event.target && !this.DS.SelectorArea.isInside(
+        /** @type {DSElement} */
+        event.target) || //fix outside elements issue
+        !isKeyboardClick && !this.DS.SelectorArea.isClicked(event) // make sure the mouse click is inside the area
+        ) return false;
         return true;
       }
       /**
@@ -2605,15 +2618,17 @@
 
       /**
        * checks if the click was triggered on the area.
+       * @param {DSEvent} [event]
        * @returns {boolean}
        */
-      value: function isClicked() {
+      value: function isClicked(event) {
         var PointerStore = this.DS.stores.PointerStore;
+        var initialVal = event ? PointerStore.getPointerPosition(event) : PointerStore.initialVal;
         return isCollision({
-          left: PointerStore.initialVal.x,
-          top: PointerStore.initialVal.y,
-          right: PointerStore.initialVal.x,
-          bottom: PointerStore.initialVal.y
+          left: initialVal.x,
+          top: initialVal.y,
+          right: initialVal.x,
+          bottom: initialVal.y
         }, this.rect);
       }
     }, {
@@ -2841,11 +2856,15 @@
         });
       });
 
-      _defineProperty(this, "update", function (event) {
-        if (!event) return;
-        _this.currentVal = getPointerPos({
+      _defineProperty(this, "getPointerPosition", function (event) {
+        return getPointerPos({
           event: _this._normalizedEvent(event)
         });
+      });
+
+      _defineProperty(this, "update", function (event) {
+        if (!event) return;
+        _this.currentVal = _this.getPointerPosition(event);
         if (!_this._isMouseInteraction) return;
 
         _this.DS.publish('PointerStore:updated', {
@@ -2867,9 +2886,7 @@
 
       _defineProperty(this, "reset", function (event) {
         if (!event) return;
-        _this.currentVal = _this.lastVal = getPointerPos({
-          event: _this._normalizedEvent(event)
-        });
+        _this.currentVal = _this.lastVal = _this.getPointerPosition(event);
 
         _this.stop();
 
@@ -2895,11 +2912,9 @@
       value: function start(event) {
         if (!event) return;
         this._isMouseInteraction = true;
-        this.currentVal = this.initialVal = getPointerPos({
-          event: this._normalizedEvent(event)
-        });
+        this.currentVal = this.initialVal = this.getPointerPosition(event);
       }
-      /** @param {DSEvent} [event] */
+      /** @param {DSEvent} event */
 
     }, {
       key: "_normalizedEvent",
