@@ -1,4 +1,4 @@
-# Next
+# 2.2.2
 
 - Add a check whether the initial click was issued within the area
 - Fixes [#105](https://github.com/ThibaultJanBeyer/DragSelect/issues/105)
