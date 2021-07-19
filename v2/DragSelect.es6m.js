@@ -2515,6 +2515,20 @@ var SelectorArea = /*#__PURE__*/function () {
 
     _defineProperty(this, "_overflowTolerance", void 0);
 
+    _defineProperty(this, "start", function () {
+      return _this.applyElements('append');
+    });
+
+    _defineProperty(this, "applyElements", function () {
+      var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'append';
+      var docEl = document.body ? 'body' : 'documentElement';
+      var methodName = "".concat(method, "Child");
+
+      _this.HTMLNode[methodName](_this.DS.Selector.HTMLNode);
+
+      document[docEl][methodName](_this.HTMLNode);
+    });
+
     _defineProperty(this, "updatePos", function () {
       _this._rect = null;
       var rect = _this.DS.Area.rect;
@@ -2530,8 +2544,10 @@ var SelectorArea = /*#__PURE__*/function () {
       if (style.height !== height) style.height = height;
     });
 
-    _defineProperty(this, "stop", function () {
-      return _this.stopAutoScroll();
+    _defineProperty(this, "stop", function (remove) {
+      _this.stopAutoScroll();
+
+      if (remove) _this.applyElements('remove');
     });
 
     _defineProperty(this, "startAutoScroll", function () {
@@ -2568,10 +2584,8 @@ var SelectorArea = /*#__PURE__*/function () {
     this._overflowTolerance = overflowTolerance;
     this.DS = DS;
     this.HTMLNode = createSelectorAreaElement(selectorAreaClass);
-    this.HTMLNode.appendChild(this.DS.Selector.HTMLNode);
-    var docEl = document.body ? 'body' : 'documentElement';
-    document[docEl].appendChild(this.HTMLNode);
     this.DS.subscribe('Area:modified', this.updatePos);
+    this.DS.subscribe('Interaction:init', this.start);
     this.DS.subscribe('Interaction:start', this.startAutoScroll);
     this.DS.subscribe('Interaction:end', function () {
       _this.updatePos();
@@ -2579,8 +2593,6 @@ var SelectorArea = /*#__PURE__*/function () {
       _this.stopAutoScroll();
     });
   }
-  /** Updates the selectorAreas positions to match the areas */
-
 
   _createClass(SelectorArea, [{
     key: "isClicked",
@@ -3419,7 +3431,7 @@ var DragSelect = /*#__PURE__*/function () {
       this.Area.stop();
       this.Drag.stop();
       this.Selector.stop();
-      this.SelectorArea.stop();
+      this.SelectorArea.stop(remove);
       this.stores.KeyStore.stop();
       this.stores.PointerStore.stop();
       this.stores.ScrollStore.stop();
@@ -3428,7 +3440,7 @@ var DragSelect = /*#__PURE__*/function () {
     }
     /**
      * Utility to override DragSelect internal functionality:
-     * Break will skip the selection or dragging functionality but let everything continue to run until after the callback.
+     * Break will skip the selection or dragging functionality (until after the callback) but let everything continue to run.
      * Useful utility to write your own functionality/move/dragNdrop based on DragSelect pointer positions.
      */
 
