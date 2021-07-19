@@ -70,10 +70,14 @@ export default class PointerStore {
   start(event) {
     if (!event) return
     this._isMouseInteraction = true
-    this.currentVal = this.initialVal = getPointerPos({
+    this.currentVal = this.initialVal = this.getPointerPosition(event)
+  }
+
+  /** @param {DSEvent} [event] */
+  getPointerPosition = (event) =>
+    getPointerPos({
       event: this._normalizedEvent(event),
     })
-  }
 
   /** @param {DSEvent} [event] */
   update = (event) => {

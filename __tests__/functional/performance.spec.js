@@ -13,9 +13,11 @@ describe('Scroll', () => {
 
     const mouse = page.mouse
     await mouse.move(100, 100)
+    await wait(100)
     await mouse.down()
     await wait(100)
     await mouse.move(200, 200)
+    await wait(100)
     await mouse.up()
 
     const { selected } = await page.evaluate(() => ({ selected }))
