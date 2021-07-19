@@ -262,7 +262,7 @@ class DragSelect {
     this.Area.stop()
     this.Drag.stop()
     this.Selector.stop()
-    this.SelectorArea.stop()
+    this.SelectorArea.stop(remove)
     this.stores.KeyStore.stop()
     this.stores.PointerStore.stop()
     this.stores.ScrollStore.stop()
@@ -272,7 +272,7 @@ class DragSelect {
   }
   /**
    * Utility to override DragSelect internal functionality:
-   * Break will skip the selection or dragging functionality but let everything continue to run until after the callback.
+   * Break will skip the selection or dragging functionality (until after the callback) but let everything continue to run.
    * Useful utility to write your own functionality/move/dragNdrop based on DragSelect pointer positions.
    */
   break = () => (this.continue = true)

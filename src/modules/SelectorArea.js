@@ -47,16 +47,27 @@ export default class SelectorArea {
     this.DS = DS
 
     this.HTMLNode = createSelectorAreaElement(selectorAreaClass)
-    this.HTMLNode.appendChild(this.DS.Selector.HTMLNode)
-    const docEl = document.body ? 'body' : 'documentElement'
-    document[docEl].appendChild(this.HTMLNode)
 
     this.DS.subscribe('Area:modified', this.updatePos)
+    this.DS.subscribe('Interaction:init', this.start)
     this.DS.subscribe('Interaction:start', this.startAutoScroll)
     this.DS.subscribe('Interaction:end', () => {
       this.updatePos()
       this.stopAutoScroll()
     })
+  }
+
+  start = () => this.applyElements('append')
+
+  /**
+   * Adding / Removing elements to document
+   * @param {'append'|'remove'} method
+   */
+  applyElements = (method = 'append') => {
+    const docEl = document.body ? 'body' : 'documentElement'
+    const methodName = `${method}Child`
+    this.HTMLNode[methodName](this.DS.Selector.HTMLNode)
+    document[docEl][methodName](this.HTMLNode)
   }
 
   /** Updates the selectorAreas positions to match the areas */
@@ -75,7 +86,10 @@ export default class SelectorArea {
     if (style.height !== height) style.height = height
   }
 
-  stop = () => this.stopAutoScroll()
+  stop = (remove) => {
+    this.stopAutoScroll()
+    if (remove) this.applyElements('remove')
+  }
 
   //////////////////////////////////////////////////////////////////////////////////////
   // AutoScroll
