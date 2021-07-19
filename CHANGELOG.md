@@ -1,3 +1,8 @@
+# 2.2.1
+
+- removes dom-nodes when using .stop
+- fixes [#94](https://github.com/ThibaultJanBeyer/DragSelect/issues/94)
+
 # 2.2.0
 
 - Add new possible callback value: `isDraggingKeyboard`
@@ -6,7 +11,7 @@
 - Add information on 3rd party integration to the README.
 - Re-add `break` functionality to give maximum flexibility on 3rd party integration
 
-All these changes solve #80
+All these changes solve [#80](https://github.com/ThibaultJanBeyer/DragSelect/issues/80)
 
 # 2.1.2
 
