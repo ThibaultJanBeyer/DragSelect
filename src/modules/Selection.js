@@ -59,7 +59,7 @@ export default class Selection {
   }
 
   update = ({ isDragging }) => {
-    if (isDragging) return
+    if (isDragging || this.DS.continue) return
     this._handleInsideSelection()
   }
 

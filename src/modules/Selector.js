@@ -55,7 +55,7 @@ export default class Selector {
 
   /** Moves the selection to the correct place */
   update = ({ isDragging }) => {
-    if (isDragging) return
+    if (isDragging || this.DS.continue) return
     const {
       stores: { ScrollStore, PointerStore },
     } = this.DS

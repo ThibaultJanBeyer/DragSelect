@@ -9,6 +9,7 @@
     window.selected = [];
     window.dragged = [];
     window.dragStart = [];
+    window.preDragStart = [];
     window.dragMove = [];
     window.getItemVect = (id) => {
         const rect = document.querySelector(`#item-${id}`).getBoundingClientRect()
@@ -21,8 +22,12 @@
     ds.subscribe('callback', ({ isDragging, items }) => {
         window.dragged = []
         window.selected = []
-        console.log(isDragging, items)
+        console.log('callback', isDragging, items)
         window[isDragging ? 'dragged' : 'selected'] = items.map(item => item.id)
+    })
+    ds.subscribe('predragstart', ({ isDragging, items }) => {
+        console.log('predragstart', isDragging, items)
+        if(isDragging) window.preDragStart.push(items.map(item => item.id))
     })
     ds.subscribe('dragstart', ({ isDragging, items }) => {
         console.log('dragstart', isDragging, items)

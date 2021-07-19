@@ -55,12 +55,17 @@ import {
   SelectorArea,
 } from './modules'
 import { PointerStore, ScrollStore, KeyStore } from './stores'
-import { toArray, vect2 } from './methods'
+import { toArray, vect2, subscriberAliases } from './methods'
 
 // Setup
 //////////////////////////////////////////////////////////////////////////////////////
 
 class DragSelect {
+  /**
+   * used to skip all current Selection and dragNdrop functionality
+   * @type {boolean}
+   */
+  continue = false
   /**
    * @class DragSelect
    * @constructor DragSelect
@@ -79,6 +84,7 @@ class DragSelect {
     selector = undefined,
     draggability = true,
     immediateDrag = true,
+    keyboardDrag = true,
     dragKeys,
     keyboardDragSpeed = 10,
     useTransform = true,
@@ -153,6 +159,7 @@ class DragSelect {
       DS: this,
       draggability,
       useTransform,
+      keyboardDrag,
       dragKeys: Object.assign(
         {
           up: ['ArrowUp'],
@@ -174,53 +181,14 @@ class DragSelect {
     })
 
     // Subscriber Aliases
-    this.subscribe('Selected:added', ({ items, item }) =>
-      this.publish('elementselect', {
-        items,
-        item,
-        isDragging: this.Interaction.isDragging,
-      })
-    )
-    this.subscribe('Selected:removed', ({ items, item }) =>
-      this.publish('elementunselect', {
-        items,
-        item,
-        isDragging: this.Interaction.isDragging,
-      })
-    )
-    this.subscribe('Interaction:update', ({ event, isDragging }) => {
-      if (event)
-        this.publish('dragmove', {
-          items: this.getSelection(),
-          event,
-          isDragging,
-        })
+    subscriberAliases({
+      subscribe: this.subscribe,
+      publish: this.publish,
+      SelectedSet: this.SelectedSet,
+      Interaction: this.Interaction,
     })
-    this.subscribe(
-      'Area:scroll',
-      ({ scroll_directions, scroll_multiplier }) => {
-        this.publish('autoscroll', {
-          items: this.getSelection(),
-          scroll_directions,
-          scroll_multiplier,
-          isDragging: this.Interaction.isDragging,
-        })
-      }
-    )
-    this.subscribe('Interaction:start', ({ event, isDragging }) =>
-      this.publish('dragstart', {
-        items: this.getSelection(),
-        event,
-        isDragging,
-      })
-    )
-    this.subscribe('Interaction:end', ({ event, isDragging }) =>
-      this.publish('callback', {
-        items: this.getSelection(),
-        event,
-        isDragging,
-      })
-    )
+
+    this.subscribe('Interaction:end', () => (this.continue = false))
 
     this.start()
   }
@@ -294,6 +262,7 @@ class DragSelect {
     this.Area.stop()
     this.Drag.stop()
     this.Selector.stop()
+    this.SelectorArea.stop()
     this.stores.KeyStore.stop()
     this.stores.PointerStore.stop()
     this.stores.ScrollStore.stop()
@@ -301,6 +270,12 @@ class DragSelect {
     if (remove) this.SelectableSet.clear()
     if (fromSelection) this.SelectedSet.clear()
   }
+  /**
+   * Utility to override DragSelect internal functionality:
+   * Break will skip the selection or dragging functionality but let everything continue to run until after the callback.
+   * Useful utility to write your own functionality/move/dragNdrop based on DragSelect pointer positions.
+   */
+  break = () => (this.continue = true)
   /**
    * Returns the current selected nodes
    * @return {DSElements}
@@ -455,18 +430,28 @@ class DragSelect {
    */
   isMultiSelect = (event) => this.stores.KeyStore.isMultiSelectKeyPressed(event)
   /**
-   * Returns the cursor position difference between start and now
+   * Utility method that returns the cursor position difference between start and now
    * @param {boolean} [usePreviousCursorDifference] if true, it will output the cursor position difference between the previous selection and now
+   * @param {boolean} [useAreaPositions] if true, it will use cursor positions relative to the area
    * @return {Vect2}
    * @deprecated
    */
-  getCursorPositionDifference(usePreviousCursorDifference = false) {
+  getCursorPositionDifference(
+    usePreviousCursorDifference = false,
+    useAreaPositions = false
+  ) {
     console.warn(
       '[DragSelect] Using .getCursorPositionDifference is deprecated. Calculate yourself instead. i.e. `.getCurrentCursorPosition().x - .getInitialCursorPosition().x`'
     )
-    const posA = this.getCurrentCursorPosition()
+    const posA = useAreaPositions
+      ? this.getCurrentCursorPositionArea()
+      : this.getCurrentCursorPosition()
     const posB = usePreviousCursorDifference
-      ? this.getPreviousCursorPosition()
+      ? useAreaPositions
+        ? this.getPreviousCursorPositionArea()
+        : this.getPreviousCursorPosition()
+      : useAreaPositions
+      ? this.getInitialCursorPositionArea()
       : this.getInitialCursorPosition()
     return vect2.calc(posA, '-', posB)
   }

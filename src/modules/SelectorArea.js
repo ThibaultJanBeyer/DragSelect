@@ -75,6 +75,8 @@ export default class SelectorArea {
     if (style.height !== height) style.height = height
   }
 
+  stop = () => this.stopAutoScroll()
+
   //////////////////////////////////////////////////////////////////////////////////////
   // AutoScroll
 
@@ -85,6 +87,7 @@ export default class SelectorArea {
 
   /** Creates an interval that auto-scrolls while the cursor is near the edge */
   handleAutoScroll = () => {
+    if (this.DS.continue) return
     const {
       stores: { PointerStore },
       Area,

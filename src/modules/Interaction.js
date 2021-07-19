@@ -146,11 +146,12 @@ export default class Interaction {
     document.removeEventListener('touchend', this.reset)
   }
 
-  update = ({ event, data }) => {
+  update = ({ event, scroll_directions, scroll_multiplier }) => {
     if (this.isInteracting)
       this.DS.publish('Interaction:update', {
         event,
-        data,
+        scroll_directions,
+        scroll_multiplier,
         isDragging: this.isDragging,
       })
   }

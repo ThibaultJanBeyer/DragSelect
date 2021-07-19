@@ -63,12 +63,14 @@
 
     window.pubsub = {}
     window.pubsub.onDragStartCalls = [];
+    window.pubsub.onPreDragStartCalls = [];
     window.pubsub.onDragMoveCalls = [];
     window.pubsub.onElementSelectCalls = [];
     window.pubsub.onElementUnselectCalls = [];
     window.pubsub.callbackCalls = [];
     window.pubsub.autoScrollCalls = [];
 
+    ds.subscribe('predragstart', (e) => { console.log(e); window.pubsub.onPreDragStartCalls.push(e) })
     ds.subscribe('dragstart', (e) => { console.log(e); window.pubsub.onDragStartCalls.push(e) })
     ds.subscribe('dragmove', (e) => { console.log(e); window.pubsub.onDragMoveCalls.push(e) })
     ds.subscribe('elementselect', (e) => { console.log(e); window.pubsub.onElementSelectCalls.push(e) })

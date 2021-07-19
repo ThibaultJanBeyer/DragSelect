@@ -9,7 +9,7 @@
 
 [GitHub](https://github.com/ThibaultJanBeyer/DragSelect/) | [NPM](https://www.npmjs.com/package/dragselect) | [Project-Page](https://dragselect.com/)  
 
-[![Build Status](https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master)](https://travis-ci.com/ThibaultJanBeyer/DragSelect) ![gzip size](http://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip) ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) [![No Dependency](https://david-dm.org/ThibaultJanBeyer/DragSelect.svg)](https://david-dm.org/ThibaultJanBeyer/DragSelect)
+[![Build Status](https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master)](https://travis-ci.com/ThibaultJanBeyer/DragSelect) ![gzip size](https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip) ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) [![No Dependency](https://david-dm.org/ThibaultJanBeyer/DragSelect.svg)](https://david-dm.org/ThibaultJanBeyer/DragSelect)
 
 # DragSelect ![GitHub package.json version](https://img.shields.io/github/package-json/v/ThibaultJanBeyer/DragSelect.svg)
 easily add a selection algorithm to your application/website.
@@ -22,6 +22,12 @@ easily add a selection algorithm to your application/website.
 - [Supporters](#supporters)
 - [Installation](#installation)
 - [Usage](#usage)
+- - [Simple](#simple)
+- - [Within a scroll-able Area](#within-a-scroll-able-area)
+- - [Extended](#extended)
+- - [Mobile/Touch usage](#mobile/touch-usage)
+- - [Accessibility (a11y)](#accessibility-a11y)
+- - [Use your own Drag And Drop](#use-your-own-drag-and-drop)
 - [Constructor Properties](#constructor-properties)
 - [Event Callbacks](#event-callbacks)
 - [Methods](#methods)
@@ -43,7 +49,7 @@ easily add a selection algorithm to your application/website.
 - Choose which elements can be selected
 - Supports all major browsers
 - Selected elements can be dragged and dropped
-- Lightweight, only ![gzip size](http://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip)
+- Lightweight, only ![gzip size](https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip)
 - Popular: ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) on npm
 - DragSelect was written with Performance in mind (can easily select >15.000 Elements)
 - Supports SVG
@@ -185,6 +191,60 @@ Obviously, keyboard users won’t get the full visual experience but it works si
 
 <p data-height="350" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="html,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">DragSelect</a> on CodePen.</p>
 
+## Use your own Drag And Drop
+
+### Using another plugin/tool (3rd party)
+
+DragSelect comes with a build-in dragNdrop. Before, `.break` was used for this. But with v2, using your own is now very simple: listen to any DragSelect event to `.stop` it. Then, re-`.start` it after your custom dragNdrop was performed. Check for `isDragging`, which indicates when the users drags (moving the element) and `isDraggingKeyboard` for the keyboard drag events. I.e. use `predragstart`.
+
+#### Example
+
+```JavaScript
+const ds = new DragSelect({ 
+  keyboardDragSpeed: 0, 
+  // keyboardDrag: false, // if your library can not handle keyboard dragging
+  /* …other settings… */
+})
+const myCustomDrag = new MyCustomDrag({/* …your settings… */})
+
+ds.subscribe('predragstart', ({ isDragging, isDraggingKeyboard }) =>
+  isDragging && ds.stop(false, false))
+myCustomDrag.subscribe('finished', () => ds.start())
+```
+
+Disabling then re-enabling directly can also work (i.e. when your library has no callback):
+
+```JavaScript
+ds.subscribe('dragstart', ({ isDragging, isDraggingKeyboard }) => {
+   if(isDragging) {
+     ds.stop(false, false)
+     ds.start()
+   }
+})
+```
+
+### Writing a fully custom solution
+
+In case you want to build something completely custom on top of DragSelect, we got you covered! You can use `.break` for this. You heard right, break is back baby :)  
+
+This utility to override DragSelects internal functionality allows you to write it all yourself: You can write your own drag and drop but you can also write your own selection:  
+
+#### Example
+
+> /!\ only use break when you know what you're doing. Support is limited /!\
+
+```JavaScript
+ds.subscribe('predragmove', ({ isDragging, isDraggingKeyboard }) => {
+  if(isDragging || isDraggingKeyboard) {
+    ds.break()
+    /* your custom logic for drag handling here. */
+  } else {
+    ds.break()
+    /* your custom logic for selection handling here. */
+  }
+}
+```
+
 # Constructor Properties:
 
 *DragSelect is hyper customizable*. Note, all properties are optional. See **[the docs](https://dragselect.com/DragSelect.html)** for more info. Here is the full list:  
@@ -203,6 +263,7 @@ Obviously, keyboard users won’t get the full visual experience but it works si
 |selector |single DOM element (node) |The square that will be used to draw the selection. | Auto-created HTML Element
 |draggability |boolean |When a user is dragging on an already selected element, the selection is dragged. |`true`
 |immediateDrag |boolean |Whether a selectable element is draggable before being selected or needs to be selected first |`true`
+|keyboardDrag |boolean |Whether or not the user can drag with the keyboard (Accessibility). |`true`
 |dragKeys |{ up:string[], down:string[], left:string[], righ:string[] } |The keys available to drag element using the keyboard. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). |`{ up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], righ: ['ArrowRight'] }`
 |keyboardDragSpeed |number |The speed at which elements are dragged using the keyboard. In pixels per keyDown. |`10`
 |useTransform |boolean |Whether to use the more performant hardware accelerated css transforms when dragging instead of the top/left positions. |`true`
@@ -223,25 +284,28 @@ ds.subscribe('<event_name>', (callback_object) => {})
 
 |event_name |callback_object |description |
 |--- |--- |---
-|callback |`{ items, event, isDragging }` |Fired after the selection (i.e. on mouse-up). 
-|dragstart |`{ items, event, isDragging }` |Fired when the selection starts (i.e. on mouse-down). 
-|dragmove |`{ items, event, isDragging }` |Fired when the mouse moves while dragging (i.e. on mouse-move).
-|autoscroll |`{ items, scroll_directions, scroll_multiplier, isDragging }` |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
-|elementselect |`{ items, item }` |Fired when an element is added to the selection.
-|elementunselect |`{ items, item }` |Fired when an element is removed from the selection.
+|callback |`{ items, event, isDragging, … }` |Fired after the selection (i.e. on mouse-up). 
+|dragstart |`{ items, event, isDragging, isDraggingKeyboard, … }` |Fired when the selection starts (i.e. on mouse-down). 
+|dragmove |`{ items, event, isDragging, isDraggingKeyboard, … }` |Fired when the mouse moves while dragging (i.e. on mouse-move).
+|autoscroll |`{ items, isDragging, scroll_directions, scroll_multiplier, … }` |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
+|elementselect |`{ items, item, … }` |Fired when an element is added to the selection.
+|elementunselect |`{ items, item, … }` |Fired when an element is removed from the selection.
+
+> Note: all your callbacks subscribers will run happen after the internal code ran. If you want to run something before everything else, use the `pre` prefix. I.e. `predragstart` is an event that runs before any internal start logic.
 
 ### Callback Object Keys
 
 |callback_object_keys |type |description |
 |--- |--- |---
-|items |`Array.<HTMLElement|SVGElement|*>` |Current selected elements
 |event |`MouseEvent|TouchEvent|KeyboardEvent` |The native HTML Event, depending on the situational context
+|items |`Array.<HTMLElement|SVGElement|*>` |Current selected elements
 |isDragging |`boolean` |If true, the user is dragging the selected elements, if false the user is drawing a selection
+|isDraggingKeyboard |`boolean` |If true, the user is dragging the selected elements with the keyboard
 |scroll_directions |`Array.<'top'|'bottom'|'left'|'right'|undefined>` |The direction in which the event is happening (i.e. scroll direction)
 |scroll_multiplier |`number` |Speed
-|item |`HTMLElement|SVGElement|*` |The element currently being interacted
+|item |`HTMLElement|SVGElement|*` |The single element currently being interacted with if any
 
-*Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first*
+> Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first
 
 # Methods:
 When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions.  
@@ -270,6 +334,7 @@ Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 |getCursorPositionDifference |Boolean (usePreviousCursorDifference) |Returns object with the x, y difference between the initial and the last cursor position. If the argument is set to true, it will instead return the x, y difference to the previous coordinates |
 |isMultiSelect |\[event:KeyboardEvent|MouseEvent|TouchEvent\] (optional) |Whether the multi-select key is currently pressed
 |isDragging |/ |Whether the user is currently drag n dropping elements (instead of selection)
+|break |/ |Utility to override DragSelect internal functionality. Read [docs](#writing-a-fully-custom-solution) for more info.
 
 # Classes
 | name | trigger |
@@ -288,7 +353,7 @@ Creating and maintaining useful tools is a lot of work.
 So don’t forget to give this repository a star if you find it useful.
 Star this repo, tell all your friends and start contributing and/or [donating 1$](https://paypal.me/pools/c/8gF2a5szCP) to keep it running. Thank you :)
 
-[![Typewriter Gif](https://dragselect.com/media/typewriter.gif)](http://thibaultjanbeyer.com/)
+[![Typewriter Gif](https://dragselect.com/media/typewriter.gif)](https://thibaultjanbeyer.com/)
 
 
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
