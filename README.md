@@ -73,7 +73,10 @@ Thanks to:
 
 | ![BrowserStack](https://dragselect.com/media/browserstack.jpg) | [You?](https://paypal.me/pools/c/8gF2a5szCP) |
 |--- |--- |
-|[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or [Get in touch](mailto:thibault.beyer@gmail.com). We can display your logo here if you want, which will help you recruit great talent and boost your SEO. |
+|[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or [Get in touch](mailto:thibault.beyer@gmail.com). We can display your logo here if you want, which will help you recruit great talent and boost your SEO. |  
+BTC: [1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) |  
+Paypal: [https://paypal.me/pools/c/8gF2a5szCP](https://paypal.me/pools/c/8gF2a5szCP) |
+Other: [get in touch](mailto:thibault.beyer@gmail.com) |
 
 # Installation
 ## NPM
