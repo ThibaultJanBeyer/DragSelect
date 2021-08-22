@@ -30,6 +30,7 @@ easily add a selection algorithm to your application/website.
 - - [Use your own Drag And Drop](#use-your-own-drag-and-drop)
 - [Constructor Properties](#constructor-properties)
 - [Event Callbacks](#event-callbacks)
+- - [Callback Object Keys](#callback-object-keys)
 - [Methods](#methods)
 - [Classes](#classes)
 
