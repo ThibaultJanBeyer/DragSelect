@@ -302,13 +302,13 @@ ds.subscribe('<event_name>', (callback_object) => {})
 
 |callback_object_keys |type |description |
 |--- |--- |---
-|event |`MouseEvent|TouchEvent|KeyboardEvent` |The native HTML Event, depending on the situational context
-|items |`Array.<HTMLElement|SVGElement|*>` |Current selected elements
+|event |`MouseEvent\|TouchEvent\|KeyboardEvent` |The native HTML Event, depending on the situational context
+|items |`Array.<HTMLElement\|SVGElement\|*>` |Current selected elements
 |isDragging |`boolean` |If true, the user is dragging the selected elements, if false the user is drawing a selection
 |isDraggingKeyboard |`boolean` |If true, the user is dragging the selected elements with the keyboard
-|scroll_directions |`Array.<'top'|'bottom'|'left'|'right'|undefined>` |The direction in which the event is happening (i.e. scroll direction)
+|scroll_directions |`Array.<'top'\|'bottom'\|'left'\|'right'\|undefined>` |The direction in which the event is happening (i.e. scroll direction)
 |scroll_multiplier |`number` |Speed
-|item |`HTMLElement|SVGElement|*` |The single element currently being interacted with if any
+|item |`HTMLElement\|SVGElement\|*` |The single element currently being interacted with if any
 
 > Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first
 
