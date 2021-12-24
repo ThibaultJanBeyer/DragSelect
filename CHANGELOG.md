@@ -1,4 +1,4 @@
-# Next
+# 2.3.0
 
 - Fix bug with break not working. (still handling change)
 - Fix bug with `pre` events not working properly.
