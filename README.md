@@ -224,10 +224,12 @@ Disabling then re-enabling directly can also work (i.e. when your library has no
 ds.subscribe('dragstart', ({ isDragging, isDraggingKeyboard }) => {
    if(isDragging) {
      ds.stop(false, false)
-     ds.start()
+     setTimeout(ds.start)
    }
 })
 ```
+
+Note: it is important to debounce (i.e. with `setTimeout(ds.start)`) the start function if it's called within a single subscriber so that all the scheduled callbacks finish triggering before we start again.
 
 ### Writing a fully custom solution
 
