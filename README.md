@@ -342,7 +342,7 @@ Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 |getCursorPositionDifference |Boolean (usePreviousCursorDifference) |Returns object with the x, y difference between the initial and the last cursor position. If the argument is set to true, it will instead return the x, y difference to the previous coordinates |
 |isMultiSelect |\[event:KeyboardEvent|MouseEvent|TouchEvent\] (optional) |Whether the multi-select key is currently pressed
 |isDragging |/ |Whether the user is currently drag n dropping elements (instead of selection)
-|break |/ |Utility to override DragSelect internal functionality. Read [docs](#writing-a-fully-custom-solution) for more info.
+|break |/ |Utility to override DragSelect internal functionality. Breaks out of current flow. Read [docs](#writing-a-fully-custom-solution) for more info.
 
 # Classes
 | name | trigger |
