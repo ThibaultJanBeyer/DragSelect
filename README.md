@@ -30,6 +30,7 @@ easily add a selection algorithm to your application/website.
 - - [Use your own Drag And Drop](#use-your-own-drag-and-drop)
 - [Constructor Properties](#constructor-properties)
 - [Event Callbacks](#event-callbacks)
+- - [Callback Object Keys](#callback-object-keys)
 - [Methods](#methods)
 - [Classes](#classes)
 
@@ -67,11 +68,16 @@ We use it currently in a professional rich interface application where we have a
 
 # Supporters
 
+Please donate to support the countless hours of hard work & support. Especially if your company makes money. Thank you :)
+
 Thanks to:  
 
 | ![BrowserStack](https://dragselect.com/media/browserstack.jpg) | [You?](https://paypal.me/pools/c/8gF2a5szCP) |
 |--- |--- |
-|[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or [Get in touch](mailto:thibault.beyer@gmail.com) |
+|[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or [Get in touch](mailto:thibault.beyer@gmail.com). We can display your logo here if you want, which will help you recruit great talent and boost your SEO. |  
+BTC: [1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) |  
+Paypal: [https://paypal.me/pools/c/8gF2a5szCP](https://paypal.me/pools/c/8gF2a5szCP) |
+Other: [get in touch](mailto:thibault.beyer@gmail.com) |
 
 # Installation
 ## NPM
@@ -215,13 +221,15 @@ myCustomDrag.subscribe('finished', () => ds.start())
 Disabling then re-enabling directly can also work (i.e. when your library has no callback):
 
 ```JavaScript
-ds.subscribe('dragstart', ({ isDragging, isDraggingKeyboard }) => {
+ds.subscribe('predragstart', ({ isDragging, isDraggingKeyboard }) => {
    if(isDragging) {
      ds.stop(false, false)
-     ds.start()
+     setTimeout(ds.start)
    }
 })
 ```
+
+Note: it is important to debounce (i.e. with `setTimeout(ds.start)`) the start function if it's called within a single subscriber so that all the scheduled callbacks finish triggering before we start again.
 
 ### Writing a fully custom solution
 
@@ -297,13 +305,13 @@ ds.subscribe('<event_name>', (callback_object) => {})
 
 |callback_object_keys |type |description |
 |--- |--- |---
-|event |`MouseEvent|TouchEvent|KeyboardEvent` |The native HTML Event, depending on the situational context
-|items |`Array.<HTMLElement|SVGElement|*>` |Current selected elements
+|event |`MouseEvent\|TouchEvent\|KeyboardEvent` |The native HTML Event, depending on the situational context
+|items |`Array.<HTMLElement\|SVGElement\|*>` |Current selected elements
 |isDragging |`boolean` |If true, the user is dragging the selected elements, if false the user is drawing a selection
 |isDraggingKeyboard |`boolean` |If true, the user is dragging the selected elements with the keyboard
-|scroll_directions |`Array.<'top'|'bottom'|'left'|'right'|undefined>` |The direction in which the event is happening (i.e. scroll direction)
+|scroll_directions |`Array.<'top'\|'bottom'\|'left'\|'right'\|undefined>` |The direction in which the event is happening (i.e. scroll direction)
 |scroll_multiplier |`number` |Speed
-|item |`HTMLElement|SVGElement|*` |The single element currently being interacted with if any
+|item |`HTMLElement\|SVGElement\|*` |The single element currently being interacted with if any
 
 > Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first
 
