@@ -11,6 +11,13 @@ import {
   handleElementPositionAttribute,
 } from '../methods'
 
+/**
+ * @typedef {Object} AreaProps
+ * @property {DSArea} area
+ * @property {PubSub} PS
+ * @property {number} zoom
+ */
+
 export default class Area {
   /**
    * @type {DSModificationCallback}
@@ -55,23 +62,16 @@ export default class Area {
 
   /**
    * @constructor Area
-   * @param {Object} obj
-   * @param {DSArea} obj.area
-   * @param {PubSub} obj.PS
-   * @param {number} obj.zoom
+   * @param {AreaProps} settings
    * @ignore
    */
   constructor({ area, PS, zoom }) {
-    this._node = area
     this._zoom = zoom
     this.PubSub = PS
-
-    handleElementPositionAttribute({
-      computedStyle: this.computedStyle,
-      node: this._node,
-    })
+    this.setArea(area)
 
     this._modificationCallback = debounce((event) => {
+      this.PubSub.publish('Area:modified:pre', { event, item: this })
       this.reset()
       this.PubSub.publish('Area:modified', { event, item: this })
     }, 60)
@@ -79,14 +79,24 @@ export default class Area {
       this._modificationCallback
     )
 
-    // first immediate debounce to update values after dom-update
-    setTimeout(() => {
-      this.reset()
-      this.PubSub.publish('Area:modified', { event, item: this })
-    })
-
     this.PubSub.subscribe('Interaction:init', this.start)
     this.PubSub.subscribe('Interaction:end', this.reset)
+  }
+
+  /** @param {DSArea} area */
+  setArea = (area) => {
+    this._node = area
+    handleElementPositionAttribute({
+      computedStyle: this.computedStyle,
+      node: this._node,
+    })
+
+    // first immediate debounce to update values after dom-update
+    setTimeout(() => {
+      this.PubSub.publish('Area:modified:pre', { item: this })
+      this.reset()
+      this.PubSub.publish('Area:modified', { item: this })
+    })
   }
 
   start = () => {
@@ -121,11 +131,13 @@ export default class Area {
    * @param {number} multiplier
    */
   scroll = (directions, multiplier) => {
-    scrollElement(this._node, directions, multiplier)
-    this.PubSub.publish('Area:scroll', {
+    const data = {
       scroll_directions: directions,
       scroll_multiplier: multiplier,
-    })
+    }
+    this.PubSub.publish('Area:scroll:pre', data)
+    scrollElement(this._node, directions, multiplier)
+    this.PubSub.publish('Area:scroll', data)
   }
 
   //////////////////////////////////////////////////////////////////////////////////////

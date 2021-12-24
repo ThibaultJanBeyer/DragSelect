@@ -40,10 +40,16 @@ export default class Interaction {
     this.DS.subscribe('PointerStore:updated', this.update)
     this.DS.subscribe('Selectable:click', this.onClick)
     this.DS.subscribe('Selectable:pointer', ({ event }) => this.start(event))
+    this.DS.subscribe('Interaction:start:pre', ({ event }) =>
+      this._start(event)
+    )
+    this.DS.subscribe('Interaction:init:pre', this._init)
+    this.DS.subscribe('Interaction:end:pre', ({ event }) => this._reset(event))
     this.DS.subscribe('Area:scroll', this.update)
   }
 
-  init = () => {
+  init = () => this.DS.publish('Interaction:init:pre', {})
+  _init = () => {
     this.stop()
     this._areaElement.addEventListener('mousedown', this.start)
     this._areaElement.addEventListener('touchstart', this.start, {
@@ -79,7 +85,8 @@ export default class Interaction {
   /**
    * @param {DSEvent} event
    */
-  start = (event) => {
+  start = (event) => this.DS.publish('Interaction:start:pre', { event, isDragging: this.isDragging })
+  _start = (event) => {
     if (event.type === 'touchstart') event.preventDefault() // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
     if (!this._canInteract(event)) return
 
@@ -122,7 +129,7 @@ export default class Interaction {
   /**
    * Triggers when a node is actively selected: <button> nodes that are pressed via the keyboard.
    * Making DragSelect accessible for everyone!
-   * @param {{ event:MouseEvent }} p
+   * @param {{ event:MouseEvent }} prop
    */
   onClick = ({ event }) => {
     if (!this._canInteract(event)) return
@@ -132,7 +139,6 @@ export default class Interaction {
       stores: { PointerStore, KeyStore },
       SelectableSet,
       SelectedSet,
-      publish,
     } = this.DS
 
     PointerStore.start(event)
@@ -143,7 +149,7 @@ export default class Interaction {
     if (!KeyStore.isMultiSelectKeyPressed(event)) SelectedSet.clear()
     SelectedSet.toggle(node)
 
-    publish('Interaction:end', { event, isDragging: this.isDragging }) // simulate mouse-up (that does not exist on keyboard)
+    this.reset() // simulate mouse-up (that does not exist on keyboard)
   }
 
   stop = () => {
@@ -160,7 +166,7 @@ export default class Interaction {
 
   update = ({ event, scroll_directions, scroll_multiplier }) => {
     if (this.isInteracting)
-      this.DS.publish('Interaction:update', {
+      this.DS.publish(['Interaction:update:pre', 'Interaction:update'], {
         event,
         scroll_directions,
         scroll_multiplier,
@@ -168,7 +174,8 @@ export default class Interaction {
       })
   }
 
-  reset = (event) => {
+  reset = (event) => this.DS.publish('Interaction:end:pre', { event, isDragging: this.isDragging })
+  _reset = (event) => {
     const isDragging = this.isDragging
     this.stop()
     this.init()

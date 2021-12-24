@@ -33,7 +33,6 @@ export default ({ subscribe, publish, Interaction, SelectedSet }) => {
       { name: 'dragmove', condition: (data) => data.event },
     ], // event, isDraggingKeyboard
     'Interaction:end': [{ name: 'callback' }], // event, isDraggingKeyboard
-    'Drag:keyboardDrag': [{ name: 'dragstart' }, { name: 'dragmove' }], // event, isDraggingKeyboard
   }
 
   for (const [sub_name, pubs] of Object.entries(mapping))
