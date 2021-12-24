@@ -221,7 +221,7 @@ myCustomDrag.subscribe('finished', () => ds.start())
 Disabling then re-enabling directly can also work (i.e. when your library has no callback):
 
 ```JavaScript
-ds.subscribe('dragstart', ({ isDragging, isDraggingKeyboard }) => {
+ds.subscribe('predragstart', ({ isDragging, isDraggingKeyboard }) => {
    if(isDragging) {
      ds.stop(false, false)
      setTimeout(ds.start)
