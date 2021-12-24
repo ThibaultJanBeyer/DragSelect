@@ -416,9 +416,9 @@
 
   /** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'|'Selectable:pointer'|'KeyStore:down'|'KeyStore:up'} DSInternalEventNames */
 
-  /** @typedef {'Interaction:init:pre'|'Interaction:start:pre'|'Interaction:end:pre'|'Interaction:update:pre'|'Area:modified:pre'|'Area:scroll:pre'|'PointerStore:updated:pre'|'Selected:added:pre'|'Selected:removed:pre'|'Selectable:click:pre'|'Selectable:pointer:pre'|'KeyStore:down:pre'|'KeyStore:up:pre'|'Drag:keyboardDrag:pre'} DSInternalEventNamesPre */
+  /** @typedef {'Interaction:init:pre'|'Interaction:start:pre'|'Interaction:end:pre'|'Interaction:update:pre'|'Area:modified:pre'|'Area:scroll:pre'|'PointerStore:updated:pre'|'Selected:added:pre'|'Selected:removed:pre'|'Selectable:click:pre'|'Selectable:pointer:pre'|'KeyStore:down:pre'|'KeyStore:up:pre'} DSInternalEventNamesPre */
 
-  /** @typedef {DSEventNames|DSInternalEventNames} DSCallbackNames the name of the callback */
+  /** @typedef {DSEventNames|DSInternalEventNames|DSInternalEventNamesPre} DSCallbackNames the name of the callback */
 
   /** @typedef {{top:number,left:number,bottom:number,right:number,width:number,height:number}} DSBoundingRect */
 
@@ -1261,12 +1261,6 @@
       // event, isDraggingKeyboard
       'Interaction:end': [{
         name: 'callback'
-      }],
-      // event, isDraggingKeyboard
-      'Drag:keyboardDrag': [{
-        name: 'dragstart'
-      }, {
-        name: 'dragmove'
       }] // event, isDraggingKeyboard
 
     };
@@ -1320,6 +1314,13 @@
     element.style.height = "".concat(pos.height, "px");
   });
 
+  /**
+   * @typedef {Object} AreaProps
+   * @property {DSArea} area
+   * @property {PubSub} PS
+   * @property {number} zoom
+   */
+
   var Area = /*#__PURE__*/function () {
     /**
      * @type {DSModificationCallback}
@@ -1363,16 +1364,13 @@
 
     /**
      * @constructor Area
-     * @param {Object} obj
-     * @param {DSArea} obj.area
-     * @param {PubSub} obj.PS
-     * @param {number} obj.zoom
+     * @param {AreaProps} settings
      * @ignore
      */
     function Area(_ref) {
       var _this = this;
 
-      var area = _ref.area,
+      var _area = _ref.area,
           PS = _ref.PS,
           zoom = _ref.zoom;
 
@@ -1394,6 +1392,26 @@
 
       _defineProperty(this, "_rect", void 0);
 
+      _defineProperty(this, "setArea", function (area) {
+        _this._node = area;
+        handleElementPositionAttribute({
+          computedStyle: _this.computedStyle,
+          node: _this._node
+        }); // first immediate debounce to update values after dom-update
+
+        setTimeout(function () {
+          _this.PubSub.publish('Area:modified:pre', {
+            item: _this
+          });
+
+          _this.reset();
+
+          _this.PubSub.publish('Area:modified', {
+            item: _this
+          });
+        });
+      });
+
       _defineProperty(this, "start", function () {
         addModificationObservers(_this.parentNodes, _this._modificationCallback, _this._modificationObserver);
       });
@@ -1412,22 +1430,27 @@
       });
 
       _defineProperty(this, "scroll", function (directions, multiplier) {
-        scrollElement(_this._node, directions, multiplier);
-
-        _this.PubSub.publish('Area:scroll', {
+        var data = {
           scroll_directions: directions,
           scroll_multiplier: multiplier
-        });
+        };
+
+        _this.PubSub.publish('Area:scroll:pre', data);
+
+        scrollElement(_this._node, directions, multiplier);
+
+        _this.PubSub.publish('Area:scroll', data);
       });
 
-      this._node = area;
       this._zoom = zoom;
       this.PubSub = PS;
-      handleElementPositionAttribute({
-        computedStyle: this.computedStyle,
-        node: this._node
-      });
+      this.setArea(_area);
       this._modificationCallback = debounce(function (event) {
+        _this.PubSub.publish('Area:modified:pre', {
+          event: event,
+          item: _this
+        });
+
         _this.reset();
 
         _this.PubSub.publish('Area:modified', {
@@ -1435,19 +1458,12 @@
           item: _this
         });
       }, 60);
-      this._modificationObserver = new MutationObserver(this._modificationCallback); // first immediate debounce to update values after dom-update
-
-      setTimeout(function () {
-        _this.reset();
-
-        _this.PubSub.publish('Area:modified', {
-          event: event,
-          item: _this
-        });
-      });
+      this._modificationObserver = new MutationObserver(this._modificationCallback);
       this.PubSub.subscribe('Interaction:init', this.start);
       this.PubSub.subscribe('Interaction:end', this.reset);
     }
+    /** @param {DSArea} area */
+
 
     _createClass(Area, [{
       key: "HTMLNode",
@@ -1624,12 +1640,13 @@
         var event = _ref2.event,
             key = _ref2.key;
         if (!_this._keyboardDrag || !_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size || !_this._draggability || _this.DS["continue"]) return;
-
-        _this.DS.publish('Interaction:start', {
+        var publishData = {
           event: event,
           isDragging: true,
           isDraggingKeyboard: true
-        });
+        };
+
+        _this.DS.publish(['Interaction:start:pre', 'Interaction:start'], publishData);
 
         _this._elements = _this.DS.getSelection();
 
@@ -1655,23 +1672,20 @@
           });
         });
 
-        _this.DS.publish('Interaction:update', {
-          event: event,
-          isDragging: true,
-          isDraggingKeyboard: true
-        });
+        _this.DS.publish(['Interaction:update:pre', 'Interaction:update'], publishData);
       });
 
       _defineProperty(this, "keyboardEnd", function (_ref3) {
         var event = _ref3.event,
             key = _ref3.key;
         if (!_this._keyboardDrag || !_this._dragKeysFlat.includes(key) || !_this.DS.SelectedSet.size || !_this._draggability) return;
-
-        _this.DS.publish('Interaction:end', {
+        var publishData = {
           event: event,
           isDragging: _this._draggability,
           isDraggingKeyboard: true
-        });
+        };
+
+        _this.DS.publish(['Interaction:end:pre', 'Interaction:end'], publishData);
       });
 
       _defineProperty(this, "start", function (_ref4) {
@@ -1822,6 +1836,10 @@
       _defineProperty(this, "isDragging", void 0);
 
       _defineProperty(this, "init", function () {
+        return _this.DS.publish('Interaction:init:pre', {});
+      });
+
+      _defineProperty(this, "_init", function () {
         _this.stop();
 
         _this._areaElement.addEventListener('mousedown', _this.start);
@@ -1834,6 +1852,13 @@
       });
 
       _defineProperty(this, "start", function (event) {
+        return _this.DS.publish('Interaction:start:pre', {
+          event: event,
+          isDragging: _this.isDragging
+        });
+      });
+
+      _defineProperty(this, "_start", function (event) {
         if (event.type === 'touchstart') event.preventDefault(); // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
 
         if (!_this._canInteract(event)) return;
@@ -1878,8 +1903,7 @@
             PointerStore = _this$DS$stores.PointerStore,
             KeyStore = _this$DS$stores.KeyStore,
             SelectableSet = _this$DS.SelectableSet,
-            SelectedSet = _this$DS.SelectedSet,
-            publish = _this$DS.publish;
+            SelectedSet = _this$DS.SelectedSet;
         PointerStore.start(event);
         var node =
         /** @type {any} */
@@ -1887,10 +1911,9 @@
         if (!SelectableSet.has(node)) return;
         if (!KeyStore.isMultiSelectKeyPressed(event)) SelectedSet.clear();
         SelectedSet.toggle(node);
-        publish('Interaction:end', {
-          event: event,
-          isDragging: _this.isDragging
-        }); // simulate mouse-up (that does not exist on keyboard)
+
+        _this.reset(); // simulate mouse-up (that does not exist on keyboard)
+
       });
 
       _defineProperty(this, "stop", function () {
@@ -1912,7 +1935,7 @@
         var event = _ref3.event,
             scroll_directions = _ref3.scroll_directions,
             scroll_multiplier = _ref3.scroll_multiplier;
-        if (_this.isInteracting) _this.DS.publish('Interaction:update', {
+        if (_this.isInteracting) _this.DS.publish(['Interaction:update:pre', 'Interaction:update'], {
           event: event,
           scroll_directions: scroll_directions,
           scroll_multiplier: scroll_multiplier,
@@ -1921,6 +1944,13 @@
       });
 
       _defineProperty(this, "reset", function (event) {
+        return _this.DS.publish('Interaction:end:pre', {
+          event: event,
+          isDragging: _this.isDragging
+        });
+      });
+
+      _defineProperty(this, "_reset", function (event) {
         var isDragging = _this.isDragging;
 
         _this.stop();
@@ -1942,6 +1972,15 @@
       this.DS.subscribe('Selectable:pointer', function (_ref4) {
         var event = _ref4.event;
         return _this.start(event);
+      });
+      this.DS.subscribe('Interaction:start:pre', function (_ref5) {
+        var event = _ref5.event;
+        return _this._start(event);
+      });
+      this.DS.subscribe('Interaction:init:pre', this._init);
+      this.DS.subscribe('Interaction:end:pre', function (_ref6) {
+        var event = _ref6.event;
+        return _this._reset(event);
       });
       this.DS.subscribe('Area:scroll', this.update);
     }
@@ -1980,8 +2019,10 @@
     return Interaction;
   }();
 
-  var PubSub = function PubSub() {
+  var PubSub = function PubSub(_ref) {
     var _this = this;
+
+    var DS = _ref.DS;
 
     _classCallCheck(this, PubSub);
 
@@ -2002,17 +2043,44 @@
     });
 
     _defineProperty(this, "publish", function (eventName, data) {
-      var _this$subscribers$, _this$subscribers$eve;
-
-      if (!Array.isArray(_this.subscribers[eventName])) return;
-      (_this$subscribers$ = _this.subscribers["".concat(eventName, ":pre")]) === null || _this$subscribers$ === void 0 ? void 0 : _this$subscribers$.forEach(function (callback) {
-        return callback(data);
-      });
-      (_this$subscribers$eve = _this.subscribers[eventName]) === null || _this$subscribers$eve === void 0 ? void 0 : _this$subscribers$eve.forEach(function (callback) {
-        return callback(data);
-      });
+      if (Array.isArray(eventName)) eventName.forEach(function (name) {
+        return _this._publish(name, data);
+      });else _this._publish(eventName, data);
     });
-  };
+
+    _defineProperty(this, "_publish", function (eventName, data) {
+      var subscribers = _this.subscribers[eventName];
+      if (!Array.isArray(subscribers)) return;
+      if (eventName.includes(":pre")) _this._handlePrePublish(subscribers, data);else _this._handlePublish(subscribers, data);
+    });
+
+    _defineProperty(this, "_handlePublish", function (subscribers, data) {
+      for (var i = 0, il = subscribers.length; i < il; i++) {
+        if (_this.DS.stopped) return;
+        subscribers[i](data);
+      }
+    });
+
+    _defineProperty(this, "_handlePrePublish", function (subscribers, data) {
+      var i = subscribers.length;
+
+      while (i--) {
+        if (_this.DS.stopped) return;
+        subscribers[i](data);
+      }
+    });
+
+    this.DS = DS;
+  }
+  /**
+   * Subscribe to an event
+   * @memberof DragSelect#
+   * @function subscribe
+   * @param {DSCallbackNames} eventName
+   * @param {DSCallback} callback
+   * @returns {number} event id, can be used to unsubscribe more efficiently
+   */
+  ;
 
   var SelectableSet = /*#__PURE__*/function (_Set) {
     _inherits(SelectableSet, _Set);
@@ -2092,13 +2160,13 @@
       });
 
       _defineProperty(_assertThisInitialized(_this), "_onClick", function (event) {
-        return _this.DS.publish('Selectable:click', {
+        return _this.DS.publish(['Selectable:click:pre', 'Selectable:click'], {
           event: event
         });
       });
 
       _defineProperty(_assertThisInitialized(_this), "_onPointer", function (event) {
-        return _this.DS.publish('Selectable:pointer', {
+        return _this.DS.publish(['Selectable:pointer:pre', 'Selectable:pointer'], {
           event: event
         });
       });
@@ -2230,15 +2298,17 @@
       key: "add",
       value: function add(element) {
         if (_get(_getPrototypeOf(SelectedSet.prototype), "has", this).call(this, element)) return;
+        var publishData = {
+          items: this.elements,
+          item: element
+        };
+        this.DS.publish('Selected:added:pre', publishData);
 
         _get(_getPrototypeOf(SelectedSet.prototype), "add", this).call(this, element);
 
         element.classList.add(this._className);
-        this.DS.publish('Selected:added', {
-          items: this.elements,
-          item: element
-        });
         element.style.zIndex = "".concat((parseInt(element.style.zIndex) || 0) + 1);
+        this.DS.publish('Selected:added', publishData);
         return this;
       }
       /** @param {DSElement} element */
@@ -2247,15 +2317,17 @@
       key: "delete",
       value: function _delete(element) {
         if (!_get(_getPrototypeOf(SelectedSet.prototype), "has", this).call(this, element)) return;
+        var publishData = {
+          items: this.elements,
+          item: element
+        };
+        this.DS.publish('Selected:removed:pre', publishData);
 
         var deleted = _get(_getPrototypeOf(SelectedSet.prototype), "delete", this).call(this, element);
 
         element.classList.remove(this._className);
-        this.DS.publish('Selected:removed', {
-          items: this.elements,
-          item: element
-        });
         element.style.zIndex = "".concat((parseInt(element.style.zIndex) || 0) - 1);
+        this.DS.publish('Selected:removed', publishData);
         return deleted;
       }
     }, {
@@ -2357,6 +2429,7 @@
 
         var multiSelectionToggle = _this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) && _this._multiSelectToggling;
 
+        if (_this.DS["continue"]) return;
         select.forEach(function (element) {
           return handleSelection({
             element: element,
@@ -2699,6 +2772,11 @@
       _defineProperty(this, "keydown", function (event) {
         var key = event.key.toLowerCase();
 
+        _this.DS.publish('KeyStore:down:pre', {
+          event: event,
+          key: key
+        });
+
         _this._currentValues.add(key);
 
         _this.DS.publish('KeyStore:down', {
@@ -2709,6 +2787,11 @@
 
       _defineProperty(this, "keyup", function (event) {
         var key = event.key.toLowerCase();
+
+        _this.DS.publish('KeyStore:up:pre', {
+          event: event,
+          key: key
+        });
 
         _this._currentValues["delete"](key);
 
@@ -2864,6 +2947,11 @@
 
       _defineProperty(this, "update", function (event) {
         if (!event) return;
+
+        _this.DS.publish('PointerStore:updated:pre', {
+          event: event
+        });
+
         _this.currentVal = _this.getPointerPosition(event);
         if (!_this._isMouseInteraction) return;
 
@@ -3206,7 +3294,9 @@
       _defineProperty(this, "continue", false);
 
       _defineProperty(this, "start", function () {
-        return _this.Interaction.init();
+        _this.stopped = false;
+
+        _this.Interaction.init();
       });
 
       _defineProperty(this, "break", function () {
@@ -3253,7 +3343,9 @@
         return _this.Interaction.isDragging;
       });
 
-      this.PubSub = new PubSub();
+      this.PubSub = new PubSub({
+        DS: this
+      });
       this.subscribe = this.PubSub.subscribe;
       this.unsubscribe = this.PubSub.unsubscribe;
       this.publish = this.PubSub.publish;
@@ -3458,6 +3550,7 @@
         this.stores.ScrollStore.stop();
         if (remove) this.SelectableSet.clear();
         if (fromSelection) this.SelectedSet.clear();
+        this.stopped = true;
       }
       /**
        * Utility to override DragSelect internal functionality:
