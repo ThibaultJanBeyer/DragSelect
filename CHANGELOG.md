@@ -1,3 +1,11 @@
+# Next
+
+- Fix bug with break not working. (still handling change)
+- Fix bug with `pre` events not working properly.
+- **Caution**:
+- - This upgrade changes the order in which the callbacks are fired. The normal callbacks are fired in a FIFO order, first in, first out. The `pre` callbacks are fired in a LIFO order, last in first out.
+- - Pre Events are now really triggered *before* the whole action.
+
 # 2.2.2
 
 - Add a check whether the initial click was issued within the area

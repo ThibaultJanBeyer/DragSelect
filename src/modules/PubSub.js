@@ -4,6 +4,10 @@ import '../types'
 export default class PubSub {
   subscribers = {}
 
+  constructor({ DS }) {
+    this.DS = DS
+  }
+
   /**
    * Subscribe to an event
    * @memberof DragSelect#
@@ -39,12 +43,38 @@ export default class PubSub {
    * Publishes an event to all subscribers
    * @memberof DragSelect#
    * @function publish
-   * @param {DSCallbackNames} eventName
+   * @param {DSCallbackNames|DSCallbackNames[]} eventName
    * @param {CallbackObject} data passed to the subscription method
    */
   publish = (eventName, data) => {
-    if (!Array.isArray(this.subscribers[eventName])) return
-    this.subscribers[`${eventName}:pre`]?.forEach((callback) => callback(data))
-    this.subscribers[eventName]?.forEach((callback) => callback(data))
+    if (Array.isArray(eventName))
+      eventName.forEach(name => this._publish(name, data))
+    else
+      this._publish(eventName, data)
+  }
+  _publish = (eventName, data) => {
+    const subscribers = this.subscribers[eventName]
+    if (!Array.isArray(subscribers)) return
+    if (eventName.includes(`:pre`))
+      this._handlePrePublish(subscribers, data)
+    else
+      this._handlePublish(subscribers, data)
+  }
+
+  // non-pre events are executed first in first out
+  _handlePublish = (subscribers, data) => {
+    for (let i = 0, il = subscribers.length; i < il; i++) {
+      if (this.DS.stopped) return
+      subscribers[i](data)
+    }
+  }
+
+  // pre events are executed last in first out (so user callbacks are called before DS callbacks)
+  _handlePrePublish = (subscribers, data) => {
+    let i = subscribers.length
+    while (i--) {
+      if (this.DS.stopped) return
+      subscribers[i](data)
+    }
   }
 }

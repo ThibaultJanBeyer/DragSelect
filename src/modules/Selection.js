@@ -91,6 +91,7 @@ export default class Selection {
       this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) &&
       this._multiSelectToggling
 
+    if (this.DS.continue) return
     select.forEach((element) =>
       handleSelection({
         element,

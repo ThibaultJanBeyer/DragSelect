@@ -113,11 +113,12 @@ export default class Drag {
     )
       return
 
-    this.DS.publish('Interaction:start', {
+    const publishData = {
       event,
       isDragging: true,
       isDraggingKeyboard: true,
-    })
+    }
+    this.DS.publish(['Interaction:start:pre', 'Interaction:start'], publishData)
 
     this._elements = this.DS.getSelection()
     this.handleZIndex(true)
@@ -142,11 +143,7 @@ export default class Drag {
       })
     )
 
-    this.DS.publish('Interaction:update', {
-      event,
-      isDragging: true,
-      isDraggingKeyboard: true,
-    })
+    this.DS.publish(['Interaction:update:pre', 'Interaction:update'], publishData)
   }
 
   keyboardEnd = ({ event, key }) => {
@@ -157,11 +154,12 @@ export default class Drag {
       !this._draggability
     )
       return
-    this.DS.publish('Interaction:end', {
+    const publishData = {
       event,
       isDragging: this._draggability,
       isDraggingKeyboard: true,
-    })
+    }
+    this.DS.publish(['Interaction:end:pre', 'Interaction:end'], publishData)
   }
 
   start = ({ isDragging, isDraggingKeyboard }) => {

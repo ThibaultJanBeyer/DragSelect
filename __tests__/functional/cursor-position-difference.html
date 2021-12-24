@@ -7,18 +7,43 @@
     window.cursorPosMove = [];
     window.cursorPosStart = [];
 
-    const ds = new DragSelect({
-      onDragStart: function(e) {
-        const diff = ds.getCursorPositionDifference(true);
-        console.log("onStart ::: getCursorPositionDifference(true)", diff);
-        cursorStartDiff.push(diff);
-        cursorPosStart.push({ x: e.clientX, y: e.clientY });
-      },
-      onDragMove: function(e) {
-        const diff = ds.getCursorPositionDifference();
-        console.log("onMove ::: getCursorPositionDifference()", diff);
-        cursorMoveDiff.push(diff);
-        cursorPosMove.push({ x: e.clientX, y: e.clientY });
-      },
-    });
+    /**
+     * Utility method that returns the cursor position difference between start and now
+     * @param {boolean} [usePreviousCursorDifference] if true, it will output the cursor position difference between the previous selection and now
+     * @param {boolean} [useAreaPositions] if true, it will use cursor positions relative to the area
+     * @return {Vect2}
+     */
+     const customPosDiffCalc = (usePreviousCursorDifference, useAreaPositions, ds) => {
+      const posA = useAreaPositions
+      ? ds.getCurrentCursorPositionArea()
+      : ds.getCurrentCursorPosition()
+    const posB = usePreviousCursorDifference
+      ? useAreaPositions
+        ? ds.getPreviousCursorPositionArea()
+        : ds.getPreviousCursorPosition()
+      : useAreaPositions
+      ? ds.getInitialCursorPositionArea()
+      : ds.getInitialCursorPosition()
+
+      return {
+        x: posA.x - posB.x,
+        y: posA.y - posB.y
+      }
+    }
+
+    const ds = new DragSelect({});
+
+    ds.subscribe('dragstart', ({ event }) => {
+      const diff = customPosDiffCalc(true, false, ds);
+      console.log("onStart ::: getCursorPositionDifference(true)", diff, ds.getCurrentCursorPosition(), ds.getCurrentCursorPositionArea());
+      cursorStartDiff.push(diff);
+      cursorPosStart.push({ x: event.clientX, y: event.clientY });
+    })
+
+    ds.subscribe('dragmove', ({ event }) => {
+      const diff = customPosDiffCalc(false, false, ds);
+      console.log("onMove ::: getCursorPositionDifference()", diff);
+      cursorMoveDiff.push(diff);
+      cursorPosMove.push({ x: event.clientX, y: event.clientY });
+    })
 </script>

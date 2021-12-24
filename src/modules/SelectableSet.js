@@ -97,8 +97,8 @@ export default class SelectableSet extends Set {
 
   clear = () => this.forEach((el) => this.delete(el))
 
-  _onClick = (event) => this.DS.publish('Selectable:click', { event })
-  _onPointer = (event) => this.DS.publish('Selectable:pointer', { event })
+  _onClick = (event) => this.DS.publish(['Selectable:click:pre', 'Selectable:click'], { event })
+  _onPointer = (event) => this.DS.publish(['Selectable:pointer:pre', 'Selectable:pointer'], { event })
 
   /** @param {DSElements} elements */
   addAll = (elements) => elements.forEach((el) => this.add(el))

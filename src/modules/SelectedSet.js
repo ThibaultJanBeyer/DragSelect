@@ -25,26 +25,30 @@ export default class SelectedSet extends Set {
   /** @param {DSElement} element */
   add(element) {
     if (super.has(element)) return
-    super.add(element)
-    element.classList.add(this._className)
-    this.DS.publish('Selected:added', {
+    const publishData = {
       items: this.elements,
       item: element,
-    })
+    }
+    this.DS.publish('Selected:added:pre', publishData)
+    super.add(element)
+    element.classList.add(this._className)
     element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) + 1}`
+    this.DS.publish('Selected:added', publishData)
     return this
   }
 
   /** @param {DSElement} element */
   delete(element) {
     if (!super.has(element)) return
-    const deleted = super.delete(element)
-    element.classList.remove(this._className)
-    this.DS.publish('Selected:removed', {
+    const publishData = {
       items: this.elements,
       item: element,
-    })
+    }
+    this.DS.publish('Selected:removed:pre', publishData)
+    const deleted = super.delete(element)
+    element.classList.remove(this._className)
     element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) - 1}`
+    this.DS.publish('Selected:removed', publishData)
     return deleted
   }
 

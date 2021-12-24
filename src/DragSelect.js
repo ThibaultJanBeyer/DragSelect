@@ -100,7 +100,7 @@ class DragSelect {
     onElementSelect,
     onElementUnselect,
   }) {
-    this.PubSub = new PubSub()
+    this.PubSub = new PubSub({ DS: this })
     this.subscribe = this.PubSub.subscribe
     this.unsubscribe = this.PubSub.unsubscribe
     this.publish = this.PubSub.publish
@@ -247,7 +247,10 @@ class DragSelect {
    * Initializes the functionality. Automatically triggered when created.
    * Also, reset the functionality after a teardown
    */
-  start = () => this.Interaction.init()
+  start = () => {
+    this.stopped = false
+    this.Interaction.init()
+  }
   /**
    * Complete function teardown
    * Will teardown/stop the whole functionality
@@ -269,6 +272,8 @@ class DragSelect {
 
     if (remove) this.SelectableSet.clear()
     if (fromSelection) this.SelectedSet.clear()
+
+    this.stopped = true
   }
   /**
    * Utility to override DragSelect internal functionality:
