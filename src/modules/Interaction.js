@@ -18,6 +18,11 @@ export default class Interaction {
    * @private
    * */
   _immediateDrag
+  /**
+   * @type {string}
+   * @private
+   * */
+   _selectableClass
   /** @type {boolean} */
   isInteracting
   /** @type {boolean} */
@@ -29,13 +34,15 @@ export default class Interaction {
    * @param {DSArea} obj.areaElement
    * @param {boolean} obj.draggability
    * @param {boolean} obj.immediateDrag
+   * @param {string} obj.selectableClass
    * @param {DragSelect} obj.DS
    * @ignore
    */
-  constructor({ areaElement, DS, draggability, immediateDrag }) {
+  constructor({ areaElement, DS, draggability, immediateDrag, selectableClass }) {
     this._areaElement = areaElement
     this._draggability = draggability
     this._immediateDrag = immediateDrag
+    this._selectableClass = selectableClass
     this.DS = DS
     this.DS.subscribe('PointerStore:updated', this.update)
     this.DS.subscribe('Selectable:click', this.onClick)
@@ -105,7 +112,7 @@ export default class Interaction {
    * @returns {boolean}
    */
   isDragEvent = (event) => {
-    const clickedElement = /** @type {Element} */(event.target).closest('.ds-selectable')
+    const clickedElement = /** @type {Element} */(event.target).closest(this._selectableClass)
     if (
       !this._draggability ||
       this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) ||
