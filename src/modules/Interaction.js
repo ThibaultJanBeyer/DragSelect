@@ -105,23 +105,24 @@ export default class Interaction {
    * @returns {boolean}
    */
   isDragEvent = (event) => {
+    const clickedElement = /** @type {Element} */(event.target).closest('.ds-selectable')
     if (
       !this._draggability ||
       this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) ||
-      !this.DS.SelectableSet.has(event.target)
+      !this.DS.SelectableSet.has(clickedElement)
     )
       return false
 
     if (this._immediateDrag) {
       if (!this.DS.SelectedSet.size)
-        this.DS.SelectedSet.add(/** @type {DSElement} */ (event.target))
-      else if (!this.DS.SelectedSet.has(event.target)) {
+        this.DS.SelectedSet.add(/** @type {DSElement} */ (clickedElement))
+      else if (!this.DS.SelectedSet.has(clickedElement)) {
         this.DS.SelectedSet.clear()
-        this.DS.SelectedSet.add(/** @type {DSElement} */ (event.target))
+        this.DS.SelectedSet.add(/** @type {DSElement} */ (clickedElement))
       }
     }
 
-    if (this.DS.SelectedSet.has(event.target)) return true
+    if (this.DS.SelectedSet.has(clickedElement)) return true
 
     return false
   }
