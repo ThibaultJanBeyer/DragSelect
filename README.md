@@ -74,7 +74,7 @@ Thanks to:
 
 | ![BrowserStack](https://dragselect.com/media/browserstack.jpg) | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
 |--- |--- |
-|[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation to DragSelect](https://paypal.me/pools/c/8gF2a5szCP) (Donations are distributed with all project contributors proportionally. We are grateful for any amount) or sponsor me via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com). We can display your logo here if you want, which will help you recruit great talent and boost your SEO. |  
+|[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (Direct Donations to the project via Bitcoin (Wallet: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`) are distributed with all project contributors proportionally. We are grateful for any amount. We have >300.000 users, imagine how much we'd have if everyone would have had donated only 1$ 🤩 (unfortunately this did not happen)) or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com). We can display your logo here if you want, which will help you recruit great talent and boost your SEO. |  
 BTC: [1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) |  
 Paypal: [https://paypal.me/pools/c/8gF2a5szCP](https://paypal.me/pools/c/8gF2a5szCP) |
 Other: [get in touch](mailto:thibault.beyer@gmail.com) |
@@ -359,7 +359,7 @@ Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 
 Creating and maintaining useful tools is a lot of work. 
 So don’t forget to give this repository a star if you find it useful.
-Star this repo, tell all your friends and start contributing and/or [donating 1$](https://paypal.me/pools/c/8gF2a5szCP) to keep it running. Thank you :)
+Star this repo, tell all your friends and start contributing and/or [donating 1$](https://github.com/sponsors/ThibaultJanBeyer) to keep it running. Thank you :)
 
 [![Typewriter Gif](https://dragselect.com/media/typewriter.gif)](https://thibaultjanbeyer.com/)
 
