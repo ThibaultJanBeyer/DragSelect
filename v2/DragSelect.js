@@ -1802,6 +1802,11 @@
      * @private
      * */
 
+    /**
+     * @type {string}
+     * @private
+     * */
+
     /** @type {boolean} */
 
     /** @type {boolean} */
@@ -1809,19 +1814,21 @@
     /**
      * @constructor Interaction
      * @param {Object} obj
+     * @param {DragSelect} obj.DS
      * @param {DSArea} obj.areaElement
      * @param {boolean} obj.draggability
      * @param {boolean} obj.immediateDrag
-     * @param {DragSelect} obj.DS
+     * @param {string} obj.selectableClass
      * @ignore
      */
     function Interaction(_ref) {
       var _this = this;
 
-      var areaElement = _ref.areaElement,
-          DS = _ref.DS,
+      var DS = _ref.DS,
+          areaElement = _ref.areaElement,
           draggability = _ref.draggability,
-          immediateDrag = _ref.immediateDrag;
+          immediateDrag = _ref.immediateDrag,
+          selectableClass = _ref.selectableClass;
 
       _classCallCheck(this, Interaction);
 
@@ -1830,6 +1837,8 @@
       _defineProperty(this, "_draggability", void 0);
 
       _defineProperty(this, "_immediateDrag", void 0);
+
+      _defineProperty(this, "_selectableClass", void 0);
 
       _defineProperty(this, "isInteracting", void 0);
 
@@ -1875,21 +1884,24 @@
       });
 
       _defineProperty(this, "isDragEvent", function (event) {
-        if (!_this._draggability || _this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) || !_this.DS.SelectableSet.has(event.target)) return false;
+        var clickedElement =
+        /** @type {Element} */
+        event.target.closest(".".concat(_this._selectableClass));
+        if (!_this._draggability || _this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) || !clickedElement) return false;
 
         if (_this._immediateDrag) {
           if (!_this.DS.SelectedSet.size) _this.DS.SelectedSet.add(
           /** @type {DSElement} */
-          event.target);else if (!_this.DS.SelectedSet.has(event.target)) {
+          clickedElement);else if (!_this.DS.SelectedSet.has(clickedElement)) {
             _this.DS.SelectedSet.clear();
 
             _this.DS.SelectedSet.add(
             /** @type {DSElement} */
-            event.target);
+            clickedElement);
           }
         }
 
-        if (_this.DS.SelectedSet.has(event.target)) return true;
+        if (_this.DS.SelectedSet.has(clickedElement)) return true;
         return false;
       });
 
@@ -1966,6 +1978,7 @@
       this._areaElement = areaElement;
       this._draggability = draggability;
       this._immediateDrag = immediateDrag;
+      this._selectableClass = selectableClass;
       this.DS = DS;
       this.DS.subscribe('PointerStore:updated', this.update);
       this.DS.subscribe('Selectable:click', this.onClick);
@@ -3426,7 +3439,8 @@
         areaElement: area,
         DS: this,
         draggability: draggability,
-        immediateDrag: immediateDrag
+        immediateDrag: immediateDrag,
+        selectableClass: selectableClass
       }); // Subscriber Aliases
 
       subscriberAliases({
