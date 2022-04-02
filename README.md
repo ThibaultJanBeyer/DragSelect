@@ -74,10 +74,15 @@ Thanks to:
 
 | ![BrowserStack](https://dragselect.com/media/browserstack.jpg) | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
 |--- |--- |
-|[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (Direct Donations to the project via Bitcoin (Wallet: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`) are distributed with all project contributors proportionally. We are grateful for any amount. We have >300.000 users, imagine how much we'd have if everyone would have had donated only 1$ 🤩 (unfortunately this did not happen)) or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com). We can display your logo here if you want, which will help you recruit great talent and boost your SEO. |  
-BTC: [1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) |  
-Paypal: [https://paypal.me/pools/c/8gF2a5szCP](https://paypal.me/pools/c/8gF2a5szCP) |
-Other: [get in touch](mailto:thibault.beyer@gmail.com) |
+|[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (Direct Donations to the project via Bitcoin (Wallet: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`). Or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com).|  
+| Via BTC: | [1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (directly to the project) |
+| Via GitHub: | [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) (monthly & one-time) |
+| Other: | [get in touch](mailto:thibault.beyer@gmail.com) |
+
+All donations are distributed with all project contributors proportionally to their involvement. We are grateful for any amount:  
+We have more than ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg), imagine how much we'd have if everyone would have had donated only 1$ 🤩 (unfortunately this did not happen)  
+
+If you donate, we can display your logo here if you want, which will give you fame, fortune and help you recruit great talent and boosting your SEO. 
 
 # Installation
 ## NPM
