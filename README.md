@@ -25,7 +25,7 @@ easily add a selection algorithm to your application/website.
 - - [Simple](#simple)
 - - [Within a scroll-able Area](#within-a-scroll-able-area)
 - - [Extended](#extended)
-- - [Mobile/Touch usage](#mobile/touch-usage)
+- - [Mobile Touch usage](#mobile-touch-usage)
 - - [Accessibility (a11y)](#accessibility-a11y)
 - - [Use your own Drag And Drop](#use-your-own-drag-and-drop)
 - [Constructor Properties](#constructor-properties)
@@ -75,7 +75,7 @@ Thanks to:
 | ![BrowserStack](https://dragselect.com/media/browserstack.jpg) | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
 |--- |--- |
 |[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (Direct Donations to the project via Bitcoin (Wallet: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`). Or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com).|  
-| Via BTC: | [1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (directly to the project) |
+| Via BTC: | [1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (direct) |
 | Via GitHub: | [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) (monthly & one-time) |
 | Other: | [get in touch](mailto:thibault.beyer@gmail.com) |
 
