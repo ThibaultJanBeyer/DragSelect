@@ -25,7 +25,7 @@ easily add a selection algorithm to your application/website.
 - - [Simple](#simple)
 - - [Within a scroll-able Area](#within-a-scroll-able-area)
 - - [Extended](#extended)
-- - [Mobile Touch usage](#mobile-touch-usage)
+- - [Mobile Touch usage](#mobiletouch-usage)
 - - [Accessibility (a11y)](#accessibility-a11y)
 - - [Use your own Drag And Drop](#use-your-own-drag-and-drop)
 - [Constructor Properties](#constructor-properties)
