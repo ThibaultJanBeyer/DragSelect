@@ -68,7 +68,7 @@ We use it currently in a professional rich interface application where we have a
 
 # Supporters
 
-Please donate to support the countless hours of hard work & support. Especially if your company makes money. Thank you :)
+Please donate to support the countless hours of hard work & support. Especially if your company makes money, then there is no excuse. Thank you :)
 
 If you're too poor or broke you can still support us with your time instead by [contributing to the code](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md)!
 
