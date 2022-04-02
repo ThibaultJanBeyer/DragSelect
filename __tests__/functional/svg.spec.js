@@ -6,12 +6,14 @@ describe('SVG', () => {
     await page.goto(`${baseUrl}/svg.html`)
 
     const mouse = page.mouse
-    await mouse.move(50, 50)
+    await mouse.move(50, 50, { steps: 10 })
     await mouse.down()
+    await wait(100)
     await mouse.move(500, 500, {
       steps: 10,
     })
     await mouse.up()
+    await wait(100)
 
     const {
       selected0,
@@ -32,12 +34,14 @@ describe('SVG', () => {
     expect(selected0.length).toEqual(4)
     expect(dragged0.length).toEqual(0)
 
-    await mouse.move(itemVect3.x, itemVect3.y)
+    await mouse.move(itemVect3.x, itemVect3.y, { steps: 10 })
     await mouse.down()
+    await wait(100)
     await mouse.move(itemVect3.x + 100, itemVect3.y + 100, {
       steps: 10,
     })
     await mouse.up()
+    await wait(100)
 
     const {
       selected02,
