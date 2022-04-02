@@ -70,11 +70,13 @@ We use it currently in a professional rich interface application where we have a
 
 Please donate to support the countless hours of hard work & support. Especially if your company makes money. Thank you :)
 
-Thanks to:  
+If you're too poor or broke you can still support us with your time instead by [contributing to the code](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md)!
+
+## Thanks to:  
 
 | ![BrowserStack](https://dragselect.com/media/browserstack.jpg) | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
 |--- |--- |
-|[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (Direct Donations to the project via Bitcoin (Wallet: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`). Or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com).|  
+|[BrowserStack](https://www.browserstack.com/) is an amazing testing service which helps testing the tool on various browsers. They support this open source projects by providing a [free account for open source projects](https://www.browserstack.com/open-source) to use their service! | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (via Bitcoin: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`). Or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com). | 
 | Via BTC: | [1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (direct) |
 | Via GitHub: | [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) (monthly & one-time) |
 | Other: | [get in touch](mailto:thibault.beyer@gmail.com) |
