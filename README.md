@@ -9,7 +9,7 @@
 
 [GitHub](https://github.com/ThibaultJanBeyer/DragSelect/) | [NPM](https://www.npmjs.com/package/dragselect) | [Project-Page](https://dragselect.com/)  
 
-[![Build Status](https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master)](https://travis-ci.com/ThibaultJanBeyer/DragSelect) ![gzip size](https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip) ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) [![No Dependency](https://david-dm.org/ThibaultJanBeyer/DragSelect.svg)](https://david-dm.org/ThibaultJanBeyer/DragSelect)
+[![Build Status](https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master)](https://travis-ci.com/ThibaultJanBeyer/DragSelect) ![gzip size](https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip) ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) [![No Dependency](https://img.shields.io/badge/dependencies-none-brightgreen)](https://david-dm.org/ThibaultJanBeyer/DragSelect)
 
 # DragSelect ![GitHub package.json version](https://img.shields.io/github/package-json/v/ThibaultJanBeyer/DragSelect.svg)
 easily add a selection algorithm to your application/website.
@@ -40,7 +40,7 @@ easily add a selection algorithm to your application/website.
 
 # Key-Features
 
-- **No dependencies** [![No Dependency](https://david-dm.org/ThibaultJanBeyer/DragSelect.svg)](https://david-dm.org/ThibaultJanBeyer/DragSelect)
+- **No dependencies** [![No Dependency](https://img.shields.io/badge/dependencies-none-brightgreen)](https://david-dm.org/ThibaultJanBeyer/DragSelect)
 - Hyper customizable
 - Replicates operating system drag-selection in the browser
 - Accessibility (a11y)
