@@ -6,7 +6,7 @@ describe('Constrained', () => {
 
     const mouse = page.mouse
     // move to the middle of the page
-    await mouse.move(150, 150)
+    await mouse.move(150, 150, { steps: 10 })
     await mouse.down()
     // move 300px down and to the end of the page
     // steps are how often the mouse moves

@@ -1,20 +1,16 @@
+import wait from '../helpers/wait'
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
-
-function delay(time) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, time)
-  })
-}
 
 describe('Multiselection', () => {
   it('should multiselect', async () => {
     await page.goto(`${baseUrl}/multiselection.html`)
 
     const mouse = page.mouse
-    await mouse.move(1, 1)
+    await mouse.move(1, 1, { steps: 10 })
     await mouse.down()
     await mouse.move(100, 30, { steps: 10 })
     await mouse.up()
+    await wait(100)
 
     const keyboard = page.keyboard
     await keyboard.down('Shift')
@@ -22,10 +18,12 @@ describe('Multiselection', () => {
     await mouse.down()
     await mouse.move(200, 40, { steps: 10 })
     await mouse.up()
+    await wait(100)
 
     await mouse.move(250, 40, { steps: 10 })
     await mouse.down()
     await mouse.up()
+    await wait(100)
 
     const { selected } = await page.evaluate(() => ({ selected }))
     const expected = ['one', 'three', 'four', 'five']
@@ -40,15 +38,18 @@ describe('Multiselection', () => {
     await mouse.down()
     await mouse.move(100, 90, { steps: 10 })
     await mouse.up()
+    await wait(100)
 
     await mouse.move(60, 90, { steps: 10 })
     await mouse.down()
     await mouse.move(200, 100, { steps: 10 })
     await mouse.up()
+    await wait(100)
 
     await mouse.move(250, 100)
     await mouse.down()
     await mouse.up()
+    await wait(100)
 
     const { multiselected } = await page.evaluate(() => ({ multiselected }))
     const expected = ['one2', 'three2', 'four2', 'five2']
@@ -63,11 +64,13 @@ describe('Multiselection', () => {
     await mouse.down()
     await mouse.move(80, 160, { steps: 10 })
     await mouse.up()
+    await wait(100)
 
     await mouse.move(180, 160, { steps: 10 })
     await mouse.down()
     await mouse.move(30, 170, { steps: 10 })
     await mouse.up()
+    await wait(100)
 
     const { multiSelectTogglingOff } = await page.evaluate(() => ({
       multiSelectTogglingOff,

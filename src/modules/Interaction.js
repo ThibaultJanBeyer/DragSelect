@@ -128,7 +128,7 @@ export default class Interaction {
     if (
       !this._draggability ||
       this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) ||
-      !this.DS.SelectableSet.has(clickedElement)
+      !clickedElement
     )
       return false
 

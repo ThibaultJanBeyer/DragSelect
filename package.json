@@ -13,6 +13,7 @@
     "checkjs": "tsc --lib es2019,dom -t es5 --allowJs --checkJs --noEmit src/*.js",
     "checkjs:watch": "npm run checkjs -- -w",
     "postcheckjs": "npm run docs && rm -rf docs",
+    "pretest": "npm run build",
     "test": "npm run checkjs && jest --detectOpenHandles",
     "test:watch": "npm run test -- --watch",
     "\n# BUILDING:": "",
