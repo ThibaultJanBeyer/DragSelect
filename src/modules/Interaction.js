@@ -18,6 +18,11 @@ export default class Interaction {
    * @private
    * */
   _immediateDrag
+  /**
+   * @type {string}
+   * @private
+   * */
+  _selectableClass
   /** @type {boolean} */
   isInteracting
   /** @type {boolean} */
@@ -26,16 +31,24 @@ export default class Interaction {
   /**
    * @constructor Interaction
    * @param {Object} obj
+   * @param {DragSelect} obj.DS
    * @param {DSArea} obj.areaElement
    * @param {boolean} obj.draggability
    * @param {boolean} obj.immediateDrag
-   * @param {DragSelect} obj.DS
+   * @param {string} obj.selectableClass
    * @ignore
    */
-  constructor({ areaElement, DS, draggability, immediateDrag }) {
+  constructor({
+    DS,
+    areaElement,
+    draggability,
+    immediateDrag,
+    selectableClass,
+  }) {
     this._areaElement = areaElement
     this._draggability = draggability
     this._immediateDrag = immediateDrag
+    this._selectableClass = selectableClass
     this.DS = DS
     this.DS.subscribe('PointerStore:updated', this.update)
     this.DS.subscribe('Selectable:click', this.onClick)
@@ -85,7 +98,11 @@ export default class Interaction {
   /**
    * @param {DSEvent} event
    */
-  start = (event) => this.DS.publish('Interaction:start:pre', { event, isDragging: this.isDragging })
+  start = (event) =>
+    this.DS.publish('Interaction:start:pre', {
+      event,
+      isDragging: this.isDragging,
+    })
   _start = (event) => {
     if (event.type === 'touchstart') event.preventDefault() // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
     if (!this._canInteract(event)) return
@@ -105,23 +122,26 @@ export default class Interaction {
    * @returns {boolean}
    */
   isDragEvent = (event) => {
+    const clickedElement = /** @type {Element} */ (event.target).closest(
+      `.${this._selectableClass}`
+    )
     if (
       !this._draggability ||
       this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) ||
-      !this.DS.SelectableSet.has(event.target)
+      !clickedElement
     )
       return false
 
     if (this._immediateDrag) {
       if (!this.DS.SelectedSet.size)
-        this.DS.SelectedSet.add(/** @type {DSElement} */ (event.target))
-      else if (!this.DS.SelectedSet.has(event.target)) {
+        this.DS.SelectedSet.add(/** @type {DSElement} */ (clickedElement))
+      else if (!this.DS.SelectedSet.has(clickedElement)) {
         this.DS.SelectedSet.clear()
-        this.DS.SelectedSet.add(/** @type {DSElement} */ (event.target))
+        this.DS.SelectedSet.add(/** @type {DSElement} */ (clickedElement))
       }
     }
 
-    if (this.DS.SelectedSet.has(event.target)) return true
+    if (this.DS.SelectedSet.has(clickedElement)) return true
 
     return false
   }
@@ -174,7 +194,11 @@ export default class Interaction {
       })
   }
 
-  reset = (event) => this.DS.publish('Interaction:end:pre', { event, isDragging: this.isDragging })
+  reset = (event) =>
+    this.DS.publish('Interaction:end:pre', {
+      event,
+      isDragging: this.isDragging,
+    })
   _reset = (event) => {
     const isDragging = this.isDragging
     this.stop()

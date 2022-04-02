@@ -1,3 +1,7 @@
+# Next
+
+- Fix bug [#109](https://github.com/ThibaultJanBeyer/DragSelect/issues/109) where inner elements are ignored from normal drag behavior
+
 # 2.3.0
 
 - Fix bug with break not working. (still handling change)
@@ -5,6 +9,7 @@
 - **Caution**:
 - - This upgrade changes the order in which the callbacks are fired. The normal callbacks are fired in a FIFO order, first in, first out. The `pre` callbacks are fired in a LIFO order, last in first out.
 - - Pre Events are now really triggered *before* the whole action.
+- Fixes issue [#110](https://github.com/ThibaultJanBeyer/DragSelect/issues/110) where teardown did not work properly
 
 # 2.2.2
 

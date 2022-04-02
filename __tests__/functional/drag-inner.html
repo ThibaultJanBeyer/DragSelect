@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="basics.css">
+<style>
+.inner {
+  border: 2px solid black;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
+<script src="../../dist/DragSelect.js"></script>
+<button type="button" class="item one">
+  <div class="inner">1</div>
+</button>
+<button type="button" class="item two">2</button>
+<button type="button" class="item three">3</button>
+<script>
+    const ds = new DragSelect({
+        selectables: document.querySelectorAll('.item'),
+    });
+</script>

@@ -178,6 +178,7 @@ class DragSelect {
       DS: this,
       draggability,
       immediateDrag,
+      selectableClass,
     })
 
     // Subscriber Aliases

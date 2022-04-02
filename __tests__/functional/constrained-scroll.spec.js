@@ -1,3 +1,4 @@
+import wait from '../helpers/wait'
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 describe('Constrained Scroll', () => {
@@ -7,10 +8,12 @@ describe('Constrained Scroll', () => {
     const mouse = page.mouse
     const keyboard = page.keyboard
     await keyboard.down('Shift')
-    await mouse.move(110, 110)
+    await mouse.move(110, 110, { steps: 10 })
     await mouse.down()
+    await wait(100)
     await mouse.move(400, 400, { steps: 60 })
     await mouse.up()
+    await wait(100)
 
     let executesFn = await page.evaluate(() => {
       return {

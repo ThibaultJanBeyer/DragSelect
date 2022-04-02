@@ -7,12 +7,14 @@ describe('Callbacks', () => {
 
     const mouse = page.mouse
     // move to the middle of the page
-    await mouse.move(1, 1)
+    await mouse.move(1, 1, { steps: 100 })
     await mouse.down()
+    await wait(100)
     // move 200px down and to the end of the page
     // steps are how often the mouse moves
     await mouse.move(200, 200, { steps: 100 })
     await mouse.up()
+    await wait(100)
 
     const executesFn = await page.evaluate(() => {
       ds.Area.scroll(['right'], 1)
