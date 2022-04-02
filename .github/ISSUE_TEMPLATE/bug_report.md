@@ -17,6 +17,13 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
+**Code Example**
+Add a link to a code example where the bug can be reproduced.
+You can copy one of the existing codepen templates to make it easier:
+- Normal: https://codepen.io/ThibaultJanBeyer/pen/prpwYG
+- With Area: https://codepen.io/ThibaultJanBeyer/pen/RZMRZw
+- With Scrollable Area: https://codepen.io/ThibaultJanBeyer/pen/Nvobgq
+
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
