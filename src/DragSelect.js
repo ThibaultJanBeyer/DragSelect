@@ -335,11 +335,11 @@ class DragSelect {
    * @return {DSElements} all selected elements
    */
   toggleSelection(elements, triggerCallback = false, alsoSelectables = false) {
-    toArray(elements).forEach((el) =>
-      this.SelectedSet.has(el)
-        ? this.removeSelection(elements, triggerCallback, alsoSelectables)
-        : this.addSelection(elements, triggerCallback, alsoSelectables)
-    )
+    const willRemoveSelection = [];
+    const willAddSelection = [];
+    toArray(elements).forEach((el) => (this.SelectedSet.has(el) ? willRemoveSelection : willAddSelection).push(el))
+    this.removeSelection(willRemoveSelection, triggerCallback, alsoSelectables)
+    this.addSelection(willAddSelection, triggerCallback, alsoSelectables)
     if (triggerCallback)
       this.PubSub.publish('callback', { items: this.getSelection() })
     return this.getSelection()
