@@ -99,6 +99,7 @@ class DragSelect {
     onDragStart,
     onElementSelect,
     onElementUnselect,
+    usePointerEvents = false,
   }) {
     this.PubSub = new PubSub({ DS: this })
     this.subscribe = this.PubSub.subscribe
@@ -114,7 +115,7 @@ class DragSelect {
     })
 
     this.stores = {
-      PointerStore: new PointerStore({ DS: this }),
+      PointerStore: new PointerStore({ DS: this, usePointerEvents }),
       ScrollStore: new ScrollStore({ DS: this, areaElement: area, zoom }),
       KeyStore: new KeyStore({ DS: this, multiSelectKeys, multiSelectMode }),
     }
@@ -142,6 +143,7 @@ class DragSelect {
       hoverClassName: hoverClass,
       useTransform,
       draggability,
+      usePointerEvents,
     })
 
     this.SelectedSet = new SelectedSet({
@@ -179,6 +181,7 @@ class DragSelect {
       draggability,
       immediateDrag,
       selectableClass,
+      usePointerEvents,
     })
 
     // Subscriber Aliases

@@ -23,6 +23,11 @@ export default class Interaction {
    * @private
    * */
   _selectableClass
+    /**
+   * @type {boolean}
+   * @private
+   * */
+  _usePointerEvents
   /** @type {boolean} */
   isInteracting
   /** @type {boolean} */
@@ -36,6 +41,7 @@ export default class Interaction {
    * @param {boolean} obj.draggability
    * @param {boolean} obj.immediateDrag
    * @param {string} obj.selectableClass
+   * @param {boolean} obj.usePointerEvents
    * @ignore
    */
   constructor({
@@ -44,11 +50,13 @@ export default class Interaction {
     draggability,
     immediateDrag,
     selectableClass,
+    usePointerEvents,
   }) {
     this._areaElement = areaElement
     this._draggability = draggability
     this._immediateDrag = immediateDrag
     this._selectableClass = selectableClass
+    this._usePointerEvents = usePointerEvents
     this.DS = DS
     this.DS.subscribe('PointerStore:updated', this.update)
     this.DS.subscribe('Selectable:click', this.onClick)
@@ -64,7 +72,13 @@ export default class Interaction {
   init = () => this.DS.publish('Interaction:init:pre', {})
   _init = () => {
     this.stop()
-    this._areaElement.addEventListener('mousedown', this.start)
+    if (this._usePointerEvents) {
+      this._areaElement.addEventListener('pointerdown', this.start, {
+        passive: false,
+      })
+    } else {
+      this._areaElement.addEventListener('mousedown', this.start)
+    }
     this._areaElement.addEventListener('touchstart', this.start, {
       passive: false,
     })
@@ -112,7 +126,12 @@ export default class Interaction {
 
     this.DS.publish('Interaction:start', { event, isDragging: this.isDragging })
 
-    document.addEventListener('mouseup', this.reset)
+    if (this._usePointerEvents) {
+      document.addEventListener('pointerup', this.reset)
+      document.addEventListener('pointercancel', this.reset)
+    } else {
+      document.addEventListener('mouseup', this.reset)
+    }
     document.addEventListener('touchend', this.reset)
   }
 
@@ -175,12 +194,21 @@ export default class Interaction {
   stop = () => {
     this.isInteracting = false
     this.isDragging = false
-    this._areaElement.removeEventListener('mousedown', this.start)
+    if (this._usePointerEvents) {
+      this._areaElement.removeEventListener('pointerdown', this.start, {
+        // @ts-ignore
+        passive: false,
+      })
+      document.removeEventListener('pointerup', this.reset)
+      document.removeEventListener('pointercancel', this.reset)
+    } else {
+      this._areaElement.removeEventListener('mousedown', this.start)
+      document.removeEventListener('mouseup', this.reset)
+    }
     this._areaElement.removeEventListener('touchstart', this.start, {
       // @ts-ignore
       passive: false,
     })
-    document.removeEventListener('mouseup', this.reset)
     document.removeEventListener('touchend', this.reset)
   }
 

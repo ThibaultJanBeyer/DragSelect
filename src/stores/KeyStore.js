@@ -90,7 +90,7 @@ export default class KeyStore {
 
   reset = () => this._currentValues.clear()
 
-  /** @param {KeyboardEvent|MouseEvent|TouchEvent} [event] */
+  /** @param {KeyboardEvent|MouseEvent|PointerEvent|TouchEvent} [event] */
   isMultiSelectKeyPressed(event) {
     if (this._multiSelectMode) return true
     if (this.currentValues.some((key) => this._multiSelectKeys.includes(key)))

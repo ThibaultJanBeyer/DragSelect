@@ -52,7 +52,7 @@ describe('Multiselection', () => {
     await wait(100)
 
     const { multiselected } = await page.evaluate(() => ({ multiselected }))
-    const expected = ['one2', 'three2', 'four2', 'five2']
+    const expected = ['two2', 'three2', 'four2', 'five2']
     expect(multiselected.sort()).toEqual(expected.sort())
   })
 

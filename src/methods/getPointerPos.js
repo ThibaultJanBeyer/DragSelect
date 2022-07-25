@@ -4,7 +4,7 @@ import '../types'
 /**
  * Returns cursor x, y position based on event object
  * @param {Object} p
- * @param {MouseEvent|Touch} p.event
+ * @param {MouseEvent|Touch|PointerEvent} p.event
  * @return {Vect2} cursor X/Y position
  */
 export default ({ event }) => ({

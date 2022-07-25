@@ -30,6 +30,11 @@ export default class SelectableSet extends Set {
    * @private
    * */
   _draggability
+    /**
+   * @type {boolean}
+   * @private
+   * */
+  _usePointerEvents
 
   /**
    * @constructor SelectableSet
@@ -40,6 +45,7 @@ export default class SelectableSet extends Set {
    * @param {string} p.hoverClassName
    * @param {boolean} p.useTransform
    * @param {boolean} p.draggability
+   * @param {boolean} p.usePointerEvents
    * @ignore
    */
   constructor({
@@ -47,6 +53,7 @@ export default class SelectableSet extends Set {
     className,
     hoverClassName,
     draggability,
+    usePointerEvents,
     useTransform,
     DS,
   }) {
@@ -57,6 +64,7 @@ export default class SelectableSet extends Set {
     this._hoverClassName = hoverClassName
     this._useTransform = useTransform
     this._draggability = draggability
+    this._usePointerEvents = usePointerEvents
 
     this.DS.subscribe('Interaction:init', this.init)
   }
@@ -67,7 +75,14 @@ export default class SelectableSet extends Set {
   add(element) {
     element.classList.add(this._className)
     element.addEventListener('click', this._onClick)
-    element.addEventListener('mousedown', this._onPointer)
+    if (this._usePointerEvents) {
+      element.addEventListener('pointerdown', this._onPointer, {
+        // @ts-ignore
+        passive: false,
+      })
+    } else {
+      element.addEventListener('mousedown', this._onPointer)
+    }
     element.addEventListener('touchstart', this._onPointer, {
       // @ts-ignore
       passive: false,
@@ -87,7 +102,14 @@ export default class SelectableSet extends Set {
     element.classList.remove(this._className)
     element.classList.remove(this._hoverClassName)
     element.removeEventListener('click', this._onClick)
-    element.removeEventListener('mousedown', this._onPointer)
+    if (this._usePointerEvents) {
+      element.removeEventListener('pointerdown', this._onPointer, {
+        // @ts-ignore
+        passive: false,
+      })
+    } else {
+      element.removeEventListener('mousedown', this._onPointer)
+    }
     element.removeEventListener('touchstart', this._onPointer, {
       // @ts-ignore
       passive: false,

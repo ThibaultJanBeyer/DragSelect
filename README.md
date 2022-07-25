@@ -286,6 +286,7 @@ ds.subscribe('predragmove', ({ isDragging, isDraggingKeyboard }) => {
 |hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)
 |selectorClass |string |The class name assigned to the square selector helper. |[see classes](#classes)
 |selectableClass |string |The class name assigned to the elements that can be selected. |[see classes](#classes)
+|usePointerEvents |boolean |Whether to use Pointer Events to replace traditional Mouse or Touch Events. |`false`
 
 # Event Callbacks
 

@@ -28,13 +28,14 @@
  * @property {DSCallback} [onDragStart] Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
  * @property {DSCallback} [onElementSelect] Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
  * @property {DSCallback} [onElementUnselect] Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
+ * @property {boolean} [usePointerEvents=false] Whether to use Pointer Events to replace traditional Mouse or Touch Events.
  */
 
 /**
  * The Object that is passed back to any callback method
  * @typedef {Object} CallbackObject
  * @property {Array<HTMLElement|SVGElement|any>} [items] The items currently selected
- * @property {MouseEvent|TouchEvent|KeyboardEvent|Event} [event] The respective event object
+ * @property {MouseEvent|TouchEvent|PointerEvent|KeyboardEvent|Event} [event] The respective event object
  * @property {HTMLElement|SVGElement|any} [item] The single item currently interacted with
  * @property {boolean} [isDragging] Whether the interaction is a drag or a select
  * @property {boolean} [isDraggingKeyboard] Whether or not the drag interaction is via keyboard
@@ -56,7 +57,7 @@
 /** @typedef {Array.<HTMLElement|SVGElement> | HTMLElement | SVGElement} DSInputElements the elements that can be selected */
 /** @typedef {Array.<HTMLElement|SVGElement>} DSElements the elements that can be selected */
 /** @typedef {HTMLElement|SVGElement} DSElement a single element that can be selected */
-/** @typedef {MouseEvent|TouchEvent} DSEvent en event from a touch or mouse interaction */
+/** @typedef {MouseEvent|TouchEvent|PointerEvent} DSEvent en event from a touch or mouse interaction */
 /** @typedef {Array.<'Shift'|'Control'|'Meta'|string>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
 
 /** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
