@@ -1,4 +1,4 @@
-# Next
+# 2.3.1
 
 - Fix bug [#109](https://github.com/ThibaultJanBeyer/DragSelect/issues/109) where inner elements are ignored from normal drag behavior
 
