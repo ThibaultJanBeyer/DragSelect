@@ -10,8 +10,7 @@ export default class Interaction {
 
   /**
    * @constructor Interaction
-   * @param {Object} obj
-   * @param {DragSelect} obj.DS
+   * @param {{DS:DragSelect}} obj
    * @ignore
    */
   constructor({ DS }) {
