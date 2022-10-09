@@ -10,11 +10,6 @@ import {
 
 export default class SelectorArea {
   /**
-   * @type {number}
-   * @private
-   * */
-  _autoScrollSpeed
-  /**
    * @type {*}
    * @private
    * */
@@ -29,25 +24,25 @@ export default class SelectorArea {
    * @private
    */
   currentEdges = []
-  /**
-   * @type {Vect2}
-   * @private
-   */
-  _overflowTolerance
 
   /**
    * @class SelectorArea
    * @constructor SelectorArea
-   * @param {{ DS:DragSelect, selectorAreaClass:string, autoScrollSpeed:number, overflowTolerance:Vect2}} obj
+   * @param {{ DS:DragSelect }} obj
    * @ignore
    */
-  constructor({ DS, selectorAreaClass, autoScrollSpeed, overflowTolerance }) {
-    this._autoScrollSpeed = autoScrollSpeed
-    this._overflowTolerance = overflowTolerance
+  constructor({ DS }) {
     this.DS = DS
 
-    this.HTMLNode = createSelectorAreaElement(selectorAreaClass)
+    this.HTMLNode = createSelectorAreaElement()
+    // @ts-ignore: @todo: update to typescript
+    this.DS.subscribe('Settings:updated:selectorAreaClass', ({ settings }) => {
+      this.HTMLNode.classList.remove(settings['selectorAreaClass:pre'])
+      this.HTMLNode.classList.add(settings['selectorAreaClass'])
+    })
+    this.HTMLNode.classList.add(this.DS.stores.SettingsStore.s.selectorAreaClass)
 
+    this.DS.subscribe('Area:modified', this.updatePos)
     this.DS.subscribe('Area:modified', this.updatePos)
     this.DS.subscribe('Interaction:init', this.start)
     this.DS.subscribe('Interaction:start', this.startAutoScroll)
@@ -110,11 +105,11 @@ export default class SelectorArea {
     this.currentEdges = getOverflowEdges({
       elementRect: vect2.vect2rect(PointerStore.currentVal),
       containerRect: this.rect,
-      tolerance: this._overflowTolerance,
+      tolerance: this.DS.stores.SettingsStore.s.overflowTolerance,
     })
 
     if (this.currentEdges.length)
-      Area.scroll(this.currentEdges, this._autoScrollSpeed)
+      Area.scroll(this.currentEdges, this.DS.stores.SettingsStore.s.autoScrollSpeed)
   }
 
   stopAutoScroll = () => {

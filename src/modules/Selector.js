@@ -18,22 +18,35 @@ export default class Selector {
 
   /**
    * @constructor Selector
-   * @param {Object} p
-   * @param {DragSelect} p.DS
-   * @param {HTMLElement} p.selector
-   * @param {string} p.selectorClass
-   * @param {boolean} p.customStyles
+   * @param {{ DS:DragSelect }} p
    * @ignore
    */
-  constructor({ DS, selector, selectorClass, customStyles }) {
+  constructor({ DS }) {
     this.DS = DS
 
-    this.HTMLNode = selector || createSelectorElement(customStyles)
-    this.HTMLNode.classList.add(selectorClass)
+    // @ts-ignore: @todo: update to typescript
+    this.DS.subscribe('Settings:updated:selectorClass', ({ settings }) => {
+      this.HTMLNode.classList.remove(settings['selectorClass:pre'])
+      this.HTMLNode.classList.add(settings['selectorClass'])
+    })
+    // @ts-ignore: @todo: update to typescript
+    this.DS.subscribe('Settings:updated:selector', this.attachSelector)
+    this.attachSelector()
 
     this.DS.subscribe('Interaction:start', this.start)
     this.DS.subscribe('Interaction:update', this.update)
     this.DS.subscribe('Interaction:end', this.stop)
+  }
+  
+  attachSelector = () => {
+    if (this.HTMLNode && this.DS.SelectorArea?.HTMLNode)
+      this.DS.SelectorArea.HTMLNode.removeChild(this.HTMLNode)
+    this.HTMLNode =
+      this.DS.stores.SettingsStore.s.selector ||
+      createSelectorElement(this.DS.stores.SettingsStore.s.customStyles)
+    this.HTMLNode.classList.add(this.DS.stores.SettingsStore.s.selectorClass)
+    if (this.HTMLNode && this.DS.SelectorArea?.HTMLNode)
+      this.DS.SelectorArea.HTMLNode.appendChild(this.HTMLNode)
   }
 
   start = ({ isDragging }) => {

@@ -4,22 +4,14 @@ import DragSelect from '../DragSelect'
 
 export default class SelectedSet extends Set {
   /**
-   * @type {string}
-   * @private
-   * */
-  _className
-
-  /**
    * @constructor SelectableSet
    * @param {Object} p
    * @param {DragSelect} p.DS
-   * @param {string} p.className
    * @ignore
    */
-  constructor({ className, DS }) {
+  constructor({ DS }) {
     super()
     this.DS = DS
-    this._className = className
   }
 
   /** @param {DSElement} element */
@@ -31,7 +23,7 @@ export default class SelectedSet extends Set {
     }
     this.DS.publish('Selected:added:pre', publishData)
     super.add(element)
-    element.classList.add(this._className)
+    element.classList.add(this.DS.stores.SettingsStore.s.selectedClass)
     element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) + 1}`
     this.DS.publish('Selected:added', publishData)
     return this
@@ -46,7 +38,7 @@ export default class SelectedSet extends Set {
     }
     this.DS.publish('Selected:removed:pre', publishData)
     const deleted = super.delete(element)
-    element.classList.remove(this._className)
+    element.classList.remove(this.DS.stores.SettingsStore.s.selectedClass)
     element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) - 1}`
     this.DS.publish('Selected:removed', publishData)
     return deleted

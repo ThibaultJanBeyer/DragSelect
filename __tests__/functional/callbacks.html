@@ -46,19 +46,8 @@
 
 <script src="../../dist/DragSelect.js"></script>
 <script>
-    window.onDragStartCalls = [];
-    window.onDragMoveCalls = [];
-    window.onElementSelectCalls = [];
-    window.onElementUnselectCalls = [];
-    window.callbackCalls = [];
-
     const ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
-        onDragStart: e => window.onDragStartCalls.push({element: e}),
-        onDragMove: e => window.onDragMoveCalls.push({element: e}),
-        onElementSelect: e => window.onElementSelectCalls.push({element: e}),
-        onElementUnselect: e => window.onElementUnselectCalls.push({element: e}),
-        callback: (n, e) => window.callbackCalls.push({elements: n, event: e})
     });
 
     window.pubsub = {}

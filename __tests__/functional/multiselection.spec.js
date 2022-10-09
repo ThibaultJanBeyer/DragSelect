@@ -34,19 +34,19 @@ describe('Multiselection', () => {
     await page.goto(`${baseUrl}/multiselection.html`)
 
     const mouse = page.mouse
-    await mouse.move(1, 1)
+    await mouse.move(1, 80, { steps: 10 })
     await mouse.down()
-    await mouse.move(100, 90, { steps: 10 })
+    await mouse.move(100, 100, { steps: 10 })
     await mouse.up()
     await wait(100)
 
-    await mouse.move(60, 90, { steps: 10 })
+    await mouse.move(60, 80, { steps: 10 })
     await mouse.down()
     await mouse.move(200, 100, { steps: 10 })
     await mouse.up()
     await wait(100)
 
-    await mouse.move(250, 100)
+    await mouse.move(250, 100, { steps: 10 })
     await mouse.down()
     await mouse.up()
     await wait(100)

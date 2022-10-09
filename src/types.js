@@ -22,12 +22,6 @@
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
  * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
  * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
- * @property {DSCallback} [callback] Deprecated: please use DragSelect.subscribe('callback', callback) instead
- * @property {DSCallback} [onDragMove] Deprecated: please use DragSelect.subscribe('onDragMove', onDragMove) instead
- * @property {DSCallback} [onDragStartBegin] Deprecated: please use DragSelect.subscribe('onDragStartBegin', onDragStartBegin) instead
- * @property {DSCallback} [onDragStart] Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
- * @property {DSCallback} [onElementSelect] Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
- * @property {DSCallback} [onElementUnselect] Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
  */
 
 /**
@@ -39,6 +33,7 @@
  * @property {boolean} [isDragging] Whether the interaction is a drag or a select
  * @property {boolean} [isDraggingKeyboard] Whether or not the drag interaction is via keyboard
  * @property {string} [key] Pressed key (lowercase)
+ * @property {Settings} [settings] the settings being updates/manipulated/passed, also holds the previous value. i.e. updating selectorClass will publish { settings: { selectorClass: 'newVal', 'selectorClass:pre': 'oldVal' } }
  * @property {Array.<'top'|'bottom'|'left'|'right'|undefined>} [scroll_directions]
  * @property {number} [scroll_multiplier]
  */
@@ -62,7 +57,9 @@
 /** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
 /** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'|'Selectable:pointer'|'KeyStore:down'|'KeyStore:up'} DSInternalEventNames */
 /** @typedef {'Interaction:init:pre'|'Interaction:start:pre'|'Interaction:end:pre'|'Interaction:update:pre'|'Area:modified:pre'|'Area:scroll:pre'|'PointerStore:updated:pre'|'Selected:added:pre'|'Selected:removed:pre'|'Selectable:click:pre'|'Selectable:pointer:pre'|'KeyStore:down:pre'|'KeyStore:up:pre'} DSInternalEventNamesPre */
-/** @typedef {DSEventNames|DSInternalEventNames|DSInternalEventNamesPre} DSCallbackNames the name of the callback */
+// @todo: update to typescript for complex defs like `Settings:updated:${string}` | `Settings:updated:${string}:pre`
+/** @typedef {'Settings:updated'|'Settings:updated:pre'|'Settings:updated:*'|'Settings:updated:*:pre'} DSInternalSettingEvents */
+/** @typedef {DSEventNames|DSInternalEventNames|DSInternalEventNamesPre|DSInternalSettingEvents} DSCallbackNames the name of the callback */
 
 /** @typedef {{top:number,left:number,bottom:number,right:number,width:number,height:number}} DSBoundingRect */
 /** @typedef {{up:string[],down:string[],left:string[],right:string[]}} DSDragKeys */

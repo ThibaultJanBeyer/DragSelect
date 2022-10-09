@@ -1,7 +1,7 @@
 // @ts-check
 import '../types.js'
+import DragSelect from '../DragSelect'
 
-import { PubSub } from './'
 import {
   addModificationObservers,
   debounce,
@@ -11,14 +11,12 @@ import {
   handleElementPositionAttribute,
 } from '../methods'
 
-/**
- * @typedef {Object} AreaProps
- * @property {DSArea} area
- * @property {PubSub} PS
- * @property {number} zoom
- */
-
 export default class Area {
+  /**
+   * @type {DragSelect}
+   * @private
+   */
+  DS
   /**
    * @type {DSModificationCallback}
    * @private
@@ -62,25 +60,29 @@ export default class Area {
 
   /**
    * @constructor Area
-   * @param {AreaProps} settings
+   * @param {{DS:DragSelect}} p
    * @ignore
    */
-  constructor({ area, PS, zoom }) {
-    this._zoom = zoom
-    this.PubSub = PS
-    this.setArea(area)
+  constructor({ DS }) {
+    this.DS = DS
+
+    this.setArea(this.DS.stores.SettingsStore.s.area)
+    // @ts-ignore: @todo: update to typescript
+    this.DS.PubSub.subscribe('Settings:updated:area', ({ settings }) =>
+      this.setArea(settings.area)
+    )
 
     this._modificationCallback = debounce((event) => {
-      this.PubSub.publish('Area:modified:pre', { event, item: this })
+      this.DS.PubSub.publish('Area:modified:pre', { event, item: this })
       this.reset()
-      this.PubSub.publish('Area:modified', { event, item: this })
+      this.DS.PubSub.publish('Area:modified', { event, item: this })
     }, 60)
     this._modificationObserver = new MutationObserver(
       this._modificationCallback
     )
 
-    this.PubSub.subscribe('Interaction:init', this.start)
-    this.PubSub.subscribe('Interaction:end', this.reset)
+    this.DS.PubSub.subscribe('Interaction:init', this.start)
+    this.DS.PubSub.subscribe('Interaction:end', this.reset)
   }
 
   /** @param {DSArea} area */
@@ -93,9 +95,9 @@ export default class Area {
 
     // first immediate debounce to update values after dom-update
     setTimeout(() => {
-      this.PubSub.publish('Area:modified:pre', { item: this })
+      this.DS.PubSub.publish('Area:modified:pre', { item: this })
       this.reset()
-      this.PubSub.publish('Area:modified', { item: this })
+      this.DS.PubSub.publish('Area:modified', { item: this })
     })
   }
 
@@ -135,9 +137,9 @@ export default class Area {
       scroll_directions: directions,
       scroll_multiplier: multiplier,
     }
-    this.PubSub.publish('Area:scroll:pre', data)
+    this.DS.PubSub.publish('Area:scroll:pre', data)
     scrollElement(this._node, directions, multiplier)
-    this.PubSub.publish('Area:scroll', data)
+    this.DS.PubSub.publish('Area:scroll', data)
   }
 
   //////////////////////////////////////////////////////////////////////////////////////
@@ -180,7 +182,7 @@ export default class Area {
    */
   get rect() {
     if (this._rect) return this._rect
-    return (this._rect = getAreaRect(this.HTMLNode, this._zoom))
+    return (this._rect = getAreaRect(this.HTMLNode, this.DS.stores.SettingsStore.s.zoom))
   }
 
   get parentNodes() {

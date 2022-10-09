@@ -10,26 +10,13 @@ export default class Selection {
    * @private
    * */
   _prevSelectedSet
-  /**
-   * @type {string}
-   * @private
-   * */
-  _hoverClassName
-  /**
-   * @type {boolean}
-   * @private
-   * */
-  _multiSelectToggling
 
   /**
    * @constructor Selection
-   * @param {{ DS:DragSelect, hoverClassName:string, multiSelectToggling:boolean }} p
+   * @param {{ DS:DragSelect }} p
    * @ignore
    */
-  constructor({ DS, hoverClassName, multiSelectToggling }) {
-    this._hoverClassName = hoverClassName
-    this._multiSelectToggling = multiSelectToggling
-
+  constructor({ DS }) {
     this.DS = DS
     this.DS.subscribe('Interaction:start', this.start)
     this.DS.subscribe('Interaction:update', this.update)
@@ -88,8 +75,8 @@ export default class Selection {
     }
 
     const multiSelectionToggle =
-      this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) &&
-      this._multiSelectToggling
+      (this.DS.stores.KeyStore.isMultiSelectKeyPressed(event)) &&
+      this.DS.stores.SettingsStore.s.multiSelectToggling
 
     if (this.DS.continue) return
     select.forEach((element) =>
@@ -98,7 +85,7 @@ export default class Selection {
         force,
         multiSelectionToggle,
         SelectedSet: this.DS.SelectedSet,
-        hoverClassName: this._hoverClassName,
+        hoverClassName: this.DS.stores.SettingsStore.s.hoverClass,
       })
     )
     unselect.forEach((element) =>
@@ -106,7 +93,7 @@ export default class Selection {
         element,
         force,
         SelectedSet: this.DS.SelectedSet,
-        hoverClassName: this._hoverClassName,
+        hoverClassName: this.DS.stores.SettingsStore.s.hoverClass,
         PrevSelectedSet: this._prevSelectedSet,
       })
     )

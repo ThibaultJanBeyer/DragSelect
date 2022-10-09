@@ -3,26 +3,6 @@ import DragSelect from '../DragSelect'
 import '../types'
 
 export default class Interaction {
-  /**
-   * @type {DSArea}
-   * @private
-   * */
-  _areaElement
-  /**
-   * @type {boolean}
-   * @private
-   * */
-  _draggability
-  /**
-   * @type {boolean}
-   * @private
-   * */
-  _immediateDrag
-  /**
-   * @type {string}
-   * @private
-   * */
-  _selectableClass
   /** @type {boolean} */
   isInteracting
   /** @type {boolean} */
@@ -32,24 +12,12 @@ export default class Interaction {
    * @constructor Interaction
    * @param {Object} obj
    * @param {DragSelect} obj.DS
-   * @param {DSArea} obj.areaElement
-   * @param {boolean} obj.draggability
-   * @param {boolean} obj.immediateDrag
-   * @param {string} obj.selectableClass
    * @ignore
    */
-  constructor({
-    DS,
-    areaElement,
-    draggability,
-    immediateDrag,
-    selectableClass,
-  }) {
-    this._areaElement = areaElement
-    this._draggability = draggability
-    this._immediateDrag = immediateDrag
-    this._selectableClass = selectableClass
+  constructor({ DS }) {
     this.DS = DS
+    // @ts-ignore: @todo: update to typescript
+    this.DS.subscribe('Settings:updated:area', this.init)
     this.DS.subscribe('PointerStore:updated', this.update)
     this.DS.subscribe('Selectable:click', this.onClick)
     this.DS.subscribe('Selectable:pointer', ({ event }) => this.start(event))
@@ -64,8 +32,8 @@ export default class Interaction {
   init = () => this.DS.publish('Interaction:init:pre', {})
   _init = () => {
     this.stop()
-    this._areaElement.addEventListener('mousedown', this.start)
-    this._areaElement.addEventListener('touchstart', this.start, {
+    this.DS.Area.HTMLNode.addEventListener('mousedown', this.start)
+    this.DS.Area.HTMLNode.addEventListener('touchstart', this.start, {
       passive: false,
     })
     this.DS.publish('Interaction:init', {})
@@ -123,16 +91,17 @@ export default class Interaction {
    */
   isDragEvent = (event) => {
     const clickedElement = /** @type {Element} */ (event.target).closest(
-      `.${this._selectableClass}`
+      `.${this.DS.stores.SettingsStore.s.selectableClass}`
     )
+
     if (
-      !this._draggability ||
+      !this.DS.stores.SettingsStore.s.draggability ||
       this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) ||
       !clickedElement
     )
       return false
 
-    if (this._immediateDrag) {
+    if (this.DS.stores.SettingsStore.s.immediateDrag) {
       if (!this.DS.SelectedSet.size)
         this.DS.SelectedSet.add(/** @type {DSElement} */ (clickedElement))
       else if (!this.DS.SelectedSet.has(clickedElement)) {
@@ -166,7 +135,8 @@ export default class Interaction {
     const node = /** @type {any} */ (event.target)
     if (!SelectableSet.has(node)) return
 
-    if (!KeyStore.isMultiSelectKeyPressed(event)) SelectedSet.clear()
+    if (!KeyStore.isMultiSelectKeyPressed(event))
+      SelectedSet.clear()
     SelectedSet.toggle(node)
 
     this.reset() // simulate mouse-up (that does not exist on keyboard)
@@ -175,8 +145,8 @@ export default class Interaction {
   stop = () => {
     this.isInteracting = false
     this.isDragging = false
-    this._areaElement.removeEventListener('mousedown', this.start)
-    this._areaElement.removeEventListener('touchstart', this.start, {
+    this.DS.Area.HTMLNode.removeEventListener('mousedown', this.start)
+    this.DS.Area.HTMLNode.removeEventListener('touchstart', this.start, {
       // @ts-ignore
       passive: false,
     })

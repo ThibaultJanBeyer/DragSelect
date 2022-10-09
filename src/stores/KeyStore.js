@@ -4,16 +4,6 @@ import DragSelect from '../DragSelect'
 
 export default class KeyStore {
   /**
-   * @type {boolean}
-   * @private
-   * */
-  _multiSelectMode
-  /**
-   * @type {DSMultiSelectKeys}
-   * @private
-   * */
-  _multiSelectKeys
-  /**
    * @type {Set<string>}
    * @private
    * */
@@ -31,31 +21,11 @@ export default class KeyStore {
   /**
    * @class KeyStore
    * @constructor KeyStore
-   * @param {{DS:DragSelect,multiSelectKeys:DSMultiSelectKeys,multiSelectMode:boolean}} p
+   * @param {{DS:DragSelect}} p
    * @ignore
    */
-  constructor({ DS, multiSelectKeys, multiSelectMode }) {
+  constructor({ DS }) {
     this.DS = DS
-    this._multiSelectMode = multiSelectMode
-
-    // @TODO: remove after deprecation
-    this._multiSelectKeys = multiSelectKeys.map((key) => {
-      const deprecatedKeys = {
-        ctrlKey: 'Control',
-        shiftKey: 'Shift',
-        metaKey: 'Meta',
-      }
-      /** @type {string} */
-      const newName = deprecatedKeys[key]
-      if (newName) {
-        console.warn(
-          `[DragSelect] ${key} is deprecated. Use "${newName}" instead. Act Now!. See docs for more info`
-        )
-        return newName.toLowerCase()
-      }
-      return key.toLowerCase()
-    })
-
     this.DS.subscribe('Interaction:init', this.init)
   }
 
@@ -92,13 +62,17 @@ export default class KeyStore {
 
   /** @param {KeyboardEvent|MouseEvent|TouchEvent} [event] */
   isMultiSelectKeyPressed(event) {
-    if (this._multiSelectMode) return true
-    if (this.currentValues.some((key) => this._multiSelectKeys.includes(key)))
-      return true
-    if (
-      event &&
-      this._multiSelectKeys.some((key) => event[this._keyMapping[key]])
+    if(this.DS.stores.SettingsStore.s.multiSelectMode) return true
+    const multiSelectKeys = this.DS.stores.SettingsStore.s.multiSelectKeys.map(
+      (key) => key.toLocaleLowerCase()
     )
+    if (
+      this.currentValues.some((key) =>
+        multiSelectKeys.includes(key.toLocaleLowerCase())
+      )
+    )
+      return true
+    if (event && multiSelectKeys.some((key) => event[this._keyMapping[key]]))
       return true
     return false
   }

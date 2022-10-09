@@ -1,4 +1,3 @@
-// Check if onStart ::: getCursorPositionDifference(true) and onMove ::: getCursorPositionDifference() return the correct values
 const baseUrl = `file://${process.cwd()}/__tests__/functional`;
 
 const startPos = 10;
