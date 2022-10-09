@@ -4,9 +4,6 @@ import DragSelect from '../DragSelect'
 
 import { hydrateSettings } from '../methods'
 
-/**
- * @type {Settings}
- * */
 export default class SettingsStore {
   /**
    * @type {Settings}
