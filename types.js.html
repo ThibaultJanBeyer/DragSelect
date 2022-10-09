@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DragSelect.html">DragSelect</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#addSelectables">addSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#addSelection">addSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#clearSelection">clearSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#getCursorPositionDifference">getCursorPositionDifference</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#publish">publish</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#removeSelectables">removeSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#removeSelection">removeSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#setSelectables">setSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#setSelection">setSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#stop">stop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#subscribe">subscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#toggleSelection">toggleSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#unsubscribe">unsubscribe</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DragSelect.html">DragSelect</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#addSelectables">addSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#addSelection">addSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#clearSelection">clearSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#publish">publish</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#removeSelectables">removeSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#removeSelection">removeSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#setSelectables">setSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#setSelection">setSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#stop">stop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#subscribe">subscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#toggleSelection">toggleSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#unsubscribe">unsubscribe</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
 </nav>
 
 <div id="main">
@@ -63,12 +63,6 @@
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
  * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
  * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
- * @property {DSCallback} [callback] Deprecated: please use DragSelect.subscribe('callback', callback) instead
- * @property {DSCallback} [onDragMove] Deprecated: please use DragSelect.subscribe('onDragMove', onDragMove) instead
- * @property {DSCallback} [onDragStartBegin] Deprecated: please use DragSelect.subscribe('onDragStartBegin', onDragStartBegin) instead
- * @property {DSCallback} [onDragStart] Deprecated: please use DragSelect.subscribe('onDragStart', onDragStart) instead
- * @property {DSCallback} [onElementSelect] Deprecated: please use DragSelect.subscribe('onElementSelect', onElementSelect) instead
- * @property {DSCallback} [onElementUnselect] Deprecated: please use DragSelect.subscribe('onElementUnselect', onElementUnselect) instead
  */
 
 /**
@@ -80,6 +74,7 @@
  * @property {boolean} [isDragging] Whether the interaction is a drag or a select
  * @property {boolean} [isDraggingKeyboard] Whether or not the drag interaction is via keyboard
  * @property {string} [key] Pressed key (lowercase)
+ * @property {Settings} [settings] the settings being updates/manipulated/passed, also holds the previous value. i.e. updating selectorClass will publish { settings: { selectorClass: 'newVal', 'selectorClass:pre': 'oldVal' } }
  * @property {Array.&lt;'top'|'bottom'|'left'|'right'|undefined>} [scroll_directions]
  * @property {number} [scroll_multiplier]
  */
@@ -103,7 +98,9 @@
 /** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
 /** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'|'Selectable:pointer'|'KeyStore:down'|'KeyStore:up'} DSInternalEventNames */
 /** @typedef {'Interaction:init:pre'|'Interaction:start:pre'|'Interaction:end:pre'|'Interaction:update:pre'|'Area:modified:pre'|'Area:scroll:pre'|'PointerStore:updated:pre'|'Selected:added:pre'|'Selected:removed:pre'|'Selectable:click:pre'|'Selectable:pointer:pre'|'KeyStore:down:pre'|'KeyStore:up:pre'} DSInternalEventNamesPre */
-/** @typedef {DSEventNames|DSInternalEventNames|DSInternalEventNamesPre} DSCallbackNames the name of the callback */
+// @todo: update to typescript for complex defs like `Settings:updated:${string}` | `Settings:updated:${string}:pre`
+/** @typedef {'Settings:updated'|'Settings:updated:pre'|'Settings:updated:*'|'Settings:updated:*:pre'} DSInternalSettingEvents */
+/** @typedef {DSEventNames|DSInternalEventNames|DSInternalEventNamesPre|DSInternalSettingEvents} DSCallbackNames the name of the callback */
 
 /** @typedef {{top:number,left:number,bottom:number,right:number,width:number,height:number}} DSBoundingRect */
 /** @typedef {{up:string[],down:string[],left:string[],right:string[]}} DSDragKeys */
@@ -124,7 +121,7 @@
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Fri Sep 30 2022 17:11:44 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a> on Sun Oct 09 2022 18:35:34 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

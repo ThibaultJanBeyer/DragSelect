@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DragSelect.html">DragSelect</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#addSelectables">addSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#addSelection">addSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#clearSelection">clearSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#getCursorPositionDifference">getCursorPositionDifference</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#publish">publish</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#removeSelectables">removeSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#removeSelection">removeSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#setSelectables">setSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#setSelection">setSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#stop">stop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#subscribe">subscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#toggleSelection">toggleSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#unsubscribe">unsubscribe</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DragSelect.html">DragSelect</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#addSelectables">addSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#addSelection">addSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#clearSelection">clearSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#publish">publish</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#removeSelectables">removeSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#removeSelection">removeSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#setSelectables">setSelectables</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#setSelection">setSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#stop">stop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#subscribe">subscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#toggleSelection">toggleSelection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DragSelect.html#unsubscribe">unsubscribe</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
 </nav>
 
 <div id="main">
@@ -97,7 +97,12 @@
 <li><a href="#use-your-own-drag-and-drop">Use your own Drag And Drop</a></li>
 </ul>
 </li>
-<li><a href="#constructor-properties">Constructor Properties</a></li>
+<li><a href="#constructor-properties-settings">Constructor Properties (Settings)</a></li>
+<li>
+<ul>
+<li><a href="#post-initialization-setting-updates">Post initialization setting updates</a></li>
+</ul>
+</li>
 <li><a href="#event-callbacks">Event Callbacks</a></li>
 <li>
 <ul>
@@ -212,26 +217,24 @@ Choose which elements can be selected:</p>
 <h2>Extended</h2>
 <p>All options are optional. You could also just initiate the Dragselect by <code>new DragSelect({});</code> without any option.<br>
 Find all possible properties and methods in <strong><a href="https://dragselect.com/DragSelect.html">the docs</a></strong></p>
-<pre class="prettyprint source lang-javascript"><code>const ds = new DragSelect({
-  // node/nodes that can be selected.
-  // This is also optional, you could just add them later with .addSelectables().
+<pre class="prettyprint source lang-javascript"><code>// if you add the function to a variable like this, you have access to all its functions
+const ds = new DragSelect({
+  // all settings are optional and can be added later
+});
+
+// this is how you add/update settings after initialization
+ds.setSettings({
+  // node/nodes that can be selected. By default will never add elements twice:
   selectables: document.querySelectorAll('.selectable-nodes'),
   // area in which you can drag. If not provided it will be the whole document & body/documentElement.
   area: document.getElementById('area'),
   // and many more, see &quot;properties&quot; section in the docs
-});
-
-// if you add the function to a variable like we did, you have access to all its functions:
+})
 
 // fired once the user releases the mouse. (items) = selected nodes:
 ds.subscribe('callback', ({ items, event }) => {})
-
 // returns all currently selected nodes:
 ds.getSelection();
-
-// adds elements that can be selected. Won't add elements twice:
-ds.addSelectables(document.getElementsByClassName('selectable-node'));
-
 // Teardown/stop the whole functionality:
 ds.stop();
 // Reset the functionality after a teardown:
@@ -303,8 +306,10 @@ myCustomDrag.subscribe('finished', () => ds.start())
   }
 }
 </code></pre>
-<h1>Constructor Properties:</h1>
-<p><em>DragSelect is hyper customizable</em>. Note, all properties are optional. See <strong><a href="https://dragselect.com/DragSelect.html">the docs</a></strong> for more info. Here is the full list:</p>
+<h1>Constructor Properties (Settings):</h1>
+<p><em>DragSelect is hyper customizable</em>. Note, all properties are optional. See <strong><a href="https://dragselect.com/DragSelect.html">the docs</a></strong> for more info.</p>
+<p>Moreover any setting can also be updated or added after the initialization, see <a href="#post-initialization-setting-updates">post-initialization setting updates</a>.</p>
+<p>Here is the full list:</p>
 <table>
 <thead>
 <tr>
@@ -437,6 +442,14 @@ myCustomDrag.subscribe('finished', () => ds.start())
 </tr>
 </tbody>
 </table>
+<h2>Post-Initialization Setting-Updates</h2>
+<p>Any setting can be updated/added after initialization by using the <code>setSettings</code> method. Here is an example updating the <code>area</code> and the <code>selectables</code>:</p>
+<pre class="prettyprint source lang-JavaScript"><code>const ds = new DragSelect({})
+ds.setSettings({
+  selectables: document.getElementsByClassName('selectable-nodes'),
+  area: document.getElementById('area')
+})
+</code></pre>
 <h1>Event Callbacks</h1>
 <p>Event Callbacks are used like this:</p>
 <pre class="prettyprint source lang-JavaScript"><code>ds.subscribe('&lt;event_name>', (callback_object) => {})
@@ -498,12 +511,12 @@ myCustomDrag.subscribe('finished', () => ds.start())
 <tbody>
 <tr>
 <td>event</td>
-<td><code>MouseEvent\|TouchEvent\|KeyboardEvent</code></td>
+<td><code>MouseEvent|TouchEvent|KeyboardEvent</code></td>
 <td>The native HTML Event, depending on the situational context</td>
 </tr>
 <tr>
 <td>items</td>
-<td><code>Array.&lt;HTMLElement\|SVGElement\|*&gt;</code></td>
+<td><code>Array.&lt;HTMLElement|SVGElement|*&gt;</code></td>
 <td>Current selected elements</td>
 </tr>
 <tr>
@@ -518,7 +531,7 @@ myCustomDrag.subscribe('finished', () => ds.start())
 </tr>
 <tr>
 <td>scroll_directions</td>
-<td><code>Array.&lt;'top'\|'bottom'\|'left'\|'right'\|undefined&gt;</code></td>
+<td><code>Array.&lt;'top'|'bottom'|'left'|'right'|undefined&gt;</code></td>
 <td>The direction in which the event is happening (i.e. scroll direction)</td>
 </tr>
 <tr>
@@ -528,7 +541,7 @@ myCustomDrag.subscribe('finished', () => ds.start())
 </tr>
 <tr>
 <td>item</td>
-<td><code>HTMLElement\|SVGElement\|*</code></td>
+<td><code>HTMLElement|SVGElement|*</code></td>
 <td>The single element currently being interacted with if any</td>
 </tr>
 </tbody>
@@ -714,7 +727,7 @@ Star this repo, tell all your friends and start contributing and/or <a href="htt
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Fri Sep 30 2022 17:11:44 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a> on Sun Oct 09 2022 18:35:34 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
