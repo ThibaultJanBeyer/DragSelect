@@ -7,8 +7,7 @@ import { toArray, handleElementPositionAttribute } from '../methods'
 export default class SelectableSet extends Set {
   /**
    * @constructor SelectableSet
-   * @param {Object} p
-   * @param {DragSelect} p.DS
+   * @param {{DS:DragSelect}} obj
    * @ignore
    */
   constructor({ DS }) {

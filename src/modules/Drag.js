@@ -32,8 +32,8 @@ export default class Drag {
   _dragKeysFlat = []
 
   /**
-   * @param {Object} p
-   * @param {DragSelect} p.DS
+   * @constructor Drag
+   * @param {{DS:DragSelect}} obj
    * @ignore
    */
   constructor({ DS }) {

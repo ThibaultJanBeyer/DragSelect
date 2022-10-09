@@ -5,8 +5,7 @@ import DragSelect from '../DragSelect'
 export default class SelectedSet extends Set {
   /**
    * @constructor SelectableSet
-   * @param {Object} p
-   * @param {DragSelect} p.DS
+   * @param {{DS:DragSelect}} obj
    * @ignore
    */
   constructor({ DS }) {
