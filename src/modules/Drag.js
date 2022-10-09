@@ -6,11 +6,6 @@ import { vect2, moveElement, handleKeyboardDragPosDifference } from '../methods'
 
 export default class Drag {
   /**
-   * @type {boolean}
-   * @private
-   */
-  _useTransform
-  /**
    * @type {Vect2}
    * @private
    */
@@ -26,11 +21,6 @@ export default class Drag {
    */
   _elements = []
   /**
-   * @type {boolean}
-   * @private
-   */
-  _draggability
-  /**
    * @type {DSDragKeys}
    * @private
    */
@@ -39,63 +29,19 @@ export default class Drag {
    * @type {string[]}
    * @private
    */
-  _dragKeysFlat
-  /**
-   * @type {boolean}
-   * @private
-   */
-  _keyboardDrag
-  /**
-   * @type {number}
-   * @private
-   */
-  _keyboardDragSpeed
-  /**
-   * @type {number}
-   * @private
-   */
-  _zoom
+  _dragKeysFlat = []
 
   /**
-   * @param {Object} p
-   * @param {DragSelect} p.DS
-   * @param {boolean} p.draggability
-   * @param {boolean} p.useTransform
-   * @param {DSDragKeys} p.dragKeys
-   * @param {boolean} p.keyboardDrag
-   * @param {number} p.keyboardDragSpeed
-   * @param {number} p.zoom
+   * @constructor Drag
+   * @param {{DS:DragSelect}} obj
    * @ignore
    */
-  constructor({
-    DS,
-    dragKeys,
-    draggability,
-    keyboardDrag,
-    keyboardDragSpeed,
-    useTransform,
-    zoom,
-  }) {
+  constructor({ DS }) {
     this.DS = DS
-    this._useTransform = useTransform
-    this._keyboardDragSpeed = keyboardDragSpeed
-    this._keyboardDrag = keyboardDrag
-    this._zoom = zoom
-    this._draggability = draggability
 
-    this._dragKeys = {
-      up: dragKeys.up.map((k) => k.toLowerCase()),
-      down: dragKeys.down.map((k) => k.toLowerCase()),
-      left: dragKeys.left.map((k) => k.toLowerCase()),
-      right: dragKeys.right.map((k) => k.toLowerCase()),
-    }
-    this._dragKeysFlat = [
-      ...this._dragKeys.up,
-      ...this._dragKeys.down,
-      ...this._dragKeys.left,
-      ...this._dragKeys.right,
-    ]
-
+    // @ts-ignore: @todo: update to typescript
+    this.DS.subscribe('Settings:updated:dragKeys', this.assignDragkeys)
+    this.assignDragkeys()
     this.DS.subscribe('Interaction:start', this.start)
     this.DS.subscribe('Interaction:end', this.stop)
     this.DS.subscribe('Interaction:update', this.update)
@@ -103,12 +49,28 @@ export default class Drag {
     this.DS.subscribe('KeyStore:up', this.keyboardEnd)
   }
 
+  assignDragkeys = () => {
+    this._dragKeys = {
+      up: this.DS.stores.SettingsStore.s.dragKeys.up.map((k) => k.toLowerCase()),
+      down: this.DS.stores.SettingsStore.s.dragKeys.down.map((k) => k.toLowerCase()),
+      left: this.DS.stores.SettingsStore.s.dragKeys.left.map((k) => k.toLowerCase()),
+      right: this.DS.stores.SettingsStore.s.dragKeys.right.map((k) => k.toLowerCase()),
+    }
+    this._dragKeysFlat = [
+      ...this._dragKeys.up,
+      ...this._dragKeys.down,
+      ...this._dragKeys.left,
+      ...this._dragKeys.right,
+    ]
+  }
+
   keyboardDrag = ({ event, key }) => {
+    const _key = key.toLowerCase()
     if (
-      !this._keyboardDrag ||
-      !this._dragKeysFlat.includes(key) ||
+      !this.DS.stores.SettingsStore.s.keyboardDrag ||
+      !this._dragKeysFlat.includes(_key) ||
       !this.DS.SelectedSet.size ||
-      !this._draggability ||
+      !this.DS.stores.SettingsStore.s.draggability ||
       this.DS.continue
     )
       return
@@ -125,9 +87,9 @@ export default class Drag {
 
     const posDirection = handleKeyboardDragPosDifference({
       shiftKey: this.DS.stores.KeyStore.currentValues.includes('shift'),
-      keyboardDragSpeed: this._keyboardDragSpeed,
-      zoom: this._zoom,
-      key,
+      keyboardDragSpeed: this.DS.stores.SettingsStore.s.keyboardDragSpeed,
+      zoom: this.DS.stores.SettingsStore.s.zoom,
+      key: _key,
       scrollCallback: this.DS.Area.scroll,
       scrollDiff: this._scrollDiff,
       canScroll: this.DS.stores.ScrollStore.canScroll,
@@ -139,24 +101,28 @@ export default class Drag {
         element,
         posDirection,
         containerRect: this.DS.SelectorArea.rect,
-        useTransform: this._useTransform,
+        useTransform: this.DS.stores.SettingsStore.s.useTransform,
       })
     )
 
-    this.DS.publish(['Interaction:update:pre', 'Interaction:update'], publishData)
+    this.DS.publish(
+      ['Interaction:update:pre', 'Interaction:update'],
+      publishData
+    )
   }
 
   keyboardEnd = ({ event, key }) => {
+    const _key = key.toLowerCase()
     if (
-      !this._keyboardDrag ||
-      !this._dragKeysFlat.includes(key) ||
+      !this.DS.stores.SettingsStore.s.keyboardDrag ||
+      !this._dragKeysFlat.includes(_key) ||
       !this.DS.SelectedSet.size ||
-      !this._draggability
+      !this.DS.stores.SettingsStore.s.draggability
     )
       return
     const publishData = {
       event,
-      isDragging: this._draggability,
+      isDragging: this.DS.stores.SettingsStore.s.draggability,
       isDraggingKeyboard: true,
     }
     this.DS.publish(['Interaction:end:pre', 'Interaction:end'], publishData)
@@ -194,7 +160,7 @@ export default class Drag {
         element,
         posDirection,
         containerRect: this.DS.SelectorArea.rect,
-        useTransform: this._useTransform,
+        useTransform: this.DS.stores.SettingsStore.s.useTransform,
       })
     )
   }

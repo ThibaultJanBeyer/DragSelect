@@ -1,0 +1,42 @@
+<link rel="stylesheet" href="basics.css">
+<style>
+.container2 {
+    top: 400px;
+}
+
+.five {
+    position: absolute;
+    top: 500px;
+}
+</style>
+
+<div class="container">
+    <button type="button" id="one" class="item one">1</button>
+    <button type="button" id="two" class="item two">2</button>
+    <button type="button" id="_five" class="item five">5</button>
+</div>
+
+<div class="container container2">
+    <button type="button" id="three" class="item three">3</button>
+    <button type="button" id="four" class="item four">4</button>
+    <button type="button" id="five" class="item five">5</button>
+</div>
+
+<script src="../../dist/DragSelect.js"></script>
+<script>
+    window.callback = []
+
+    window.ds = new DragSelect({
+        selectables: document.getElementsByClassName('item'),
+        selectorClass: 'selectorrr',
+        draggability: false,
+        immediateDrag: false,
+        keyboardDrag: false,
+        area: document.getElementsByClassName('container')[0],
+    });
+
+    window.ds.subscribe('callback', ({items}) => {
+        console.log(items)
+        window.callback = items.map(item => item.id)
+    })
+</script>

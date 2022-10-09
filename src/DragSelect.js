@@ -54,7 +54,7 @@ import {
   Selector,
   SelectorArea,
 } from './modules'
-import { PointerStore, ScrollStore, KeyStore } from './stores'
+import { PointerStore, ScrollStore, KeyStore, SettingsStore } from './stores'
 import { toArray, vect2, subscriberAliases } from './methods'
 
 // Setup
@@ -71,115 +71,29 @@ class DragSelect {
    * @constructor DragSelect
    * @param {Settings} settings
    */
-  constructor({
-    area = document,
-    selectables = [],
-    autoScrollSpeed = 5,
-    overflowTolerance = { x: 25, y: 25 },
-    zoom = 1,
-    customStyles = false,
-    multiSelectMode = false,
-    multiSelectToggling = true,
-    multiSelectKeys = ['Control', 'Shift', 'Meta'],
-    selector = undefined,
-    draggability = true,
-    immediateDrag = true,
-    keyboardDrag = true,
-    dragKeys,
-    keyboardDragSpeed = 10,
-    useTransform = true,
-    hoverClass = 'ds-hover',
-    selectableClass = 'ds-selectable',
-    selectedClass = 'ds-selected',
-    selectorClass = 'ds-selector',
-    selectorAreaClass = 'ds-selector-area',
-    callback,
-    onDragMove,
-    onDragStartBegin,
-    onDragStart,
-    onElementSelect,
-    onElementUnselect,
-  }) {
+  constructor(settings) {
     this.PubSub = new PubSub({ DS: this })
     this.subscribe = this.PubSub.subscribe
     this.unsubscribe = this.PubSub.unsubscribe
     this.publish = this.PubSub.publish
-    this._callbacksTemp({
-      callback,
-      onDragMove,
-      onDragStart,
-      onDragStartBegin,
-      onElementSelect,
-      onElementUnselect,
-    })
 
-    this.stores = {
-      PointerStore: new PointerStore({ DS: this }),
-      ScrollStore: new ScrollStore({ DS: this, areaElement: area, zoom }),
-      KeyStore: new KeyStore({ DS: this, multiSelectKeys, multiSelectMode }),
-    }
+    this.stores = /** @type {{ SettingsStore:SettingsStore, PointerStore:PointerStore, ScrollStore:ScrollStore, KeyStore:KeyStore }} */ ({})
+    this.stores.SettingsStore = new SettingsStore({ DS: this, settings })
+    this.stores.PointerStore = new PointerStore({ DS: this })
+    this.stores.ScrollStore = new ScrollStore({ DS: this })
+    this.stores.KeyStore = new KeyStore({ DS: this })
 
-    this.Area = new Area({ area, PS: this.PubSub, zoom })
+    this.Area = new Area({ DS: this })
+    this.Selector = new Selector({ DS: this })
+    this.SelectorArea = new SelectorArea({ DS: this })
 
-    this.Selector = new Selector({
-      DS: this,
-      selector,
-      selectorClass,
-      customStyles,
-    })
+    this.SelectableSet = new SelectableSet({ DS: this })
+    this.SelectedSet = new SelectedSet({ DS: this })
+    this.Selection = new Selection({ DS: this })
 
-    this.SelectorArea = new SelectorArea({
-      DS: this,
-      selectorAreaClass,
-      autoScrollSpeed,
-      overflowTolerance,
-    })
+    this.Drag = new Drag({ DS: this })
 
-    this.SelectableSet = new SelectableSet({
-      elements: selectables,
-      DS: this,
-      className: selectableClass,
-      hoverClassName: hoverClass,
-      useTransform,
-      draggability,
-    })
-
-    this.SelectedSet = new SelectedSet({
-      DS: this,
-      className: selectedClass,
-    })
-
-    this.Selection = new Selection({
-      DS: this,
-      hoverClassName: hoverClass,
-      multiSelectToggling,
-    })
-
-    this.Drag = new Drag({
-      DS: this,
-      draggability,
-      useTransform,
-      keyboardDrag,
-      dragKeys: Object.assign(
-        {
-          up: ['ArrowUp'],
-          down: ['ArrowDown'],
-          left: ['ArrowLeft'],
-          right: ['ArrowRight'],
-        },
-        dragKeys
-      ),
-      zoom,
-      keyboardDragSpeed,
-    })
-
-    this.Interaction = new Interaction({
-      areaElement: area,
-      DS: this,
-      draggability,
-      immediateDrag,
-      selectableClass,
-    })
+    this.Interaction = new Interaction({ DS: this })
 
     // Subscriber Aliases
     subscriberAliases({
@@ -194,54 +108,6 @@ class DragSelect {
     this.start()
   }
 
-  // @TODO: remove after deprecation
-  _callbacksTemp({
-    callback,
-    onDragMove,
-    onDragStart,
-    onDragStartBegin,
-    onElementSelect,
-    onElementUnselect,
-  }) {
-    const warnMessage = (name, newName) =>
-      console.warn(
-        `[DragSelect] ${name} is deprecated. Use DragSelect.subscribe("${newName}", (callbackObject) => {}) instead. Act Now! See docs for more info`
-      )
-    if (callback) {
-      warnMessage('callback', 'callback')
-      this.subscribe('callback', ({ items, item, event }) =>
-        callback(items, event)
-      )
-    }
-    if (onDragMove) {
-      warnMessage('onDragMove', 'dragmove')
-      this.subscribe('dragmove', ({ items, item, event }) => onDragMove(event))
-    }
-    if (onDragStart) {
-      warnMessage('onDragStart', 'dragstart')
-      this.subscribe('dragstart', ({ items, item, event }) =>
-        onDragStart(event)
-      )
-    }
-    if (onDragStartBegin) {
-      warnMessage('onDragStartBegin', 'dragstart')
-      this.subscribe('dragstart', ({ items, item, event }) =>
-        onDragStartBegin(event)
-      )
-    }
-    if (onElementSelect) {
-      warnMessage('onElementSelect', 'elementselect')
-      this.subscribe('elementselect', ({ items, item, event }) =>
-        onElementSelect(item, event)
-      )
-    }
-    if (onElementUnselect) {
-      warnMessage('onElementUnselect', 'elementunselect')
-      this.subscribe('elementunselect', ({ items, item, event }) =>
-        onElementUnselect(item, event)
-      )
-    }
-  }
   // Useful methods for the user
   //////////////////////////////////////////////////////////////////////////////////////
   /**
@@ -403,6 +269,7 @@ class DragSelect {
     removeFromSelection = false,
     addToSelection = false
   ) {
+    console.warn('[DragSelect] DEPRECATION ".setSelectables" is deprecated and will be removed soon. Please use "ds.setSettings({ selectables: << new dom elements >> })" instead (see docs)')
     this.removeSelectables(elements, removeFromSelection)
     return this.addSelectables(elements, addToSelection)
   }
@@ -436,36 +303,16 @@ class DragSelect {
    */
   isMultiSelect = (event) => this.stores.KeyStore.isMultiSelectKeyPressed(event)
   /**
-   * Utility method that returns the cursor position difference between start and now
-   * @param {boolean} [usePreviousCursorDifference] if true, it will output the cursor position difference between the previous selection and now
-   * @param {boolean} [useAreaPositions] if true, it will use cursor positions relative to the area
-   * @return {Vect2}
-   * @deprecated
-   */
-  getCursorPositionDifference(
-    usePreviousCursorDifference = false,
-    useAreaPositions = false
-  ) {
-    console.warn(
-      '[DragSelect] Using .getCursorPositionDifference is deprecated. Calculate yourself instead. i.e. `.getCurrentCursorPosition().x - .getInitialCursorPosition().x`'
-    )
-    const posA = useAreaPositions
-      ? this.getCurrentCursorPositionArea()
-      : this.getCurrentCursorPosition()
-    const posB = usePreviousCursorDifference
-      ? useAreaPositions
-        ? this.getPreviousCursorPositionArea()
-        : this.getPreviousCursorPosition()
-      : useAreaPositions
-      ? this.getInitialCursorPositionArea()
-      : this.getInitialCursorPosition()
-    return vect2.calc(posA, '-', posB)
-  }
-  /**
    * Whether the user is currently drag n dropping elements (instead of selection)
    * @return {boolean}
    */
   isDragging = () => this.Interaction.isDragging
+  /**
+   * Update any setting dynamically
+   * @param {Settings} settings
+   * @return {void}
+   */
+  setSettings = (settings) => this.stores.SettingsStore.update({ settings })
 }
 
 export default DragSelect

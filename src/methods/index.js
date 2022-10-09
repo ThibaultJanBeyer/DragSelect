@@ -16,6 +16,7 @@ export { default as handleElementPositionAttribute } from './handleElementPositi
 export { default as handleKeyboardDragPosDifference } from './handleKeyboardDragPosDifference'
 export { default as handleSelection } from './handleSelection'
 export { default as handleUnSelection } from './handleUnSelection'
+export { default as hydrateSettings } from './hydrateSettings'
 export { default as isCollision } from './isCollision'
 export { default as moveElement } from './moveElement'
 export { default as removeModificationObservers } from './removeModificationObservers'

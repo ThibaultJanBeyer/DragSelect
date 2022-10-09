@@ -1,3 +1,10 @@
+# Next
+
+- Change all Properties dynamically *anytime*. Solves #111 and #95. Very helpful for async libraries like react. You can do so using the `setSettings` method, you can pass any settings in the object and they will be updated. Example: update the drag area at any time by running: `ds.setSettings({ area: document.getElementById("new-area") })`.
+- Remove deprecated keys `ctrlKey`, `shiftKey` and `metaKey`. Use `Control`, `Shift` and `Meta` respectively instead.
+- Remove deprecated method `getCursorPositionDifference`. Calculate the difference on your own instead.
+- Remove deprecated setting property callbacks. Use `DragSelect.subscribe("callback", (callbackObject) => {})` instead.
+
 # 2.3.1
 
 - Fix bug [#109](https://github.com/ThibaultJanBeyer/DragSelect/issues/109) where inner elements are ignored from normal drag behavior

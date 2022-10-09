@@ -28,7 +28,8 @@ easily add a selection algorithm to your application/website.
 - - [Mobile Touch usage](#mobiletouch-usage)
 - - [Accessibility (a11y)](#accessibility-a11y)
 - - [Use your own Drag And Drop](#use-your-own-drag-and-drop)
-- [Constructor Properties](#constructor-properties)
+- [Constructor Properties (Settings)](#constructor-properties-settings)
+- - [Post initialization setting updates](#post-initialization-setting-updates)
 - [Event Callbacks](#event-callbacks)
 - - [Callback Object Keys](#callback-object-keys)
 - [Methods](#methods)
@@ -153,26 +154,24 @@ All options are optional. You could also just initiate the Dragselect by `new Dr
 Find all possible properties and methods in **[the docs](https://dragselect.com/DragSelect.html)**  
 
 ```javascript
+// if you add the function to a variable like this, you have access to all its functions
 const ds = new DragSelect({
-  // node/nodes that can be selected.
-  // This is also optional, you could just add them later with .addSelectables().
+  // all settings are optional and can be added later
+});
+
+// this is how you add/update settings after initialization
+ds.setSettings({
+  // node/nodes that can be selected. By default will never add elements twice:
   selectables: document.querySelectorAll('.selectable-nodes'),
   // area in which you can drag. If not provided it will be the whole document & body/documentElement.
   area: document.getElementById('area'),
   // and many more, see "properties" section in the docs
-});
-
-// if you add the function to a variable like we did, you have access to all its functions:
+})
 
 // fired once the user releases the mouse. (items) = selected nodes:
 ds.subscribe('callback', ({ items, event }) => {})
-
 // returns all currently selected nodes:
 ds.getSelection();
-
-// adds elements that can be selected. Won't add elements twice:
-ds.addSelectables(document.getElementsByClassName('selectable-node'));
-
 // Teardown/stop the whole functionality:
 ds.stop();
 // Reset the functionality after a teardown:
@@ -260,9 +259,13 @@ ds.subscribe('predragmove', ({ isDragging, isDraggingKeyboard }) => {
 }
 ```
 
-# Constructor Properties:
+# Constructor Properties (Settings):
 
-*DragSelect is hyper customizable*. Note, all properties are optional. See **[the docs](https://dragselect.com/DragSelect.html)** for more info. Here is the full list:  
+*DragSelect is hyper customizable*. Note, all properties are optional. See **[the docs](https://dragselect.com/DragSelect.html)** for more info.  
+
+Moreover any setting can also be updated or added after the initialization, see [post-initialization setting updates](#post-initialization-setting-updates).
+
+Here is the full list:  
 
 | property | type | usage | default |
 |--- |--- |--- |--- |
@@ -286,6 +289,18 @@ ds.subscribe('predragmove', ({ isDragging, isDraggingKeyboard }) => {
 |hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)
 |selectorClass |string |The class name assigned to the square selector helper. |[see classes](#classes)
 |selectableClass |string |The class name assigned to the elements that can be selected. |[see classes](#classes)
+
+## Post-Initialization Setting-Updates
+
+Any setting can be updated/added after initialization by using the `setSettings` method. Here is an example updating the `area` and the `selectables`:
+
+```JavaScript
+const ds = new DragSelect({})
+ds.setSettings({
+  selectables: document.getElementsByClassName('selectable-nodes'),
+  area: document.getElementById('area')
+})
+```
 
 # Event Callbacks
 
