@@ -1,6 +1,6 @@
 {
   "name": "dragselect",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "easy javascript drag select functionality for your projects",
   "main": "./dist/DragSelect.js",
   "types": "./dist/DragSelect.d.ts",
