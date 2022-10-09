@@ -1,4 +1,4 @@
-# Next
+# 2.4.0-1
 
 - Change all Properties dynamically *anytime*. Solves #111 and #95. Very helpful for async libraries like react. You can do so using the `setSettings` method, you can pass any settings in the object and they will be updated. Example: update the drag area at any time by running: `ds.setSettings({ area: document.getElementById("new-area") })`.
 - Remove deprecated keys `ctrlKey`, `shiftKey` and `metaKey`. Use `Control`, `Shift` and `Meta` respectively instead.

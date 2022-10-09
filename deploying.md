@@ -27,6 +27,8 @@ Rollup is necessary for npm packages (since `dist` will be deployed to npm but i
 versions are either `patch` wich changes 0.0.x, `minor` wich changes 0.x.0 or `major` for x.0.0.  
 See [npm docs](https://docs.npmjs.com/getting-started/publishing-npm-packages)  
 
+Check if the `changelog` reflects the latest version
+
 After that push again, just to make sure and then publish
 
 ```
