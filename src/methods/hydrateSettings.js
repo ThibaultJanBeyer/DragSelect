@@ -75,6 +75,12 @@ const hydrateHelper = (key, value, withFallback, fallback) => {
 }
 
 /**
+ * This helper method creates the setting object,
+ * - if the settings provided are of wrong type, the fallback value will be used
+ * - - except for if settings are undefined or explicitly marked as "null"
+ * - if "withfallback" is true, it will return the object with all settings: 
+ * - - if not provided from the settings object (or wrong type), the fallback will be used
+ * (the fallback value for each setting is the last prop of the hydrateHelper)
  * @param {Settings} settings 
  * @param {boolean} withFallback 
  */
