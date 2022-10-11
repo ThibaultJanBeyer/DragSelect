@@ -41,3 +41,8 @@ npm test
 ```
 
 - If you feel like your test case should be permanently tested before each release, please add it to the `__tests__` folder.  
+
+## NOTES
+
+- Be extra careful with changes that affect the customer facing apis:
+- - when changing/updating/removing topics (publish/subscribe). As these could be used

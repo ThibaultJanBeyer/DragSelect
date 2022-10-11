@@ -35,6 +35,12 @@ export default class SelectableSet extends Set {
 
   /** @param {DSElement} element */
   add(element) {
+    if (super.has(element)) return
+    const publishData = {
+      items: this.elements,
+      item: element,
+    }
+    this.DS.publish('Selectable:added:pre', publishData)
     element.classList.add(this.DS.stores.SettingsStore.s.selectableClass)
     element.addEventListener('click', this._onClick)
     element.addEventListener('mousedown', this._onPointer)
@@ -52,11 +58,18 @@ export default class SelectableSet extends Set {
         node: element,
       })
 
+    this.DS.publish('Selectable:added', publishData)
     return super.add(element)
   }
 
   /** @param {DSElement} element */
   delete(element) {
+    if (!super.has(element)) return
+    const publishData = {
+      items: this.elements,
+      item: element,
+    }
+    this.DS.publish('Selectable:removed:pre', publishData)
     element.classList.remove(this.DS.stores.SettingsStore.s.selectableClass)
     element.classList.remove(this.DS.stores.SettingsStore.s.hoverClass)
     element.removeEventListener('click', this._onClick)
@@ -65,6 +78,7 @@ export default class SelectableSet extends Set {
       // @ts-ignore
       passive: false,
     })
+    this.DS.publish('Selectable:removed', publishData)
     return super.delete(element)
   }
 
