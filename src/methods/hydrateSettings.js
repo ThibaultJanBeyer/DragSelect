@@ -96,6 +96,7 @@ export default (settings, withFallback) => ({
   ...hydrateHelper('multiSelectKeys', settings.multiSelectKeys, withFallback, ['Control', 'Shift', 'Meta']),
   ...hydrateHelper('selector', settings.selector, withFallback, null),
   ...hydrateHelper('draggability', settings.draggability, withFallback, true),
+  ...hydrateHelper('dropZones', settings.dropZones, withFallback, [{ zoneId: '', zoneEl: null, items: [] }]),
   ...hydrateHelper('immediateDrag', settings.immediateDrag, withFallback, true),
   ...hydrateHelper('keyboardDrag', settings.keyboardDrag, withFallback, true),
   ...hydrateHelper('dragKeys', settings.dragKeys, withFallback, { up: ['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'] }),

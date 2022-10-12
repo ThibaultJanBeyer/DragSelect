@@ -269,8 +269,8 @@ Here is the full list:
 
 | property | type | usage | default |
 |--- |--- |--- |--- |
-|area |single DOM element (node) |The square in which you are able to select |document
-|selectables |DOM elements (nodes) |The elements that can be selected | []
+|area |single DOM element (node) |The square in which you are able to select |`document`
+|selectables |DOM elements (nodes) |The elements that can be selected |`[]`
 |autoScrollSpeed |number |The speed in which the area scrolls while selecting (if available). The unit is arbitrary (interval aims for 30fps). Set to `0.0001` to disable auto-scrolling. |`5`
 |overflowTolerance |{ x:number, y:number } |Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start) |`{x:25,y:25}`
 |zoom |number |Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom. |`1`
@@ -280,6 +280,7 @@ Here is the full list:
 |multiSelectKeys |array |Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality. |`['Control', 'Shift', 'Meta']`
 |selector |single DOM element (node) |The square that will be used to draw the selection. | Auto-created HTML Element
 |draggability |boolean |When a user is dragging on an already selected element, the selection is dragged. |`true`
+|dropZones |DOM elements (nodes) |one or more drop-elements (where the element can be dropped into) |`[]`
 |immediateDrag |boolean |Whether a selectable element is draggable before being selected or needs to be selected first |`true`
 |keyboardDrag |boolean |Whether or not the user can drag with the keyboard (Accessibility). |`true`
 |dragKeys |{ up:string[], down:string[], left:string[], righ:string[] } |The keys available to drag element using the keyboard. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). |`{ up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], righ: ['ArrowRight'] }`
@@ -334,6 +335,7 @@ ds.subscribe('<event_name>', (callback_object) => {})
 |scroll_directions |`Array.<'top'\|'bottom'\|'left'\|'right'\|undefined>` |The direction in which the event is happening (i.e. scroll direction)
 |scroll_multiplier |`number` |Speed
 |item |`HTMLElement\|SVGElement\|*` |The single element currently being interacted with if any
+|dropped |`false` = no element was not dropped into a corresponding dropZone. `[{ zoneId: 'id', zoneEl: node, items: [node] }]` = array of dropZones with corresponding items/elements that were dropped into|
 
 > Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first
 
@@ -374,6 +376,12 @@ Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 |.ds-selector |On the selector element
 |.ds-selector-area |The overlay where the selector resides in
 |.ds-selectable |On elements that can be selected
+|.ds-dropped |on successful element drop into container |
+|.ds-droppable |on element that can be dropped into at least one container |
+|.ds-droppable-${zoneId} |on element that can be dropped into a zone with specific identifier, `${zoneId}` will be replaced by the corresponding zoneId|
+|.ds-dropzone |on each dropZone |
+|.ds-dropzone-ready |on corresponding dropZone when element is dragged |
+|.ds-dropzone-dropped |on dropZone when any element is successfully dropped inside |
 
 *note: you can change the class names setting the respective property on the constructor, see **[the docs](https://dragselect.com/DragSelect.html)** properties section.*
 
