@@ -96,7 +96,7 @@ export default (settings, withFallback) => ({
   ...hydrateHelper('multiSelectKeys', settings.multiSelectKeys, withFallback, ['Control', 'Shift', 'Meta']),
   ...hydrateHelper('selector', settings.selector, withFallback, null),
   ...hydrateHelper('draggability', settings.draggability, withFallback, true),
-  ...hydrateHelper('dropZones', settings.dropZones, withFallback, [{ zoneId: '', zoneEl: null, items: [] }]),
+  ...hydrateHelper('dropZones', settings.dropZones, withFallback, []),
   ...hydrateHelper('immediateDrag', settings.immediateDrag, withFallback, true),
   ...hydrateHelper('keyboardDrag', settings.keyboardDrag, withFallback, true),
   ...hydrateHelper('dragKeys', settings.dragKeys, withFallback, { up: ['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'] }),
@@ -107,4 +107,9 @@ export default (settings, withFallback) => ({
   ...hydrateHelper('selectedClass', settings.selectedClass, withFallback, 'ds-selected'),
   ...hydrateHelper('selectorClass', settings.selectorClass, withFallback, 'ds-selector'),
   ...hydrateHelper('selectorAreaClass', settings.selectorAreaClass, withFallback, 'ds-selector-area'),
+  ...hydrateHelper('droppedTargetClass', settings.droppedTargetClass, withFallback, 'ds-dropped-target'),
+  ...hydrateHelper('droppableClass', settings.droppableClass, withFallback, 'ds-droppable'),
+  ...hydrateHelper('dropZoneClass', settings.dropZoneClass, withFallback, 'ds-dropzone'),
+  ...hydrateHelper('dropZoneReadyClass', settings.dropZoneReadyClass, withFallback, 'ds-dropzone-ready'),
+  ...hydrateHelper('dropZoneTargetClass', settings.dropZoneTargetClass, withFallback, 'ds-dropzone-target'),
 })

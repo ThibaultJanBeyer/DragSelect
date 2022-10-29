@@ -46,6 +46,7 @@ import './types'
 import {
   Area,
   Drag,
+  DropZones,
   Interaction,
   PubSub,
   SelectableSet,
@@ -55,7 +56,7 @@ import {
   SelectorArea,
 } from './modules'
 import { PointerStore, ScrollStore, KeyStore, SettingsStore } from './stores'
-import { toArray, vect2, subscriberAliases } from './methods'
+import { toArray, subscriberAliases } from './methods'
 
 // Setup
 //////////////////////////////////////////////////////////////////////////////////////
@@ -93,6 +94,8 @@ class DragSelect {
 
     this.Drag = new Drag({ DS: this })
 
+    this.DropZones = new DropZones({ DS: this })
+
     this.Interaction = new Interaction({ DS: this })
 
     // Subscriber Aliases
@@ -101,6 +104,7 @@ class DragSelect {
       publish: this.publish,
       SelectedSet: this.SelectedSet,
       Interaction: this.Interaction,
+      DropZones: this.DropZones,
     })
 
     this.subscribe('Interaction:end', () => (this.continue = false))

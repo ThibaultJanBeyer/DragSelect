@@ -1,0 +1,71 @@
+<body>
+<link rel="stylesheet" href="basics.css">
+<style>
+    .dropzone {
+        width: 200px;
+        height: 200px;
+        background: #eee;
+        margin: 20px;
+        padding: 20px;
+        border: 1px solid #ccc;
+    }
+    #zone-1.ds-dropzone-ready {
+        background: #cfc;
+    }
+    #zone-2.ds-dropzone-ready {
+        background: #ccf;
+    }
+    #zone-3.ds-dropzone-ready {
+        background: #fcc;
+    }
+    .ds-droppable {
+        color: red;
+    }
+    .ds-droppable-zone-1 {
+        background: #cfc;
+    }
+    .ds-droppable-zone-2 {
+        background: #ccf;
+    }
+    .ds-droppable-zone-3 {
+        background: #fcc;
+    }
+    .ds-droppable-zone-2.ds-droppable-zone-1 {
+        background: #cff;
+    }
+    .ds-dropped-target {
+        background: gold;
+    }
+    .ds-dropzone-target {
+        background: gold;
+    }
+</style>
+<script src="../../dist/DragSelect.js"></script>
+<p>Draggable</p>
+<button id="item-1" class="item one">1</button>
+<button id="item-2" class="item two">2</button>
+<button id="item-3" class="item three">3</button>
+<button id="item-4" class="item four">4</button>
+<p>Droppable</p>
+<div id="zone-1" class="dropzone one"></div>
+<div id="zone-2" class="dropzone two"></div>
+<div id="zone-3" class="dropzone three"></div>
+<script>
+    const ds = new DragSelect({
+        selectables: document.querySelectorAll('.item'),
+        dropZones: [
+            { element: document.querySelector('#zone-1'), id: 'zone-1', droppables: document.querySelectorAll('#item-1,#item-2,#item-4') },
+            { element: document.querySelector('#zone-2'), id: 'zone-2', droppables: document.querySelector('#item-2') },
+            { element: document.querySelector('#zone-3'), id: 'zone-3', droppables: document.querySelector('#item-3') },
+        ],
+    });
+    ds.subscribe('callback', ({ isDragging, items, dropTarget }) => {
+        console.log('callback', 'dropTarget', dropTarget, 'itemsDropped', dropTarget && dropTarget.itemsDropped)
+        window.dropTarget = dropTarget
+    })
+    ds.subscribe('precallback', ({ isDragging, items, dropTarget }) => {
+        console.log('precallback', 'dropTarget', dropTarget, 'itemsDropped', dropTarget && dropTarget.itemsDropped)
+        window.dropTarget = dropTarget
+    })
+</script>
+</body>
