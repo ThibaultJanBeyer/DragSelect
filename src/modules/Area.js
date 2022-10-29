@@ -169,7 +169,7 @@ export default class Area {
    */
   get computedStyle() {
     if (this._computedStyle) return this._computedStyle
-    if (this.HTMLNode instanceof HTMLDocument)
+    if (this.HTMLNode instanceof Document)
       return (this._computedStyle = window.getComputedStyle(
         this.HTMLNode.body || this.HTMLNode.documentElement
       ))

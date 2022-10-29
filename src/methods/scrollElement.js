@@ -16,7 +16,7 @@ export default (element, directions, multiplier) => {
     document.documentElement.scrollTop &&
     document.documentElement
   const _element =
-    element instanceof HTMLDocument ? docEl || document.body : element
+    element instanceof Document ? docEl || document.body : element
 
   const scrollTop = directions.includes('top') && _element.scrollTop > 0
   const scrollBot =
