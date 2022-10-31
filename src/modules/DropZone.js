@@ -68,7 +68,7 @@ export default class DropZone {
 
     this._observers = addModificationObservers(
       this.parentNodes,
-      debounce(() => this._rect = null, this.DS.stores.SettingsStore.refreshRate),
+      debounce(() => this._rect = null, this.Settings.refreshMemoryRate),
     )
 
     this.DS.subscribe('Interaction:start', this.start)
@@ -212,7 +212,7 @@ export default class DropZone {
 
     // since elements can be moved while this getter is called, we need to update the values every X seconds
     if (this._timeout) clearTimeout(this._timeout)
-    this._timeout = setTimeout(() => this._itemsInside = null, this.DS.stores.SettingsStore.refreshRate)
+    this._timeout = setTimeout(() => this._itemsInside = null, this.Settings.refreshMemoryRate)
 
     return this._itemsInside
   }

@@ -23,6 +23,7 @@ export default class SelectableSet extends Set {
   constructor({ DS }) {
     super()
     this.DS = DS
+    this.Settings = DS.stores.SettingsStore.s
     this.DS.subscribe('Interaction:init', this.init)
     // @ts-ignore: @todo: update to typescript
     this.DS.PubSub.subscribe('Settings:updated:selectables', () => {
@@ -39,7 +40,7 @@ export default class SelectableSet extends Set {
   }
 
   init = () =>
-    toArray(this.DS.stores.SettingsStore.s.selectables).forEach((el) =>
+    toArray(this.Settings.selectables).forEach((el) =>
       this.add(el)
     )
 
@@ -51,7 +52,7 @@ export default class SelectableSet extends Set {
       item: element,
     }
     this.DS.publish('Selectable:added:pre', publishData)
-    element.classList.add(this.DS.stores.SettingsStore.s.selectableClass)
+    element.classList.add(this.Settings.selectableClass)
     element.addEventListener('click', this._onClick)
     element.addEventListener('mousedown', this._onPointer)
     element.addEventListener('touchstart', this._onPointer, {
@@ -60,8 +61,8 @@ export default class SelectableSet extends Set {
     })
 
     if (
-      this.DS.stores.SettingsStore.s.draggability &&
-      !this.DS.stores.SettingsStore.s.useTransform
+      this.Settings.draggability &&
+      !this.Settings.useTransform
     )
       handleElementPositionAttribute({
         computedStyle: window.getComputedStyle(element),
@@ -80,8 +81,8 @@ export default class SelectableSet extends Set {
       item: element,
     }
     this.DS.publish('Selectable:removed:pre', publishData)
-    element.classList.remove(this.DS.stores.SettingsStore.s.selectableClass)
-    element.classList.remove(this.DS.stores.SettingsStore.s.hoverClass)
+    element.classList.remove(this.Settings.selectableClass)
+    element.classList.remove(this.Settings.hoverClass)
     element.removeEventListener('click', this._onClick)
     element.removeEventListener('mousedown', this._onPointer)
     element.removeEventListener('touchstart', this._onPointer, {
@@ -115,7 +116,7 @@ export default class SelectableSet extends Set {
 
     // since elements can be moved, we need to update the rects every X ms
     if (this._timeout) clearTimeout(this._timeout)
-    this._timeout = setTimeout(() => this._rects = null, this.DS.stores.SettingsStore.refreshRate)
+    this._timeout = setTimeout(() => this._rects = null, this.Settings.refreshMemoryRate)
 
     return this._rects
   }

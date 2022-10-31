@@ -1,7 +1,8 @@
 # 2.5.0
 
 - Add dropZones! Solves #115
-- Add a selection threshold, solves #130
+- Add a `selectionThreshold` settings, solves #130
+- Add a `refreshMemoryRate` settings, to increase/decrease performance as necessary
 
 # 2.4.2
 

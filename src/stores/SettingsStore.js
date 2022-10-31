@@ -11,11 +11,6 @@ export default class SettingsStore {
    * */
   _settings = {}
   /**
-   * @type {number}
-   * */
-  refreshRate = 80
-
-  /**
    * Holds the settings and their previous value `:pre`
    * @example {
    *    autoScrollSpeed: 3,

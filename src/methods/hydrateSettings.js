@@ -102,6 +102,7 @@ export default (settings, withFallback) => ({
   ...hydrateHelper('dragKeys', settings.dragKeys, withFallback, { up: ['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'] }),
   ...hydrateHelper('keyboardDragSpeed', settings.keyboardDragSpeed, withFallback, 10),
   ...hydrateHelper('useTransform', settings.useTransform, withFallback, true),
+  ...hydrateHelper('refreshMemoryRate', settings.refreshMemoryRate, withFallback, 80),
   ...hydrateHelper('dropZones', settings.dropZones, withFallback, []),
   ...hydrateHelper('dropInsideThreshold', settings.dropInsideThreshold, withFallback, 1),
   ...hydrateHelper('dropTargetThreshold', settings.dropTargetThreshold, withFallback, 0),
