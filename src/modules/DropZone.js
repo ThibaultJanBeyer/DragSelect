@@ -55,6 +55,12 @@ export default class DropZone {
     this.droppables = toArray(droppables)
     this.element.classList.add(`${this.Settings.dropZoneClass}`)
 
+    // @ts-ignore: @todo: update to typescript
+    this.DS.subscribe('Settings:updated:dropZoneClass', ({ settings }) => {
+      this.element.classList.remove(settings['dropZoneClass:pre'])
+      this.element.classList.add(settings['dropZoneClass'])
+    })
+
     this.DS.subscribe('Interaction:start', this.start)
     this.DS.subscribe('Interaction:end', this.stop)
   }
@@ -110,7 +116,6 @@ export default class DropZone {
   handleItemsInsideClasses = () => {
     let isAnyInside = false
     this.droppables.forEach((item) => {
-      console.log("itemsInside", this._itemsInside)
       if (this.itemsInside.includes(item)) {
         item.classList.add(`${this.Settings.droppedInsideClass}`)
         item.classList.add(`${this.Settings.droppedInsideClass}-${this.id}`)
@@ -185,11 +190,10 @@ export default class DropZone {
     if (this._itemsInside) return this._itemsInside
 
     this._itemsInside = this.droppables.flatMap((item) => {
-      console.log('isAnyInside', this.rect, this.DS.SelectableSet.rects.get(item))
       if(isCollision(
         this.DS.SelectableSet.rects.get(item),
         this.rect,
-        1
+        this.Settings.dropInsideThreshold
       ))
         return [item]
       return []
