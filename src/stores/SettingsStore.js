@@ -13,7 +13,7 @@ export default class SettingsStore {
   /**
    * @type {number}
    * */
-  refreshRate = 333
+  refreshRate = 80
 
   /**
    * Holds the settings and their previous value `:pre`
