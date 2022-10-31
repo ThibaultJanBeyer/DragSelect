@@ -1,28 +1,34 @@
-// @TODO: 
-// - Retrieval of droptargets
-// - Retrieval of items within the dropzone
-// - Return only the ID and retrievals via ID
-
 // @ts-check
+
 import '../types'
 import DragSelect from '../DragSelect'
+import DropZone from './DropZone'
 
-import { toArray } from '../methods'
+import { isCollision, toArray } from '../methods'
 
 export default class DropZones {
   /**
    * Get the drop zone by the zone element
-   * @type {Map}
+   * @type {Map<DSElement, DropZone>}
+   * @private
    */
   _zoneByElement = new Map()
   /**
+   * Get the drop zone by the zone id
+   * @type {Map<string, DropZone>}
+   * @private
+   */
+  _zoneById = new Map()
+  /**
    * Get the drop zones by one zone item
-   * @type {Map<DSElement,DSDropZone[]>}
+   * @type {Map<DSElement,DropZone[]>}
+   * @private
    */
   _zonesByDroppable = new Map()
   /**
    * Get the drop zones by one zone item
-   * @type {DSDropZone[]}
+   * @type {DropZone[]}
+   * @private
    */
   _zones
 
@@ -49,105 +55,99 @@ export default class DropZones {
    */
   setDropZones = ({ dropZones }) => {
     if (!dropZones) return
-    this._zones = dropZones.slice()
+    if (this._zones) this._zones.forEach((zone) => zone.destroy())
+
+    this._zones = dropZones.map((zone) => new DropZone({ DS: this.DS, ...zone }))
     this._zones.forEach((zone) => {
-      zone.droppables = toArray(zone.droppables)
       this._zoneByElement.set(zone.element, zone)
       zone.droppables.forEach((droppable) => {
         const zones = this._zonesByDroppable.get(droppable)
         if (!zones?.length) return this._zonesByDroppable.set(droppable, [zone])
         // @ts-ignore
         this._zonesByDroppable.set(droppable, [...new Set([...zones, zone])])
-      })
-      zone.element.classList.add(this.Settings.dropZoneClass || '')
-    })
-  }
-
-  /**
-   * @param {'add'|'remove'} action
-   */
-  _setReadyClasses = (action) => {
-    this.DS.SelectedSet.forEach((item) => {
-      const zones = this._zonesByDroppable.get(item)
-      if (!zones?.length) return
-      zones.forEach((zone) => {
-        item.classList[action](`${this.Settings.droppableClass}`)
-        item.classList[action](`${this.Settings.droppableClass}-${zone.id}`)
-        zone.element.classList[action](`${this.Settings.dropZoneReadyClass}`)
+        this._zoneById.set(zone.id, zone)
       })
     })
-  }
-
-  _handleDropOutsideOfTarget = (zone) => {
-    // for each selected element that is not part of the target zone, remove the classes
-    this.DS.SelectedSet.forEach((item) => {
-      item.classList.remove(this.Settings.droppedTargetClass)
-      item.classList.remove(`${this.Settings.droppedTargetClass}-${zone.id}`)
-    })
-    // and remove them from the zones dropped items
-    zone.itemsDropped = zone.itemsDropped?.filter((item) => !this.DS.SelectedSet.has(item))
-    // if the zone has no dropped left, also remove the zones class
-    if(!zone.itemsDropped?.length)
-      zone.element.classList.remove(this.Settings.dropZoneTargetClass)
-  }
-
-  _handleDropOnTarget = (zone) => {
-    // add selected droppable items to the zones dropped items
-    if(!zone.itemsDropped) zone.itemsDropped = []
-    // @ts-ignore
-    zone.itemsDropped = [...new Set([...zone.itemsDropped, ...zone.droppables?.filter((item) => this.DS.SelectedSet.has(item))])]
-    // add the target class to the zones dropped items
-    zone.itemsDropped?.forEach((item) => {
-      item.classList.add(this.Settings.droppedTargetClass)
-      item.classList.add(`${this.Settings.droppedTargetClass}-${zone.id}`)
-    })
-    // if the zone has dropped, add the zones class
-    if(zone.itemsDropped?.length)
-      zone.element.classList.add(this.Settings.dropZoneTargetClass)
   }
 
   _handleDrop = (target) => {
     this._zones.forEach((zone) => {
       if (zone === target) return
-      this._handleDropOutsideOfTarget(zone)
+      zone.handleNoDrop()
     })
-    if(!target) return
-    this._handleDropOnTarget(target)
+    if (!target) return
+    target.handleDrop()
   }
 
   /**
    * @param {DSElements} elements
-   * @returns {DSDropZone|undefined}
+   * @param {Vect2} point
+   * @returns {DropZone|undefined}
    */
-  _getZoneByElements = (elements) => {
+  _getZoneByElementsFromPoint = (elements, { x, y }) => {
     for(let i = 0, il = elements.length; i < il; i++) {
       const zone = this._zoneByElement.get(elements[i])
-      if(zone) return zone
+      if (
+        zone &&
+        isCollision(
+          zone.rect,
+          { left: x, right: x, top: y, bottom: y },
+          Math.min(this.Settings.dropTargetThreshold, 0.5)
+        )
+      ) {
+        return zone
+      }
     }
-  }
-  /**
-   * Returns first DropsZone under current pointer
-   * @param {Vect2} [coordinates]
-   * @returns {DSDropZone | undefined}
-   */
-  getTarget = (coordinates) => {
-    if(!this._zones?.length) return
-    const elements = document.elementsFromPoint(
-      coordinates?.x || this.DS.stores.PointerStore.currentVal.x,
-      coordinates?.y || this.DS.stores.PointerStore.currentVal.y
-    )
-    return this._getZoneByElements(/** @type {DSElements} */(elements))
   }
 
   start = ({ isDragging }) => {
     if (!isDragging) return
-    this._setReadyClasses('add')
   }
 
   stop = ({ isDragging }) => {
     if (!isDragging) return
-    this._setReadyClasses('remove')
     const target = this.getTarget()
     this._handleDrop(target)
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////
+  // Getters
+
+  /**
+   * @param {string} zoneId 
+   * @returns {DSElements|void}
+   */
+  getItemsDroppedById = (zoneId) => {
+    const zone = this._zoneById.get(zoneId)
+    if (!zone) return console.warn(`[DragSelect] No zone found (id: ${zoneId})`)
+    return zone.itemsDropped
+  }
+
+  /**
+   * @param {string} zoneId 
+   * @param {boolean} addClasses
+   * @returns {DSElements|void}
+   */
+  getItemsInsideById = (zoneId, addClasses) => {
+    const zone = this._zoneById.get(zoneId)
+    if (!zone) return console.warn(`[DragSelect] No zone found (id: ${zoneId})`)
+    const itemsInside = zone.itemsInside
+    if(addClasses) zone.handleItemsInsideClasses()
+    return itemsInside
+  }
+
+  /**
+   * Returns first DropsZone under current pointer
+   * @param {Vect2} [coordinates]
+   * @returns {DropZone | undefined}
+   */
+  getTarget = (coordinates) => {
+    if (!this._zones?.length) return
+    
+    const x = coordinates?.x || this.DS.stores.PointerStore.currentVal.x
+    const y = coordinates?.y || this.DS.stores.PointerStore.currentVal.y
+    
+    const elements = document.elementsFromPoint(x, y)
+    return this._getZoneByElementsFromPoint(/** @type {DSElements} */(elements), { x, y })
   }
 }

@@ -349,7 +349,7 @@ ds.subscribe('<event_name>', (callback_object) => {})
 |scroll_directions |`Array.<'top'\|'bottom'\|'left'\|'right'\|undefined>` |The direction in which the event is happening (i.e. scroll direction)
 |scroll_multiplier |`number` |Speed
 |item |`HTMLElement\|SVGElement\|*` |The single element currently being interacted with if any
-|dropTarget |`{ id: 'id', element: node, droppables: [node], itemsDropped: [node] }` |dropZone in which the droppable elements were dropped into. `itemsDropped` all items that were dropped. |
+|dropTarget |`{ id: 'id', element: node, droppables: [node], itemsDropped: [node], itemsInside: [node] }` |dropZone in which the droppable elements were dropped into. `itemsDropped`: all items that were dropped on the target. `itemsInside`: all items that are within the bounds of the zone |
 
 > Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first
 
@@ -361,26 +361,29 @@ Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 |--- |--- |--- |
 |stop |/ |Will teardown/stop the whole functionality
 |start |/ |Reset the functionality after a teardown
+|break |/ |Utility to override DragSelect internal functionality. Breaks out of current flow. Read [docs](#writing-a-fully-custom-solution) for more info.
+|setSettings |`settings:Settings` |Update any setting dynamically, see [Settings](#constructor-properties-settings)
 |getSelection |/ |Returns all currently selected nodes 
-|addSelection |DOM elements [nodes], Boolean (callback), Boolean (dontAddToSelectables) |adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true) 
-|removeSelection |DOM elements [nodes], Boolean (callback), Boolean (removeFromSelectables) |removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last boolean is set to true, it also removes them from the possible selectable nodes if they were. 
-|toggleSelection |DOM elements [nodes], Boolean (callback), Boolean (alsoSelectables) |toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If boolean is set to true: callback will be called afterward. If last boolean is set to true, it also removes selected elements from possible selectable nodes & doesn’t add them to selectables if they are not (can be turned off by setting the last boolean to true).
-|setSelection |DOM elements [nodes], Boolean (callback), Boolean (dontAddToSelectables) |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true)
+|addSelection |`elements:DOM Elements, triggerCallback:boolean, dontAddToSelectables:boolean` |adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true) 
+|removeSelection |`elements:DOM Elements, triggerCallback:boolean, removeFromSelectables:boolean`|removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last boolean is set to true, it also removes them from the possible selectable nodes if they were. 
+|toggleSelection |`elements:DOM Elements, triggerCallback:boolean, alsoSelectables:boolean` |toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If boolean is set to true: callback will be called afterward. If last boolean is set to true, it also removes selected elements from possible selectable nodes & doesn’t add them to selectables if they are not (can be turned off by setting the last boolean to true).
+|setSelection |`elements:DOM Elements, triggerCallback:boolean, dontAddToSelectables:boolean` |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true)
 |clearSelection |DOM elements [nodes], Boolean (callback) |remove all elements from the selection. If boolean is set to true: callback will be called afterwards. |
-|addSelectables |DOM elements [nodes], Boolean (addToSelection) |Adds elements that can be selected. Don’t worry, nodes are never added twice. If boolean is set to true: elements will also be added to current selection.
-|removeSelectables |DOM elements [nodes], Boolean (removeFromSelection) |Remove elements from the set of elements that can be selected. If boolean is set to true: elements will also be removed from current selection.
+|clearSelection |`triggerCallback:boolean` |Unselect / Deselect all current selected Nodes |
+|addSelectables |`elements:DOM Elements, addToSelection:boolean` |Adds elements that can be selected. Don’t worry, nodes are never added twice. If boolean is set to true: elements will also be added to current selection.
+|removeSelectables |`elements:DOM Elements, removeFromSelection:boolean` |Remove elements from the set of elements that can be selected. If boolean is set to true: elements will also be removed from current selection.
 |getSelectables |/ |Returns array with all nodes that can be selected.
-|setSelectables |DOM elements [nodes], Boolean (removeFromSelection), Boolean (addToSelection) |Sets all elements that can be selected. Removes all current selectables (& their respective applied classes). Adds the new set to the selectables set. Thus, replacing the original set. First boolean if old elements should be removed from the selection. Second boolean if new elements should be added to the selection. 
 |getInitialCursorPosition |/ |Returns the registered x, y coordinates the cursor had when first clicked 
 |getCurrentCursorPosition |/ |Returns current x, y coordinates of the cursor 
 |getPreviousCursorPosition |/ |Returns last registered x, y coordinates of the cursor (after last callback) 
 |getInitialCursorPositionArea |/ |Returns the registered x, y coordinates relative to the area the cursor had when first clicked 
 |getCurrentCursorPositionArea |/ |Returns current x, y coordinates of the cursor relative to the area
 |getPreviousCursorPositionArea |/ |Returns last registered x, y coordinates of the cursor relative to the area (after last callback) 
-|getCursorPositionDifference |Boolean (usePreviousCursorDifference) |Returns object with the x, y difference between the initial and the last cursor position. If the argument is set to true, it will instead return the x, y difference to the previous coordinates |
-|isMultiSelect |\[event:KeyboardEvent|MouseEvent|TouchEvent\] (optional) |Whether the multi-select key is currently pressed
+|isMultiSelect |`event:KeyboardEvent|MouseEvent|TouchEvent` (optional) |Whether the multi-select key is currently pressed
 |isDragging |/ |Whether the user is currently drag n dropping elements (instead of selection)
-|break |/ |Utility to override DragSelect internal functionality. Breaks out of current flow. Read [docs](#writing-a-fully-custom-solution) for more info.
+|getDropTarget |Optional `{x: number, y: number}` |Returns the topmost drop target under the current mouse position, or, if provided at coordinates x/y
+|getItemsDroppedById |`zoneId: string` |Returns the items dropped into a specific zone (by zone.id)
+|getItemsInsi1deById |`zoneId: string`,`addClasses: boolean` |Returns the items that are visually inside a specific zone (by zone.id)
 
 # Classes
 | name | trigger |
@@ -394,9 +397,12 @@ Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 |.ds-droppable-${id} |on item that can be dropped into a zone with specific identifier, `${id}` will be replaced by the corresponding zone.id|
 |.ds-dropped-target |on an item corresponding the target dropzone |
 |.ds-dropped-target-${id} |on an item corresponding the target dropzone with specific identifier, `${id}` will be replaced by the corresponding zone.id |
+|.ds-dropped-inside |on an item that is within its dropzone bounds after a drop |
+|.ds-dropped-inside-${id} |on an item that is within its dropzone bounds after a drop with specific identifier, `${id}` will be replaced by the corresponding zone.id |
 |.ds-dropzone |on each dropZone |
 |.ds-dropzone-ready |on corresponding dropZone when corresponding item is being dragged |
 |.ds-dropzone-target |on dropZone when it was target of a successful drop |
+|.ds-dropzone-inside |on dropZone that has elements inside after any drop |
 
 *note: you can change the class names setting the respective property on the constructor, see **[the docs](https://dragselect.com/DragSelect.html)** properties section.*
 

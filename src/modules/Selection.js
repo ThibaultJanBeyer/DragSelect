@@ -60,18 +60,15 @@ export default class Selection {
     const { SelectableSet, SelectorArea, Selector } = this.DS
 
     /** @type {any} */
-    const elPosCombo = SelectableSet.elements.map((element) => {
-      return [element, element.getBoundingClientRect()]
-    })
+    const elRects = SelectableSet.rects
 
     const select = []
     const unselect = []
 
-    for (let i = 0, il = elPosCombo.length; i < il; i++) {
-      if (!SelectorArea.isInside(elPosCombo[i][0], elPosCombo[i][1])) continue
-      if (isCollision(elPosCombo[i][1], Selector.rect))
-        select.push(elPosCombo[i][0])
-      else unselect.push(elPosCombo[i][0])
+    for(const [element, rect] of elRects) {
+      if (!SelectorArea.isInside(element, rect)) continue
+      if (isCollision(rect, Selector.rect)) select.push(element)
+      else unselect.push(element)
     }
 
     const multiSelectionToggle =

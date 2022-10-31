@@ -153,6 +153,12 @@ class DragSelect {
    */
   break = () => (this.continue = true)
   /**
+   * Update any setting dynamically
+   * @param {Settings} settings
+   * @return {void}
+   */
+  setSettings = (settings) => this.stores.SettingsStore.update({ settings })
+  /**
    * Returns the current selected nodes
    * @return {DSElements}
    */
@@ -312,11 +318,25 @@ class DragSelect {
    */
   isDragging = () => this.Interaction.isDragging
   /**
-   * Update any setting dynamically
-   * @param {Settings} settings
-   * @return {void}
+   * Returns first DropsZone under coordinates,
+   * if no coordinated provided current pointer coordinates are used
+   * @param {Vect2} [coordinates]
+   * @returns {DSDropZone | undefined}
    */
-  setSettings = (settings) => this.stores.SettingsStore.update({ settings })
+  getDropTarget = (coordinates) => this.DropZones.getTarget(coordinates)?.toObject()
+  /**
+   * Returns itemsDropped into zone by zone id
+   * @param {string} zoneId
+   * @returns {DSElements|void}
+   */
+  getItemsDroppedById = (zoneId) => this.DropZones.getItemsDroppedById(zoneId)
+  /**
+   * Returns itemsInside by zone id
+   * @param {string} zoneId
+   * @param {boolean} addClasses whether or not to add/remove the "inside" classes to the items
+   * @returns {DSElements|void}
+   */
+  getItemsInsideById = (zoneId, addClasses) => this.DropZones.getItemsInsideById(zoneId, addClasses)
 }
 
 export default DragSelect

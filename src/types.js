@@ -12,22 +12,26 @@
  * @property {DSMultiSelectKeys} [multiSelectKeys=['Control', 'Shift', 'Meta']] Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
  * @property {boolean} [draggability=true] When a user is dragging on an already selected element, the selection is dragged.
- * @property {DSInputDropZone[]} [dropZones=[]] one or more drop-elements: where the selectables can be dropped into
  * @property {boolean} [immediateDrag=true] Whether an element is draggable from the start or needs to be selected first
  * @property {boolean} [keyboardDrag=true] Whether or not the user can drag with the keyboard (we don't recommend disabling it)
  * @property {DSDragKeys} [dragKeys={up:['ArrowUp'],down:['ArrowDown'],left:['ArrowLeft'],righ:['ArrowRight']}] The keys available to drag element using the keyboard.
  * @property {number} [keyboardDragSpeed=10] The speed at which elements are dragged using the keyboard. In pixels per keydown.
  * @property {boolean} [useTransform=true] Whether to use hardware accelerated css transforms when dragging or top/left instead
+ * @property {DSInputDropZone[]} [dropZones=[]] one or more drop-elements: where the selectables can be dropped into
+ * @property {number} [dropInsideThreshold=1] how much % of the item has to be inside the dropzone to be considered inside (min: 0 = barely touching, max: 1 = completely inside)
+ * @property {number} [dropTargetThreshold=0] how much % of the zone does the pointer has to be in to be considered a target (min: 0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone)
  * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
  * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
  * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
  * @property {string} [droppedTargetClass=ds-dropped-target] on an item corresponding the target dropzone. This is also the prefix for ds-dropped-target-${zone.id}
+ * @property {string} [droppedInsideClass=ds-dropped-inside] on an item that is within its dropzone bounds after a drop. This is also the prefix for ds-dropped-inside-${zone.id}
  * @property {string} [droppableClass=ds-droppable] on element that can be dropped into at least one container. This is also the prefix for ds-droppable-${zone.id}
  * @property {string} [dropZoneClass=ds-dropzone] on each dropZone
  * @property {string} [dropZoneReadyClass=ds-dropzone-ready] on corresponding dropZone when element is dragged
  * @property {string} [dropZoneTargetClass=ds-dropzone-target] on dropZone that has elements from any successful target drop
+ * @property {string} [dropZoneInsideClass=ds-dropzone-inside] on dropZone that has elements inside after any drop
  */
 
 /**
@@ -61,6 +65,7 @@
  * @property {DSElement} element
  * @property {DSElements} droppables
  * @property {DSElements} [itemsDropped] the items related to the target zone
+ * @property {DSElements} [itemsInside] the items that are within the targets bounds
  */
 
 /** @typedef {{x: number, y: number}} Vect2 */

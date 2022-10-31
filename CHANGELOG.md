@@ -1,3 +1,7 @@
+# 2.5.0
+
+- Add dropZones! Solving #115
+
 # 2.4.2
 
 - Add Selecrables events/topics for add/delete: `Selectable:added` & `Selectable:added:pre` & `Selectable:removed` & `Selectable:removed:pre`

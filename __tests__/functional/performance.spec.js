@@ -33,6 +33,7 @@ describe('Scroll', () => {
     expect(selected[8]).toBe('item-68')
 
     const duration = performance.now() - start
+    console.info("Performance Duration", duration)
     expect(duration).toBeLessThan(3000)
   })
 })

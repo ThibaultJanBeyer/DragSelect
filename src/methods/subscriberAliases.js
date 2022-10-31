@@ -38,11 +38,11 @@ export default ({ subscribe, publish, Interaction, SelectedSet, DropZones }) => 
         name: 'callback', extraData: () => {
           const target = DropZones.getTarget()
           return {
-            ...(target ? { dropTarget: target } : {}),
+            ...(target ? { dropTarget: target.toObject() } : {}),
           }
         }
       }
-    ], 
+    ],
   }
 
   for (const [sub_name, pubs] of Object.entries(mapping))
