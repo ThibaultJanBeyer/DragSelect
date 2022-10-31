@@ -394,8 +394,8 @@ Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 |isMultiSelect |`event:KeyboardEvent|MouseEvent|TouchEvent` (optional) |Whether the multi-select key is currently pressed
 |isDragging |/ |Whether the user is currently drag n dropping elements (instead of selection)
 |getDropTarget |Optional `{x: number, y: number}` |Returns the topmost drop target under the current mouse position, or, if provided at coordinates x/y
-|getItemsDroppedById |`zoneId: string` |Returns the items dropped into a specific zone (by zone.id)
-|getItemsInsi1deById |`zoneId: string`,`addClasses: boolean` |Returns the items that are visually inside a specific zone (by zone.id)
+|getItemsDroppedByZoneId |`zoneId: string` |Returns the items dropped into a specific zone (by zone.id)
+|getItemsInsideByZoneId |`zoneId: string`,`addClasses: boolean` |Returns the items that are visually inside a specific zone (by zone.id)
 
 # Classes
 | name | trigger |

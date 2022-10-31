@@ -329,14 +329,14 @@ class DragSelect {
    * @param {string} zoneId
    * @returns {DSElements|void}
    */
-  getItemsDroppedById = (zoneId) => this.DropZones.getItemsDroppedById(zoneId)
+  getItemsDroppedByZoneId = (zoneId) => this.DropZones.getItemsDroppedById(zoneId)
   /**
    * Returns itemsInside by zone id
    * @param {string} zoneId
    * @param {boolean} addClasses whether or not to add/remove the "inside" classes to the items
    * @returns {DSElements|void}
    */
-  getItemsInsideById = (zoneId, addClasses) => this.DropZones.getItemsInsideById(zoneId, addClasses)
+  getItemsInsideByZoneId = (zoneId, addClasses) => this.DropZones.getItemsInsideById(zoneId, addClasses)
 }
 
 export default DragSelect
