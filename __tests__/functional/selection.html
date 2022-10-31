@@ -1,0 +1,14 @@
+<body>
+<link rel="stylesheet" href="basics.css">
+<script src="../../dist/DragSelect.js"></script>
+<p>Draggable</p>
+<div style="margin: 50px;">
+    <button id="item-1" class="item one">1</button>
+    <button id="item-2" class="item two">2</button>
+    <button id="item-3" class="item three">3</button>
+</div>
+<script>
+    window.ds = new DragSelect({ selectables: document.querySelector('#item-1') })
+    ds.subscribe('callback', ({ isDragging, items }) => window.items = items.map(item => item.id))
+</script>
+</body>

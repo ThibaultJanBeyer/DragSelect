@@ -18,6 +18,7 @@ export default class Selection {
    */
   constructor({ DS }) {
     this.DS = DS
+    this.Settings = this.DS.stores.SettingsStore.s
     this.DS.subscribe('Interaction:start', this.start)
     this.DS.subscribe('Interaction:update', this.update)
   }
@@ -67,13 +68,13 @@ export default class Selection {
 
     for(const [element, rect] of elRects) {
       if (!SelectorArea.isInside(element, rect)) continue
-      if (isCollision(rect, Selector.rect)) select.push(element)
+      if (isCollision(rect, Selector.rect, this.Settings.selectionThreshold)) select.push(element)
       else unselect.push(element)
     }
 
     const multiSelectionToggle =
       (this.DS.stores.KeyStore.isMultiSelectKeyPressed(event)) &&
-      this.DS.stores.SettingsStore.s.multiSelectToggling
+      this.Settings.multiSelectToggling
 
     if (this.DS.continue) return
     select.forEach((element) =>
@@ -82,7 +83,7 @@ export default class Selection {
         force,
         multiSelectionToggle,
         SelectedSet: this.DS.SelectedSet,
-        hoverClassName: this.DS.stores.SettingsStore.s.hoverClass,
+        hoverClassName: this.Settings.hoverClass,
       })
     )
     unselect.forEach((element) =>
@@ -90,7 +91,7 @@ export default class Selection {
         element,
         force,
         SelectedSet: this.DS.SelectedSet,
-        hoverClassName: this.DS.stores.SettingsStore.s.hoverClass,
+        hoverClassName: this.Settings.hoverClass,
         PrevSelectedSet: this._prevSelectedSet,
       })
     )

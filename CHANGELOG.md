@@ -1,6 +1,7 @@
 # 2.5.0
 
-- Add dropZones! Solving #115
+- Add dropZones! Solves #115
+- Add a selection threshold, solves #130
 
 # 2.4.2
 

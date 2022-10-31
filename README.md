@@ -40,7 +40,7 @@ easily add a selection algorithm to your application/website.
       - [Example](#example)
     - [Writing a fully custom solution](#writing-a-fully-custom-solution)
       - [Example](#example-1)
-- [Constructor Properties (Settings):](#constructor-properties-settings)
+- [Constructor Properties (Settings)](#constructor-properties-settings)
   - [Post-Initialization Setting-Updates](#post-initialization-setting-updates)
 - [Event Callbacks](#event-callbacks)
   - [Events](#events)
@@ -273,7 +273,7 @@ ds.subscribe('predragmove', ({ isDragging, isDraggingKeyboard }) => {
 }
 ```
 
-# Constructor Properties (Settings):
+# Constructor Properties (Settings)
 
 *DragSelect is hyper customizable*. Note, all properties are optional. See **[the docs](https://dragselect.com/DragSelect.html)** for more info.  
 
@@ -293,17 +293,29 @@ Here is the full list:
 |multiSelectToggling |boolean |Whether or not to toggle already active elements while multi-selecting. |`true` (MacOS selection behavior)
 |multiSelectKeys |array |Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality. |`['Control', 'Shift', 'Meta']`
 |selector |single DOM element (node) |The square that will be used to draw the selection. | Auto-created HTML Element
+|selectionThreshold |number |How much % of the element has to be selected to be considered selected (0 = just touching, 1 = fully inside the selection) |`0`
 |draggability |boolean |When a user is dragging on an already selected element, the selection is dragged. |`true`
-|dropZones |[{ id: 'string', element: single DOM element (node), droppables: DOM elements [nodes] }] |zones with association of droppable items that can be dropped into them |`[]`
 |immediateDrag |boolean |Whether a selectable element is draggable before being selected or needs to be selected first |`true`
 |keyboardDrag |boolean |Whether or not the user can drag with the keyboard (Accessibility). |`true`
 |dragKeys |{ up:string[], down:string[], left:string[], righ:string[] } |The keys available to drag element using the keyboard. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). |`{ up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], righ: ['ArrowRight'] }`
 |keyboardDragSpeed |number |The speed at which elements are dragged using the keyboard. In pixels per keyDown. |`10`
 |useTransform |boolean |Whether to use the more performant hardware accelerated css transforms when dragging instead of the top/left positions. |`true`
+|dropZones |[{ id: 'string', element: single DOM element (node), droppables: DOM elements [nodes] }] |zones with association of droppable items that can be dropped into them |`[]`
+|dropInsideThreshold |number |How much % of the item has to be inside the dropzone to be considered inside (0 = barely touching, 1 = completely inside) |`1`
+|dropTargetThreshold |number |How much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone) |`0`
 |selectedClass |string |The class name assigned to the selected items. |[see classes](#classes)
 |hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)
 |selectorClass |string |The class name assigned to the square selector helper. |[see classes](#classes)
 |selectableClass |string |The class name assigned to the elements that can be selected. |[see classes](#classes)
+|selectorClass |string |The class assigned to the square selector helper |ds-selector
+|selectorAreaClass |string |The class assigned to the square in which the selector resides. By default it's invisible |ds-selector-area
+|droppedTargetClass |string |On an item corresponding the target dropzone. This is also the prefix for ds-dropped-target-${zone.id}. |ds-dropped-target & ds-dropped-target-${zone.id}
+|droppedInsideClass |string |On an item that is within its dropzone bounds after a drop. This is also the prefix for ds-dropped-inside-${zone.id} |ds-dropped-inside & ds-dropped-inside-${zone.id}
+|droppableClass |string |On element that can be dropped into at least one container. This is also the prefix for ds-droppable-${zone.id} |ds-droppable & ds-droppable-${zone.id}
+|dropZoneClass |string |On each dropZone |ds-dropzone
+|dropZoneReadyClass |string |On corresponding dropZone when element is dragged |ds-dropzone-ready
+|dropZoneTargetClass |string |On dropZone that has elements from any successful target drop |ds-dropzone-target
+|dropZoneInsideClass |string |On dropZone that has elements inside after any drop |ds-dropzone-inside
 
 ## Post-Initialization Setting-Updates
 
