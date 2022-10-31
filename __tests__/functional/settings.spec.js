@@ -1,5 +1,5 @@
 import wait from '../helpers/wait'
-import { moveSelect, moveKey, click } from '../helpers/manipulation'
+import { moveSelect, moveKey, click } from '../helpers/manipulations'
 
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
