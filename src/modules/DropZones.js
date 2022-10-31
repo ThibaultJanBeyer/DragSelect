@@ -60,12 +60,12 @@ export default class DropZones {
     this._zones = dropZones.map((zone) => new DropZone({ DS: this.DS, ...zone }))
     this._zones.forEach((zone) => {
       this._zoneByElement.set(zone.element, zone)
+      this._zoneById.set(zone.id, zone)
       zone.droppables.forEach((droppable) => {
         const zones = this._zonesByDroppable.get(droppable)
         if (!zones?.length) return this._zonesByDroppable.set(droppable, [zone])
         // @ts-ignore
         this._zonesByDroppable.set(droppable, [...new Set([...zones, zone])])
-        this._zoneById.set(zone.id, zone)
       })
     })
   }
