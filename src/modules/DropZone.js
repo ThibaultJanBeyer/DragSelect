@@ -2,7 +2,7 @@
 import '../types'
 import DragSelect from '../DragSelect'
 
-import { isCollision, toArray } from '../methods'
+import { isCollision, toArray, debounce, addModificationObservers, getAllParentNodes } from '../methods'
 
 export default class DropZone {
   /**
@@ -22,6 +22,11 @@ export default class DropZone {
    * @private
    */
   _rect
+  /**
+   * @type {{cleanup:()=>void}}
+   * @private
+   */
+  _observers
   /**
    * @type {NodeJS.Timeout}
    * @private
@@ -60,6 +65,11 @@ export default class DropZone {
       this.element.classList.remove(settings['dropZoneClass:pre'])
       this.element.classList.add(settings['dropZoneClass'])
     })
+
+    this._observers = addModificationObservers(
+      this.parentNodes,
+      debounce(() => this._rect = null, this.DS.stores.SettingsStore.refreshRate),
+    )
 
     this.DS.subscribe('Interaction:start', this.start)
     this.DS.subscribe('Interaction:end', this.stop)
@@ -144,6 +154,7 @@ export default class DropZone {
   }
 
   destroy() {
+    this._observers.cleanup()
     this.element.classList.remove(`${this.Settings.dropZoneClass}`)
     this.element.classList.remove(`${this.Settings.dropZoneTargetClass}`)
     this.element.classList.remove(`${this.Settings.dropZoneReadyClass}`)
@@ -204,5 +215,10 @@ export default class DropZone {
     this._timeout = setTimeout(() => this._itemsInside = null, this.DS.stores.SettingsStore.refreshRate)
 
     return this._itemsInside
+  }
+
+  get parentNodes() {
+    if (this._parentNodes) return this._parentNodes
+    return (this._parentNodes = getAllParentNodes(this.element))
   }
 }
