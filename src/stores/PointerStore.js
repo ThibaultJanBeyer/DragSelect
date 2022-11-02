@@ -46,34 +46,27 @@ export default class PointerStore {
   _lastTouch
 
   /**
-   * @type {boolean}
-   * @private
-   * */
-  _usePointerEvents
-
-  /**
    * @class PointerStore
    * @constructor PointerStore
-   * @param {{DS:DragSelect,usePointerEvents:boolean}} p
+   * @param {{DS:DragSelect}} p
    * @ignore
    */
-  constructor({ DS, usePointerEvents = false }) {
+  constructor({ DS }) {
     this.DS = DS
-    this._usePointerEvents = usePointerEvents
+    this.Settings = DS.stores.SettingsStore.s
     this.DS.subscribe('Interaction:init', this.init)
     this.DS.subscribe('Interaction:start', ({ event }) => this.start(event))
     this.DS.subscribe('Interaction:end', ({ event }) => this.reset(event))
   }
 
   init = () => {
-    if (this._usePointerEvents) {
+    if (this.Settings.usePointerEvents)
       document.addEventListener('pointermove', this.update, {
         // @ts-ignore
         passive: false,
       })
-    } else {
-      document.addEventListener('mousemove', this.update)
-    }
+    else document.addEventListener('mousemove', this.update)
+
     document.addEventListener('touchmove', this.update, {
       // @ts-ignore
       passive: false,
@@ -103,14 +96,14 @@ export default class PointerStore {
   }
 
   stop = () => {
-    if (this._usePointerEvents) {
+    // @TODO: fix pointer events mixing issue see [PR](https://github.com/ThibaultJanBeyer/DragSelect/pull/128#issuecomment-1154885289)
+    if (this.Settings.usePointerEvents)
       document.removeEventListener('pointermove', this.update, {
         // @ts-ignore
         passive: false,
       })
-    } else {
-      document.removeEventListener('mousemove', this.update)
-    }
+    else document.removeEventListener('mousemove', this.update)
+
     document.removeEventListener('touchmove', this.update, {
       // @ts-ignore
       passive: false,
