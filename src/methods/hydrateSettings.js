@@ -71,6 +71,10 @@ const hydrateHelper = (key, value, withFallback, fallback) => {
   if (key === 'dragKeys' && isAvailable) return { [key]: Object.assign(fallback, value) }
   else if(key === 'dragKeys' && !isAvailable) return isFallback ? { [key]: fallback } : {}
 
+  // Special rule for [dropZones]
+  if (key === 'dropZones' && isAvailable && new Set(value.map(v => v.id)).size !== value.length)
+    console.warn(`[DragSelect] UniqueConstraintsIssue: setting "dropZones" contains duplicate ids.`)
+
   return isAvailable ? { [key]: value } : isFallback ? { [key]: fallback } : {}
 }
 
