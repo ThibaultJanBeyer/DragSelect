@@ -46,20 +46,34 @@ export default class PointerStore {
   _lastTouch
 
   /**
+   * @type {boolean}
+   * @private
+   * */
+  _usePointerEvents
+
+  /**
    * @class PointerStore
    * @constructor PointerStore
-   * @param {{DS:DragSelect}} p
+   * @param {{DS:DragSelect,usePointerEvents:boolean}} p
    * @ignore
    */
-  constructor({ DS }) {
+  constructor({ DS, usePointerEvents = false }) {
     this.DS = DS
+    this._usePointerEvents = usePointerEvents
     this.DS.subscribe('Interaction:init', this.init)
     this.DS.subscribe('Interaction:start', ({ event }) => this.start(event))
     this.DS.subscribe('Interaction:end', ({ event }) => this.reset(event))
   }
 
   init = () => {
-    document.addEventListener('mousemove', this.update)
+    if (this._usePointerEvents) {
+      document.addEventListener('pointermove', this.update, {
+        // @ts-ignore
+        passive: false,
+      })
+    } else {
+      document.addEventListener('mousemove', this.update)
+    }
     document.addEventListener('touchmove', this.update, {
       // @ts-ignore
       passive: false,
@@ -89,7 +103,14 @@ export default class PointerStore {
   }
 
   stop = () => {
-    document.removeEventListener('mousemove', this.update)
+    if (this._usePointerEvents) {
+      document.removeEventListener('pointermove', this.update, {
+        // @ts-ignore
+        passive: false,
+      })
+    } else {
+      document.removeEventListener('mousemove', this.update)
+    }
     document.removeEventListener('touchmove', this.update, {
       // @ts-ignore
       passive: false,
@@ -110,7 +131,7 @@ export default class PointerStore {
 
   /**
    * @param {DSEvent} event
-   * @return {MouseEvent|Touch}
+   * @return {MouseEvent|PointerEvent|Touch}
    * @private
    */
   _normalizedEvent(event) {

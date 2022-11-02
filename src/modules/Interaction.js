@@ -15,6 +15,7 @@ export default class Interaction {
    */
   constructor({ DS }) {
     this.DS = DS
+    this.Settings = DS.stores.SettingsStore.s
     // @ts-ignore: @todo: update to typescript
     this.DS.subscribe('Settings:updated:area', this.init)
     this.DS.subscribe('PointerStore:updated', this.update)
@@ -31,7 +32,14 @@ export default class Interaction {
   init = () => this.DS.publish('Interaction:init:pre', {})
   _init = () => {
     this.stop()
-    this.DS.Area.HTMLNode.addEventListener('mousedown', this.start)
+    
+    // @TODO: fix pointer events mixing issue see [PR](https://github.com/ThibaultJanBeyer/DragSelect/pull/128#issuecomment-1154885289)
+    if (this.Settings.usePointerEvents)
+      this.DS.Area.HTMLNode.addEventListener('pointerdown', this.start, {
+        passive: false,
+      })
+    else this.DS.Area.HTMLNode.addEventListener('mousedown', this.start)
+
     this.DS.Area.HTMLNode.addEventListener('touchstart', this.start, {
       passive: false,
     })
@@ -79,7 +87,12 @@ export default class Interaction {
 
     this.DS.publish('Interaction:start', { event, isDragging: this.isDragging })
 
-    document.addEventListener('mouseup', this.reset)
+    // @TODO: fix pointer events mixing issue see [PR](https://github.com/ThibaultJanBeyer/DragSelect/pull/128#issuecomment-1154885289)
+    if (this.Settings.usePointerEvents) {
+      document.addEventListener('pointerup', this.reset)
+      document.addEventListener('pointercancel', this.reset)
+    } else document.addEventListener('mouseup', this.reset)
+
     document.addEventListener('touchend', this.reset)
   }
 
@@ -90,17 +103,17 @@ export default class Interaction {
    */
   isDragEvent = (event) => {
     const clickedElement = /** @type {Element} */ (event.target).closest(
-      `.${this.DS.stores.SettingsStore.s.selectableClass}`
+      `.${this.Settings.selectableClass}`
     )
 
     if (
-      !this.DS.stores.SettingsStore.s.draggability ||
+      !this.Settings.draggability ||
       this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) ||
       !clickedElement
     )
       return false
 
-    if (this.DS.stores.SettingsStore.s.immediateDrag) {
+    if (this.Settings.immediateDrag) {
       if (!this.DS.SelectedSet.size)
         this.DS.SelectedSet.add(/** @type {DSElement} */ (clickedElement))
       else if (!this.DS.SelectedSet.has(clickedElement)) {
@@ -144,12 +157,24 @@ export default class Interaction {
   stop = () => {
     this.isInteracting = false
     this.isDragging = false
-    this.DS.Area.HTMLNode.removeEventListener('mousedown', this.start)
+
+    // @TODO: fix pointer events mixing issue see [PR](https://github.com/ThibaultJanBeyer/DragSelect/pull/128#issuecomment-1154885289)
+    if (this.Settings.usePointerEvents) {
+      this.DS.Area.HTMLNode.removeEventListener('pointerdown', this.start, {
+        // @ts-ignore
+        passive: false,
+      })
+      document.removeEventListener('pointerup', this.reset)
+      document.removeEventListener('pointercancel', this.reset)
+    } else {
+      this.DS.Area.HTMLNode.removeEventListener('mousedown', this.start)
+      document.removeEventListener('mouseup', this.reset)
+    }
+
     this.DS.Area.HTMLNode.removeEventListener('touchstart', this.start, {
       // @ts-ignore
       passive: false,
     })
-    document.removeEventListener('mouseup', this.reset)
     document.removeEventListener('touchend', this.reset)
   }
 
