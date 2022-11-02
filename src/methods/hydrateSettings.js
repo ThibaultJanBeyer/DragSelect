@@ -101,6 +101,7 @@ export default (settings, withFallback) => ({
   ...hydrateHelper('dragKeys', settings.dragKeys, withFallback, { up: ['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'] }),
   ...hydrateHelper('keyboardDragSpeed', settings.keyboardDragSpeed, withFallback, 10),
   ...hydrateHelper('useTransform', settings.useTransform, withFallback, true),
+  ...hydrateHelper('usePointerEvents', settings.usePointerEvents, withFallback, false),
   ...hydrateHelper('hoverClass', settings.hoverClass, withFallback, 'ds-hover'),
   ...hydrateHelper('selectableClass', settings.selectableClass, withFallback, 'ds-selectable'),
   ...hydrateHelper('selectedClass', settings.selectedClass, withFallback, 'ds-selected'),
