@@ -394,7 +394,7 @@ Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 |getPreviousCursorPositionArea |/ |Returns last registered x, y coordinates of the cursor relative to the area (after last callback) 
 |isMultiSelect |`event:KeyboardEvent|MouseEvent|TouchEvent` (optional) |Whether the multi-select key is currently pressed
 |isDragging |/ |Whether the user is currently drag n dropping elements (instead of selection)
-|getZoneByCoordinates |Optional `{x: number, y: number}` |Returns the topmost drop target under the current mouse position, or, if provided at coordinates x/y
+|getZoneByCoordinates |Optional `{x: number, y: number}` |Returns the first drop target under the current mouse position, or, if provided at coordinates x/y
 |getItemsDroppedByZoneId |`zoneId: string` |Returns the items dropped into a specific zone (by zone.id)
 |getItemsInsideByZoneId |`zoneId: string`,`addClasses: boolean` |Returns the items that are visually inside a specific zone (by zone.id)
 
