@@ -16,8 +16,6 @@ easily add a selection algorithm to your application/website.
 
 # TOC
 
-- [DragSelect !GitHub package.json version](#dragselect-)
-- [TOC](#toc)
 - [Project Page: Demo & Info](#project-page-demo--info)
 - [Key-Features](#key-features)
 - [Why?](#why)
