@@ -17,7 +17,7 @@
  * @property {DSDragKeys} [dragKeys={up:['ArrowUp'],down:['ArrowDown'],left:['ArrowLeft'],righ:['ArrowRight']}] The keys available to drag element using the keyboard.
  * @property {number} [keyboardDragSpeed=10] The speed at which elements are dragged using the keyboard. In pixels per keydown.
  * @property {boolean} [useTransform=true] Whether to use hardware accelerated css transforms when dragging or top/left instead
- * @property {boolean} [usePointerEvents=false] Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for software like Google Blockly.
+ * @property {boolean} [usePointerEvents=false] Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly.
  * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items

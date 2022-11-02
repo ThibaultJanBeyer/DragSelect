@@ -16,24 +16,38 @@ easily add a selection algorithm to your application/website.
 
 # TOC
 
+- [DragSelect !GitHub package.json version](#dragselect-)
+- [TOC](#toc)
 - [Project Page: Demo & Info](#project-page-demo--info)
 - [Key-Features](#key-features)
 - [Why?](#why)
 - [Supporters](#supporters)
+  - [Thanks to:](#thanks-to)
 - [Installation](#installation)
+  - [NPM](#npm)
+  - [Yarn](#yarn)
+  - [Global](#global)
+  - [Bower (deprecated)](#bower-deprecated)
+  - [That's it, you're ready to rock!](#thats-it-youre-ready-to-rock)
 - [Usage](#usage)
-- - [Simple](#simple)
-- - [Within a scroll-able Area](#within-a-scroll-able-area)
-- - [Extended](#extended)
-- - [Mobile Touch usage](#mobiletouch-usage)
-- - [Accessibility (a11y)](#accessibility-a11y)
-- - [Use your own Drag And Drop](#use-your-own-drag-and-drop)
-- [Constructor Properties (Settings)](#constructor-properties-settings)
-- - [Post initialization setting updates](#post-initialization-setting-updates)
+  - [Simple](#simple)
+  - [Within a scroll-able Area](#within-a-scroll-able-area)
+  - [Extended](#extended)
+  - [Mobile/Touch usage](#mobiletouch-usage)
+  - [Accessibility (a11y)](#accessibility-a11y)
+  - [Use your own Drag And Drop](#use-your-own-drag-and-drop)
+    - [Using another plugin/tool (3rd party)](#using-another-plugintool-3rd-party)
+      - [Example](#example)
+    - [Writing a fully custom solution](#writing-a-fully-custom-solution)
+      - [Example](#example-1)
+- [Constructor Properties (Settings):](#constructor-properties-settings)
+  - [Post-Initialization Setting-Updates](#post-initialization-setting-updates)
 - [Event Callbacks](#event-callbacks)
-- - [Callback Object Keys](#callback-object-keys)
-- [Methods](#methods)
+  - [Events](#events)
+    - [Callback Object Keys](#callback-object-keys)
+- [Methods:](#methods)
 - [Classes](#classes)
+- [Have Fun!](#have-fun)
 
 # Project Page: Demo & Info
 
@@ -289,7 +303,7 @@ Here is the full list:
 |hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)
 |selectorClass |string |The class name assigned to the square selector helper. |[see classes](#classes)
 |selectableClass |string |The class name assigned to the elements that can be selected. |[see classes](#classes)
-|usePointerEvents |boolean |Whether to use Pointer Events to replace traditional Mouse or Touch Events. |`false`
+|usePointerEvents |boolean |Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly. |`false`
 
 ## Post-Initialization Setting-Updates
 
