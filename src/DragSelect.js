@@ -252,12 +252,15 @@ class DragSelect {
    * Add elements that can be selected. No node is added twice
    * @param {DSInputElements} elements dom element(s)
    * @param {boolean} [addToSelection] if elements should also be added to current selection
+   * @param {boolean} [triggerCallback] - if callback should be called
    * @return {DSInputElements} the added element(s)
    */
-  addSelectables(elements, addToSelection = false) {
+  addSelectables(elements, addToSelection, triggerCallback) {
     const els = toArray(elements)
     this.SelectableSet.addAll(els)
     if (addToSelection) this.SelectedSet.addAll(els)
+    if (triggerCallback)
+      this.PubSub.publish('callback', { items: this.getSelection() })
     return elements
   }
   /**
@@ -287,11 +290,14 @@ class DragSelect {
    * Remove elements from the elements that can be selected.
    * @param {DSInputElements} elements – dom element(s)
    * @param {boolean} [removeFromSelection] if elements should also be removed from current selection
+   * @param {boolean} [triggerCallback] - if callback should be called
    * @return {DSInputElements} the removed element(s)
    */
-  removeSelectables(elements, removeFromSelection = false) {
+  removeSelectables(elements, removeFromSelection, triggerCallback) {
     this.SelectableSet.deleteAll(toArray(elements))
     if (removeFromSelection) this.removeSelection(elements)
+    if (triggerCallback)
+      this.PubSub.publish('callback', { items: this.getSelection() })
     return elements
   }
   /** The starting/initial position of the cursor/selector @return {Vect2} */

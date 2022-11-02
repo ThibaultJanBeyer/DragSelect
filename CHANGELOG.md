@@ -4,6 +4,10 @@
 - Add a `selectionThreshold` settings, solves #130
 - Add a `refreshMemoryRate` settings, to increase/decrease performance as necessary
 
+# 2.4.3
+
+- add `triggerCallback` option to `removeSelectables` and `addSelectables`
+
 # 2.4.2
 
 - Add Selecrables events/topics for add/delete: `Selectable:added` & `Selectable:added:pre` & `Selectable:removed` & `Selectable:removed:pre`
