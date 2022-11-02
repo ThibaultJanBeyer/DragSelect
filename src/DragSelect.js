@@ -323,7 +323,7 @@ class DragSelect {
    * @param {Vect2} [coordinates]
    * @returns {DSDropZone | undefined}
    */
-  getDropTarget = (coordinates) => this.DropZones.getTarget(coordinates)?.toObject()
+  getZoneByCoordinates = (coordinates) => this.DropZones.getTarget(coordinates)?.toObject()
   /**
    * Returns itemsDropped into zone by zone id
    * @param {string} zoneId
