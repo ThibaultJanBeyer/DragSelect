@@ -1,0 +1,27 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 19
+
+      - run: npm ci
+      - run: npm run ci:test
+      - run: npm run ci:build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/master' }} # only on master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # Set in the settings page of your repository, as a secure variable
+          publish_dir: ./docs
+          cname: DragSelect.com

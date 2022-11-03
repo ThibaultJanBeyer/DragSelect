@@ -23,12 +23,12 @@
     "media": "cp -R .media docs/media",
     "prerollup": "npm run types",
     "rollup": "rollup -c",
-    "rollup:travis": "npm run rollup -- --travis",
+    "rollup:ci": "npm run rollup -- --ci",
     "rollup:watch": "npm run rollup -- -w",
     "types": "tsc src/DragSelect.js --lib es2019,dom -t es5 --declaration --allowJs --emitDeclarationOnly --outDir dist",
     "\n## PROD:": "",
-    "travis:build": "npm run rollup:travis && npm run media && npm run docs",
-    "travis:test": "npm run rollup && npm run test"
+    "ci:build": "npm run rollup:ci && npm run media && npm run docs",
+    "ci:test": "npm run rollup && npm run test"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",
