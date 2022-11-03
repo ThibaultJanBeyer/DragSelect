@@ -14,7 +14,7 @@ if you are a regular contributor, see [contibuting](CONTRIBUTING.md) and make a 
 Typically you don’t have to do this, since you most likely are not the project owner.  
 But if you are the project owner:
 
-- Travis will take care of deployment to gh-pages when you push/merge to github (gh-pages will be build by Travis)
+- Github Actions will take care of deployment to gh-pages when you push/merge to github main branch (gh-pages will be build by Github Actions)
 
 If this was successful, the next step is to publish the new version on `npm`:
 

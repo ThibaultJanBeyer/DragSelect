@@ -74,7 +74,7 @@ export default {
     {
       name: 'copy',
       writeBundle(options) {
-        if (!process.argv.includes('--travis')) return
+        if (!process.argv.includes('--ci')) return
         if (!fs.existsSync('docs/')) fs.mkdirSync('docs')
         fs.copyFileSync(
           `.v1/${path.basename(options.file)}`,
