@@ -56,7 +56,7 @@
                  /____/                              
 </code></pre>
 <p><a href="https://github.com/ThibaultJanBeyer/DragSelect/">GitHub</a> | <a href="https://www.npmjs.com/package/dragselect">NPM</a> | <a href="https://dragselect.com/">Project-Page</a></p>
-<p><a href="https://travis-ci.com/ThibaultJanBeyer/DragSelect"><img src="https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master" alt="Build Status"></a> <img src="https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip" alt="gzip size"> <img src="https://img.shields.io/npm/dt/dragselect.svg" alt="npm downloads count"> <a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/package.json"><img src="https://img.shields.io/badge/dependencies-none-informational" alt="No Dependency"></a> <a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md"><img src="https://img.shields.io/badge/contributors-welcome-blueviolet" alt="Contributors Welcome"></a> <a href="https://github.com/sponsors/ThibaultJanBeyer"><img src="https://img.shields.io/badge/sponsors-welcome-blueviolet" alt="Sponsors Welcome"></a></p>
+<p><a href="https://github.com/ThibaultJanBeyer/DragSelect/actions"><img src="https://github.com/ThibaultJanBeyer/DragSelect/actions/workflows/github-actions-build.yml/badge.svg" alt="Build Status"></a> <img src="https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip" alt="gzip size"> <img src="https://img.shields.io/npm/dt/dragselect.svg" alt="npm downloads count"> <a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/package.json"><img src="https://img.shields.io/badge/dependencies-none-informational" alt="No Dependency"></a> <a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md"><img src="https://img.shields.io/badge/contributors-welcome-blueviolet" alt="Contributors Welcome"></a> <a href="https://github.com/sponsors/ThibaultJanBeyer"><img src="https://img.shields.io/badge/sponsors-welcome-blueviolet" alt="Sponsors Welcome"></a></p>
 <h1>DragSelect <img src="https://img.shields.io/github/package-json/v/ThibaultJanBeyer/DragSelect.svg" alt="GitHub package.json version"></h1>
 <p>easily add a selection algorithm to your application/website.</p>
 <h1>TOC</h1>
@@ -64,53 +64,60 @@
 <li><a href="#project-page-demo--info">Project Page: Demo &amp; Info</a></li>
 <li><a href="#key-features">Key-Features</a></li>
 <li><a href="#why">Why?</a></li>
-<li><a href="#supporters">Supporters</a></li>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#usage">Usage</a></li>
-<li>
+<li><a href="#supporters">Supporters</a>
+<ul>
+<li><a href="#thanks-to">Thanks to:</a></li>
+</ul>
+</li>
+<li><a href="#installation">Installation</a>
+<ul>
+<li><a href="#npm">NPM</a></li>
+<li><a href="#yarn">Yarn</a></li>
+<li><a href="#global">Global</a></li>
+<li><a href="#bower-deprecated">Bower (deprecated)</a></li>
+<li><a href="#thats-it-youre-ready-to-rock">That's it, you're ready to rock!</a></li>
+</ul>
+</li>
+<li><a href="#usage">Usage</a>
 <ul>
 <li><a href="#simple">Simple</a></li>
-</ul>
-</li>
-<li>
-<ul>
 <li><a href="#within-a-scroll-able-area">Within a scroll-able Area</a></li>
-</ul>
-</li>
-<li>
-<ul>
 <li><a href="#extended">Extended</a></li>
-</ul>
-</li>
-<li>
-<ul>
-<li><a href="#mobiletouch-usage">Mobile Touch usage</a></li>
-</ul>
-</li>
-<li>
-<ul>
+<li><a href="#mobiletouch-usage">Mobile/Touch usage</a></li>
 <li><a href="#accessibility-a11y">Accessibility (a11y)</a></li>
-</ul>
-</li>
-<li>
+<li><a href="#use-your-own-drag-and-drop">Use your own Drag And Drop</a>
 <ul>
-<li><a href="#use-your-own-drag-and-drop">Use your own Drag And Drop</a></li>
-</ul>
-</li>
-<li><a href="#constructor-properties-settings">Constructor Properties (Settings)</a></li>
-<li>
+<li><a href="#using-another-plugintool-3rd-party">Using another plugin/tool (3rd party)</a>
 <ul>
-<li><a href="#post-initialization-setting-updates">Post initialization setting updates</a></li>
+<li><a href="#example">Example</a></li>
 </ul>
 </li>
-<li><a href="#event-callbacks">Event Callbacks</a></li>
-<li>
+<li><a href="#writing-a-fully-custom-solution">Writing a fully custom solution</a>
+<ul>
+<li><a href="#example-1">Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#constructor-properties-settings">Constructor Properties (Settings):</a>
+<ul>
+<li><a href="#post-initialization-setting-updates">Post-Initialization Setting-Updates</a></li>
+</ul>
+</li>
+<li><a href="#event-callbacks">Event Callbacks</a>
+<ul>
+<li><a href="#events">Events</a>
 <ul>
 <li><a href="#callback-object-keys">Callback Object Keys</a></li>
 </ul>
 </li>
-<li><a href="#methods">Methods</a></li>
+</ul>
+</li>
+<li><a href="#methods">Methods:</a></li>
 <li><a href="#classes">Classes</a></li>
+<li><a href="#have-fun">Have Fun!</a></li>
 </ul>
 <h1>Project Page: Demo &amp; Info</h1>
 <p><a href="https://dragselect.com/">https://dragselect.com/</a></p>
@@ -727,7 +734,7 @@ Star this repo, tell all your friends and start contributing and/or <a href="htt
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a> on Sun Oct 09 2022 18:41:04 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a> on Thu Nov 03 2022 18:49:27 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

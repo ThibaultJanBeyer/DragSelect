@@ -1,6 +1,6 @@
 /***
 
- ~~~ Version 2.4.1 ~~~
+ ~~~ Version 2.4.3 ~~~
 
  ******************************************
 
@@ -409,9 +409,9 @@
 
   /** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */
 
-  /** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'|'Selectable:pointer'|'KeyStore:down'|'KeyStore:up'} DSInternalEventNames */
+  /** @typedef {'Interaction:init'|'Interaction:start'|'Interaction:end'|'Interaction:update'|'Area:modified'|'Area:scroll'|'PointerStore:updated'|'Selected:added'|'Selected:removed'|'Selectable:click'|'Selectable:added'|'Selectable:removed'|'Selectable:pointer'|'KeyStore:down'|'KeyStore:up'} DSInternalEventNames */
 
-  /** @typedef {'Interaction:init:pre'|'Interaction:start:pre'|'Interaction:end:pre'|'Interaction:update:pre'|'Area:modified:pre'|'Area:scroll:pre'|'PointerStore:updated:pre'|'Selected:added:pre'|'Selected:removed:pre'|'Selectable:click:pre'|'Selectable:pointer:pre'|'KeyStore:down:pre'|'KeyStore:up:pre'} DSInternalEventNamesPre */
+  /** @typedef {'Interaction:init:pre'|'Interaction:start:pre'|'Interaction:end:pre'|'Interaction:update:pre'|'Area:modified:pre'|'Area:scroll:pre'|'PointerStore:updated:pre'|'Selected:added:pre'|'Selected:removed:pre'|'Selectable:click:pre'|'Selectable:added:pre'|'Selectable:removed:pre'|'Selectable:pointer:pre'|'KeyStore:down:pre'|'KeyStore:up:pre'} DSInternalEventNamesPre */
   // @todo: update to typescript for complex defs like `Settings:updated:${string}` | `Settings:updated:${string}:pre`
 
   /** @typedef {'Settings:updated'|'Settings:updated:pre'|'Settings:updated:*'|'Settings:updated:*:pre'} DSInternalSettingEvents */
@@ -2199,6 +2199,12 @@
 
       /** @param {DSElement} element */
       value: function add(element) {
+        if (_get(_getPrototypeOf(SelectableSet.prototype), "has", this).call(this, element)) return;
+        var publishData = {
+          items: this.elements,
+          item: element
+        };
+        this.DS.publish('Selectable:added:pre', publishData);
         element.classList.add(this.DS.stores.SettingsStore.s.selectableClass);
         element.addEventListener('click', this._onClick);
         element.addEventListener('mousedown', this._onPointer);
@@ -2210,6 +2216,7 @@
           computedStyle: window.getComputedStyle(element),
           node: element
         });
+        this.DS.publish('Selectable:added', publishData);
         return _get(_getPrototypeOf(SelectableSet.prototype), "add", this).call(this, element);
       }
       /** @param {DSElement} element */
@@ -2217,6 +2224,12 @@
     }, {
       key: "delete",
       value: function _delete(element) {
+        if (!_get(_getPrototypeOf(SelectableSet.prototype), "has", this).call(this, element)) return;
+        var publishData = {
+          items: this.elements,
+          item: element
+        };
+        this.DS.publish('Selectable:removed:pre', publishData);
         element.classList.remove(this.DS.stores.SettingsStore.s.selectableClass);
         element.classList.remove(this.DS.stores.SettingsStore.s.hoverClass);
         element.removeEventListener('click', this._onClick);
@@ -2225,6 +2238,7 @@
           // @ts-ignore
           passive: false
         });
+        this.DS.publish('Selectable:removed', publishData);
         return _get(_getPrototypeOf(SelectableSet.prototype), "delete", this).call(this, element);
       }
     }, {
@@ -3532,16 +3546,19 @@
        * Add elements that can be selected. No node is added twice
        * @param {DSInputElements} elements dom element(s)
        * @param {boolean} [addToSelection] if elements should also be added to current selection
+       * @param {boolean} [triggerCallback] - if callback should be called
        * @return {DSInputElements} the added element(s)
        */
 
     }, {
       key: "addSelectables",
-      value: function addSelectables(elements) {
-        var addToSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      value: function addSelectables(elements, addToSelection, triggerCallback) {
         var els = toArray(elements);
         this.SelectableSet.addAll(els);
         if (addToSelection) this.SelectedSet.addAll(els);
+        if (triggerCallback) this.PubSub.publish('callback', {
+          items: this.getSelection()
+        });
         return elements;
       }
       /**
@@ -3572,15 +3589,18 @@
        * Remove elements from the elements that can be selected.
        * @param {DSInputElements} elements – dom element(s)
        * @param {boolean} [removeFromSelection] if elements should also be removed from current selection
+       * @param {boolean} [triggerCallback] - if callback should be called
        * @return {DSInputElements} the removed element(s)
        */
 
     }, {
       key: "removeSelectables",
-      value: function removeSelectables(elements) {
-        var removeFromSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      value: function removeSelectables(elements, removeFromSelection, triggerCallback) {
         this.SelectableSet.deleteAll(toArray(elements));
         if (removeFromSelection) this.removeSelection(elements);
+        if (triggerCallback) this.PubSub.publish('callback', {
+          items: this.getSelection()
+        });
         return elements;
       }
       /** The starting/initial position of the cursor/selector @return {Vect2} */
