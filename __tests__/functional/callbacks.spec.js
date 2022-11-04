@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, getStepFactorByBrowser } from './shared';
 
 test.describe('Callbacks', () => {
-  test('should trigger callbacks with the correct elements when elements are selected', async ({ page }) => {
+  test('should trigger callbacks with the correct elements when elements are selected', async ({ page }, testInfo) => {
     await page.goto(`${baseUrl}/callbacks.html`)
 
     const mouse = page.mouse
     // move to the beginning of the page
-    await mouse.move(1, 1, { steps: 10 })
+    await mouse.move(1, 1)
     await mouse.down()
     // move 200px down and to the end of the page
     // steps are how often the mouse moves
-    await mouse.move(200, 200, { steps: 100 })
+    await mouse.move(200, 200, { steps: 100 * getStepFactorByBrowser(testInfo.project.name) })
     await mouse.up()
 
     const executesFn = await page.evaluate(() => {
@@ -36,7 +36,7 @@ test.describe('Callbacks', () => {
     ).not.toBeDefined()
 
     expect(executesFn.onDragStartCallsPS.length).toBe(1)
-    expect(executesFn.onDragMoveCallsPS.length).toBe(100)
+    expect(executesFn.onDragMoveCallsPS.length).toBeGreaterThanOrEqual(100 * getStepFactorByBrowser(testInfo.project.name))
     expect(executesFn.onElementSelectCallsPS.length).toBe(2)
     expect(executesFn.onElementUnselectCallsPS.length).toBe(0)
     expect(executesFn.callbackCallsPS.length).toBe(1)

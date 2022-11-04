@@ -14,11 +14,10 @@ jobs:
         with:
           node-version: 19
 
+      - uses: microsoft/playwright-github-action@v1
+
       - name: Install dependencies
         run: npm ci
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
 
       - name: Test
         run: npm run ci:test

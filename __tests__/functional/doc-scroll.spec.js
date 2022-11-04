@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, getStepFactorByBrowser } from './shared';
 
 test.describe('Document Scroll', () => {
-  test('the document should be auto scroll-able', async ({ page }) => {
+  test('the document should be auto scroll-able', async ({ page }, testInfo) => {
     await page.goto(`${baseUrl}/doc-scroll.html`)
     const { docHeight } = await page.evaluate(() => ({
       docHeight: window.innerHeight,
@@ -11,7 +11,7 @@ test.describe('Document Scroll', () => {
     const mouse = page.mouse
     await mouse.move(50, docHeight - 100)
     await mouse.down()
-    await mouse.move(50, docHeight + 150, { steps: 500 })
+    await mouse.move(50, docHeight + 150, { steps: 100 * getStepFactorByBrowser(testInfo.project.name) })
     await mouse.up()
 
     const { selected } = await page.evaluate(() => ({

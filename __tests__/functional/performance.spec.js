@@ -32,7 +32,7 @@ test.describe('Scroll', () => {
     expect(selected[8]).toBe('item-104')
 
     const duration = performance.now() - start
-    console.info(`Duration: ${duration}ms`)
-    expect(duration).toBeLessThan(getStepFactorByBrowser(testInfo.project.name))
+    console.info(`[${testInfo.project.name}] Duration: ${duration}ms (${process.env.CI})`)
+    expect(duration).toBeLessThan(2222 * getStepFactorByBrowser(testInfo.project.name))
   })
 })
