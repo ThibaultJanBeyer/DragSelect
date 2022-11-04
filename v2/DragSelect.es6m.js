@@ -355,6 +355,7 @@ function _nonIterableRest() {
  * @property {DSDragKeys} [dragKeys={up:['ArrowUp'],down:['ArrowDown'],left:['ArrowLeft'],righ:['ArrowRight']}] The keys available to drag element using the keyboard.
  * @property {number} [keyboardDragSpeed=10] The speed at which elements are dragged using the keyboard. In pixels per keydown.
  * @property {boolean} [useTransform=true] Whether to use hardware accelerated css transforms when dragging or top/left instead
+ * @property {boolean} [usePointerEvents=false] Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly.
  * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
@@ -366,7 +367,7 @@ function _nonIterableRest() {
  * The Object that is passed back to any callback method
  * @typedef {Object} CallbackObject
  * @property {Array<HTMLElement|SVGElement|any>} [items] The items currently selected
- * @property {MouseEvent|TouchEvent|KeyboardEvent|Event} [event] The respective event object
+ * @property {MouseEvent|TouchEvent|PointerEvent|KeyboardEvent|Event} [event] The respective event object
  * @property {HTMLElement|SVGElement|any} [item] The single item currently interacted with
  * @property {boolean} [isDragging] Whether the interaction is a drag or a select
  * @property {boolean} [isDraggingKeyboard] Whether or not the drag interaction is via keyboard
@@ -397,7 +398,7 @@ function _nonIterableRest() {
 
 /** @typedef {HTMLElement|SVGElement} DSElement a single element that can be selected */
 
-/** @typedef {MouseEvent|TouchEvent} DSEvent en event from a touch or mouse interaction */
+/** @typedef {MouseEvent|TouchEvent|PointerEvent} DSEvent en event from a touch or mouse interaction */
 
 /** @typedef {Array.<'Shift'|'Control'|'Meta'|string>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
 
@@ -693,7 +694,7 @@ var getOverflowEdges = (function (_ref) {
 /**
  * Returns cursor x, y position based on event object
  * @param {Object} p
- * @param {MouseEvent|Touch} p.event
+ * @param {MouseEvent|Touch|PointerEvent} p.event
  * @return {Vect2} cursor X/Y position
  */
 
@@ -1159,7 +1160,7 @@ var hydrateHelper = function hydrateHelper(key, value, withFallback, fallback) {
 
 
 var hydrateSettings = (function (settings, withFallback) {
-  return _objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2({}, hydrateHelper('area', settings.area, withFallback, document)), hydrateHelper('selectables', settings.selectables, withFallback, null)), hydrateHelper('autoScrollSpeed', settings.autoScrollSpeed, withFallback, 5)), hydrateHelper('overflowTolerance', settings.overflowTolerance, withFallback, {
+  return _objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2({}, hydrateHelper('area', settings.area, withFallback, document)), hydrateHelper('selectables', settings.selectables, withFallback, null)), hydrateHelper('autoScrollSpeed', settings.autoScrollSpeed, withFallback, 5)), hydrateHelper('overflowTolerance', settings.overflowTolerance, withFallback, {
     x: 25,
     y: 25
   })), hydrateHelper('zoom', settings.zoom, withFallback, 1)), hydrateHelper('customStyles', settings.customStyles, withFallback, false)), hydrateHelper('multiSelectMode', settings.multiSelectMode, withFallback, false)), hydrateHelper('multiSelectToggling', settings.multiSelectToggling, withFallback, true)), hydrateHelper('multiSelectKeys', settings.multiSelectKeys, withFallback, ['Control', 'Shift', 'Meta'])), hydrateHelper('selector', settings.selector, withFallback, null)), hydrateHelper('draggability', settings.draggability, withFallback, true)), hydrateHelper('immediateDrag', settings.immediateDrag, withFallback, true)), hydrateHelper('keyboardDrag', settings.keyboardDrag, withFallback, true)), hydrateHelper('dragKeys', settings.dragKeys, withFallback, {
@@ -1167,7 +1168,7 @@ var hydrateSettings = (function (settings, withFallback) {
     down: ['ArrowDown'],
     left: ['ArrowLeft'],
     right: ['ArrowRight']
-  })), hydrateHelper('keyboardDragSpeed', settings.keyboardDragSpeed, withFallback, 10)), hydrateHelper('useTransform', settings.useTransform, withFallback, true)), hydrateHelper('hoverClass', settings.hoverClass, withFallback, 'ds-hover')), hydrateHelper('selectableClass', settings.selectableClass, withFallback, 'ds-selectable')), hydrateHelper('selectedClass', settings.selectedClass, withFallback, 'ds-selected')), hydrateHelper('selectorClass', settings.selectorClass, withFallback, 'ds-selector')), hydrateHelper('selectorAreaClass', settings.selectorAreaClass, withFallback, 'ds-selector-area'));
+  })), hydrateHelper('keyboardDragSpeed', settings.keyboardDragSpeed, withFallback, 10)), hydrateHelper('useTransform', settings.useTransform, withFallback, true)), hydrateHelper('usePointerEvents', settings.usePointerEvents, withFallback, false)), hydrateHelper('hoverClass', settings.hoverClass, withFallback, 'ds-hover')), hydrateHelper('selectableClass', settings.selectableClass, withFallback, 'ds-selectable')), hydrateHelper('selectedClass', settings.selectedClass, withFallback, 'ds-selected')), hydrateHelper('selectorClass', settings.selectorClass, withFallback, 'ds-selector')), hydrateHelper('selectorAreaClass', settings.selectorAreaClass, withFallback, 'ds-selector-area'));
 });
 
 // @ts-check
@@ -1865,9 +1866,12 @@ var Interaction = /*#__PURE__*/function () {
     });
 
     _defineProperty(this, "_init", function () {
-      _this.stop();
+      _this.stop(); // @TODO: fix pointer events mixing issue see [PR](https://github.com/ThibaultJanBeyer/DragSelect/pull/128#issuecomment-1154885289)
 
-      _this.DS.Area.HTMLNode.addEventListener('mousedown', _this.start);
+
+      if (_this.Settings.usePointerEvents) _this.DS.Area.HTMLNode.addEventListener('pointerdown', _this.start, {
+        passive: false
+      });else _this.DS.Area.HTMLNode.addEventListener('mousedown', _this.start);
 
       _this.DS.Area.HTMLNode.addEventListener('touchstart', _this.start, {
         passive: false
@@ -1893,19 +1897,24 @@ var Interaction = /*#__PURE__*/function () {
       _this.DS.publish('Interaction:start', {
         event: event,
         isDragging: _this.isDragging
-      });
+      }); // @TODO: fix pointer events mixing issue see [PR](https://github.com/ThibaultJanBeyer/DragSelect/pull/128#issuecomment-1154885289)
 
-      document.addEventListener('mouseup', _this.reset);
+
+      if (_this.Settings.usePointerEvents) {
+        document.addEventListener('pointerup', _this.reset);
+        document.addEventListener('pointercancel', _this.reset);
+      } else document.addEventListener('mouseup', _this.reset);
+
       document.addEventListener('touchend', _this.reset);
     });
 
     _defineProperty(this, "isDragEvent", function (event) {
       var clickedElement =
       /** @type {Element} */
-      event.target.closest(".".concat(_this.DS.stores.SettingsStore.s.selectableClass));
-      if (!_this.DS.stores.SettingsStore.s.draggability || _this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) || !clickedElement) return false;
+      event.target.closest(".".concat(_this.Settings.selectableClass));
+      if (!_this.Settings.draggability || _this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) || !clickedElement) return false;
 
-      if (_this.DS.stores.SettingsStore.s.immediateDrag) {
+      if (_this.Settings.immediateDrag) {
         if (!_this.DS.SelectedSet.size) _this.DS.SelectedSet.add(
         /** @type {DSElement} */
         clickedElement);else if (!_this.DS.SelectedSet.has(clickedElement)) {
@@ -1946,16 +1955,27 @@ var Interaction = /*#__PURE__*/function () {
 
     _defineProperty(this, "stop", function () {
       _this.isInteracting = false;
-      _this.isDragging = false;
+      _this.isDragging = false; // @TODO: fix pointer events mixing issue see [PR](https://github.com/ThibaultJanBeyer/DragSelect/pull/128#issuecomment-1154885289)
 
-      _this.DS.Area.HTMLNode.removeEventListener('mousedown', _this.start);
+      if (_this.Settings.usePointerEvents) {
+        _this.DS.Area.HTMLNode.removeEventListener('pointerdown', _this.start, {
+          // @ts-ignore
+          passive: false
+        });
+
+        document.removeEventListener('pointerup', _this.reset);
+        document.removeEventListener('pointercancel', _this.reset);
+      } else {
+        _this.DS.Area.HTMLNode.removeEventListener('mousedown', _this.start);
+
+        document.removeEventListener('mouseup', _this.reset);
+      }
 
       _this.DS.Area.HTMLNode.removeEventListener('touchstart', _this.start, {
         // @ts-ignore
         passive: false
       });
 
-      document.removeEventListener('mouseup', _this.reset);
       document.removeEventListener('touchend', _this.reset);
     });
 
@@ -1991,7 +2011,8 @@ var Interaction = /*#__PURE__*/function () {
       });
     });
 
-    this.DS = DS; // @ts-ignore: @todo: update to typescript
+    this.DS = DS;
+    this.Settings = DS.stores.SettingsStore.s; // @ts-ignore: @todo: update to typescript
 
     this.DS.subscribe('Settings:updated:area', this.init);
     this.DS.subscribe('PointerStore:updated', this.update);
@@ -2129,7 +2150,7 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
     _this = _super.call(this);
 
     _defineProperty(_assertThisInitialized(_this), "init", function () {
-      return toArray(_this.DS.stores.SettingsStore.s.selectables).forEach(function (el) {
+      return toArray(_this.Settings.selectables).forEach(function (el) {
         return _this.add(el);
       });
     });
@@ -2165,6 +2186,7 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
     });
 
     _this.DS = DS;
+    _this.Settings = DS.stores.SettingsStore.s;
 
     _this.DS.subscribe('Interaction:init', _this.init); // @ts-ignore: @todo: update to typescript
 
@@ -2199,14 +2221,17 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
         item: element
       };
       this.DS.publish('Selectable:added:pre', publishData);
-      element.classList.add(this.DS.stores.SettingsStore.s.selectableClass);
+      element.classList.add(this.Settings.selectableClass);
       element.addEventListener('click', this._onClick);
-      element.addEventListener('mousedown', this._onPointer);
+      if (this.Settings.usePointerEvents) element.addEventListener('pointerdown', this._onPointer, {
+        // @ts-ignore
+        passive: false
+      });else element.addEventListener('mousedown', this._onPointer);
       element.addEventListener('touchstart', this._onPointer, {
         // @ts-ignore
         passive: false
       });
-      if (this.DS.stores.SettingsStore.s.draggability && !this.DS.stores.SettingsStore.s.useTransform) handleElementPositionAttribute({
+      if (this.Settings.draggability && !this.Settings.useTransform) handleElementPositionAttribute({
         computedStyle: window.getComputedStyle(element),
         node: element
       });
@@ -2224,10 +2249,13 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
         item: element
       };
       this.DS.publish('Selectable:removed:pre', publishData);
-      element.classList.remove(this.DS.stores.SettingsStore.s.selectableClass);
-      element.classList.remove(this.DS.stores.SettingsStore.s.hoverClass);
+      element.classList.remove(this.Settings.selectableClass);
+      element.classList.remove(this.Settings.hoverClass);
       element.removeEventListener('click', this._onClick);
-      element.removeEventListener('mousedown', this._onPointer);
+      if (this.Settings.usePointerEvents) element.removeEventListener('pointerdown', this._onPointer, {
+        // @ts-ignore
+        passive: false
+      });else element.removeEventListener('mousedown', this._onPointer);
       element.removeEventListener('touchstart', this._onPointer, {
         // @ts-ignore
         passive: false
@@ -2786,7 +2814,7 @@ var KeyStore = /*#__PURE__*/function () {
   _createClass(KeyStore, [{
     key: "isMultiSelectKeyPressed",
 
-    /** @param {KeyboardEvent|MouseEvent|TouchEvent} [event] */
+    /** @param {KeyboardEvent|MouseEvent|PointerEvent|TouchEvent} [event] */
     value: function isMultiSelectKeyPressed(event) {
       var _this2 = this;
 
@@ -2882,7 +2910,10 @@ var PointerStore = /*#__PURE__*/function () {
     _defineProperty(this, "_lastTouch", void 0);
 
     _defineProperty(this, "init", function () {
-      document.addEventListener('mousemove', _this.update);
+      if (_this.Settings.usePointerEvents) document.addEventListener('pointermove', _this.update, {
+        // @ts-ignore
+        passive: false
+      });else document.addEventListener('mousemove', _this.update);
       document.addEventListener('touchmove', _this.update, {
         // @ts-ignore
         passive: false
@@ -2911,7 +2942,11 @@ var PointerStore = /*#__PURE__*/function () {
     });
 
     _defineProperty(this, "stop", function () {
-      document.removeEventListener('mousemove', _this.update);
+      // @TODO: fix pointer events mixing issue see [PR](https://github.com/ThibaultJanBeyer/DragSelect/pull/128#issuecomment-1154885289)
+      if (_this.Settings.usePointerEvents) document.removeEventListener('pointermove', _this.update, {
+        // @ts-ignore
+        passive: false
+      });else document.removeEventListener('mousemove', _this.update);
       document.removeEventListener('touchmove', _this.update, {
         // @ts-ignore
         passive: false
@@ -2932,6 +2967,7 @@ var PointerStore = /*#__PURE__*/function () {
     });
 
     this.DS = DS;
+    this.Settings = DS.stores.SettingsStore.s;
     this.DS.subscribe('Interaction:init', this.init);
     this.DS.subscribe('Interaction:start', function (_ref2) {
       var event = _ref2.event;
@@ -2959,7 +2995,7 @@ var PointerStore = /*#__PURE__*/function () {
 
     /**
      * @param {DSEvent} event
-     * @return {MouseEvent|Touch}
+     * @return {MouseEvent|PointerEvent|Touch}
      * @private
      */
     value: function _normalizedEvent(event) {
