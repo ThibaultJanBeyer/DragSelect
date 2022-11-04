@@ -1,3 +1,7 @@
+# next
+
+- Add support for `pointerEvents` (from @HollowMan6) [#143](https://github.com/ThibaultJanBeyer/DragSelect/pull/143) & [#128](https://github.com/ThibaultJanBeyer/DragSelect/pull/128)
+
 # 2.4.3
 
 - add `triggerCallback` option to `removeSelectables` and `addSelectables`
