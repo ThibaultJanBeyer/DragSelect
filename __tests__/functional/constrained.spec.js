@@ -3,7 +3,7 @@ import { baseUrl, wait } from './shared';
 
 test.describe('Constrained', () => {
   test('selection should be constrained to the area with only contains one element', async ({ page }) => {
-    await page.goto(`${baseUrl}/constrained.html`)
+    await goToOptimized(page, `${baseUrl}/constrained.html`)
 
     const mouse = page.mouse
     // move to the middle of the page

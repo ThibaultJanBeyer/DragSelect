@@ -3,7 +3,7 @@ import { baseUrl, wait, getStepFactorByBrowser } from './shared';
 
 test.describe('Drag N Drop - Area', () => {
   test('The items should be constrained', async ({ page }, testInfo) => {
-    await page.goto(`${baseUrl}/drag-n-drop-area.html`)
+    await goToOptimized(page, `${baseUrl}/drag-n-drop-area.html`)
     const { v1, v2, v3, v4 } = await page.evaluate(() => ({
       v1: window.getItemVect(1),
       v2: window.getItemVect(2),

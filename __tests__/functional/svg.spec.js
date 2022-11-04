@@ -3,7 +3,7 @@ import { baseUrl, wait } from './shared';
 
 test.describe('SVG', () => {
   test('The items should be selectable and draggable', async ({ page }) => {
-    await page.goto(`${baseUrl}/svg.html`)
+    await goToOptimized(page, `${baseUrl}/svg.html`)
 
     const mouse = page.mouse
     await mouse.move(50, 50, { steps: 10 })

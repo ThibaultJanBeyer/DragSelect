@@ -37,7 +37,7 @@ const moveItemKey = async (mouse, keyboard, x, y, key) => {
 
 test.describe('Settings', () => {
   test('area swapping should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/settings.html`)
+    await goToOptimized(page, `${baseUrl}/settings.html`)
     let cb
 
     // can select elements in the container 1
@@ -66,7 +66,7 @@ test.describe('Settings', () => {
   })
 
   test('classes swapping should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/settings.html`)
+    await goToOptimized(page, `${baseUrl}/settings.html`)
 
     await page.evaluate(() => ds.setSettings({
       hoverClass: 'class-a',
@@ -89,20 +89,20 @@ test.describe('Settings', () => {
   })
 
   test('zoom swapping should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/settings.html`)
+    await goToOptimized(page, `${baseUrl}/settings.html`)
     await page.evaluate(() => ds.setSettings({ zoom: 5 }))
     expect(await page.evaluate(() => ds.stores.SettingsStore.s.zoom)).toEqual(5)
   })
 
   test('custom styles swapping should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/settings.html`)
+    await goToOptimized(page, `${baseUrl}/settings.html`)
     expect(await page.evaluate(() => document.querySelector('.selectorrr').style.background)).toEqual('rgba(0, 0, 255, 0.1)')
     await page.evaluate(() => ds.setSettings({ customStyles: true, selector: null }))
     expect(await page.evaluate(() => document.querySelector('.selectorrr').style.background)).toEqual('')
   })
 
   test('draggability swapping should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/settings.html`)
+    await goToOptimized(page, `${baseUrl}/settings.html`)
     let cb
     cb = await selectItems(page, 180, 120)
     expect(cb?.sort()).toMatchObject(["one", "two"])
@@ -119,7 +119,7 @@ test.describe('Settings', () => {
   })
 
   test('immediatedrag swapping should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/settings.html`)
+    await goToOptimized(page, `${baseUrl}/settings.html`)
     let cb
     await page.evaluate(() => ds.setSettings({ draggability: true }))
     await moveItem(page.mouse, 140, 85)
@@ -135,7 +135,7 @@ test.describe('Settings', () => {
   })
 
   test('scroll swapping should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/settings.html`)
+    await goToOptimized(page, `${baseUrl}/settings.html`)
     await page.evaluate(() =>
       ds.setSettings({
         draggability: true,
@@ -149,7 +149,7 @@ test.describe('Settings', () => {
   })
 
   test('keyboard swapping should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/settings.html`)
+    await goToOptimized(page, `${baseUrl}/settings.html`)
     await page.evaluate(() =>
       ds.setSettings({
         draggability: true,
@@ -175,7 +175,7 @@ test.describe('Settings', () => {
   })
 
   test('useTransform swapping should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/settings.html`)
+    await goToOptimized(page, `${baseUrl}/settings.html`)
     await page.evaluate(() =>
       ds.setSettings({
         draggability: true,
@@ -190,7 +190,7 @@ test.describe('Settings', () => {
   })
 
   test('multiSelectKeys swapping should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/settings.html`)
+    await goToOptimized(page, `${baseUrl}/settings.html`)
     await page.evaluate(() =>
       ds.setSettings({
         multiSelectKeys: ['q'],
@@ -209,7 +209,7 @@ test.describe('Settings', () => {
   })
 
   test('multiSelectMode swapping should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/settings.html`)
+    await goToOptimized(page, `${baseUrl}/settings.html`)
 
     await select(page.mouse, 140, 85)
     await select(page.mouse, 85, 85)
@@ -226,7 +226,7 @@ test.describe('Settings', () => {
   })
 
   test('multiSelectToggling swapping should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/settings.html`)
+    await goToOptimized(page, `${baseUrl}/settings.html`)
     let cb = []
     cb = await selectItems(page, 180, 120)
     expect(cb?.sort()).toMatchObject(["one", "two"])

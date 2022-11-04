@@ -3,7 +3,7 @@ import { baseUrl, wait } from './shared';
 
 test.describe('Multiselection', () => {
   test('should multiselect', async ({ page }) => {
-    await page.goto(`${baseUrl}/multiselection.html`)
+    await goToOptimized(page, `${baseUrl}/multiselection.html`)
 
     const mouse = page.mouse
     await mouse.move(1, 1, { steps: 10 })
@@ -31,7 +31,7 @@ test.describe('Multiselection', () => {
   })
 
   test('multi-select-mode should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/multiselection.html`)
+    await goToOptimized(page, `${baseUrl}/multiselection.html`)
 
     const mouse = page.mouse
     await mouse.move(1, 80, { steps: 10 })
@@ -57,7 +57,7 @@ test.describe('Multiselection', () => {
   })
 
   test('multiSelectToggling off should not toggle already selected elements', async ({ page }) => {
-    await page.goto(`${baseUrl}/multiselection.html`)
+    await goToOptimized(page, `${baseUrl}/multiselection.html`)
 
     const mouse = page.mouse
     await mouse.move(30, 160)

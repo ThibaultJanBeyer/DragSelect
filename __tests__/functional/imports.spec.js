@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 import { baseUrl } from './shared';
 
 const goToPage = async (page, uri = `${baseUrl}/imports.html`) => {
-  await page.goto(uri)
+  await goToOptimized(page, uri)
   await page.reload({ waitUntil: 'networkidle' })
 }
 

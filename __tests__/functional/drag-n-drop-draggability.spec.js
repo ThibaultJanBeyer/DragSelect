@@ -3,7 +3,7 @@ import { baseUrl, wait } from './shared';
 
 test.describe('Drag N Drop - draggability', () => {
   test('The items should NOT be draggable', async ({ page }) => {
-    await page.goto(`${baseUrl}/drag-n-drop-draggability.html`)
+    await goToOptimized(page, `${baseUrl}/drag-n-drop-draggability.html`)
     const { v1, v2, v3, v4 } = await page.evaluate(() => ({
       v1: window.getItemVect(1),
       v2: window.getItemVect(2),
@@ -71,7 +71,7 @@ test.describe('Drag N Drop - draggability', () => {
   })
 
   test('The items should NOT be draggable via keyboard', async ({ page }) => {
-    await page.goto(`${baseUrl}/drag-n-drop-draggability.html`)
+    await goToOptimized(page, `${baseUrl}/drag-n-drop-draggability.html`)
 
     const { v2 } = await page.evaluate(() => ({
       v2: window.getItemVect(2),

@@ -3,7 +3,7 @@ import { baseUrl } from './shared';
 
 test.describe('Basics', () => {
   test('The tool should initialize correctly', async ({ page }) => {
-    await page.goto(`${baseUrl}/basics.html`);
+    await goToOptimized(page, `${baseUrl}/basics.html`);
     const dragNode = await page.locator('.ds-selector')
     expect(dragNode).not.toBeNull();
   });

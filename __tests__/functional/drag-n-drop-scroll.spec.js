@@ -3,7 +3,7 @@ import { baseUrl, getStepFactorByBrowser, wait } from './shared';
 
 test.describe('Drag N Drop - Scroll', () => {
   test('The drag should also scroll', async ({ page }, testInfo) => {
-    await page.goto(`${baseUrl}/drag-n-drop-scroll.html`)
+    await goToOptimized(page, `${baseUrl}/drag-n-drop-scroll.html`)
     const { v1, v4 } = await page.evaluate(() => ({
       // @ts-ignore
       v1: window.getItemVect(1),
@@ -37,7 +37,7 @@ test.describe('Drag N Drop - Scroll', () => {
   })
 
   test('The drag should also work when scrolled', async ({ page }, testInfo) => {
-    await page.goto(`${baseUrl}/drag-n-drop-scroll.html`)
+    await goToOptimized(page, `${baseUrl}/drag-n-drop-scroll.html`)
     await page.evaluate(() => {
       document.querySelector('#area').scrollTop = document.querySelector(
         '#area'

@@ -3,7 +3,7 @@ import { baseUrl, getStepFactorByBrowser, wait } from './shared';
 
 test.describe('Callbacks', () => {
   test('should trigger callbacks with the correct elements when elements are selected', async ({ page }, testInfo) => {
-    await page.goto(`${baseUrl}/callbacks.html`)
+    await goToOptimized(page, `${baseUrl}/callbacks.html`)
 
     const mouse = page.mouse
     // move to the beginning of the page

@@ -3,7 +3,7 @@ import { baseUrl, getStepFactorByBrowser, wait } from './shared';
 
 test.describe('Document Scroll', () => {
   test('the document should be auto scroll-able', async ({ page }, testInfo) => {
-    await page.goto(`${baseUrl}/doc-scroll.html`)
+    await goToOptimized(page, `${baseUrl}/doc-scroll.html`)
     const { docHeight } = await page.evaluate(() => ({
       docHeight: window.innerHeight,
     }))

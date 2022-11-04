@@ -7,7 +7,7 @@
 // describe('TOUCH', () => {
 //   it('The items should be selectable and draggable', async () => {
 //     await page.emulate(iPhone)
-//     await page.goto(`${baseUrl}/touch.html`)
+//     await goToOptimized(page, `${baseUrl}/touch.html`)
 //     await page.tap('#item-2')
 
 //     const { selected0, dragged0 } = await page.evaluate(() => ({

@@ -3,7 +3,7 @@ import { baseUrl, getStepFactorByBrowser, wait } from './shared';
 
 test.describe('Constrained Scroll', () => {
   test('selection should be able to scroll in the constrained container while dragging', async ({ page }, testInfo) => {
-    await page.goto(`${baseUrl}/constrained-scroll.html`)
+    await goToOptimized(page, `${baseUrl}/constrained-scroll.html`)
 
     const mouse = page.mouse
     const keyboard = page.keyboard

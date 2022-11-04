@@ -3,7 +3,7 @@ import { baseUrl } from './shared';
 
 test.describe('Accessibility', () => {
   test('should select using keyboard only', async ({ page }) => {
-    await page.goto(`${baseUrl}/accessibility.html`)
+    await goToOptimized(page, `${baseUrl}/accessibility.html`)
 
     const keyboard = page.keyboard
     await keyboard.press('Tab')
@@ -22,7 +22,7 @@ test.describe('Accessibility', () => {
   })
 
   test('should multiselect using keyboard only', async ({ page }) => {
-    await page.goto(`${baseUrl}/accessibility.html`)
+    await goToOptimized(page, `${baseUrl}/accessibility.html`)
 
     const keyboard = page.keyboard
     await keyboard.press('Tab') // 1

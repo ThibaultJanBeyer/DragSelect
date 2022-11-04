@@ -3,7 +3,7 @@ import { baseUrl, wait } from './shared';
 
 test.describe('Scroll', () => {
   test('selection in double scrolling element should work', async ({ page }) => {
-    await page.goto(`${baseUrl}/scroll.html`)
+    await goToOptimized(page, `${baseUrl}/scroll.html`)
     await page.evaluate(() => {
       scroll({
         top: 500,
@@ -39,7 +39,7 @@ test.describe('Scroll', () => {
   })
 
   test('selection should remain when scrolling', async ({ page }) => {
-    await page.goto(`${baseUrl}/scroll.html`)
+    await goToOptimized(page, `${baseUrl}/scroll.html`)
     let { selection, containerScrollbarPos } = await page.evaluate(() => {
       scroll({
         top: 0,

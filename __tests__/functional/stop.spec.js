@@ -3,7 +3,7 @@ import { baseUrl, wait } from './shared';
 
 test.describe('Stop', () => {
   test('should stop the functionality', async ({ page }) => {
-    await page.goto(`${baseUrl}/stop.html`)
+    await goToOptimized(page, `${baseUrl}/stop.html`)
     await page.evaluate(() => {
       window.ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
@@ -42,7 +42,7 @@ test.describe('Stop', () => {
   })
 
   test('should stop the functionality in a callback', async ({ page }) => {
-    await page.goto(`${baseUrl}/stop.html`)
+    await goToOptimized(page, `${baseUrl}/stop.html`)
     await page.evaluate(() => {
       window.ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
@@ -87,7 +87,7 @@ test.describe('Stop', () => {
   })
 
   test('should restart the functionality after a stop', async ({ page }) => {
-    await page.goto(`${baseUrl}/stop.html`)
+    await goToOptimized(page, `${baseUrl}/stop.html`)
     await page.evaluate(() => {
       window.ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),

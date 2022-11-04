@@ -6,7 +6,7 @@ test.describe('Scroll', () => {
   test('should work and be fast even with 25k items', async ({ page }, testInfo) => {
     const start = performance.now()
 
-    await page.goto(`${baseUrl}/performance.html`, {
+    await goToOptimized(page, `${baseUrl}/performance.html`, {
       waitUntil: 'load',
     })
 

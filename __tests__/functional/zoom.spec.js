@@ -3,7 +3,7 @@ import { baseUrl, wait } from './shared';
 
 test.describe('Zoom', () => {
   test('selection should remain when zoomed', async ({ page }) => {
-    await page.goto(`${baseUrl}/zoom.html`)
+    await goToOptimized(page, `${baseUrl}/zoom.html`)
     let { selection, containerScrollbarPos } = await page.evaluate(() => {
       window.scroll({ top: 0 })
 
@@ -53,7 +53,7 @@ test.describe('Zoom', () => {
   })
 
   test('selection should remain when zoomed and scrolled', async ({ page }) => {
-    await page.goto(`${baseUrl}/zoom.html`)
+    await goToOptimized(page, `${baseUrl}/zoom.html`)
     let { selection } = await page.evaluate(() => {
       window.scroll({ top: 0 })
 

@@ -30,7 +30,7 @@
     "\n## PROD:": "",
     "ci:build": "npm run rollup:ci && npm run media && npm run docs",
     "ci:checks": "npm run rollup && npm run checkjs",
-    "ci:test": "env CI=false playwright test"
+    "ci:test": "env CI=true playwright test"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",

@@ -5,7 +5,7 @@ test.describe('Drag N Drop', () => {
   const itemId = '2'
 
   test('The items should be immediately draggable', async ({ page }) => {
-    await page.goto(`${baseUrl}/drag-n-drop.html`)
+    await goToOptimized(page, `${baseUrl}/drag-n-drop.html`)
     const { itemVect } = await page.evaluate(
       (itemId) => ({
         itemVect: window.getItemVect(itemId),
@@ -42,7 +42,7 @@ test.describe('Drag N Drop', () => {
   })
 
   test('The items should be draggable after selection', async ({ page }) => {
-    await page.goto(`${baseUrl}/drag-n-drop.html`)
+    await goToOptimized(page, `${baseUrl}/drag-n-drop.html`)
 
     const mouse = page.mouse
     await mouse.move(1, 1)
