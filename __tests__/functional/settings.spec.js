@@ -5,6 +5,7 @@ const select = async (mouse, x, y) => {
   await mouse.move(x, y)
   await mouse.down()
   await mouse.up()
+  await wait(100)
 }
 
 const selectItems = async (page, x, y) => {

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl, getStepFactorByBrowser } from './shared';
+import { baseUrl, getStepFactorByBrowser, wait } from './shared';
 
 test.describe('Callbacks', () => {
   test('should trigger callbacks with the correct elements when elements are selected', async ({ page }, testInfo) => {
@@ -13,6 +13,7 @@ test.describe('Callbacks', () => {
     // steps are how often the mouse moves
     await mouse.move(200, 200, { steps: 100 * getStepFactorByBrowser(testInfo.project.name) })
     await mouse.up()
+    await wait(100)
 
     const executesFn = await page.evaluate(() => {
       ds.Area.scroll(['right'], 1)

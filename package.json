@@ -29,7 +29,7 @@
     "types": "tsc src/DragSelect.js --lib es2019,dom -t es5 --declaration --allowJs --emitDeclarationOnly --outDir dist",
     "\n## PROD:": "",
     "ci:build": "npm run rollup:ci && npm run media && npm run docs",
-    "ci:test": "npm run rollup && npm run checkjs && env CI=true playwright test"
+    "ci:test": "npm run rollup && npm run checkjs && env CI=false playwright test"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",

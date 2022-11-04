@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, wait } from './shared';
 
 test.describe('SVG', () => {
   test('The items should be selectable and draggable', async ({ page }) => {
@@ -12,6 +12,7 @@ test.describe('SVG', () => {
       steps: 10,
     })
     await mouse.up()
+    await wait(100)
 
     const {
       selected0,
@@ -38,6 +39,7 @@ test.describe('SVG', () => {
       steps: 10,
     })
     await mouse.up()
+    await wait(100)
 
     const {
       selected02,

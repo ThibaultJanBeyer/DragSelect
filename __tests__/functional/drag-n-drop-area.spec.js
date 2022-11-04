@@ -33,6 +33,7 @@ test.describe('Drag N Drop - Area', () => {
       steps: 100 * getStepFactorByBrowser(testInfo.project.name),
     })
     await mouse.up()
+    await wait(100)
 
     const { s2, d2, v12, v22, v32, v42 } = await page.evaluate((itemId) => ({
       d2: window.dragged,

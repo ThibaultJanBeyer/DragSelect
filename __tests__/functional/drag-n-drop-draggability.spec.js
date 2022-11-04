@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, wait } from './shared';
 
 test.describe('Drag N Drop - draggability', () => {
   test('The items should NOT be draggable', async ({ page }) => {
@@ -18,6 +18,7 @@ test.describe('Drag N Drop - draggability', () => {
       steps: 10,
     })
     await mouse.up()
+    await wait(100)
 
     const { s1, d1 } = await page.evaluate((itemId) => ({
       d1: window.dragged,
@@ -33,6 +34,7 @@ test.describe('Drag N Drop - draggability', () => {
       steps: 10,
     })
     await mouse.up()
+    await wait(100)
 
     const {
       d2,

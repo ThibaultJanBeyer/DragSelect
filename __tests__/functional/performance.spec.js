@@ -18,6 +18,7 @@ test.describe('Scroll', () => {
     await mouse.move(200, 200)
     await wait(100)
     await mouse.up()
+    await wait(100)
 
     const { selected } = await page.evaluate(() => ({ selected }))
 

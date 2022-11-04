@@ -13,6 +13,7 @@ test.describe('Drag Inner', () => {
     await mouse.down()
     await mouse.move(150, 150, { steps: 50 })
     await mouse.up()
+    await wait(100)
 
     const afterPos = await inner.boundingBox()
     expect(afterPos).not.toEqual(beforePos)

@@ -48,14 +48,17 @@ test.describe('Position Difference Calculations', () => {
     await mouse.move(startPos, startPos);
     await mouse.down();
     await mouse.up();
+    await wait(100)
 
     await mouse.move(startPos + steps, startPos + steps);
     await mouse.down();
     await mouse.up();
+    await wait(100)
 
     await mouse.move(startPos + steps * 2, startPos + steps * 2);
     await mouse.down();
     await mouse.up();
+    await wait(100)
 
     const { cursorStartDiff, cursorPosStart } = await page.evaluate(() => ({
       cursorStartDiff,

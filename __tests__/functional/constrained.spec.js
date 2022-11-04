@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, wait } from './shared';
 
 test.describe('Constrained', () => {
   test('selection should be constrained to the area with only contains one element', async ({ page }) => {
@@ -13,6 +13,7 @@ test.describe('Constrained', () => {
     // steps are how often the mouse moves
     await mouse.move(800, 450, { steps: 100 })
     await mouse.up()
+    await wait(100)
 
     let executesFn = await page.evaluate(() => ({
       id: document.querySelector('.item.three').id,

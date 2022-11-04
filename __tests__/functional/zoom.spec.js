@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, wait } from './shared';
 
 test.describe('Zoom', () => {
   test('selection should remain when zoomed', async ({ page }) => {
@@ -24,6 +24,7 @@ test.describe('Zoom', () => {
     await mouse.move(10, containerScrollbarPos.top + 20)
     await mouse.down()
     await mouse.up()
+    await wait(100)
 
     selection = await page.evaluate(() => ds.getSelection())
     expect(selection.length).toBe(0)
@@ -32,6 +33,7 @@ test.describe('Zoom', () => {
     await mouse.down()
     await mouse.move(99, 99)
     await mouse.up()
+    await wait(100)
     // we have finished mouse move select at 99px:99px
     // Initially zoom example starts with 150%
     // The container starts at 100px:100px
@@ -44,6 +46,7 @@ test.describe('Zoom', () => {
     await mouse.down()
     await mouse.move(120, containerScrollbarPos.y)
     await mouse.up()
+    await wait(100)
 
     selection = await page.evaluate(() => ds.getSelection())
     expect(selection.length).toBe(1)
@@ -73,6 +76,7 @@ test.describe('Zoom', () => {
     await mouse.down()
     await mouse.move(30, 430)
     await mouse.up()
+    await wait(100)
 
     selection = await page.evaluate(() => ds.getSelection())
     // Expect to see the last (6-th) button. It placed at the

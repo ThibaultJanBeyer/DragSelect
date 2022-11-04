@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, wait } from './shared';
 
 test.describe('Drag N Drop', () => {
   const itemId = '2'
@@ -20,6 +20,7 @@ test.describe('Drag N Drop', () => {
       steps: 10,
     })
     await mouse.up()
+    await wait(100)
 
     const { dragged, itemVect2, dragStart, dragMove } = await page.evaluate(
       (itemId) => ({
@@ -50,6 +51,7 @@ test.describe('Drag N Drop', () => {
       steps: 10,
     })
     await mouse.up()
+    await wait(100)
 
     const {
       selected0,
@@ -82,6 +84,7 @@ test.describe('Drag N Drop', () => {
       steps: 10,
     })
     await mouse.up()
+    await wait(100)
 
     const {
       selected02,

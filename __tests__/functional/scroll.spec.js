@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, wait } from './shared';
 
 test.describe('Scroll', () => {
   test('selection in double scrolling element should work', async ({ page }) => {
@@ -35,6 +35,7 @@ test.describe('Scroll', () => {
     expect(selectorRect.height).toBe(100)
 
     await mouse.up()
+    await wait(100)
   })
 
   test('selection should remain when scrolling', async ({ page }) => {
@@ -66,6 +67,7 @@ test.describe('Scroll', () => {
     await mouse.move(10, containerScrollbarPos.top + 20)
     await mouse.down()
     await mouse.up()
+    await wait(100)
 
     selection = await page.evaluate(() => ds.getSelection())
     expect(selection.length).toBe(1)
@@ -74,6 +76,7 @@ test.describe('Scroll', () => {
     await mouse.down()
     await mouse.move(containerScrollbarPos.y, containerScrollbarPos.top + 40)
     await mouse.up()
+    await wait(100)
 
     selection = await page.evaluate(() => ds.getSelection())
     expect(selection.length).toBe(1)
@@ -83,6 +86,7 @@ test.describe('Scroll', () => {
     await mouse.down()
     await mouse.move(120, containerScrollbarPos.y)
     await mouse.up()
+    await wait(100)
 
     selection = await page.evaluate(() => ds.getSelection())
     expect(selection.length).toBe(1)

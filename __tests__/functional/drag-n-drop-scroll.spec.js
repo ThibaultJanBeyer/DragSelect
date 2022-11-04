@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl, getStepFactorByBrowser } from './shared';
+import { baseUrl, getStepFactorByBrowser, wait } from './shared';
 
 test.describe('Drag N Drop - Scroll', () => {
   test('The drag should also scroll', async ({ page }, testInfo) => {
@@ -18,6 +18,7 @@ test.describe('Drag N Drop - Scroll', () => {
       steps: 100 * getStepFactorByBrowser(testInfo.project.name),
     })
     await mouse.up()
+    await wait(100)
 
     const { v12, v22, v42, areaScrollTop } = await page.evaluate(() => ({
       // @ts-ignore
@@ -55,6 +56,7 @@ test.describe('Drag N Drop - Scroll', () => {
       steps: 100 * getStepFactorByBrowser(testInfo.project.name),
     })
     await mouse.up()
+    await wait(100)
 
     const { v42 } = await page.evaluate(() => ({
       // @ts-ignore

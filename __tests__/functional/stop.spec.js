@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, wait } from './shared';
 
 test.describe('Stop', () => {
   test('should stop the functionality', async ({ page }) => {
@@ -20,6 +20,7 @@ test.describe('Stop', () => {
     await mouse.down()
     await mouse.move(50, 50)
     await mouse.up()
+    await wait(100)
 
     let callback = await page.evaluate(() => callback)
     expect(callback.length).toBe(1)
@@ -30,6 +31,7 @@ test.describe('Stop', () => {
     await mouse.down()
     await mouse.move(50, 50)
     await mouse.up()
+    await wait(100)
 
     callback = await page.evaluate(() => callback)
     expect(callback.length).toBe(0)
@@ -58,6 +60,7 @@ test.describe('Stop', () => {
     await mouse.down()
     await mouse.move(50, 50)
     await mouse.up()
+    await wait(100)
 
     var callback = await page.evaluate(() => callback)
     expect(callback.length).toBe(1)
@@ -67,6 +70,7 @@ test.describe('Stop', () => {
     await mouse.down()
     await mouse.move(50, 50)
     await mouse.up()
+    await wait(100)
 
     var callback = await page.evaluate(() => callback)
     expect(callback.length).toBe(0)
@@ -76,6 +80,7 @@ test.describe('Stop', () => {
     await mouse.down()
     await mouse.move(50, 50)
     await mouse.up()
+    await wait(100)
 
     var callback = await page.evaluate(() => callback)
     expect(callback.length).toBe(1)
@@ -96,6 +101,7 @@ test.describe('Stop', () => {
     await mouse.down()
     await mouse.move(50, 50)
     await mouse.up()
+    await wait(100)
 
     var callback = await page.evaluate(() => callback)
     expect(callback.length).toBe(1)
@@ -108,6 +114,7 @@ test.describe('Stop', () => {
     await mouse.down()
     await mouse.move(50, 50)
     await mouse.up()
+    await wait(100)
 
     var callback = await page.evaluate(() => callback)
     expect(callback.length).toBe(0)
@@ -117,6 +124,7 @@ test.describe('Stop', () => {
     await mouse.down()
     await mouse.move(50, 50)
     await mouse.up()
+    await wait(100)
 
     var callback = await page.evaluate(() => callback)
     expect(callback.length).toBe(1)
