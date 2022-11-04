@@ -1,6 +1,6 @@
 import { performance } from 'perf_hooks'
 import { test, expect } from '@playwright/test';
-import { baseUrl, wait } from './shared';
+import { baseUrl, wait, getStepFactorByBrowser } from './shared';
 
 test.describe('Scroll', () => {
   test('should work and be fast even with 25k items', async ({ page }, testInfo) => {
@@ -32,12 +32,7 @@ test.describe('Scroll', () => {
     expect(selected[8]).toBe('item-104')
 
     const duration = performance.now() - start
-    if (testInfo.project.name === 'firefox') {
-      expect(duration).toBeLessThan(7000)
-    } else if (testInfo.project.name === 'webkit') {
-      expect(duration).toBeLessThan(5000)
-    } else {
-      expect(duration).toBeLessThan(2000)
-    }
+    console.info(`Duration: ${duration}ms`)
+    expect(duration).toBeLessThan(getStepFactorByBrowser(testInfo.project.name))
   })
 })
