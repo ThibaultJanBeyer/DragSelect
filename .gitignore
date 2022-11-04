@@ -7,3 +7,6 @@ package-lock.json
 npm-debug.log
 original
 dist
+/test-results/
+/playwright-report/
+/playwright/.cache/

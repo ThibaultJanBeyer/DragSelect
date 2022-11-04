@@ -1,3 +1,7 @@
+# next
+
+- Uses Playwright for testing
+
 # 2.4.3
 
 - add `triggerCallback` option to `removeSelectables` and `addSelectables`

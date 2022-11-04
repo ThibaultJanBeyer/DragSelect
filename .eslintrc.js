@@ -13,7 +13,7 @@ module.exports = {
       modules: true,
     },
   },
-  plugins: ['prettier', 'jest', 'security', '@typescript-eslint/tslint'],
+  plugins: ['prettier', 'security', '@typescript-eslint/tslint'],
   overrides: [
     {
       files: ['**/*.spec.js'],
@@ -29,7 +29,6 @@ module.exports = {
     'no-mixed-operators': 'off',
   },
   env: {
-    'jest/globals': true,
     browser: true,
     es6: true,
   },

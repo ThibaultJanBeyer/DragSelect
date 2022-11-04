@@ -32,7 +32,7 @@ Now whenever you make a change to the `DragSelect.js` in `src/` it will be trans
 
 ### Automatic
 
-For the testing puppeteer and jest is used. Puppeteer will be installed locally, but can be a bit heavy (~200mb) you can use the [Environment Variables](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#environment-variables) if you have puppeteer installed already.
+For the testing playwright is used.
 
 Automated tests are run via:
 
@@ -40,7 +40,7 @@ Automated tests are run via:
 npm test
 ```
 
-- If you feel like your test case should be permanently tested before each release, please add it to the `__tests__` folder.  
+- Please add your test case it to the `__tests__` folder.  
 
 ## NOTES
 
