@@ -10,7 +10,7 @@
     "start": "npm run open & npm run watch",
     "watch": "concurrently --kill-others \"npm run checkjs:watch\" \"npm run rollup:watch\" \"npm run test:watch\"",
     "\n# TESTING:": "",
-    "checkjs": "tsc --lib es2019,dom -t es5 --allowJs --checkJs --noEmit src/*.js",
+    "checkjs": "tsc --lib es2019,dom -t es5 --allowJs --skipLibCheck --checkJs --noEmit src/*.js",
     "checkjs:watch": "npm run checkjs -- -w",
     "postcheckjs": "npm run docs && rm -rf docs",
     "pretest": "npm run build",
@@ -25,7 +25,7 @@
     "rollup": "rollup -c",
     "rollup:ci": "npm run rollup -- --ci",
     "rollup:watch": "npm run rollup -- -w",
-    "types": "tsc src/DragSelect.js --lib es2019,dom -t es5 --declaration --allowJs --emitDeclarationOnly --outDir dist",
+    "types": "tsc src/DragSelect.js --lib es2019,dom -t es5 --declaration --allowJs --emitDeclarationOnly --skipLibCheck --outDir dist",
     "\n## PROD:": "",
     "ci:build": "npm run rollup:ci && npm run media && npm run docs",
     "ci:test": "npm run test"
