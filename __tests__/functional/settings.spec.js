@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl, wait, goToOptimized } from './shared';
+import { baseUrl, wait, goToOptimized, getStepFactorByBrowser } from './shared';
 
 const select = async (mouse, x, y) => {
   await mouse.move(x, y)
