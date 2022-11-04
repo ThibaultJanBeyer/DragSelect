@@ -33,6 +33,7 @@ describe('Scroll', () => {
     expect(selected[8]).toBe('item-68')
 
     const duration = performance.now() - start
-    expect(duration).toBeLessThan(3000)
+    console.info(`[puppeteer] Duration: ${duration}ms (${process.env.CI})`)
+    expect(duration).toBeLessThan(process?.env?.CI ? 4000 : 3000)
   })
 })
