@@ -18,10 +18,10 @@ const selectItems = async (page, x, y) => {
   return retr
 }
 
-const moveItem = async (mouse, x, y) => {
+const moveItem = async (mouse, x, y, testInfo) => {
   await mouse.move(x, y)
   await mouse.down()
-  await mouse.move(x + 200, y + 200, { steps: 10 })
+  await mouse.move(x + 200, y + 200, { steps: 100 * getStepFactorByBrowser(testInfo.project.name) })
   await mouse.up()
   await wait(100)
 }
@@ -101,40 +101,40 @@ test.describe('Settings', () => {
     expect(await page.evaluate(() => document.querySelector('.selectorrr').style.background)).toEqual('')
   })
 
-  test('draggability swapping should work', async ({ page }) => {
+  test('draggability swapping should work', async ({ page }, testInfo) => {
     await goToOptimized(page, `${baseUrl}/settings.html`)
     let cb
     cb = await selectItems(page, 180, 120)
     expect(cb?.sort()).toMatchObject(["one", "two"])
     await page.evaluate(() => ds.setSettings({ draggability: false }))
     // move with draggability OFF
-    await moveItem(page.mouse, 140, 85)
+    await moveItem(page.mouse, 140, 85, testInfo)
     cb = await selectItems(page, 180, 120)
     expect(cb?.sort()).toMatchObject(["one", "two"])
     // move with draggability ON
     await page.evaluate(() => ds.setSettings({ draggability: true }))
-    await moveItem(page.mouse, 140, 85)
+    await moveItem(page.mouse, 140, 85, testInfo)
     cb = await selectItems(page, 180, 120)
     expect(cb?.sort()).toMatchObject([])
   })
 
-  test('immediatedrag swapping should work', async ({ page }) => {
+  test('immediatedrag swapping should work', async ({ page }, testInfo) => {
     await goToOptimized(page, `${baseUrl}/settings.html`)
     let cb
     await page.evaluate(() => ds.setSettings({ draggability: true }))
-    await moveItem(page.mouse, 140, 85)
+    await moveItem(page.mouse, 140, 85, testInfo)
     await select(page.mouse, 180, 120)
     cb = await selectItems(page, 140, 85)
     expect(cb?.sort()).toMatchObject(["one", "two"])
     await select(page.mouse, 180, 120)
     await page.evaluate(() => ds.setSettings({ immediateDrag: true }))
-    await moveItem(page.mouse, 140, 85)
+    await moveItem(page.mouse, 140, 85, testInfo)
     await select(page.mouse, 180, 85)
     cb = await selectItems(page, 140, 85)
     expect(cb).toMatchObject(["one"])
   })
 
-  test('scroll swapping should work', async ({ page }) => {
+  test('scroll swapping should work', async ({ page }, testInfo) => {
     await goToOptimized(page, `${baseUrl}/settings.html`)
     await page.evaluate(() =>
       ds.setSettings({
@@ -143,7 +143,7 @@ test.describe('Settings', () => {
         autoScrollSpeed: 1000,
         overflowTolerance: { x: 200, y: 200 }
       }))
-    await moveItem(page.mouse, 140, 85)
+    await moveItem(page.mouse, 140, 85, testInfo)
     expect(await page.evaluate(() =>
       ds.Area.HTMLNode.scrollTop)).not.toBe(0)
   })
@@ -174,7 +174,7 @@ test.describe('Settings', () => {
     expect(cb).toMatchObject(["one"])
   })
 
-  test('useTransform swapping should work', async ({ page }) => {
+  test('useTransform swapping should work', async ({ page }, testInfo) => {
     await goToOptimized(page, `${baseUrl}/settings.html`)
     await page.evaluate(() =>
       ds.setSettings({
@@ -182,7 +182,7 @@ test.describe('Settings', () => {
         immediateDrag: true,
         useTransform: false,
       }))
-    await moveItem(page.mouse, 140, 85)
+    await moveItem(page.mouse, 140, 85, testInfo)
     expect(await page.evaluate(() =>
       document.querySelector("#two").style.top)).not.toBe(0)
     expect(await page.evaluate(() =>

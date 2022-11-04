@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl, wait, goToOptimized } from './shared';
+import { baseUrl, wait, goToOptimized, getStepFactorByBrowser } from './shared';
 
 test.describe('Scroll', () => {
-  test('selection in double scrolling element should work', async ({ page }) => {
+  test('selection in double scrolling element should work', async ({ page }, testInfo) => {
     await goToOptimized(page, `${baseUrl}/scroll.html`)
     await page.evaluate(() => {
       scroll({
@@ -17,7 +17,8 @@ test.describe('Scroll', () => {
     const mouse = page.mouse
     await mouse.move(100, 300)
     await mouse.down()
-    await mouse.move(50, 200)
+    await mouse.move(50, 200, { steps: 100 * getStepFactorByBrowser(testInfo.project.name) })
+    await wait(100)
 
     const selectorRect = await page.evaluate(() => {
       window.dsRect = ds.Selector.HTMLNode.getBoundingClientRect()
@@ -30,9 +31,9 @@ test.describe('Scroll', () => {
     })
 
     expect(selectorRect.left).toBe(50)
-    expect(selectorRect.top).toBe(200)
+    expect(selectorRect.top).toBe(120)
     expect(selectorRect.width).toBe(50)
-    expect(selectorRect.height).toBe(100)
+    expect(selectorRect.height).toBe(80)
 
     await mouse.up()
     await wait(100)
