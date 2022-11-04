@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, goToOptimized } from './shared';
 
 test.describe('Accessibility', () => {
   test('should select using keyboard only', async ({ page }) => {

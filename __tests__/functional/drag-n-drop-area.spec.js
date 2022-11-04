@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl, wait, getStepFactorByBrowser } from './shared';
+import { baseUrl, wait, getStepFactorByBrowser, goToOptimized } from './shared';
 
 test.describe('Drag N Drop - Area', () => {
   test('The items should be constrained', async ({ page }, testInfo) => {

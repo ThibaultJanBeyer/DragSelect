@@ -1,7 +1,7 @@
 import http from 'http'
 import fs from 'fs'
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, goToOptimized } from './shared';
 
 const goToPage = async (page, uri = `${baseUrl}/imports.html`) => {
   await goToOptimized(page, uri)

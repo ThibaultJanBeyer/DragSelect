@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl, wait } from './shared';
+import { baseUrl, wait, goToOptimized } from './shared';
 
 const startPos = 10;
 const steps = 10;

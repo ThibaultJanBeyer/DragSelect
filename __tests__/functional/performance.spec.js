@@ -1,6 +1,6 @@
 import { performance } from 'perf_hooks'
 import { test, expect } from '@playwright/test';
-import { baseUrl, wait, getStepFactorByBrowser } from './shared';
+import { baseUrl, wait, getStepFactorByBrowser, goToOptimized } from './shared';
 
 test.describe('Scroll', () => {
   test('should work and be fast even with 25k items', async ({ page }, testInfo) => {

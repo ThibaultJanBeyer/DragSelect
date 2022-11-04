@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, goToOptimized } from './shared';
 
 test.describe('Basics', () => {
   test('The tool should initialize correctly', async ({ page }) => {

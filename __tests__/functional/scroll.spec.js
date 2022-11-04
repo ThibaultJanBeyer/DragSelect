@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl, wait } from './shared';
+import { baseUrl, wait, goToOptimized } from './shared';
 
 test.describe('Scroll', () => {
   test('selection in double scrolling element should work', async ({ page }) => {

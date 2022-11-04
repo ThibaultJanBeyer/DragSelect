@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl } from './shared';
+import { baseUrl, goToOptimized } from './shared';
 
 test.describe('Drag N Drop', () => {
   test('The items should be draggable via keyboard', async ({ page }) => {

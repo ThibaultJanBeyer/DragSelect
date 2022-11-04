@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl, getStepFactorByBrowser, wait } from './shared';
+import { baseUrl, getStepFactorByBrowser, wait, goToOptimized } from './shared';
 
 test.describe('Callbacks', () => {
   test('should trigger callbacks with the correct elements when elements are selected', async ({ page }, testInfo) => {

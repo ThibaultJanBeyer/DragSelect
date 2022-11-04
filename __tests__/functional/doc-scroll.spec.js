@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl, getStepFactorByBrowser, wait } from './shared';
+import { baseUrl, getStepFactorByBrowser, wait, goToOptimized } from './shared';
 
 test.describe('Document Scroll', () => {
   test('the document should be auto scroll-able', async ({ page }, testInfo) => {

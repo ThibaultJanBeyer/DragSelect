@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl, wait } from './shared';
+import { baseUrl, wait, goToOptimized } from './shared';
 
 test.describe('Constrained', () => {
   test('selection should be constrained to the area with only contains one element', async ({ page }) => {

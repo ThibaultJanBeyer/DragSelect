@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { baseUrl, wait } from './shared';
+import { baseUrl, wait, goToOptimized } from './shared';
 
 test.describe('Drag Inner', () => {
   test('it should be able to drag an element even if it has inner elements', async ({ page }) => {
