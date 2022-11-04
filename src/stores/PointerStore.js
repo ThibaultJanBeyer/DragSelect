@@ -53,13 +53,20 @@ export default class PointerStore {
    */
   constructor({ DS }) {
     this.DS = DS
+    this.Settings = DS.stores.SettingsStore.s
     this.DS.subscribe('Interaction:init', this.init)
     this.DS.subscribe('Interaction:start', ({ event }) => this.start(event))
     this.DS.subscribe('Interaction:end', ({ event }) => this.reset(event))
   }
 
   init = () => {
-    document.addEventListener('mousemove', this.update)
+    if (this.Settings.usePointerEvents)
+      document.addEventListener('pointermove', this.update, {
+        // @ts-ignore
+        passive: false,
+      })
+    else document.addEventListener('mousemove', this.update)
+
     document.addEventListener('touchmove', this.update, {
       // @ts-ignore
       passive: false,
@@ -89,7 +96,14 @@ export default class PointerStore {
   }
 
   stop = () => {
-    document.removeEventListener('mousemove', this.update)
+    // @TODO: fix pointer events mixing issue see [PR](https://github.com/ThibaultJanBeyer/DragSelect/pull/128#issuecomment-1154885289)
+    if (this.Settings.usePointerEvents)
+      document.removeEventListener('pointermove', this.update, {
+        // @ts-ignore
+        passive: false,
+      })
+    else document.removeEventListener('mousemove', this.update)
+
     document.removeEventListener('touchmove', this.update, {
       // @ts-ignore
       passive: false,
@@ -110,7 +124,7 @@ export default class PointerStore {
 
   /**
    * @param {DSEvent} event
-   * @return {MouseEvent|Touch}
+   * @return {MouseEvent|PointerEvent|Touch}
    * @private
    */
   _normalizedEvent(event) {

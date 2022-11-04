@@ -60,7 +60,7 @@ export default class KeyStore {
 
   reset = () => this._currentValues.clear()
 
-  /** @param {KeyboardEvent|MouseEvent|TouchEvent} [event] */
+  /** @param {KeyboardEvent|MouseEvent|PointerEvent|TouchEvent} [event] */
   isMultiSelectKeyPressed(event) {
     if(this.DS.stores.SettingsStore.s.multiSelectMode) return true
     const multiSelectKeys = this.DS.stores.SettingsStore.s.multiSelectKeys.map(
