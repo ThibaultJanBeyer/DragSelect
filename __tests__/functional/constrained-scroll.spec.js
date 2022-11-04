@@ -1,19 +1,17 @@
-import wait from '../helpers/wait'
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl, getStepFactorByBrowser } from './shared';
 
-describe('Constrained Scroll', () => {
-  it('selection should be able to scroll in the constrained container while dragging', async () => {
+test.describe('Constrained Scroll', () => {
+  test('selection should be able to scroll in the constrained container while dragging', async ({ page }, testInfo) => {
     await page.goto(`${baseUrl}/constrained-scroll.html`)
 
     const mouse = page.mouse
     const keyboard = page.keyboard
     await keyboard.down('Shift')
-    await mouse.move(110, 110, { steps: 10 })
+    await mouse.move(110, 110, { steps: 100 * getStepFactorByBrowser(testInfo.project.name) })
     await mouse.down()
-    await wait(100)
-    await mouse.move(400, 400, { steps: 60 })
+    await mouse.move(500, 500, { steps: 100 * getStepFactorByBrowser(testInfo.project.name) })
     await mouse.up()
-    await wait(100)
 
     let executesFn = await page.evaluate(() => {
       return {

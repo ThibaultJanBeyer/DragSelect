@@ -1,7 +1,8 @@
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
-describe('Scroll', () => {
-  it('selection in double scrolling element should work', async () => {
+test.describe('Scroll', () => {
+  test('selection in double scrolling element should work', async ({ page }) => {
     await page.goto(`${baseUrl}/scroll.html`)
     await page.evaluate(() => {
       scroll({
@@ -36,7 +37,7 @@ describe('Scroll', () => {
     await mouse.up()
   })
 
-  it('selection should remain when scrolling', async () => {
+  test('selection should remain when scrolling', async ({ page }) => {
     await page.goto(`${baseUrl}/scroll.html`)
     let { selection, containerScrollbarPos } = await page.evaluate(() => {
       scroll({

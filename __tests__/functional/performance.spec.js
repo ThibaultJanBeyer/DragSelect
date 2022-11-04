@@ -1,10 +1,9 @@
 import { performance } from 'perf_hooks'
-import wait from '../helpers/wait'
+import { test, expect } from '@playwright/test';
+import { baseUrl, wait } from './shared';
 
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
-
-describe('Scroll', () => {
-  it('should work and be fast even with 25k items', async () => {
+test.describe('Scroll', () => {
+  test('should work and be fast even with 25k items', async ({ page }, testInfo) => {
     const start = performance.now()
 
     await page.goto(`${baseUrl}/performance.html`, {
@@ -22,17 +21,23 @@ describe('Scroll', () => {
 
     const { selected } = await page.evaluate(() => ({ selected }))
 
-    expect(selected[0]).toBe('item-34')
-    expect(selected[1]).toBe('item-35')
-    expect(selected[2]).toBe('item-36')
-    expect(selected[3]).toBe('item-50')
-    expect(selected[4]).toBe('item-51')
-    expect(selected[5]).toBe('item-52')
-    expect(selected[6]).toBe('item-66')
-    expect(selected[7]).toBe('item-67')
-    expect(selected[8]).toBe('item-68')
+    expect(selected[0]).toBe('item-52')
+    expect(selected[1]).toBe('item-53')
+    expect(selected[2]).toBe('item-54')
+    expect(selected[3]).toBe('item-77')
+    expect(selected[4]).toBe('item-78')
+    expect(selected[5]).toBe('item-79')
+    expect(selected[6]).toBe('item-102')
+    expect(selected[7]).toBe('item-103')
+    expect(selected[8]).toBe('item-104')
 
     const duration = performance.now() - start
-    expect(duration).toBeLessThan(3000)
+    if (testInfo.project.name === 'firefox') {
+      expect(duration).toBeLessThan(7000)
+    } else if (testInfo.project.name === 'webkit') {
+      expect(duration).toBeLessThan(5000)
+    } else {
+      expect(duration).toBeLessThan(2000)
+    }
   })
 })

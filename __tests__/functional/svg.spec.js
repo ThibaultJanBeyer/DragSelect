@@ -1,19 +1,17 @@
-import wait from '../helpers/wait'
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
-describe('SVG', () => {
-  it('The items should be selectable and draggable', async () => {
+test.describe('SVG', () => {
+  test('The items should be selectable and draggable', async ({ page }) => {
     await page.goto(`${baseUrl}/svg.html`)
 
     const mouse = page.mouse
     await mouse.move(50, 50, { steps: 10 })
     await mouse.down()
-    await wait(100)
     await mouse.move(500, 500, {
       steps: 10,
     })
     await mouse.up()
-    await wait(100)
 
     const {
       selected0,
@@ -36,12 +34,10 @@ describe('SVG', () => {
 
     await mouse.move(itemVect3.x, itemVect3.y, { steps: 10 })
     await mouse.down()
-    await wait(100)
     await mouse.move(itemVect3.x + 100, itemVect3.y + 100, {
       steps: 10,
     })
     await mouse.up()
-    await wait(100)
 
     const {
       selected02,

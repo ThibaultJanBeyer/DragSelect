@@ -1,8 +1,8 @@
-import wait from '../helpers/wait'
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl, wait } from './shared';
 
-describe('Multiselection', () => {
-  it('should multiselect', async () => {
+test.describe('Multiselection', () => {
+  test('should multiselect', async ({ page }) => {
     await page.goto(`${baseUrl}/multiselection.html`)
 
     const mouse = page.mouse
@@ -30,7 +30,7 @@ describe('Multiselection', () => {
     expect(selected.sort()).toEqual(expected.sort())
   })
 
-  it('multi-select-mode should work', async () => {
+  test('multi-select-mode should work', async ({ page }) => {
     await page.goto(`${baseUrl}/multiselection.html`)
 
     const mouse = page.mouse
@@ -56,7 +56,7 @@ describe('Multiselection', () => {
     expect(multiselected.sort()).toEqual(expected.sort())
   })
 
-  it('multiSelectToggling off should not toggle already selected elements', async () => {
+  test('multiSelectToggling off should not toggle already selected elements', async ({ page }) => {
     await page.goto(`${baseUrl}/multiselection.html`)
 
     const mouse = page.mouse

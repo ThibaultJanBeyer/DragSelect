@@ -1,50 +1,44 @@
-import wait from '../helpers/wait'
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
-describe('Accessibility', () => {
-  it('should select using keyboard only', async () => {
+test.describe('Accessibility', () => {
+  test('should select using keyboard only', async ({ page }) => {
     await page.goto(`${baseUrl}/accessibility.html`)
 
     const keyboard = page.keyboard
     await keyboard.press('Tab')
     await keyboard.press('Enter')
 
-    const { selected: s1 } = await page.evaluate(() => ({ selected }))
+    const { selected: s1 } = await page.evaluate(() => ({ selected: window.selected }))
 
     expect(s1[0]).toBe('one')
-
-    await wait(100)
 
     await keyboard.press('Tab')
     await keyboard.press('Enter')
 
-    const { selected: s2 } = await page.evaluate(() => ({ selected }))
+    const { selected: s2 } = await page.evaluate(() => ({ selected: window.selected }))
 
     expect(s2[0]).toBe('two')
   })
 
-  it('should multiselect using keyboard only', async () => {
+  test('should multiselect using keyboard only', async ({ page }) => {
     await page.goto(`${baseUrl}/accessibility.html`)
 
     const keyboard = page.keyboard
     await keyboard.press('Tab') // 1
     await keyboard.press('Tab') // 2
     await keyboard.press('Enter') // 2
-    await wait(100)
     await keyboard.press('Tab') // 3
     await keyboard.down('Shift')
     await keyboard.press('Enter') // 3
-    await wait(100)
     await keyboard.up('Shift')
     await keyboard.press('Tab') // 4
     await keyboard.down('Shift')
     await keyboard.press('Enter') // 4
-    await wait(100)
     await keyboard.up('Shift')
     await keyboard.press('Tab') // 5
     await keyboard.down('Shift')
     await keyboard.press('Enter') // 5
-    await wait(100)
     await keyboard.press('Tab') // 4
     await keyboard.press('Enter') // 4
     await keyboard.up('Shift')

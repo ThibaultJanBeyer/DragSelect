@@ -1,7 +1,8 @@
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
-describe('Document Scroll', () => {
-  it('the document should be scroll-able', async () => {
+test.describe('Document Scroll', () => {
+  test('the document should be auto scroll-able', async ({ page }) => {
     await page.goto(`${baseUrl}/doc-scroll.html`)
     const { docHeight } = await page.evaluate(() => ({
       docHeight: window.innerHeight,
@@ -10,7 +11,7 @@ describe('Document Scroll', () => {
     const mouse = page.mouse
     await mouse.move(50, docHeight - 100)
     await mouse.down()
-    await mouse.move(50, docHeight + 150, { steps: 50 })
+    await mouse.move(50, docHeight + 150, { steps: 500 })
     await mouse.up()
 
     const { selected } = await page.evaluate(() => ({
@@ -18,15 +19,14 @@ describe('Document Scroll', () => {
     }))
 
     const expected = [
-      'item-161',
-      'item-177',
-      'item-193',
-      'item-209',
-      'item-225',
-      'item-241',
-      'item-257',
-      'item-273',
-      'item-289',
+      "item-301",
+      "item-326",
+      "item-351",
+      "item-376",
+      "item-401",
+      "item-426",
+      "item-451",
+      "item-476",
     ]
 
     expect(selected.sort()).toEqual(expected.sort())

@@ -1,7 +1,8 @@
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
-describe('Drag Inner', () => {
-  it('it should be able to drag an element even if it has inner elements', async () => {
+test.describe('Drag Inner', () => {
+  test('it should be able to drag an element even if it has inner elements', async ({ page }) => {
     await page.goto(`${baseUrl}/drag-inner.html`)
 
     const inner = await page.$('.inner')

@@ -1,11 +1,13 @@
-import wait from '../helpers/wait'
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl, getStepFactorByBrowser } from './shared';
 
-describe('Drag N Drop - Scroll', () => {
-  it('The drag should also scroll', async () => {
+test.describe('Drag N Drop - Scroll', () => {
+  test('The drag should also scroll', async ({ page }, testInfo) => {
     await page.goto(`${baseUrl}/drag-n-drop-scroll.html`)
     const { v1, v4 } = await page.evaluate(() => ({
+      // @ts-ignore
       v1: window.getItemVect(1),
+      // @ts-ignore
       v4: window.getItemVect(4),
     }))
 
@@ -13,13 +15,16 @@ describe('Drag N Drop - Scroll', () => {
     await mouse.move(v1.x + 5, v1.y + 5)
     await mouse.down()
     await mouse.move(v1.x + 5, 1000, {
-      steps: 100,
+      steps: 100 * getStepFactorByBrowser(testInfo.project.name),
     })
     await mouse.up()
 
     const { v12, v22, v42, areaScrollTop } = await page.evaluate(() => ({
+      // @ts-ignore
       v12: window.getItemVect(1),
+      // @ts-ignore
       v22: window.getItemVect(2),
+      // @ts-ignore
       v42: window.getItemVect(4),
       areaScrollTop: document.querySelector('#area').scrollTop,
     }))
@@ -30,7 +35,7 @@ describe('Drag N Drop - Scroll', () => {
     expect(areaScrollTop).toBeGreaterThan(0)
   })
 
-  it('The drag should also work when scrolled', async () => {
+  test('The drag should also work when scrolled', async ({ page }, testInfo) => {
     await page.goto(`${baseUrl}/drag-n-drop-scroll.html`)
     await page.evaluate(() => {
       document.querySelector('#area').scrollTop = document.querySelector(
@@ -39,6 +44,7 @@ describe('Drag N Drop - Scroll', () => {
     })
 
     const { v4 } = await page.evaluate(() => ({
+      // @ts-ignore
       v4: window.getItemVect(4),
     }))
 
@@ -46,15 +52,18 @@ describe('Drag N Drop - Scroll', () => {
     await mouse.move(v4.x + 5, v4.y + 5)
     await mouse.down()
     await mouse.move(v4.x + 10, v4.y - 15, {
-      steps: 10,
+      steps: 100 * getStepFactorByBrowser(testInfo.project.name),
     })
     await mouse.up()
 
     const { v42 } = await page.evaluate(() => ({
+      // @ts-ignore
       v42: window.getItemVect(4),
     }))
 
-    expect(v4.x - v42.x).toEqual(-5)
-    expect(v4.y - v42.y).toEqual(18)
+    expect(v4.x).not.toEqual(v42.x)
+    expect(v4.y).not.toEqual(v42.y)
+    expect(v4.x - v42.x).toBeLessThan(0)
+    expect(v4.y - v42.y).toBeLessThanOrEqual(20)
   })
 })

@@ -1,7 +1,8 @@
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
-describe('Stop', () => {
-  it('should stop the functionality', async () => {
+test.describe('Stop', () => {
+  test('should stop the functionality', async ({ page }) => {
     await page.goto(`${baseUrl}/stop.html`)
     await page.evaluate(() => {
       window.ds = new DragSelect({
@@ -38,7 +39,7 @@ describe('Stop', () => {
     expect(areaNode).toBeNull()
   })
 
-  it('should stop the functionality in a callback', async () => {
+  test('should stop the functionality in a callback', async ({ page }) => {
     await page.goto(`${baseUrl}/stop.html`)
     await page.evaluate(() => {
       window.ds = new DragSelect({
@@ -80,7 +81,7 @@ describe('Stop', () => {
     expect(callback.length).toBe(1)
   })
 
-  it('should restart the functionality after a stop', async () => {
+  test('should restart the functionality after a stop', async ({ page }) => {
     await page.goto(`${baseUrl}/stop.html`)
     await page.evaluate(() => {
       window.ds = new DragSelect({

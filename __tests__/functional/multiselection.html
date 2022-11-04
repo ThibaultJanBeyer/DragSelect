@@ -31,7 +31,10 @@ Multi-Select-Toggling: OFF
 <script>
     window.selected = [];
 
-    const ds1 = new DragSelect({ selectables: document.querySelectorAll('.item.a') });
+    const ds1 = new DragSelect({ 
+        selectables: document.querySelectorAll('.item.a'),
+        draggability: false,
+    });
     ds1.subscribe('callback', ({items}) => window.selected = items.map(item => item.id))
 </script>
 <script>
@@ -40,6 +43,7 @@ Multi-Select-Toggling: OFF
     const ds2 = new DragSelect({
         selectables: document.querySelectorAll('.item.b'),
         multiSelectMode: true,
+        draggability: false,
     });
     ds2.subscribe('callback', ({items}) => window.multiselected = items.map(item => item.id))
 </script>
@@ -49,6 +53,7 @@ Multi-Select-Toggling: OFF
     const ds3 = new DragSelect({
         selectables: document.querySelectorAll('.item.c'),
         multiSelectToggling: false,
+        draggability: false,
     });
     ds3.subscribe('callback', ({items}) => window.multiSelectTogglingOff = items.map(item => item.id))
 </script>

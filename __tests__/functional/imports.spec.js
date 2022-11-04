@@ -1,19 +1,16 @@
-import wait from '../helpers/wait'
 import http from 'http'
 import fs from 'fs'
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
-
-const goToPage = async (uri = `${baseUrl}/imports.html`) => {
+const goToPage = async (page, uri = `${baseUrl}/imports.html`) => {
   await page.goto(uri)
-  await page.reload({ waitUntil: ['networkidle0', 'domcontentloaded'] })
-  await page.evaluate(() => location.reload(true))
-  await page.waitForSelector('#loaded')
+  await page.reload({ waitUntil: 'networkidle' })
 }
 
-const test = async () => {
+const _test = async (page) => {
   await page.waitForFunction(() => 'ds' in window)
-  await page.waitForSelector('.ds-selector')
+  await page.waitForFunction(() => !!document.querySelector('.ds-selector'))
   const dragNode = await page.$('.ds-selector')
   await page.waitForSelector('.ds-selector-area')
   const dragNodeArea = await page.$('.ds-selector-area')
@@ -21,13 +18,17 @@ const test = async () => {
   expect(dragNodeArea).not.toBeNull()
 }
 
-const teardown = async () => {
+const teardown = async (page) => {
   await page.evaluate(() => {
+    // @ts-ignore
     window.importScripts.forEach((iScript) =>
       document.body.removeChild(iScript)
     )
+    // @ts-ignore
     window.ds = null
+    // @ts-ignore
     window.callback = []
+    // @ts-ignore
     window.importScripts = []
   })
   const { ds } = await page.evaluate(() => ({ ds }))
@@ -35,11 +36,12 @@ const teardown = async () => {
   const callback = await page.evaluate(() => callback)
   expect(callback.length).toBe(0)
 }
-describe('Imports', () => {
+
+test.describe('Imports', () => {
   let server
   const port = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000)
 
-  beforeAll(
+  test.beforeAll(
     async () =>
       new Promise((resolve, rejects) => {
         try {
@@ -57,71 +59,89 @@ describe('Imports', () => {
               res.end(data)
             })
           })
-          server.listen(port, resolve)
+          server.listen(port, () => resolve("ok"))
         } catch (err) {
           rejects(err)
         }
       })
   )
-  afterAll(() => {
+  test.afterAll(() => {
     server.close()
   })
 
-  describe('Static Window Import', () => {
-    const setup = async () => {
+  test.describe('Static Window Import', () => {
+
+    const setup = async (page) => {
       await page.waitForFunction(() => 'DragSelect' in window)
       await page.evaluate(() => {
+        // @ts-ignore
         window.ds = new DragSelect({
           selectables: document.querySelectorAll('.item'),
         })
+        // @ts-ignore
         window.ds.subscribe(
           'callback',
+          // @ts-ignore
           ({ items }) => (window.callback = items.map((item) => item.id))
         )
       })
     }
 
-    it('when importing the script, it should be bound to the window', async () => {
-      await goToPage()
+    test('when importing the script, it should be bound to the window', async ({ page }) => {
+      await goToPage(page)
       await page.evaluate(() => {
+        // @ts-ignore
         window.dsScript = document.createElement('script')
+        // @ts-ignore
         window.dsScript.setAttribute('src', `../../dist/DragSelect.js`)
+        // @ts-ignore
         document.body.appendChild(window.dsScript)
+        // @ts-ignore
         window.importScripts.push(window.dsScript)
       })
-      await setup()
-      await test()
-      await teardown()
+      await setup(page)
+      await _test(page)
+      await teardown(page)
     })
 
-    it('when importing the minified script, it should be bound to the window', async () => {
-      await goToPage()
+    test('when importing the minified script, it should be bound to the window', async ({ page }) => {
+      await goToPage(page)
       await page.evaluate(() => {
+        // @ts-ignore
         window.dsScript = document.createElement('script')
+        // @ts-ignore
         window.dsScript.setAttribute('src', `../../dist/ds.min.js`)
+        // @ts-ignore
         document.body.appendChild(window.dsScript)
+        // @ts-ignore
         window.importScripts.push(window.dsScript)
       })
-      await setup()
-      await test()
-      await teardown()
+      await setup(page)
+      await _test(page)
+      await teardown(page)
     })
   })
 
-  describe('AMD Module', () => {
-    const setup = async (uri = '../../dist/DragSelect') => {
+  test.describe('AMD Module', () => {
+    const setup = async (page, uri = '../../dist/DragSelect') => {
       await page.evaluate(() => {
+        // @ts-ignore
         window.dsScript = document.createElement('script')
+        // @ts-ignore
         window.dsScript.setAttribute(
           'src',
           `http://requirejs.org/docs/release/2.3.6/comments/require.js`
         )
+        // @ts-ignore
         document.body.appendChild(window.dsScript)
+        // @ts-ignore
         window.importScripts.push(window.dsScript)
       })
       await page.waitForFunction(() => 'require' in window)
       await page.evaluate((uri) => {
+        // @ts-ignore
         window.dsScript = document.createElement('script')
+        // @ts-ignore
         window.dsScript.innerHTML = /*javascript*/ `
           require.config({
             paths: {
@@ -134,62 +154,68 @@ describe('Imports', () => {
             window.ds.subscribe('callback', ({ items }) => (window.callback = items.map((item) => item.id)))
           });
         `
+        // @ts-ignore
         document.body.appendChild(window.dsScript)
+        // @ts-ignore
         window.importScripts.push(window.dsScript)
       }, uri)
     }
 
-    it('Should be able to load DS as an AMD Module', async () => {
-      await goToPage()
-      await setup()
-      await test()
-      await teardown()
+    test('Should be able to load DS as an AMD Module', async ({ page }) => {
+      await goToPage(page)
+      await setup(page)
+      await _test(page)
+      await teardown(page)
     })
 
-    it('Should be able to load minified DS as an AMD Module', async () => {
-      await goToPage()
-      await setup('../../dist/ds.min')
-      await test()
-      await teardown()
+    test('Should be able to load minified DS as an AMD Module', async ({ page }) => {
+      await goToPage(page)
+      await setup(page, '../../dist/ds.min')
+      await _test(page)
+      await teardown(page)
     })
   })
 
-  describe('ESM Module', () => {
-    const setup = async (uri = '../../dist/DragSelect.es6m.js') => {
-      await wait(500)
+  test.describe('ESM Module', () => {
+    const setup = async (page, uri = '../../dist/DragSelect.es6m.js') => {
       await page.evaluate((uri) => {
+        // @ts-ignore
         window.dsScript = document.createElement('script')
+        // @ts-ignore
         window.dsScript.setAttribute('type', 'module')
+        // @ts-ignore
         window.dsScript.innerHTML = /*javascript*/ `
           import DragSelect from "${uri}";
           window.ds = new DragSelect({ selectables: document.querySelectorAll('.item') });
           window.ds.subscribe('callback', ({ items }) => (window.callback = items.map((item) => item.id)))
           `
+        // @ts-ignore
         document.body.appendChild(window.dsScript)
         setTimeout(() => {
+          // @ts-ignore
           if (!window.importScripts) window.importScripts = []
+          // @ts-ignore
           window.importScripts.push(window.dsScript)
         }, 500)
       }, uri)
-      await wait(500)
     }
 
-    it('when importing the script as module, it should be available', async () => {
-      await goToPage(
+    test('when importing the script as module, it should be available', async ({ page }) => {
+      await goToPage(page,
         `http://localhost:${port}/__tests__/functional/imports.html`
       )
-      await setup()
-      await test()
-      await teardown()
+      await setup(page)
+      await _test(page)
+      await teardown(page)
     })
 
-    it('when importing the minified script as module, it should be available', async () => {
-      await goToPage(
+    test('when importing the minified script as module, it should be available', async ({ page }) => {
+      await goToPage(page,
         `http://localhost:${port}/__tests__/functional/imports.html`
       )
-      await setup('../../dist/ds.es6m.min.js')
-      await test()
-      await teardown()
+      await setup(page, '../../dist/ds.es6m.min.js')
+      await _test(page)
+      await teardown(page)
     })
   })
 })

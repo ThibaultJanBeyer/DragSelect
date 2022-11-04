@@ -1,9 +1,10 @@
-const baseUrl = `file://${process.cwd()}/__tests__/functional`;
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
-describe('Basics', () => {
-  test('The tool should initialize correctly', async () => {
+test.describe('Basics', () => {
+  test('The tool should initialize correctly', async ({ page }) => {
     await page.goto(`${baseUrl}/basics.html`);
-    let dragNode = await page.$('.ds-selector');
+    const dragNode = await page.locator('.ds-selector')
     expect(dragNode).not.toBeNull();
   });
 });

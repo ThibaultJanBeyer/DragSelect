@@ -1,9 +1,8 @@
-import wait from '../helpers/wait'
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
-
-describe('Zoom', () => {
-  it('selection should remain when zoomed', async () => {
+test.describe('Zoom', () => {
+  test('selection should remain when zoomed', async ({ page }) => {
     await page.goto(`${baseUrl}/zoom.html`)
     let { selection, containerScrollbarPos } = await page.evaluate(() => {
       window.scroll({ top: 0 })
@@ -50,7 +49,7 @@ describe('Zoom', () => {
     expect(selection.length).toBe(1)
   })
 
-  it('selection should remain when zoomed and scrolled', async () => {
+  test('selection should remain when zoomed and scrolled', async ({ page }) => {
     await page.goto(`${baseUrl}/zoom.html`)
     let { selection } = await page.evaluate(() => {
       window.scroll({ top: 0 })
@@ -73,7 +72,6 @@ describe('Zoom', () => {
     await mouse.move(430, 430)
     await mouse.down()
     await mouse.move(30, 430)
-    await wait(100)
     await mouse.up()
 
     selection = await page.evaluate(() => ds.getSelection())

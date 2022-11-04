@@ -1,8 +1,8 @@
-import wait from '../helpers/wait'
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
-describe('Drag N Drop - draggability', () => {
-  it('The items should NOT be draggable', async () => {
+test.describe('Drag N Drop - draggability', () => {
+  test('The items should NOT be draggable', async ({ page }) => {
     await page.goto(`${baseUrl}/drag-n-drop-draggability.html`)
     const { v1, v2, v3, v4 } = await page.evaluate(() => ({
       v1: window.getItemVect(1),
@@ -68,7 +68,7 @@ describe('Drag N Drop - draggability', () => {
     expect(dragMove).toEqual([])
   })
 
-  it('The items should NOT be draggable via keyboard', async () => {
+  test('The items should NOT be draggable via keyboard', async ({ page }) => {
     await page.goto(`${baseUrl}/drag-n-drop-draggability.html`)
 
     const { v2 } = await page.evaluate(() => ({

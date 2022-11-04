@@ -1,8 +1,8 @@
-import wait from '../helpers/wait'
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
-describe('Drag N Drop', () => {
-  it('The items should be draggable via keyboard', async () => {
+test.describe('Drag N Drop', () => {
+  test('The items should be draggable via keyboard', async ({ page }) => {
     await page.goto(`${baseUrl}/drag-n-drop-keyboard.html`)
 
     const { v2 } = await page.evaluate(() => ({

@@ -1,8 +1,8 @@
-import wait from '../helpers/wait'
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl, wait, getStepFactorByBrowser } from './shared';
 
-describe('Drag N Drop - Area', () => {
-  it('The items should be constrained', async () => {
+test.describe('Drag N Drop - Area', () => {
+  test('The items should be constrained', async ({ page }, testInfo) => {
     await page.goto(`${baseUrl}/drag-n-drop-area.html`)
     const { v1, v2, v3, v4 } = await page.evaluate(() => ({
       v1: window.getItemVect(1),
@@ -14,8 +14,8 @@ describe('Drag N Drop - Area', () => {
     const mouse = page.mouse
     await mouse.move(1, 1)
     await mouse.down()
-    await mouse.move(500, 500, {
-      steps: 10,
+    await mouse.move(300, 300, {
+      steps: 100 * getStepFactorByBrowser(testInfo.project.name),
     })
     await mouse.up()
 
@@ -29,8 +29,8 @@ describe('Drag N Drop - Area', () => {
 
     await mouse.move(v2.x, v2.y)
     await mouse.down()
-    await mouse.move(500, 500, {
-      steps: 10,
+    await mouse.move(300, 300, {
+      steps: 100 * getStepFactorByBrowser(testInfo.project.name),
     })
     await mouse.up()
 
@@ -47,7 +47,8 @@ describe('Drag N Drop - Area', () => {
     expect(s2.length).toEqual(0)
     expect(v12.x).not.toEqual(v1.x)
     expect(v22.y).not.toEqual(v2.y)
-    expect(v12).toMatchObject(v22)
+    expect(v12.x).toEqual(v22.x)
+    expect(v12.y - v22.y).toBeLessThan(50)
 
     expect(v32.x).toEqual(v3.x)
     expect(v42.y).toEqual(v4.y)

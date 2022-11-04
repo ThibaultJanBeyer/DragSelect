@@ -1,4 +1,5 @@
-const baseUrl = `file://${process.cwd()}/__tests__/functional`;
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
 const startPos = 10;
 const steps = 10;
@@ -18,8 +19,8 @@ async function moveMouse(page, dpi = steps + 1) {
   }));
 }
 
-describe('Position Difference Calculations', () => {
-  it('should have correct first value on move', async () => {
+test.describe('Position Difference Calculations', () => {
+  test('should have correct first value on move', async ({ page }) => {
     await page.goto(`${baseUrl}/cursor-position-difference.html`);
     const { cursorMoveDiff } = await moveMouse(page);
 
@@ -29,7 +30,7 @@ describe('Position Difference Calculations', () => {
   });
 
   // Next Drag: difference between startPos and current mouse position.
-  it('should have correct subsequent values on move', async () => {
+  test('should have correct subsequent values on move', async ({ page }) => {
     await page.goto(`${baseUrl}/cursor-position-difference.html`);
     const { cursorMoveDiff, cursorPosMove } = await moveMouse(page);
 
@@ -40,7 +41,7 @@ describe('Position Difference Calculations', () => {
     expect(cursorMoveDiff[8].y).toBe(cursorPosMove[8].y - startPos);
   });
 
-  it('should have correct values on click', async () => {
+  test('should have correct values on click', async ({ page }) => {
     await page.goto(`${baseUrl}/cursor-position-difference.html`);
 
     const mouse = page.mouse;

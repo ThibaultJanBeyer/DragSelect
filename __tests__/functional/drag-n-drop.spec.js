@@ -1,10 +1,10 @@
-import wait from '../helpers/wait'
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { test, expect } from '@playwright/test';
+import { baseUrl } from './shared';
 
-describe('Drag N Drop', () => {
+test.describe('Drag N Drop', () => {
   const itemId = '2'
 
-  it('The items should be immediately draggable', async () => {
+  test('The items should be immediately draggable', async ({ page }) => {
     await page.goto(`${baseUrl}/drag-n-drop.html`)
     const { itemVect } = await page.evaluate(
       (itemId) => ({
@@ -40,7 +40,7 @@ describe('Drag N Drop', () => {
     )
   })
 
-  it('The items should be draggable after selection', async () => {
+  test('The items should be draggable after selection', async ({ page }) => {
     await page.goto(`${baseUrl}/drag-n-drop.html`)
 
     const mouse = page.mouse
@@ -59,11 +59,17 @@ describe('Drag N Drop', () => {
       itemVect4,
       dragged0,
     } = await page.evaluate(() => ({
+      // @ts-ignore
       selected0: window.selected,
+      // @ts-ignore
       itemVect1: window.getItemVect(1),
+      // @ts-ignore
       itemVect2: window.getItemVect(2),
+      // @ts-ignore
       itemVect3: window.getItemVect(3),
+      // @ts-ignore
       itemVect4: window.getItemVect(4),
+      // @ts-ignore
       dragged0: window.dragged,
     }))
 
@@ -87,20 +93,28 @@ describe('Drag N Drop', () => {
       dragStart,
       dragMove,
     } = await page.evaluate(() => ({
+      // @ts-ignore
       selected02: window.selected,
+      // @ts-ignore
       itemVect12: window.getItemVect(1),
+      // @ts-ignore
       itemVect22: window.getItemVect(2),
+      // @ts-ignore
       itemVect32: window.getItemVect(3),
+      // @ts-ignore
       itemVect42: window.getItemVect(4),
+      // @ts-ignore
       dragged02: window.dragged,
+      // @ts-ignore
       dragStart: window.dragStart,
+      // @ts-ignore
       dragMove: window.dragMove,
     }))
 
     expect(selected02.length).toEqual(0)
     expect(dragged02.length).toEqual(4)
     expect(dragStart.length).toEqual(1)
-    expect(dragMove.length).toEqual(5)
+    expect(dragMove.length).toBeGreaterThanOrEqual(5)
 
     expect(itemVect12).not.toMatchObject(itemVect1)
     expect(itemVect22).not.toMatchObject(itemVect2)

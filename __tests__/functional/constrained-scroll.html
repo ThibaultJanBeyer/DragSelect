@@ -66,6 +66,7 @@
         selectables,
         area: document.querySelector('.area'),
         autoScrollSpeed: 100,
+        draggability: false
     });
     ds.subscribe('callback', ({ items }) => window.callbackIds = items.map(n => n.id), window.itemIds)
 </script>
