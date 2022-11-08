@@ -42,7 +42,7 @@
             <pre class="prettyprint source linenums"><code>/**
  * The Settings to be passed to the Class
  * @typedef {Object} Settings
- * @property {HTMLElement|SVGElement|HTMLDocument} [area=document] area in which you can drag. If not provided it will be the whole document
+ * @property {HTMLElement|SVGElement|Document} [area=document] area in which you can drag. If not provided it will be the whole document
  * @property {DSInputElements} [selectables=[]] the elements that can be selected
  * @property {number} [autoScrollSpeed=5] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement.
  * @property {Vect2} [overflowTolerance={x:25,y:25}] Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start)
@@ -52,18 +52,30 @@
  * @property {boolean} [multiSelectToggling=true] Whether or not to toggle already active elements while multi-selecting
  * @property {DSMultiSelectKeys} [multiSelectKeys=['Control', 'Shift', 'Meta']] Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for &lt;kbd>Control&lt;/kbd>, &lt;kbd>Shift&lt;/kbd> and &lt;kbd>Meta&lt;/kbd>. Provide an empty array `[]` if you want to turn off the functionality.
  * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
+ * @property {number} [selectionThreshold=0] how much % of the element has to be selected to be considered selected (0 = just touching, 1 = inside the selection)
  * @property {boolean} [draggability=true] When a user is dragging on an already selected element, the selection is dragged.
  * @property {boolean} [immediateDrag=true] Whether an element is draggable from the start or needs to be selected first
  * @property {boolean} [keyboardDrag=true] Whether or not the user can drag with the keyboard (we don't recommend disabling it)
  * @property {DSDragKeys} [dragKeys={up:['ArrowUp'],down:['ArrowDown'],left:['ArrowLeft'],righ:['ArrowRight']}] The keys available to drag element using the keyboard.
  * @property {number} [keyboardDragSpeed=10] The speed at which elements are dragged using the keyboard. In pixels per keydown.
  * @property {boolean} [useTransform=true] Whether to use hardware accelerated css transforms when dragging or top/left instead
+ * @property {number} [refreshMemoryRate=80] Refresh rate on memoization, higher numbers mean better performance but more lag if elements are moving, lower numbers mean less lag but worse performance. If none of your DOMNodes are moving, you can set it to a very high number to increase performance. Value in milliseconds.
+ * @property {DSInputDropZone[]} [dropZones=[]] one or more drop-elements: where the selectables can be dropped into
+ * @property {number} [dropInsideThreshold=1] how much % of the item has to be inside the dropzone to be considered inside (0 = barely touching, 1 = completely inside)
+ * @property {number} [dropTargetThreshold=0] how much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone)
  * @property {boolean} [usePointerEvents=false] Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly.
  * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
  * @property {string} [selectorClass=ds-selector] the class assigned to the square selector helper
  * @property {string} [selectorAreaClass=ds-selector-area] the class assigned to the square in which the selector resides. By default it's invisible
+ * @property {string} [droppedTargetClass=ds-dropped-target] on an item corresponding the target dropzone. This is also the prefix for ds-dropped-target-${zone.id}
+ * @property {string} [droppedInsideClass=ds-dropped-inside] on an item that is within its dropzone bounds after a drop. This is also the prefix for ds-dropped-inside-${zone.id}
+ * @property {string} [droppableClass=ds-droppable] on element that can be dropped into at least one container. This is also the prefix for ds-droppable-${zone.id}
+ * @property {string} [dropZoneClass=ds-dropzone] on each dropZone
+ * @property {string} [dropZoneReadyClass=ds-dropzone-ready] on corresponding dropZone when element is dragged
+ * @property {string} [dropZoneTargetClass=ds-dropzone-target] on dropZone that has elements from any successful target drop
+ * @property {string} [dropZoneInsideClass=ds-dropzone-inside] on dropZone that has elements inside after any drop
  */
 
 /**
@@ -78,17 +90,33 @@
  * @property {Settings} [settings] the settings being updates/manipulated/passed, also holds the previous value. i.e. updating selectorClass will publish { settings: { selectorClass: 'newVal', 'selectorClass:pre': 'oldVal' } }
  * @property {Array.&lt;'top'|'bottom'|'left'|'right'|undefined>} [scroll_directions]
  * @property {number} [scroll_multiplier]
+ * @property {DSDropZone} [dropTarget] The dropZone element that the element was dropped into (or the mouse is currently hovering over)
  */
 /**
  * @typedef {function} DSCallback
  * @param {CallbackObject} data
  */
 
+/**
+ * @typedef {Object} DSInputDropZone
+ * @property {string} id
+ * @property {DSElement} element
+ * @property {DSInputElements} droppables
+ */
+/**
+ * @typedef {Object} DSDropZone
+ * @property {string} id
+ * @property {DSElement} element
+ * @property {DSElements} droppables
+ * @property {DSElements} [itemsDropped] the items related to the target zone
+ * @property {DSElements} [itemsInside] the items that are within the targets bounds
+ */
+
 /** @typedef {{x: number, y: number}} Vect2 */
 /** @typedef {{x:number,y:number,w:number,h:number,r:number,b:number}} DSElementPos */
 /** @typedef {Array.&lt;'top'|'bottom'|'left'|'right'|undefined>} DSEdges */
 
-/** @typedef {HTMLElement|SVGElement|HTMLDocument} DSArea area within which you can drag */
+/** @typedef {HTMLElement|SVGElement|Document} DSArea area within which you can drag */
 /** @typedef {HTMLElement} DSSelectorArea area in which you can drag */
 /** @typedef {Array.&lt;HTMLElement|SVGElement> | HTMLElement | SVGElement} DSInputElements the elements that can be selected */
 /** @typedef {Array.&lt;HTMLElement|SVGElement>} DSElements the elements that can be selected */
@@ -122,7 +150,7 @@
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a> on Fri Nov 04 2022 20:16:07 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a> on Tue Nov 08 2022 22:08:47 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

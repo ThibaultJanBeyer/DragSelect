@@ -101,7 +101,7 @@
 </li>
 </ul>
 </li>
-<li><a href="#constructor-properties-settings">Constructor Properties (Settings):</a>
+<li><a href="#constructor-properties-settings">Constructor Properties (Settings)</a>
 <ul>
 <li><a href="#post-initialization-setting-updates">Post-Initialization Setting-Updates</a></li>
 </ul>
@@ -115,7 +115,7 @@
 </li>
 </ul>
 </li>
-<li><a href="#methods">Methods:</a></li>
+<li><a href="#methods">Methods</a></li>
 <li><a href="#classes">Classes</a></li>
 <li><a href="#have-fun">Have Fun!</a></li>
 </ul>
@@ -313,7 +313,7 @@ myCustomDrag.subscribe('finished', () => ds.start())
   }
 }
 </code></pre>
-<h1>Constructor Properties (Settings):</h1>
+<h1>Constructor Properties (Settings)</h1>
 <p><em>DragSelect is hyper customizable</em>. Note, all properties are optional. See <strong><a href="https://dragselect.com/DragSelect.html">the docs</a></strong> for more info.</p>
 <p>Moreover any setting can also be updated or added after the initialization, see <a href="#post-initialization-setting-updates">post-initialization setting updates</a>.</p>
 <p>Here is the full list:</p>
@@ -331,13 +331,13 @@ myCustomDrag.subscribe('finished', () => ds.start())
 <td>area</td>
 <td>single DOM element (node)</td>
 <td>The square in which you are able to select</td>
-<td>document</td>
+<td><code>document</code></td>
 </tr>
 <tr>
 <td>selectables</td>
-<td>DOM elements (nodes)</td>
+<td>DOM elements [nodes]</td>
 <td>The elements that can be selected</td>
-<td>[]</td>
+<td><code>[]</code></td>
 </tr>
 <tr>
 <td>autoScrollSpeed</td>
@@ -388,6 +388,12 @@ myCustomDrag.subscribe('finished', () => ds.start())
 <td>Auto-created HTML Element</td>
 </tr>
 <tr>
+<td>selectionThreshold</td>
+<td>number</td>
+<td>How much % of the element has to be selected to be considered selected (0 = just touching, 1 = fully inside the selection)</td>
+<td><code>0</code></td>
+</tr>
+<tr>
 <td>draggability</td>
 <td>boolean</td>
 <td>When a user is dragging on an already selected element, the selection is dragged.</td>
@@ -424,6 +430,36 @@ myCustomDrag.subscribe('finished', () => ds.start())
 <td><code>true</code></td>
 </tr>
 <tr>
+<td>refreshMemoryRate</td>
+<td>number</td>
+<td>Refresh rate on memoization, higher numbers mean better performance but more lag if elements are moving, lower numbers mean less lag but worse performance. If none of your DOMNodes are moving, you can set it to a very high number to increase performance. Value in milliseconds.</td>
+<td><code>80</code></td>
+</tr>
+<tr>
+<td>dropZones</td>
+<td>[{ id: 'string', element: single DOM element (node), droppables: DOM elements [nodes] }]</td>
+<td>zones with association of droppable items that can be dropped into them</td>
+<td><code>[]</code></td>
+</tr>
+<tr>
+<td>dropInsideThreshold</td>
+<td>number</td>
+<td>How much % of the item has to be inside the dropzone to be considered inside (0 = barely touching, 1 = completely inside)</td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td>dropTargetThreshold</td>
+<td>number</td>
+<td>How much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone)</td>
+<td><code>0</code></td>
+</tr>
+<tr>
+<td>usePointerEvents</td>
+<td>boolean</td>
+<td>Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly.</td>
+<td><code>false</code></td>
+</tr>
+<tr>
 <td>selectedClass</td>
 <td>string</td>
 <td>The class name assigned to the selected items.</td>
@@ -448,10 +484,58 @@ myCustomDrag.subscribe('finished', () => ds.start())
 <td><a href="#classes">see classes</a></td>
 </tr>
 <tr>
-<td>usePointerEvents</td>
-<td>boolean</td>
-<td>Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly.</td>
-<td><code>false</code></td>
+<td>selectorClass</td>
+<td>string</td>
+<td>The class assigned to the square selector helper</td>
+<td>ds-selector</td>
+</tr>
+<tr>
+<td>selectorAreaClass</td>
+<td>string</td>
+<td>The class assigned to the square in which the selector resides. By default it's invisible</td>
+<td>ds-selector-area</td>
+</tr>
+<tr>
+<td>droppedTargetClass</td>
+<td>string</td>
+<td>On an item corresponding the target dropzone. This is also the prefix for ds-dropped-target-${zone.id}.</td>
+<td>ds-dropped-target &amp; ds-dropped-target-${zone.id}</td>
+</tr>
+<tr>
+<td>droppedInsideClass</td>
+<td>string</td>
+<td>On an item that is within its dropzone bounds after a drop. This is also the prefix for ds-dropped-inside-${zone.id}</td>
+<td>ds-dropped-inside &amp; ds-dropped-inside-${zone.id}</td>
+</tr>
+<tr>
+<td>droppableClass</td>
+<td>string</td>
+<td>On element that can be dropped into at least one container. This is also the prefix for ds-droppable-${zone.id}</td>
+<td>ds-droppable &amp; ds-droppable-${zone.id}</td>
+</tr>
+<tr>
+<td>dropZoneClass</td>
+<td>string</td>
+<td>On each dropZone</td>
+<td>ds-dropzone</td>
+</tr>
+<tr>
+<td>dropZoneReadyClass</td>
+<td>string</td>
+<td>On corresponding dropZone when element is dragged</td>
+<td>ds-dropzone-ready</td>
+</tr>
+<tr>
+<td>dropZoneTargetClass</td>
+<td>string</td>
+<td>On dropZone that has elements from any successful target drop</td>
+<td>ds-dropzone-target</td>
+</tr>
+<tr>
+<td>dropZoneInsideClass</td>
+<td>string</td>
+<td>On dropZone that has elements inside after any drop</td>
+<td>ds-dropzone-inside</td>
 </tr>
 </tbody>
 </table>
@@ -557,12 +641,17 @@ ds.setSettings({
 <td><code>HTMLElement|SVGElement|*</code></td>
 <td>The single element currently being interacted with if any</td>
 </tr>
+<tr>
+<td>dropTarget</td>
+<td><code>{ id: 'id', element: node, droppables: [node], itemsDropped: [node], itemsInside: [node] }</code></td>
+<td>dropZone in which the droppable elements were dropped into. <code>itemsDropped</code>: all items that were dropped on the target. <code>itemsInside</code>: all items that are within the bounds of the zone</td>
+</tr>
 </tbody>
 </table>
 <blockquote>
 <p>Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first</p>
 </blockquote>
-<h1>Methods:</h1>
+<h1>Methods</h1>
 <p>When the function is saved into a variable <code>var foo = new DragSelect()</code> you have access to all its inner functions.<br>
 Also check <strong><a href="https://dragselect.com/DragSelect.html">the docs</a></strong> for more info.</p>
 <table>
@@ -585,54 +674,64 @@ Also check <strong><a href="https://dragselect.com/DragSelect.html">the docs</a>
 <td>Reset the functionality after a teardown</td>
 </tr>
 <tr>
+<td>break</td>
+<td>/</td>
+<td>Utility to override DragSelect internal functionality. Breaks out of current flow. Read <a href="#writing-a-fully-custom-solution">docs</a> for more info.</td>
+</tr>
+<tr>
+<td>setSettings</td>
+<td><code>settings:Settings</code></td>
+<td>Update any setting dynamically, see <a href="#constructor-properties-settings">Settings</a></td>
+</tr>
+<tr>
 <td>getSelection</td>
 <td>/</td>
 <td>Returns all currently selected nodes</td>
 </tr>
 <tr>
 <td>addSelection</td>
-<td>DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables)</td>
+<td><code>elements:DOM Elements, triggerCallback:boolean, dontAddToSelectables:boolean</code></td>
 <td>adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true)</td>
 </tr>
 <tr>
 <td>removeSelection</td>
-<td>DOM elements (nodes), Boolean (callback), Boolean (removeFromSelectables)</td>
+<td><code>elements:DOM Elements, triggerCallback:boolean, removeFromSelectables:boolean</code></td>
 <td>removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last boolean is set to true, it also removes them from the possible selectable nodes if they were.</td>
 </tr>
 <tr>
 <td>toggleSelection</td>
-<td>DOM elements (nodes), Boolean (callback), Boolean (alsoSelectables)</td>
+<td><code>elements:DOM Elements, triggerCallback:boolean, alsoSelectables:boolean</code></td>
 <td>toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If boolean is set to true: callback will be called afterward. If last boolean is set to true, it also removes selected elements from possible selectable nodes &amp; doesn’t add them to selectables if they are not (can be turned off by setting the last boolean to true).</td>
 </tr>
 <tr>
 <td>setSelection</td>
-<td>DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables)</td>
+<td><code>elements:DOM Elements, triggerCallback:boolean, dontAddToSelectables:boolean</code></td>
 <td>sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true)</td>
 </tr>
 <tr>
 <td>clearSelection</td>
-<td>DOM elements (nodes), Boolean (callback)</td>
+<td>DOM elements [nodes], Boolean (callback)</td>
 <td>remove all elements from the selection. If boolean is set to true: callback will be called afterwards.</td>
 </tr>
 <tr>
+<td>clearSelection</td>
+<td><code>triggerCallback:boolean</code></td>
+<td>Unselect / Deselect all current selected Nodes</td>
+</tr>
+<tr>
 <td>addSelectables</td>
-<td>DOM elements (nodes), Boolean (addToSelection)</td>
+<td><code>elements:DOM Elements, addToSelection:boolean</code></td>
 <td>Adds elements that can be selected. Don’t worry, nodes are never added twice. If boolean is set to true: elements will also be added to current selection.</td>
 </tr>
 <tr>
 <td>removeSelectables</td>
-<td>DOM elements (nodes), Boolean (removeFromSelection)</td>
+<td><code>elements:DOM Elements, removeFromSelection:boolean</code></td>
 <td>Remove elements from the set of elements that can be selected. If boolean is set to true: elements will also be removed from current selection.</td>
 </tr>
 <tr>
 <td>getSelectables</td>
 <td>/</td>
 <td>Returns array with all nodes that can be selected.</td>
-</tr>
-<tr>
-<td>setSelectables</td>
-<td>DOM elements (nodes), Boolean (removeFromSelection), Boolean (addToSelection)</td>
-<td>Sets all elements that can be selected. Removes all current selectables (&amp; their respective applied classes). Adds the new set to the selectables set. Thus, replacing the original set. First boolean if old elements should be removed from the selection. Second boolean if new elements should be added to the selection.</td>
 </tr>
 <tr>
 <td>getInitialCursorPosition</td>
@@ -665,13 +764,8 @@ Also check <strong><a href="https://dragselect.com/DragSelect.html">the docs</a>
 <td>Returns last registered x, y coordinates of the cursor relative to the area (after last callback)</td>
 </tr>
 <tr>
-<td>getCursorPositionDifference</td>
-<td>Boolean (usePreviousCursorDifference)</td>
-<td>Returns object with the x, y difference between the initial and the last cursor position. If the argument is set to true, it will instead return the x, y difference to the previous coordinates</td>
-</tr>
-<tr>
 <td>isMultiSelect</td>
-<td>[event:KeyboardEvent</td>
+<td>`event:KeyboardEvent</td>
 <td>MouseEvent</td>
 </tr>
 <tr>
@@ -680,9 +774,19 @@ Also check <strong><a href="https://dragselect.com/DragSelect.html">the docs</a>
 <td>Whether the user is currently drag n dropping elements (instead of selection)</td>
 </tr>
 <tr>
-<td>break</td>
-<td>/</td>
-<td>Utility to override DragSelect internal functionality. Breaks out of current flow. Read <a href="#writing-a-fully-custom-solution">docs</a> for more info.</td>
+<td>getZoneByCoordinates</td>
+<td>Optional <code>{x: number, y: number}</code></td>
+<td>Returns the first drop target under the current mouse position, or, if provided at coordinates x/y</td>
+</tr>
+<tr>
+<td>getItemsDroppedByZoneId</td>
+<td><code>zoneId: string</code></td>
+<td>Returns the items dropped into a specific zone (by zone.id)</td>
+</tr>
+<tr>
+<td>getItemsInsideByZoneId</td>
+<td><code>zoneId: string</code>,<code>addClasses: boolean</code></td>
+<td>Returns the items that are visually inside a specific zone (by zone.id)</td>
 </tr>
 </tbody>
 </table>
@@ -697,11 +801,11 @@ Also check <strong><a href="https://dragselect.com/DragSelect.html">the docs</a>
 <tbody>
 <tr>
 <td>.ds-selected</td>
-<td>On elements that are selected</td>
+<td>On items that are selected</td>
 </tr>
 <tr>
 <td>.ds-hover</td>
-<td>On elements that are currently hovered</td>
+<td>On items that are currently hovered</td>
 </tr>
 <tr>
 <td>.ds-selector</td>
@@ -713,7 +817,47 @@ Also check <strong><a href="https://dragselect.com/DragSelect.html">the docs</a>
 </tr>
 <tr>
 <td>.ds-selectable</td>
-<td>On elements that can be selected</td>
+<td>On items that can be selected</td>
+</tr>
+<tr>
+<td>.ds-droppable</td>
+<td>on item that can be dropped into at least one zone</td>
+</tr>
+<tr>
+<td>.ds-droppable-${id}</td>
+<td>on item that can be dropped into a zone with specific identifier, <code>${id}</code> will be replaced by the corresponding zone.id</td>
+</tr>
+<tr>
+<td>.ds-dropped-target</td>
+<td>on an item corresponding the target dropzone</td>
+</tr>
+<tr>
+<td>.ds-dropped-target-${id}</td>
+<td>on an item corresponding the target dropzone with specific identifier, <code>${id}</code> will be replaced by the corresponding zone.id</td>
+</tr>
+<tr>
+<td>.ds-dropped-inside</td>
+<td>on an item that is within its dropzone bounds after a drop</td>
+</tr>
+<tr>
+<td>.ds-dropped-inside-${id}</td>
+<td>on an item that is within its dropzone bounds after a drop with specific identifier, <code>${id}</code> will be replaced by the corresponding zone.id</td>
+</tr>
+<tr>
+<td>.ds-dropzone</td>
+<td>on each dropZone</td>
+</tr>
+<tr>
+<td>.ds-dropzone-ready</td>
+<td>on corresponding dropZone when corresponding item is being dragged</td>
+</tr>
+<tr>
+<td>.ds-dropzone-target</td>
+<td>on dropZone when it was target of a successful drop</td>
+</tr>
+<tr>
+<td>.ds-dropzone-inside</td>
+<td>on dropZone that has elements inside after any drop</td>
 </tr>
 </tbody>
 </table>
@@ -740,7 +884,7 @@ Star this repo, tell all your friends and start contributing and/or <a href="htt
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a> on Fri Nov 04 2022 20:16:07 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a> on Tue Nov 08 2022 22:08:47 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
