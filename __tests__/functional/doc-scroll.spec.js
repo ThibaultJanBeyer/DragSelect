@@ -18,6 +18,7 @@ describe('Document Scroll', () => {
     }))
 
     const expected = [
+      "item-145",
       'item-161',
       'item-177',
       'item-193',
