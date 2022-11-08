@@ -1,7 +1,7 @@
 {
   "name": "dragselect",
   "version": "2.5.0",
-  "description": "easy javascript drag select functionality for your projects",
+  "description": "easy javascript drag select & drop functionality for your projects",
   "main": "./dist/DragSelect.js",
   "types": "./dist/DragSelect.d.ts",
   "scripts": {
