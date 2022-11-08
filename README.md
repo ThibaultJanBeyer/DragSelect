@@ -30,6 +30,7 @@ easily add a selection algorithm to your application/website.
 - [Usage](#usage)
   - [Simple](#simple)
   - [Within a scroll-able Area](#within-a-scroll-able-area)
+  - [With DropZones](#with-dropzones)
   - [Extended](#extended)
   - [Mobile/Touch usage](#mobiletouch-usage)
   - [Accessibility (a11y)](#accessibility-a11y)
@@ -159,6 +160,40 @@ new DragSelect({
 ```
 
 <p data-height="350" data-theme-id="0" data-slug-hash="Nvobgq" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect with Scrollable AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a> on CodePen.</p>
+
+## With DropZones
+
+Example of DropZones. DropZones are areas where you can drop the selected elements into.
+
+```javascript
+const ds = new DragSelect({
+  selectables: document.querySelectorAll('.selectable-nodes'),
+  area: document.querySelector('#area'),
+  dropZones: [
+    { element: document.querySelector('#zone-1'), id: 'zone-1', droppables: document.querySelectorAll('.selectable-nodes') },
+    { element: document.querySelector('#zone-2'), id: 'zone-2', droppables: document.querySelectorAll('#item-2,#item-4') },
+  ],
+  dropInsideThreshold: 1, // 1 = has to be 100% inside the dropzone, 0.5 = 50% inside, 0 = just touching is fine
+});
+
+ds.subscribe('callback', ({
+  dropTarget: {
+      id: "zone-1",
+      element: <node />,
+      droppables: [ <node />, … ],
+      itemsDropped: [ <node />, … ], // elements that were selected on drop
+      itemsInside: [ <node />, … ] // elements that are inside the bounds of the dropzone
+  }) => {
+  if(dropTarget?.itemsDropped?.length) {
+    // do something
+    console.log('Dropped', dropTarget.itemsDropped, 'into', dropTarget.id);
+  }
+})
+```
+
+This will also add some respective [classes](#classes)
+
+<p data-height="350" data-theme-id="0" data-slug-hash="bGKgVxp" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect with DropZones" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp">DragSelect with DropZones</a> on CodePen.</p>
 
 ## Extended
 
