@@ -110,6 +110,7 @@ export default (settings, withFallback) => ({
   ...hydrateHelper('dropZones', settings.dropZones, withFallback, []),
   ...hydrateHelper('dropInsideThreshold', settings.dropInsideThreshold, withFallback, 1),
   ...hydrateHelper('dropTargetThreshold', settings.dropTargetThreshold, withFallback, 0),
+  ...hydrateHelper('usePointerEvents', settings.usePointerEvents, withFallback, false),
   ...hydrateHelper('hoverClass', settings.hoverClass, withFallback, 'ds-hover'),
   ...hydrateHelper('selectableClass', settings.selectableClass, withFallback, 'ds-selectable'),
   ...hydrateHelper('selectedClass', settings.selectedClass, withFallback, 'ds-selected'),

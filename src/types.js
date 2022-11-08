@@ -22,6 +22,7 @@
  * @property {DSInputDropZone[]} [dropZones=[]] one or more drop-elements: where the selectables can be dropped into
  * @property {number} [dropInsideThreshold=1] how much % of the item has to be inside the dropzone to be considered inside (0 = barely touching, 1 = completely inside)
  * @property {number} [dropTargetThreshold=0] how much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone)
+ * @property {boolean} [usePointerEvents=false] Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly.
  * @property {string} [hoverClass=ds-hover] the class assigned to the mouse hovered items
  * @property {string} [selectableClass=ds-selectable] the class assigned to the elements that can be selected
  * @property {string} [selectedClass=ds-selected] the class assigned to the selected items
@@ -40,7 +41,7 @@
  * The Object that is passed back to any callback method
  * @typedef {Object} CallbackObject
  * @property {Array<HTMLElement|SVGElement|any>} [items] The items currently selected
- * @property {MouseEvent|TouchEvent|KeyboardEvent|Event} [event] The respective event object
+ * @property {MouseEvent|TouchEvent|PointerEvent|KeyboardEvent|Event} [event] The respective event object
  * @property {HTMLElement|SVGElement|any} [item] The single item currently interacted with
  * @property {boolean} [isDragging] Whether the interaction is a drag or a select
  * @property {boolean} [isDraggingKeyboard] Whether or not the drag interaction is via keyboard
@@ -79,7 +80,7 @@
 /** @typedef {Array.<HTMLElement|SVGElement> | HTMLElement | SVGElement} DSInputElements the elements that can be selected */
 /** @typedef {Array.<HTMLElement|SVGElement>} DSElements the elements that can be selected */
 /** @typedef {HTMLElement|SVGElement} DSElement a single element that can be selected */
-/** @typedef {MouseEvent|TouchEvent} DSEvent en event from a touch or mouse interaction */
+/** @typedef {MouseEvent|TouchEvent|PointerEvent} DSEvent en event from a touch or mouse interaction */
 /** @typedef {Array.<'Shift'|'Control'|'Meta'|string>} DSMultiSelectKeys An array of keys that allows switching to the multi-select mode */
 
 /** @typedef {'dragmove'|'autoscroll'|'dragstart'|'elementselect'|'elementunselect'|'callback'} DSEventNames */

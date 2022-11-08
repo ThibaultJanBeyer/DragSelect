@@ -9,15 +9,13 @@
 
 [GitHub](https://github.com/ThibaultJanBeyer/DragSelect/) | [NPM](https://www.npmjs.com/package/dragselect) | [Project-Page](https://dragselect.com/)  
 
-[![Build Status](https://travis-ci.com/ThibaultJanBeyer/DragSelect.svg?branch=master)](https://travis-ci.com/ThibaultJanBeyer/DragSelect) ![gzip size](https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip) ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) [![No Dependency](https://img.shields.io/badge/dependencies-none-informational)](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/package.json) [![Contributors Welcome](https://img.shields.io/badge/contributors-welcome-blueviolet)](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md) [![Sponsors Welcome](https://img.shields.io/badge/sponsors-welcome-blueviolet)](https://github.com/sponsors/ThibaultJanBeyer)
+[![Build Status](https://github.com/ThibaultJanBeyer/DragSelect/actions/workflows/github-actions-build.yml/badge.svg)](https://github.com/ThibaultJanBeyer/DragSelect/actions) ![gzip size](https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip) ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) [![No Dependency](https://img.shields.io/badge/dependencies-none-informational)](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/package.json) [![Contributors Welcome](https://img.shields.io/badge/contributors-welcome-blueviolet)](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md) [![Sponsors Welcome](https://img.shields.io/badge/sponsors-welcome-blueviolet)](https://github.com/sponsors/ThibaultJanBeyer)
 
 # DragSelect ![GitHub package.json version](https://img.shields.io/github/package-json/v/ThibaultJanBeyer/DragSelect.svg)
 easily add a selection algorithm to your application/website.
 
 # TOC
 
-- [DragSelect !GitHub package.json version](#dragselect-)
-- [TOC](#toc)
 - [Project Page: Demo & Info](#project-page-demo--info)
 - [Key-Features](#key-features)
 - [Why?](#why)
@@ -304,6 +302,7 @@ Here is the full list:
 |dropZones |[{ id: 'string', element: single DOM element (node), droppables: DOM elements [nodes] }] |zones with association of droppable items that can be dropped into them |`[]`
 |dropInsideThreshold |number |How much % of the item has to be inside the dropzone to be considered inside (0 = barely touching, 1 = completely inside) |`1`
 |dropTargetThreshold |number |How much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone) |`0`
+|usePointerEvents |boolean |Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly. |`false`
 |selectedClass |string |The class name assigned to the selected items. |[see classes](#classes)
 |hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)
 |selectorClass |string |The class name assigned to the square selector helper. |[see classes](#classes)

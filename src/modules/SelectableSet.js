@@ -54,7 +54,14 @@ export default class SelectableSet extends Set {
     this.DS.publish('Selectable:added:pre', publishData)
     element.classList.add(this.Settings.selectableClass)
     element.addEventListener('click', this._onClick)
-    element.addEventListener('mousedown', this._onPointer)
+    
+    if (this.Settings.usePointerEvents)
+      element.addEventListener('pointerdown', this._onPointer, {
+        // @ts-ignore
+        passive: false,
+      })
+    else element.addEventListener('mousedown', this._onPointer)
+    
     element.addEventListener('touchstart', this._onPointer, {
       // @ts-ignore
       passive: false,
@@ -84,7 +91,14 @@ export default class SelectableSet extends Set {
     element.classList.remove(this.Settings.selectableClass)
     element.classList.remove(this.Settings.hoverClass)
     element.removeEventListener('click', this._onClick)
-    element.removeEventListener('mousedown', this._onPointer)
+
+    if (this.Settings.usePointerEvents)
+      element.removeEventListener('pointerdown', this._onPointer, {
+        // @ts-ignore
+        passive: false,
+      })
+    else element.removeEventListener('mousedown', this._onPointer)
+
     element.removeEventListener('touchstart', this._onPointer, {
       // @ts-ignore
       passive: false,

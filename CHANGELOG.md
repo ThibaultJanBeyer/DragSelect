@@ -4,6 +4,14 @@
 - Add a `selectionThreshold` settings, solves #130
 - Add a `refreshMemoryRate` settings, to increase/decrease performance as necessary
 
+# 2.4.4
+
+- Add support for `pointerEvents` (from @HollowMan6) [#143](https://github.com/ThibaultJanBeyer/DragSelect/pull/143) & [#128](https://github.com/ThibaultJanBeyer/DragSelect/pull/128)
+
+# 2.4.3
+
+- add `triggerCallback` option to `removeSelectables` and `addSelectables`
+
 # 2.4.2
 
 - Add Selecrables events/topics for add/delete: `Selectable:added` & `Selectable:added:pre` & `Selectable:removed` & `Selectable:removed:pre`
