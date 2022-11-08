@@ -71,6 +71,10 @@ const hydrateHelper = (key, value, withFallback, fallback) => {
   if (key === 'dragKeys' && isAvailable) return { [key]: Object.assign(fallback, value) }
   else if(key === 'dragKeys' && !isAvailable) return isFallback ? { [key]: fallback } : {}
 
+  // Special rule for [dropZones]
+  if (key === 'dropZones' && isAvailable && new Set(value.map(v => v.id)).size !== value.length)
+    console.warn(`[DragSelect] UniqueConstraintsIssue: setting "dropZones" contains duplicate ids.`)
+
   return isAvailable ? { [key]: value } : isFallback ? { [key]: fallback } : {}
 }
 
@@ -95,16 +99,28 @@ export default (settings, withFallback) => ({
   ...hydrateHelper('multiSelectToggling', settings.multiSelectToggling, withFallback, true),
   ...hydrateHelper('multiSelectKeys', settings.multiSelectKeys, withFallback, ['Control', 'Shift', 'Meta']),
   ...hydrateHelper('selector', settings.selector, withFallback, null),
+  ...hydrateHelper('selectionThreshold', settings.selectionThreshold, withFallback, 0),
   ...hydrateHelper('draggability', settings.draggability, withFallback, true),
   ...hydrateHelper('immediateDrag', settings.immediateDrag, withFallback, true),
   ...hydrateHelper('keyboardDrag', settings.keyboardDrag, withFallback, true),
   ...hydrateHelper('dragKeys', settings.dragKeys, withFallback, { up: ['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'] }),
   ...hydrateHelper('keyboardDragSpeed', settings.keyboardDragSpeed, withFallback, 10),
   ...hydrateHelper('useTransform', settings.useTransform, withFallback, true),
+  ...hydrateHelper('refreshMemoryRate', settings.refreshMemoryRate, withFallback, 80),
+  ...hydrateHelper('dropZones', settings.dropZones, withFallback, []),
+  ...hydrateHelper('dropInsideThreshold', settings.dropInsideThreshold, withFallback, 1),
+  ...hydrateHelper('dropTargetThreshold', settings.dropTargetThreshold, withFallback, 0),
   ...hydrateHelper('usePointerEvents', settings.usePointerEvents, withFallback, false),
   ...hydrateHelper('hoverClass', settings.hoverClass, withFallback, 'ds-hover'),
   ...hydrateHelper('selectableClass', settings.selectableClass, withFallback, 'ds-selectable'),
   ...hydrateHelper('selectedClass', settings.selectedClass, withFallback, 'ds-selected'),
   ...hydrateHelper('selectorClass', settings.selectorClass, withFallback, 'ds-selector'),
   ...hydrateHelper('selectorAreaClass', settings.selectorAreaClass, withFallback, 'ds-selector-area'),
+  ...hydrateHelper('droppedTargetClass', settings.droppedTargetClass, withFallback, 'ds-dropped-target'),
+  ...hydrateHelper('droppedInsideClass', settings.droppedInsideClass, withFallback, 'ds-dropped-inside'),
+  ...hydrateHelper('droppableClass', settings.droppableClass, withFallback, 'ds-droppable'),
+  ...hydrateHelper('dropZoneClass', settings.dropZoneClass, withFallback, 'ds-dropzone'),
+  ...hydrateHelper('dropZoneReadyClass', settings.dropZoneReadyClass, withFallback, 'ds-dropzone-ready'),
+  ...hydrateHelper('dropZoneTargetClass', settings.dropZoneTargetClass, withFallback, 'ds-dropzone-target'),
+  ...hydrateHelper('dropZoneInsideClass', settings.dropZoneInsideClass, withFallback, 'ds-dropzone-inside'),
 })

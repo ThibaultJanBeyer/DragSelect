@@ -1,11 +1,7 @@
 import wait from '../helpers/wait'
-const baseUrl = `file://${process.cwd()}/__tests__/functional`
+import { moveSelect, moveKey, click } from '../helpers/manipulations'
 
-const select = async (mouse, x, y) => {
-  await mouse.move(x, y)
-  await mouse.down()
-  await mouse.up()
-}
+const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 const selectItems = async (mouse, x, y) => {
   await wait(100)
@@ -22,32 +18,17 @@ const selectItems = async (mouse, x, y) => {
   return retr
 }
 
-const moveItem = async (mouse, x, y) => {
-  await mouse.move(x, y)
-  await mouse.down()
-  await mouse.move(x + 200, y + 200, { steps: 10 })
-  await mouse.up()
-}
-
-const moveItemKey = async (mouse, keyboard, x, y, key) => {
-  await mouse.move(x, y)
-  await mouse.down()
-  await mouse.up()
-  await keyboard.press(key)
-  await keyboard.press(key)
-}
-
 describe('Settings', () => {
   it('area swapping should work', async () => {
     await page.goto(`${baseUrl}/settings.html`)
     let cb
 
-    // can select elements in the container 1
+    // can click elements in the container 1
     cb = await selectItems(page.mouse, 180, 120)
     expect(cb?.sort()).toMatchObject(["one", "two"])
-    await select(page.mouse, 180, 120)
+    await click(page, 180, 120)
 
-    // can NOT select elements in the container 2
+    // can NOT click elements in the container 2
     cb = await selectItems(page.mouse, 180, 480)
     expect(cb).toMatchObject([])
 
@@ -57,14 +38,14 @@ describe('Settings', () => {
       selectables: document.getElementsByClassName('four'),
     }))
 
-    // can NOT select elements in the container 1
+    // can NOT click elements in the container 1
     cb = await selectItems(page.mouse, 180, 120)
     expect(cb).toMatchObject([])
 
-    // can select elements in the container 2
+    // can click elements in the container 2
     cb = await selectItems(page.mouse, 180, 480)
     expect(cb).toMatchObject(["four"])
-    await select(page.mouse, 180, 120)
+    await click(page, 180, 120)
   })
 
   it('classes swapping should work', async () => {
@@ -114,12 +95,12 @@ describe('Settings', () => {
     expect(cb?.sort()).toMatchObject(["one", "two"])
     await page.evaluate(() => ds.setSettings({ draggability: false }))
     // move with draggability OFF
-    await moveItem(page.mouse, 140, 85)
+    await moveSelect(page, 140, 85)
     cb = await selectItems(page.mouse, 180, 120)
     expect(cb?.sort()).toMatchObject(["one", "two"])
     // move with draggability ON
     await page.evaluate(() => ds.setSettings({ draggability: true }))
-    await moveItem(page.mouse, 140, 85)
+    await moveSelect(page, 140, 85)
     cb = await selectItems(page.mouse, 180, 120)
     expect(cb?.sort()).toMatchObject([])
   })
@@ -128,15 +109,15 @@ describe('Settings', () => {
     await page.goto(`${baseUrl}/settings.html`)
     let cb
     await page.evaluate(() => ds.setSettings({ draggability: true }))
-    await moveItem(page.mouse, 140, 85)
-    await select(page.mouse, 180, 120)
+    await moveSelect(page, 140, 85)
+    await click(page, 180, 120)
     cb = await selectItems(page.mouse, 140, 85)
     expect(cb?.sort()).toMatchObject(["one", "two"])
-    await select(page.mouse, 180, 120)
+    await click(page, 180, 120)
     
     await page.evaluate(() => ds.setSettings({ immediateDrag: true }))
-    await moveItem(page.mouse, 140, 85)
-    await select(page.mouse, 180, 85)
+    await moveSelect(page, 140, 85)
+    await click(page, 180, 85)
     cb = await selectItems(page.mouse, 140, 85)
     expect(cb).toMatchObject(["one"])
   })
@@ -150,7 +131,7 @@ describe('Settings', () => {
         autoScrollSpeed: 1000,
         overflowTolerance: { x: 200, y: 200 }
       }))
-    await moveItem(page.mouse, 140, 85)
+    await moveSelect(page, 140, 85)
     expect(await page.evaluate(() =>
       ds.Area.HTMLNode.scrollTop)).not.toBe(0)
   })
@@ -170,13 +151,13 @@ describe('Settings', () => {
     let cb = []
     cb = await selectItems(page.mouse, 140, 85)
     expect(cb?.sort()).toMatchObject(["one", "two"])
-    await select(page.mouse, 180, 120)
-    await moveItemKey(page.mouse, page.keyboard, 140, 85, 's')
+    await click(page, 180, 120)
+    await moveKey(page, page.keyboard, 140, 85, 's')
     expect(await page.evaluate(() =>
       ds.Area.HTMLNode.scrollTop)).not.toBe(0)
     await page.evaluate(() =>
       ds.Area.HTMLNode.scrollTop = 0)
-    await select(page.mouse, 180, 120)
+    await click(page, 180, 120)
     cb = await selectItems(page.mouse, 140, 85)
     expect(cb).toMatchObject(["one"])
   })
@@ -189,7 +170,7 @@ describe('Settings', () => {
         immediateDrag: true,
         useTransform: false,
       }))
-    await moveItem(page.mouse, 140, 85)
+    await moveSelect(page, 140, 85)
     expect(await page.evaluate(() =>
       document.querySelector("#two").style.top)).not.toBe(0)
     expect(await page.evaluate(() =>
@@ -202,14 +183,14 @@ describe('Settings', () => {
       ds.setSettings({
         multiSelectKeys: ['q'],
       }))
-    await select(page.mouse, 140, 85)
+    await click(page, 140, 85)
     await page.keyboard.down('Shift')
-    await select(page.mouse, 85, 85)
+    await click(page, 85, 85)
     await page.keyboard.up('Shift')
     expect(await page.evaluate(() =>
       document.querySelectorAll(".ds-selected").length)).toBe(1)
     await page.keyboard.down('q')
-    await select(page.mouse, 140, 85)
+    await click(page, 140, 85)
     expect(await page.evaluate(() =>
       document.querySelectorAll(".ds-selected").length)).toBe(2)
     await page.keyboard.up('q')
@@ -218,8 +199,8 @@ describe('Settings', () => {
   it('multiSelectMode swapping should work', async () => {
     await page.goto(`${baseUrl}/settings.html`)
 
-    await select(page.mouse, 140, 85)
-    await select(page.mouse, 85, 85)
+    await click(page, 140, 85)
+    await click(page, 85, 85)
     expect(await page.evaluate(() =>
       document.querySelectorAll(".ds-selected").length)).toBe(1)
 
@@ -227,7 +208,7 @@ describe('Settings', () => {
       ds.setSettings({
         multiSelectMode: true
       }))
-    await select(page.mouse, 140, 85)
+    await click(page, 140, 85)
     expect(await page.evaluate(() =>
       document.querySelectorAll(".ds-selected").length)).toBe(2)
   })

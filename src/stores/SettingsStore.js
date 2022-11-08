@@ -10,7 +10,6 @@ export default class SettingsStore {
    * @private
    * */
   _settings = {}
-
   /**
    * Holds the settings and their previous value `:pre`
    * @example {

@@ -1,6 +1,7 @@
-import wait from '../helpers/wait'
+const puppeteer = require('puppeteer');
+const iPhone = puppeteer.devices['iPhone 6'];
+
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
-const iPhone = require('puppeteer').devices['iPhone 6']
 
 // unfortunately the touch capabilities for puppeteer are still very limited
 describe('TOUCH', () => {

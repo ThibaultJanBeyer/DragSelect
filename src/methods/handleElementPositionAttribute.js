@@ -11,6 +11,6 @@ export default ({ computedStyle, node }) => {
   const position = computedStyle.position
   const isPositioned =
     position === 'absolute' || position === 'relative' || position === 'fixed'
-  if (!(node instanceof HTMLDocument) && !isPositioned)
+  if (!(node instanceof Document) && !isPositioned)
     node.style.position = 'relative'
 }

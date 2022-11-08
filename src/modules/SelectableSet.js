@@ -6,6 +6,16 @@ import { toArray, handleElementPositionAttribute } from '../methods'
 
 export default class SelectableSet extends Set {
   /**
+   * @type {Map<DSElement,DSBoundingRect>}
+   * @private
+   */
+  _rects
+  /**
+   * @type {NodeJS.Timeout}
+   * @private
+   */
+  _timeout
+  /**
    * @constructor SelectableSet
    * @param {{DS:DragSelect}} obj
    * @ignore
@@ -111,5 +121,17 @@ export default class SelectableSet extends Set {
   /** @return {DSElements} */
   get elements() {
     return Array.from(this.values())
+  }
+
+  get rects() {
+    if (this._rects) return this._rects
+    this._rects = new Map()
+    this.forEach((element) => this._rects.set(element, element.getBoundingClientRect()))
+
+    // since elements can be moved, we need to update the rects every X ms
+    if (this._timeout) clearTimeout(this._timeout)
+    this._timeout = setTimeout(() => this._rects = null, this.Settings.refreshMemoryRate)
+
+    return this._rects
   }
 }

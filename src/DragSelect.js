@@ -46,6 +46,7 @@ import './types'
 import {
   Area,
   Drag,
+  DropZones,
   Interaction,
   PubSub,
   SelectableSet,
@@ -55,7 +56,7 @@ import {
   SelectorArea,
 } from './modules'
 import { PointerStore, ScrollStore, KeyStore, SettingsStore } from './stores'
-import { toArray, vect2, subscriberAliases } from './methods'
+import { toArray, subscriberAliases } from './methods'
 
 // Setup
 //////////////////////////////////////////////////////////////////////////////////////
@@ -93,6 +94,8 @@ class DragSelect {
 
     this.Drag = new Drag({ DS: this })
 
+    this.DropZones = new DropZones({ DS: this })
+
     this.Interaction = new Interaction({ DS: this })
 
     // Subscriber Aliases
@@ -101,6 +104,7 @@ class DragSelect {
       publish: this.publish,
       SelectedSet: this.SelectedSet,
       Interaction: this.Interaction,
+      DropZones: this.DropZones,
     })
 
     this.subscribe('Interaction:end', () => (this.continue = false))
@@ -148,6 +152,12 @@ class DragSelect {
    * Useful utility to write your own functionality/move/dragNdrop based on DragSelect pointer positions.
    */
   break = () => (this.continue = true)
+  /**
+   * Update any setting dynamically
+   * @param {Settings} settings
+   * @return {void}
+   */
+  setSettings = (settings) => this.stores.SettingsStore.update({ settings })
   /**
    * Returns the current selected nodes
    * @return {DSElements}
@@ -314,11 +324,25 @@ class DragSelect {
    */
   isDragging = () => this.Interaction.isDragging
   /**
-   * Update any setting dynamically
-   * @param {Settings} settings
-   * @return {void}
+   * Returns first DropsZone under coordinates,
+   * if no coordinated provided current pointer coordinates are used
+   * @param {Vect2} [coordinates]
+   * @returns {DSDropZone | undefined}
    */
-  setSettings = (settings) => this.stores.SettingsStore.update({ settings })
+  getZoneByCoordinates = (coordinates) => this.DropZones.getTarget(coordinates)?.toObject()
+  /**
+   * Returns itemsDropped into zone by zone id
+   * @param {string} zoneId
+   * @returns {DSElements|void}
+   */
+  getItemsDroppedByZoneId = (zoneId) => this.DropZones.getItemsDroppedById(zoneId)
+  /**
+   * Returns itemsInside by zone id
+   * @param {string} zoneId
+   * @param {boolean} addClasses whether or not to add/remove the "inside" classes to the items
+   * @returns {DSElements|void}
+   */
+  getItemsInsideByZoneId = (zoneId, addClasses) => this.DropZones.getItemsInsideById(zoneId, addClasses)
 }
 
 export default DragSelect

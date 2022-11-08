@@ -6,9 +6,9 @@ import {
   addModificationObservers,
   debounce,
   getAreaRect,
-  removeModificationObservers,
   scrollElement,
   handleElementPositionAttribute,
+  getAllParentNodes,
 } from '../methods'
 
 export default class Area {
@@ -18,20 +18,10 @@ export default class Area {
    */
   DS
   /**
-   * @type {DSModificationCallback}
+   * @type {{cleanup:() => void}}
    * @private
    */
-  _modificationCallback
-  /**
-   * @type {MutationObserver}
-   * @private
-   */
-  _modificationObserver
-  /**
-   * @type {number}
-   * @private
-   */
-  _zoom
+  _observers
   /**
    * @type {DSArea}
    * @private
@@ -72,15 +62,6 @@ export default class Area {
       this.setArea(settings.area)
     )
 
-    this._modificationCallback = debounce((event) => {
-      this.DS.PubSub.publish('Area:modified:pre', { event, item: this })
-      this.reset()
-      this.DS.PubSub.publish('Area:modified', { event, item: this })
-    }, 60)
-    this._modificationObserver = new MutationObserver(
-      this._modificationCallback
-    )
-
     this.DS.PubSub.subscribe('Interaction:init', this.start)
     this.DS.PubSub.subscribe('Interaction:end', this.reset)
   }
@@ -102,10 +83,13 @@ export default class Area {
   }
 
   start = () => {
-    addModificationObservers(
+    this._observers = addModificationObservers(
       this.parentNodes,
-      this._modificationCallback,
-      this._modificationObserver
+      debounce((event) => {
+        this.DS.PubSub.publish('Area:modified:pre', { event, item: this })
+        this.reset()
+        this.DS.PubSub.publish('Area:modified', { event, item: this })
+      }, 60)
     )
   }
 
@@ -117,10 +101,7 @@ export default class Area {
   }
 
   stop = () => {
-    removeModificationObservers(
-      this._modificationObserver,
-      this._modificationCallback
-    )
+    this._observers.cleanup()
     this.reset()
   }
 
@@ -169,7 +150,7 @@ export default class Area {
    */
   get computedStyle() {
     if (this._computedStyle) return this._computedStyle
-    if (this.HTMLNode instanceof HTMLDocument)
+    if (this.HTMLNode instanceof Document)
       return (this._computedStyle = window.getComputedStyle(
         this.HTMLNode.body || this.HTMLNode.documentElement
       ))
@@ -187,19 +168,6 @@ export default class Area {
 
   get parentNodes() {
     if (this._parentNodes) return this._parentNodes
-
-    const traverse = (toWatch, index = 0) => {
-      const parent = toWatch[index]?.parentNode
-      if (parent) {
-        toWatch.push(parent)
-        index++
-        return traverse(toWatch, index)
-      } else {
-        return toWatch
-      }
-    }
-
-    this._parentNodes = traverse([this.HTMLNode])
-    return this._parentNodes
+    return (this._parentNodes = getAllParentNodes(this.HTMLNode))
   }
 }

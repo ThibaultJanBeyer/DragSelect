@@ -1,6 +1,6 @@
 // @ts-check
 import '../types'
-import { Interaction, SelectedSet } from '../modules'
+import { DropZones, Interaction, SelectedSet } from '../modules'
 
 /**
  * @typedef {function} DSSubscribe
@@ -22,17 +22,27 @@ import { Interaction, SelectedSet } from '../modules'
  * @param {DSPublish} p.publish
  * @param {Interaction} p.Interaction
  * @param {SelectedSet} p.SelectedSet
+ * @param {DropZones} p.DropZones
  */
-export default ({ subscribe, publish, Interaction, SelectedSet }) => {
+export default ({ subscribe, publish, Interaction, SelectedSet, DropZones }) => {
   const mapping = {
     'Selected:added': [{ name: 'elementselect' }],
     'Selected:removed': [{ name: 'elementunselect' }],
     'Area:scroll': [{ name: 'autoscroll' }], // scroll_directions, scroll_multiplier
     'Interaction:start': [{ name: 'dragstart' }], // event, isDraggingKeyboard
-    'Interaction:update': [
+    'Interaction:update': [ // event, isDraggingKeyboard
       { name: 'dragmove', condition: (data) => data.event },
-    ], // event, isDraggingKeyboard
-    'Interaction:end': [{ name: 'callback' }], // event, isDraggingKeyboard
+    ], 
+    'Interaction:end': [ // event, isDraggingKeyboard
+      {
+        name: 'callback', extraData: () => {
+          const target = DropZones.getTarget()
+          return {
+            ...(target ? { dropTarget: target.toObject() } : {}),
+          }
+        }
+      }
+    ],
   }
 
   for (const [sub_name, pubs] of Object.entries(mapping))
@@ -45,6 +55,7 @@ export default ({ subscribe, publish, Interaction, SelectedSet }) => {
               items: SelectedSet.elements,
               isDragging: Interaction.isDragging,
               ...data,
+              ...(pub.extraData ? pub.extraData(data) : {}),
             })
         )
       )

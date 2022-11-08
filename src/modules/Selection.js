@@ -18,6 +18,7 @@ export default class Selection {
    */
   constructor({ DS }) {
     this.DS = DS
+    this.Settings = this.DS.stores.SettingsStore.s
     this.DS.subscribe('Interaction:start', this.start)
     this.DS.subscribe('Interaction:update', this.update)
   }
@@ -60,23 +61,20 @@ export default class Selection {
     const { SelectableSet, SelectorArea, Selector } = this.DS
 
     /** @type {any} */
-    const elPosCombo = SelectableSet.elements.map((element) => {
-      return [element, element.getBoundingClientRect()]
-    })
+    const elRects = SelectableSet.rects
 
     const select = []
     const unselect = []
 
-    for (let i = 0, il = elPosCombo.length; i < il; i++) {
-      if (!SelectorArea.isInside(elPosCombo[i][0], elPosCombo[i][1])) continue
-      if (isCollision(elPosCombo[i][1], Selector.rect))
-        select.push(elPosCombo[i][0])
-      else unselect.push(elPosCombo[i][0])
+    for(const [element, rect] of elRects) {
+      if (!SelectorArea.isInside(element, rect)) continue
+      if (isCollision(rect, Selector.rect, this.Settings.selectionThreshold)) select.push(element)
+      else unselect.push(element)
     }
 
     const multiSelectionToggle =
       (this.DS.stores.KeyStore.isMultiSelectKeyPressed(event)) &&
-      this.DS.stores.SettingsStore.s.multiSelectToggling
+      this.Settings.multiSelectToggling
 
     if (this.DS.continue) return
     select.forEach((element) =>
@@ -85,7 +83,7 @@ export default class Selection {
         force,
         multiSelectionToggle,
         SelectedSet: this.DS.SelectedSet,
-        hoverClassName: this.DS.stores.SettingsStore.s.hoverClass,
+        hoverClassName: this.Settings.hoverClass,
       })
     )
     unselect.forEach((element) =>
@@ -93,7 +91,7 @@ export default class Selection {
         element,
         force,
         SelectedSet: this.DS.SelectedSet,
-        hoverClassName: this.DS.stores.SettingsStore.s.hoverClass,
+        hoverClassName: this.Settings.hoverClass,
         PrevSelectedSet: this._prevSelectedSet,
       })
     )

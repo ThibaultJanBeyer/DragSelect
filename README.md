@@ -38,12 +38,12 @@ easily add a selection algorithm to your application/website.
       - [Example](#example)
     - [Writing a fully custom solution](#writing-a-fully-custom-solution)
       - [Example](#example-1)
-- [Constructor Properties (Settings):](#constructor-properties-settings)
+- [Constructor Properties (Settings)](#constructor-properties-settings)
   - [Post-Initialization Setting-Updates](#post-initialization-setting-updates)
 - [Event Callbacks](#event-callbacks)
   - [Events](#events)
     - [Callback Object Keys](#callback-object-keys)
-- [Methods:](#methods)
+- [Methods](#methods)
 - [Classes](#classes)
 - [Have Fun!](#have-fun)
 
@@ -271,7 +271,7 @@ ds.subscribe('predragmove', ({ isDragging, isDraggingKeyboard }) => {
 }
 ```
 
-# Constructor Properties (Settings):
+# Constructor Properties (Settings)
 
 *DragSelect is hyper customizable*. Note, all properties are optional. See **[the docs](https://dragselect.com/DragSelect.html)** for more info.  
 
@@ -281,8 +281,8 @@ Here is the full list:
 
 | property | type | usage | default |
 |--- |--- |--- |--- |
-|area |single DOM element (node) |The square in which you are able to select |document
-|selectables |DOM elements (nodes) |The elements that can be selected | []
+|area |single DOM element (node) |The square in which you are able to select |`document`
+|selectables |DOM elements [nodes] |The elements that can be selected |`[]`
 |autoScrollSpeed |number |The speed in which the area scrolls while selecting (if available). The unit is arbitrary (interval aims for 30fps). Set to `0.0001` to disable auto-scrolling. |`5`
 |overflowTolerance |{ x:number, y:number } |Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start) |`{x:25,y:25}`
 |zoom |number |Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom. |`1`
@@ -291,17 +291,31 @@ Here is the full list:
 |multiSelectToggling |boolean |Whether or not to toggle already active elements while multi-selecting. |`true` (MacOS selection behavior)
 |multiSelectKeys |array |Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality. |`['Control', 'Shift', 'Meta']`
 |selector |single DOM element (node) |The square that will be used to draw the selection. | Auto-created HTML Element
+|selectionThreshold |number |How much % of the element has to be selected to be considered selected (0 = just touching, 1 = fully inside the selection) |`0`
 |draggability |boolean |When a user is dragging on an already selected element, the selection is dragged. |`true`
 |immediateDrag |boolean |Whether a selectable element is draggable before being selected or needs to be selected first |`true`
 |keyboardDrag |boolean |Whether or not the user can drag with the keyboard (Accessibility). |`true`
 |dragKeys |{ up:string[], down:string[], left:string[], righ:string[] } |The keys available to drag element using the keyboard. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). |`{ up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], righ: ['ArrowRight'] }`
 |keyboardDragSpeed |number |The speed at which elements are dragged using the keyboard. In pixels per keyDown. |`10`
 |useTransform |boolean |Whether to use the more performant hardware accelerated css transforms when dragging instead of the top/left positions. |`true`
+|refreshMemoryRate |number |Refresh rate on memoization, higher numbers mean better performance but more lag if elements are moving, lower numbers mean less lag but worse performance. If none of your DOMNodes are moving, you can set it to a very high number to increase performance. Value in milliseconds. |`80`
+|dropZones |[{ id: 'string', element: single DOM element (node), droppables: DOM elements [nodes] }] |zones with association of droppable items that can be dropped into them |`[]`
+|dropInsideThreshold |number |How much % of the item has to be inside the dropzone to be considered inside (0 = barely touching, 1 = completely inside) |`1`
+|dropTargetThreshold |number |How much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone) |`0`
+|usePointerEvents |boolean |Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly. |`false`
 |selectedClass |string |The class name assigned to the selected items. |[see classes](#classes)
 |hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)
 |selectorClass |string |The class name assigned to the square selector helper. |[see classes](#classes)
 |selectableClass |string |The class name assigned to the elements that can be selected. |[see classes](#classes)
-|usePointerEvents |boolean |Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly. |`false`
+|selectorClass |string |The class assigned to the square selector helper |ds-selector
+|selectorAreaClass |string |The class assigned to the square in which the selector resides. By default it's invisible |ds-selector-area
+|droppedTargetClass |string |On an item corresponding the target dropzone. This is also the prefix for ds-dropped-target-${zone.id}. |ds-dropped-target & ds-dropped-target-${zone.id}
+|droppedInsideClass |string |On an item that is within its dropzone bounds after a drop. This is also the prefix for ds-dropped-inside-${zone.id} |ds-dropped-inside & ds-dropped-inside-${zone.id}
+|droppableClass |string |On element that can be dropped into at least one container. This is also the prefix for ds-droppable-${zone.id} |ds-droppable & ds-droppable-${zone.id}
+|dropZoneClass |string |On each dropZone |ds-dropzone
+|dropZoneReadyClass |string |On corresponding dropZone when element is dragged |ds-dropzone-ready
+|dropZoneTargetClass |string |On dropZone that has elements from any successful target drop |ds-dropzone-target
+|dropZoneInsideClass |string |On dropZone that has elements inside after any drop |ds-dropzone-inside
 
 ## Post-Initialization Setting-Updates
 
@@ -347,10 +361,11 @@ ds.subscribe('<event_name>', (callback_object) => {})
 |scroll_directions |`Array.<'top'\|'bottom'\|'left'\|'right'\|undefined>` |The direction in which the event is happening (i.e. scroll direction)
 |scroll_multiplier |`number` |Speed
 |item |`HTMLElement\|SVGElement\|*` |The single element currently being interacted with if any
+|dropTarget |`{ id: 'id', element: node, droppables: [node], itemsDropped: [node], itemsInside: [node] }` |dropZone in which the droppable elements were dropped into. `itemsDropped`: all items that were dropped on the target. `itemsInside`: all items that are within the bounds of the zone |
 
 > Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first
 
-# Methods:
+# Methods
 When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions.  
 Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 
@@ -358,35 +373,48 @@ Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 |--- |--- |--- |
 |stop |/ |Will teardown/stop the whole functionality
 |start |/ |Reset the functionality after a teardown
+|break |/ |Utility to override DragSelect internal functionality. Breaks out of current flow. Read [docs](#writing-a-fully-custom-solution) for more info.
+|setSettings |`settings:Settings` |Update any setting dynamically, see [Settings](#constructor-properties-settings)
 |getSelection |/ |Returns all currently selected nodes 
-|addSelection |DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables) |adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true) 
-|removeSelection |DOM elements (nodes), Boolean (callback), Boolean (removeFromSelectables) |removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last boolean is set to true, it also removes them from the possible selectable nodes if they were. 
-|toggleSelection |DOM elements (nodes), Boolean (callback), Boolean (alsoSelectables) |toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If boolean is set to true: callback will be called afterward. If last boolean is set to true, it also removes selected elements from possible selectable nodes & doesn’t add them to selectables if they are not (can be turned off by setting the last boolean to true).
-|setSelection |DOM elements (nodes), Boolean (callback), Boolean (dontAddToSelectables) |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true)
-|clearSelection |DOM elements (nodes), Boolean (callback) |remove all elements from the selection. If boolean is set to true: callback will be called afterwards. |
-|addSelectables |DOM elements (nodes), Boolean (addToSelection) |Adds elements that can be selected. Don’t worry, nodes are never added twice. If boolean is set to true: elements will also be added to current selection.
-|removeSelectables |DOM elements (nodes), Boolean (removeFromSelection) |Remove elements from the set of elements that can be selected. If boolean is set to true: elements will also be removed from current selection.
+|addSelection |`elements:DOM Elements, triggerCallback:boolean, dontAddToSelectables:boolean` |adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true) 
+|removeSelection |`elements:DOM Elements, triggerCallback:boolean, removeFromSelectables:boolean`|removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last boolean is set to true, it also removes them from the possible selectable nodes if they were. 
+|toggleSelection |`elements:DOM Elements, triggerCallback:boolean, alsoSelectables:boolean` |toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If boolean is set to true: callback will be called afterward. If last boolean is set to true, it also removes selected elements from possible selectable nodes & doesn’t add them to selectables if they are not (can be turned off by setting the last boolean to true).
+|setSelection |`elements:DOM Elements, triggerCallback:boolean, dontAddToSelectables:boolean` |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true)
+|clearSelection |DOM elements [nodes], Boolean (callback) |remove all elements from the selection. If boolean is set to true: callback will be called afterwards. |
+|clearSelection |`triggerCallback:boolean` |Unselect / Deselect all current selected Nodes |
+|addSelectables |`elements:DOM Elements, addToSelection:boolean` |Adds elements that can be selected. Don’t worry, nodes are never added twice. If boolean is set to true: elements will also be added to current selection.
+|removeSelectables |`elements:DOM Elements, removeFromSelection:boolean` |Remove elements from the set of elements that can be selected. If boolean is set to true: elements will also be removed from current selection.
 |getSelectables |/ |Returns array with all nodes that can be selected.
-|setSelectables |DOM elements (nodes), Boolean (removeFromSelection), Boolean (addToSelection) |Sets all elements that can be selected. Removes all current selectables (& their respective applied classes). Adds the new set to the selectables set. Thus, replacing the original set. First boolean if old elements should be removed from the selection. Second boolean if new elements should be added to the selection. 
 |getInitialCursorPosition |/ |Returns the registered x, y coordinates the cursor had when first clicked 
 |getCurrentCursorPosition |/ |Returns current x, y coordinates of the cursor 
 |getPreviousCursorPosition |/ |Returns last registered x, y coordinates of the cursor (after last callback) 
 |getInitialCursorPositionArea |/ |Returns the registered x, y coordinates relative to the area the cursor had when first clicked 
 |getCurrentCursorPositionArea |/ |Returns current x, y coordinates of the cursor relative to the area
 |getPreviousCursorPositionArea |/ |Returns last registered x, y coordinates of the cursor relative to the area (after last callback) 
-|getCursorPositionDifference |Boolean (usePreviousCursorDifference) |Returns object with the x, y difference between the initial and the last cursor position. If the argument is set to true, it will instead return the x, y difference to the previous coordinates |
-|isMultiSelect |\[event:KeyboardEvent|MouseEvent|TouchEvent\] (optional) |Whether the multi-select key is currently pressed
+|isMultiSelect |`event:KeyboardEvent|MouseEvent|TouchEvent` (optional) |Whether the multi-select key is currently pressed
 |isDragging |/ |Whether the user is currently drag n dropping elements (instead of selection)
-|break |/ |Utility to override DragSelect internal functionality. Breaks out of current flow. Read [docs](#writing-a-fully-custom-solution) for more info.
+|getZoneByCoordinates |Optional `{x: number, y: number}` |Returns the first drop target under the current mouse position, or, if provided at coordinates x/y
+|getItemsDroppedByZoneId |`zoneId: string` |Returns the items dropped into a specific zone (by zone.id)
+|getItemsInsideByZoneId |`zoneId: string`,`addClasses: boolean` |Returns the items that are visually inside a specific zone (by zone.id)
 
 # Classes
 | name | trigger |
 |--- |--- |
-|.ds-selected |On elements that are selected
-|.ds-hover |On elements that are currently hovered
+|.ds-selected |On items that are selected
+|.ds-hover |On items that are currently hovered
 |.ds-selector |On the selector element
 |.ds-selector-area |The overlay where the selector resides in
-|.ds-selectable |On elements that can be selected
+|.ds-selectable |On items that can be selected
+|.ds-droppable |on item that can be dropped into at least one zone |
+|.ds-droppable-${id} |on item that can be dropped into a zone with specific identifier, `${id}` will be replaced by the corresponding zone.id|
+|.ds-dropped-target |on an item corresponding the target dropzone |
+|.ds-dropped-target-${id} |on an item corresponding the target dropzone with specific identifier, `${id}` will be replaced by the corresponding zone.id |
+|.ds-dropped-inside |on an item that is within its dropzone bounds after a drop |
+|.ds-dropped-inside-${id} |on an item that is within its dropzone bounds after a drop with specific identifier, `${id}` will be replaced by the corresponding zone.id |
+|.ds-dropzone |on each dropZone |
+|.ds-dropzone-ready |on corresponding dropZone when corresponding item is being dragged |
+|.ds-dropzone-target |on dropZone when it was target of a successful drop |
+|.ds-dropzone-inside |on dropZone that has elements inside after any drop |
 
 *note: you can change the class names setting the respective property on the constructor, see **[the docs](https://dragselect.com/DragSelect.html)** properties section.*
 

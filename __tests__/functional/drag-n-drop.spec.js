@@ -1,4 +1,3 @@
-import wait from '../helpers/wait'
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 describe('Drag N Drop', () => {
