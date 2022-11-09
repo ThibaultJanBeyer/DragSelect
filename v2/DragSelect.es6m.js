@@ -1865,7 +1865,6 @@ var DropZone = /*#__PURE__*/function () {
     _defineProperty(this, "handleDrop", function () {
       var _this$droppables, _this$_itemsDropped2, _this$_itemsDropped3;
       if (_this.isDestroyed) return;
-      // @ts-ignore
       _this._itemsDropped = _toConsumableArray(new Set([].concat(_toConsumableArray(_this._itemsDropped), _toConsumableArray((_this$droppables = _this.droppables) === null || _this$droppables === void 0 ? void 0 : _this$droppables.filter(function (item) {
         return _this.DS.SelectedSet.has(item);
       })))));
@@ -1885,8 +1884,8 @@ var DropZone = /*#__PURE__*/function () {
           item.classList.add("".concat(_this.Settings.droppedInsideClass, "-").concat(_this.id));
           isAnyInside = true;
         } else {
-          item.classList.remove("".concat(_this.Settings.droppedInsideClass));
           item.classList.remove("".concat(_this.Settings.droppedInsideClass, "-").concat(_this.id));
+          if (!item.className.includes("".concat(_this.Settings.droppedInsideClass, "-"))) item.classList.remove("".concat(_this.Settings.droppedInsideClass));
         }
       });
       if (isAnyInside) _this.element.classList.add("".concat(_this.Settings.dropZoneInsideClass));else _this.element.classList.remove("".concat(_this.Settings.dropZoneInsideClass));
@@ -1922,7 +1921,7 @@ var DropZone = /*#__PURE__*/function () {
     this.DS.subscribe('Settings:updated:dropZoneClass', function (_ref4) {
       var settings = _ref4.settings;
       _this.element.classList.remove(settings['dropZoneClass:pre']);
-      _this.element.classList.add(settings['dropZoneClass']);
+      _this.element.classList.add(settings.dropZoneClass);
     });
     this._observers = addModificationObservers(this.parentNodes, debounce(function () {
       return _this._rect = null;
@@ -2084,12 +2083,8 @@ function DropZones(_ref) {
       }
     }
   });
-  _defineProperty(this, "start", function (_ref4) {
+  _defineProperty(this, "stop", function (_ref4) {
     var isDragging = _ref4.isDragging;
-    if (!isDragging) return;
-  });
-  _defineProperty(this, "stop", function (_ref5) {
-    var isDragging = _ref5.isDragging;
     if (!isDragging) return;
     var target = _this.getTarget();
     _this._handleDrop(target);
@@ -2125,7 +2120,6 @@ function DropZones(_ref) {
   this.setDropZones({
     dropZones: /** @type {DSDropZone[]} */this.DS.stores.SettingsStore.s.dropZones
   });
-  this.DS.subscribe('Interaction:start', this.start);
   this.DS.subscribe('Interaction:end', this.stop);
 }
 
