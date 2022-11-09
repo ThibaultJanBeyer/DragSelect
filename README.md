@@ -170,8 +170,8 @@ const ds = new DragSelect({
   selectables: document.querySelectorAll('.selectable-nodes'),
   area: document.querySelector('#area'),
   dropZones: [
-    { element: document.querySelector('#zone-1'), id: 'zone-1', droppables: document.querySelectorAll('.selectable-nodes') },
-    { element: document.querySelector('#zone-2'), id: 'zone-2', droppables: document.querySelectorAll('#item-2,#item-4') },
+    { element: document.querySelector('#zone-1'), id: 'zone-1' }, // all selectables can be dropped into zone 1
+    { element: document.querySelector('#zone-2'), id: 'zone-2', droppables: document.querySelectorAll('#item-2,#item-4') }, // only items 2 and 4 are droppable
   ],
   dropInsideThreshold: 1, // 1 = has to be 100% inside the dropzone, 0.5 = 50% inside, 0 = just touching is fine
 });
@@ -334,7 +334,7 @@ Here is the full list:
 |keyboardDragSpeed |number |The speed at which elements are dragged using the keyboard. In pixels per keyDown. |`10`
 |useTransform |boolean |Whether to use the more performant hardware accelerated css transforms when dragging instead of the top/left positions. |`true`
 |refreshMemoryRate |number |Refresh rate on memoization, higher numbers mean better performance but more lag if elements are moving, lower numbers mean less lag but worse performance. If none of your DOMNodes are moving, you can set it to a very high number to increase performance. Value in milliseconds. |`80`
-|dropZones |[{ id: 'string', element: single DOM element (node), droppables: DOM elements [nodes] }] |zones with association of droppable items that can be dropped into them |`[]`
+|dropZones |[{ id: 'string', element: single DOM element (node), droppables?: DOM elements [nodes] }] |zones with association of droppable items that can be dropped into them. `id`: any unique identifying string. `element`: is the dropzone itself. `droppables`: the elements that can be dropped into that zone. This is optional, by default it is all selectables |`[]`
 |dropInsideThreshold |number |How much % of the item has to be inside the dropzone to be considered inside (0 = barely touching, 1 = completely inside) |`1`
 |dropTargetThreshold |number |How much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone) |`0`
 |usePointerEvents |boolean |Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly. |`false`

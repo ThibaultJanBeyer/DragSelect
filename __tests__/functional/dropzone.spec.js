@@ -6,6 +6,16 @@ const baseUrl = `file://${process.cwd()}/__tests__/functional`
 describe('DropZone', () => {
   let response
 
+  it('by default all should be droppable', async () => {
+    await page.goto(`${baseUrl}/dropzone.html`)
+    await moveSelectTo(page, 1, 1, 300, 300)
+    await moveSelectTo(page, 80, 75, 410, 515)
+    response = await page.evaluate(() => ({ dropTarget }))
+    expect(response.dropTarget.id).toBe('zone-4')
+    expect(response.dropTarget.itemsDropped.length).toBe(4)
+    expect(response.dropTarget.itemsInside.length).toBe(4)
+  })
+
   it('dropping into a dropzone should work', async () => {
     await page.goto(`${baseUrl}/dropzone.html`)
 
@@ -131,7 +141,7 @@ describe('DropZone', () => {
 
     // idle
     response = await getClasses()
-    expect(response.dropZoneClass).toBe(3)
+    expect(response.dropZoneClass).toBe(4)
     expect(response.droppedTargetClass).toBe(0)
     expect(response.dropZoneTargetClass).toBe(0)
 
@@ -146,7 +156,7 @@ describe('DropZone', () => {
     response = await getClasses()
     expect(response.droppableClass).toBe(1)
     expect(response.droppableClassId2).toBe(1)
-    expect(response.dropZoneReadyClass).toBe(1)
+    expect(response.dropZoneReadyClass).toBe(2)
 
     // drop
     await page.mouse.up()

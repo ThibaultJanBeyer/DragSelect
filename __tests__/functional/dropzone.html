@@ -20,6 +20,10 @@
     #zone-3 {
         top: 370px;
     }
+    #zone-4 {
+        top: 370px;
+        left: 250px;
+    }
     #zone-1.ds-dropzone-ready {
         background: #cfc;
     }
@@ -28,6 +32,9 @@
     }
     #zone-3.ds-dropzone-ready {
         background: #fcc;
+    }
+    #zone-4.ds-dropzone-ready {
+        background: hotpink;
     }
     .ds-droppable {
         color: red;
@@ -41,7 +48,7 @@
     .ds-droppable-zone-3 {
         background: #fcc;
     }
-    .ds-droppable-zone-1.ds-droppable-zone-2.ds-droppable-zone-3 {
+    .ds-droppable-zone-1.ds-droppable-zone-2.ds-droppable-zone-3.ds-droppable-zone-4 {
         background: orange;
     }
     .ds-dropped-target {
@@ -72,6 +79,7 @@
 <div id="zone-1" class="dropzone one"></div>
 <div id="zone-2" class="dropzone two"></div>
 <div id="zone-3" class="dropzone three"></div>
+<div id="zone-4" class="dropzone four"></div>
 <script>
     window.dropTarget = null
     window.ds = new DragSelect({
@@ -80,6 +88,7 @@
             { element: document.querySelector('#zone-1'), id: 'zone-1', droppables: document.querySelectorAll('#item-1,#item-4') },
             { element: document.querySelector('#zone-2'), id: 'zone-2', droppables: document.querySelectorAll('#item-2,#item-4') },
             { element: document.querySelector('#zone-3'), id: 'zone-3', droppables: document.querySelectorAll('#item-3,#item-4') },
+            { element: document.querySelector('#zone-4'), id: 'zone-4' },
         ],
     });
     ds.subscribe('callback', ({ isDragging, items, dropTarget }) => {
