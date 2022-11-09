@@ -1,0 +1,108 @@
+<script src="../../dist/DragSelect.js"></script>
+<style>
+  body {
+    margin: 0;
+  }
+
+  ::selection {
+      background: none !important;
+  }
+  ::-moz-selection {
+      background: none !important;
+  }
+
+  .ds-area {
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  .selectable {
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+    background: #ccc;
+    display: inline-block;
+  }
+
+  .selected {
+    background: black;
+  }
+
+  .w-ds-area {
+    position: absolute;
+    top: 160px;
+    left: 200px;
+    width: 420px;
+    height: 240px;
+    border: 1px solid black;
+    overflow-y: scroll;
+    z-index: 999;
+  }
+</style>
+<main class="main">
+  <div id="ds-area" class="ds-area">
+    
+    <div class="selectable"></div>
+    <div class="selectable"></div>
+    <div class="selectable"></div>
+    <div class="selectable"></div>
+    <div class="selectable"></div>
+    <div class="selectable"></div>
+    
+    <div id="w-ds-area" class="w-ds-area">
+      
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      <div class="selectable"></div>
+      
+    </div> 
+    
+  </div>
+</main>
+<script>
+  // Parent DS
+  let parentDS = new DragSelect({
+    selectables: document.querySelectorAll('#ds-area > .selectable'),
+    area: document.getElementById('ds-area'),
+    selectedClass: "selected"
+  });
+
+  // Child DS
+  let childDS = new DragSelect({
+    selectables: document.querySelectorAll('#w-ds-area > .selectable'),
+    area: document.getElementById('w-ds-area'),
+    selectedClass: "selected"
+  });
+
+
+  parentDS.subscribe('predragstart', ({ event, items }) => {
+
+    let e = event,
+        window = e.target.closest('.w-ds-area');
+
+    // Break default behaviour if click is coming from window
+    if (window) {
+      parentDS.break();
+      console.log("Parent DS Break");
+    }
+    
+  });
+</script>

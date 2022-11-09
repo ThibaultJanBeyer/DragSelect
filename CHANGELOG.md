@@ -1,3 +1,8 @@
+# Next
+
+- Add possibility to manage the selector areas position in the DOM. This solves [#125](https://github.com/ThibaultJanBeyer/DragSelect/issues/125)
+- Note However, that this is deviating from the normal behavior of the library. If you want to use this feature, do so at your own risk. It is not recommended to use this feature.
+
 # 2.5.0
 
 - Add dropZones! Solves #115
