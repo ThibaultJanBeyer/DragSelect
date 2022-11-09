@@ -1,6 +1,6 @@
 /***
 
- ~~~ Version 2.5.0 ~~~
+ ~~~ Version 2.5.1 ~~~
 
  ******************************************
 
@@ -388,9 +388,9 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
 
 /**
  * @typedef {Object} DSInputDropZone
- * @property {string} id
- * @property {DSElement} element
- * @property {DSInputElements} droppables
+ * @property {string} id can be any unique identifier of type string
+ * @property {DSElement} element is the dropzone itself
+ * @property {DSInputElements} [droppables] the elements that can be dropped into that zone. This is optional, by default it will be all selectables
  */
 /**
  * @typedef {Object} DSDropZone
@@ -1079,8 +1079,8 @@ var handleUnSelection = (function (_ref) {
 });
 
 /**
- * @param {string} key 
- * @param {string} type 
+ * @param {string} key
+ * @param {string} type
  * @param {*} fallback
  * @returns {void}
  */
@@ -1089,10 +1089,10 @@ var wrongTypeWarn = function wrongTypeWarn(key, type, fallback) {
 };
 
 /**
- * @param {string} key 
+ * @param {string} key
  * @param {*} value
- * @param {boolean} withFallback 
- * @param {*} fallback 
+ * @param {boolean} withFallback
+ * @param {*} fallback
  * @returns {object}
  */
 var hydrateHelper = function hydrateHelper(key, value, withFallback, fallback) {
@@ -1114,24 +1114,24 @@ var hydrateHelper = function hydrateHelper(key, value, withFallback, fallback) {
   }
 
   // TypeCheck [Number]
-  var expectedNumber = !isNaN(fallback) && typeof fallback === 'number';
-  if (expectedNumber) isAvailable = !isNaN(value) && typeof value === 'number';
+  var expectedNumber = !Number.isNaN(fallback) && typeof fallback === 'number';
+  if (expectedNumber) isAvailable = !Number.isNaN(value) && typeof value === 'number';
   if (expectedNumber && !isAvailable) {
     forceFallback = true;
     wrongTypeWarn(key, 'number');
   }
 
   // TypeCheck [Object]
-  var expectedObject = Object.prototype.toString.call(fallback) === "[object Object]";
-  if (expectedObject) isAvailable = Object.prototype.toString.call(value) === "[object Object]";
+  var expectedObject = Object.prototype.toString.call(fallback) === '[object Object]';
+  if (expectedObject) isAvailable = Object.prototype.toString.call(value) === '[object Object]';
   if (expectedObject && !isAvailable) {
     forceFallback = true;
     wrongTypeWarn(key, 'object');
   }
 
   // TypeCheck [Boolean]
-  var expectedBoolean = typeof fallback === "boolean";
-  if (expectedBoolean) isAvailable = typeof value === "boolean";
+  var expectedBoolean = typeof fallback === 'boolean';
+  if (expectedBoolean) isAvailable = typeof value === 'boolean';
   if (expectedBoolean && !isAvailable) {
     forceFallback = true;
     wrongTypeWarn(key, 'boolean');
@@ -1147,24 +1147,27 @@ var hydrateHelper = function hydrateHelper(key, value, withFallback, fallback) {
   var isFallback = forceFallback || withFallback;
 
   // Special rule for [dragKeys]
-  if (key === 'dragKeys' && isAvailable) return _defineProperty({}, key, Object.assign(fallback, value));else if (key === 'dragKeys' && !isAvailable) return isFallback ? _defineProperty({}, key, fallback) : {};
+  if (key === 'dragKeys' && isAvailable) return _defineProperty({}, key, Object.assign(fallback, value));
+  if (key === 'dragKeys' && !isAvailable) return isFallback ? _defineProperty({}, key, fallback) : {};
 
   // Special rule for [dropZones]
   if (key === 'dropZones' && isAvailable && new Set(value.map(function (v) {
     return v.id;
   })).size !== value.length) console.warn("[DragSelect] UniqueConstraintsIssue: setting \"dropZones\" contains duplicate ids.");
-  return isAvailable ? _defineProperty({}, key, value) : isFallback ? _defineProperty({}, key, fallback) : {};
+  if (isAvailable) return _defineProperty({}, key, value);
+  if (isFallback) return _defineProperty({}, key, fallback);
+  return {};
 };
 
 /**
  * This helper method creates the setting object,
  * - if the settings provided are of wrong type, the fallback value will be used
  * - - except for if settings are undefined or explicitly marked as "null"
- * - if "withfallback" is true, it will return the object with all settings: 
+ * - if "withfallback" is true, it will return the object with all settings:
  * - - if not provided from the settings object (or wrong type), the fallback will be used
  * (the fallback value for each setting is the last prop of the hydrateHelper)
- * @param {Settings} settings 
- * @param {boolean} withFallback 
+ * @param {Settings} settings
+ * @param {boolean} withFallback
  */
 var hydrateSettings = (function (settings, withFallback) {
   return _objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2({}, hydrateHelper('area', settings.area, withFallback, document)), hydrateHelper('selectables', settings.selectables, withFallback, null)), hydrateHelper('autoScrollSpeed', settings.autoScrollSpeed, withFallback, 5)), hydrateHelper('overflowTolerance', settings.overflowTolerance, withFallback, {
@@ -1817,7 +1820,7 @@ var DropZone = /*#__PURE__*/function () {
    * @param {DragSelect} obj.DS
    * @param {string} obj.id
    * @param {DSElement} obj.element
-   * @param {DSInputElements} obj.droppables
+   * @param {DSInputElements} [obj.droppables]
    * @ignore
    */
   function DropZone(_ref) {
@@ -1829,7 +1832,7 @@ var DropZone = /*#__PURE__*/function () {
     _classCallCheck(this, DropZone);
     _defineProperty(this, "id", void 0);
     _defineProperty(this, "element", void 0);
-    _defineProperty(this, "droppables", void 0);
+    _defineProperty(this, "_droppables", void 0);
     _defineProperty(this, "_rect", void 0);
     _defineProperty(this, "_observers", void 0);
     _defineProperty(this, "_timeout", void 0);
@@ -1914,7 +1917,7 @@ var DropZone = /*#__PURE__*/function () {
     this.Settings = DS.stores.SettingsStore.s;
     this.id = id;
     this.element = element;
-    this.droppables = toArray(droppables);
+    if (droppables) this.droppables = toArray(droppables);
     this.element.classList.add("".concat(this.Settings.dropZoneClass));
 
     // @ts-ignore: @todo: update to typescript
@@ -1995,6 +1998,15 @@ var DropZone = /*#__PURE__*/function () {
     get: function get() {
       if (this._parentNodes) return this._parentNodes;
       return this._parentNodes = getAllParentNodes(this.element);
+    }
+  }, {
+    key: "droppables",
+    get: function get() {
+      if (this._droppables) return this._droppables;
+      return this.DS.SelectableSet.elements;
+    },
+    set: function set(value) {
+      this._droppables = value;
     }
   }]);
   return DropZone;
@@ -2422,7 +2434,7 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
       var settings = _ref2.settings;
       _this.forEach(function (el) {
         el.classList.remove(settings['selectableClass:pre']);
-        el.classList.add(settings['selectableClass']);
+        el.classList.add(settings.selectableClass);
       });
     });
     return _this;
