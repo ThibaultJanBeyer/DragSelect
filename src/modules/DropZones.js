@@ -4,7 +4,7 @@ import '../types'
 import DragSelect from '../DragSelect'
 import DropZone from './DropZone'
 
-import { isCollision, toArray } from '../methods'
+import { isCollision } from '../methods'
 
 export default class DropZones {
   /**
@@ -45,7 +45,9 @@ export default class DropZones {
     this.Settings = DS.stores.SettingsStore.s
 
     // @ts-ignore: @todo: update to typescript
-    this.DS.subscribe('Settings:updated:dropZones', this.setDropZones)
+    this.DS.subscribe('Settings:updated:dropZones', ({ settings }) =>
+      this.setDropZones(settings)
+    )
     this.setDropZones({
       dropZones: /** @type {DSDropZone[]} */ (this.DS.stores.SettingsStore.s
         .dropZones),

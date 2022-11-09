@@ -48,17 +48,15 @@ export default class PubSub {
    */
   publish = (eventName, data) => {
     if (Array.isArray(eventName))
-      eventName.forEach(name => this._publish(name, data))
-    else
-      this._publish(eventName, data)
+      eventName.forEach((name) => this._publish(name, data))
+    else this._publish(eventName, data)
   }
+
   _publish = (eventName, data) => {
     const subscribers = this.subscribers[eventName]
     if (!Array.isArray(subscribers)) return
-    if (eventName.includes(`:pre`))
-      this._handlePrePublish(subscribers, data)
-    else
-      this._handlePublish(subscribers, data)
+    if (eventName.includes(`:pre`)) this._handlePrePublish(subscribers, data)
+    else this._handlePublish(subscribers, data)
   }
 
   // non-pre events are executed first in first out

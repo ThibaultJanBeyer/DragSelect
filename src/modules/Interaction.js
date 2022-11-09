@@ -5,6 +5,7 @@ import '../types'
 export default class Interaction {
   /** @type {boolean} */
   isInteracting
+
   /** @type {boolean} */
   isDragging
 
@@ -30,9 +31,10 @@ export default class Interaction {
   }
 
   init = () => this.DS.publish('Interaction:init:pre', {})
+
   _init = () => {
     this.stop()
-    
+
     // @TODO: fix pointer events mixing issue see [PR](https://github.com/ThibaultJanBeyer/DragSelect/pull/128#issuecomment-1154885289)
     if (this.Settings.usePointerEvents)
       this.DS.Area.HTMLNode.addEventListener('pointerdown', this.start, {
@@ -62,7 +64,7 @@ export default class Interaction {
       (event.target &&
         !this.DS.SelectorArea.isInside(
           /** @type {DSElement} */ (event.target)
-        )) || //fix outside elements issue
+        )) || // fix outside elements issue
       (!isKeyboardClick && !this.DS.SelectorArea.isClicked(event)) // make sure the mouse click is inside the area
     )
       return false
@@ -78,6 +80,7 @@ export default class Interaction {
       event,
       isDragging: this.isDragging,
     })
+
   _start = (event) => {
     if (event.type === 'touchstart') event.preventDefault() // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
     if (!this._canInteract(event)) return
@@ -147,8 +150,7 @@ export default class Interaction {
     const node = /** @type {any} */ (event.target)
     if (!SelectableSet.has(node)) return
 
-    if (!KeyStore.isMultiSelectKeyPressed(event))
-      SelectedSet.clear()
+    if (!KeyStore.isMultiSelectKeyPressed(event)) SelectedSet.clear()
     SelectedSet.toggle(node)
 
     this.reset() // simulate mouse-up (that does not exist on keyboard)
@@ -193,8 +195,9 @@ export default class Interaction {
       event,
       isDragging: this.isDragging,
     })
+
   _reset = (event) => {
-    const isDragging = this.isDragging
+    const { isDragging } = this
     this.stop()
     this.init()
     this.DS.publish('Interaction:end', { event, isDragging })

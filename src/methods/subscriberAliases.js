@@ -24,24 +24,33 @@ import { DropZones, Interaction, SelectedSet } from '../modules'
  * @param {SelectedSet} p.SelectedSet
  * @param {DropZones} p.DropZones
  */
-export default ({ subscribe, publish, Interaction, SelectedSet, DropZones }) => {
+export default ({
+  subscribe,
+  publish,
+  Interaction,
+  SelectedSet,
+  DropZones,
+}) => {
   const mapping = {
     'Selected:added': [{ name: 'elementselect' }],
     'Selected:removed': [{ name: 'elementunselect' }],
     'Area:scroll': [{ name: 'autoscroll' }], // scroll_directions, scroll_multiplier
     'Interaction:start': [{ name: 'dragstart' }], // event, isDraggingKeyboard
-    'Interaction:update': [ // event, isDraggingKeyboard
+    'Interaction:update': [
+      // event, isDraggingKeyboard
       { name: 'dragmove', condition: (data) => data.event },
-    ], 
-    'Interaction:end': [ // event, isDraggingKeyboard
+    ],
+    'Interaction:end': [
+      // event, isDraggingKeyboard
       {
-        name: 'callback', extraData: () => {
+        name: 'callback',
+        extraData: () => {
           const target = DropZones.getTarget()
           return {
             ...(target ? { dropTarget: target.toObject() } : {}),
           }
-        }
-      }
+        },
+      },
     ],
   }
 

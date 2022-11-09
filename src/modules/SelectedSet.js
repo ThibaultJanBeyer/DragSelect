@@ -58,8 +58,10 @@ export default class SelectedSet extends Set {
 
   /** @param {DSElements} elements */
   addAll = (elements) => elements.forEach((el) => this.add(el))
+
   /** @param {DSElements} elements */
   deleteAll = (elements) => elements.forEach((el) => this.delete(el))
+
   /** @return {DSElements} */
   get elements() {
     return Array.from(this.values())
