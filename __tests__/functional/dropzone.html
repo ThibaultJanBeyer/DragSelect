@@ -50,6 +50,17 @@
     .ds-dropzone-target {
         background: gold;
     }
+    .ds-dropped-target::before {
+    content: 'dropped';
+    position: absolute;
+    bottom: 0;
+    }
+    .ds-dropped-inside::after {
+    content: 'inside';
+    position: absolute;
+    top: 0;
+    }
+
 </style>
 <script src="../../dist/DragSelect.js"></script>
 <p>Draggable</p>

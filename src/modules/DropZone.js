@@ -2,46 +2,60 @@
 import '../types'
 import DragSelect from '../DragSelect'
 
-import { isCollision, toArray, debounce, addModificationObservers, getAllParentNodes } from '../methods'
+import {
+  isCollision,
+  toArray,
+  debounce,
+  addModificationObservers,
+  getAllParentNodes,
+} from '../methods'
 
 export default class DropZone {
   /**
    * @type {string}
    */
   id
+
   /**
    * @type {DSElement}
    */
   element
+
   /**
    * @type {DSElements}
    */
   droppables
+
   /**
    * @type {DOMRect}
    * @private
    */
   _rect
+
   /**
    * @type {{cleanup:()=>void}}
    * @private
    */
   _observers
+
   /**
    * @type {NodeJS.Timeout}
    * @private
    */
   _timeout
+
   /**
    * @type {DSElements}
    * @private
    */
   _itemsDropped = []
+
   /**
    * @type {DSElements}
    * @private
    */
   _itemsInside
+
   /**
    * @constructor Drag
    * @param {Object} obj
@@ -63,12 +77,12 @@ export default class DropZone {
     // @ts-ignore: @todo: update to typescript
     this.DS.subscribe('Settings:updated:dropZoneClass', ({ settings }) => {
       this.element.classList.remove(settings['dropZoneClass:pre'])
-      this.element.classList.add(settings['dropZoneClass'])
+      this.element.classList.add(settings.dropZoneClass)
     })
 
     this._observers = addModificationObservers(
       this.parentNodes,
-      debounce(() => this._rect = null, this.Settings.refreshMemoryRate),
+      debounce(() => (this._rect = null), this.Settings.refreshMemoryRate)
     )
 
     this.DS.subscribe('Interaction:start', this.start)
@@ -79,8 +93,10 @@ export default class DropZone {
    * @param {'add'|'remove'} action
    */
   setReadyClasses = (action) => {
-    if(this.isDestroyed) return
-    const selectedEls = this.droppables.filter((el) => this.DS.SelectedSet.has(el))
+    if (this.isDestroyed) return
+    const selectedEls = this.droppables.filter((el) =>
+      this.DS.SelectedSet.has(el)
+    )
     if (!selectedEls.length) return
     selectedEls.forEach((item) => {
       item.classList[action](`${this.Settings.droppableClass}`)
@@ -93,16 +109,18 @@ export default class DropZone {
    * This zone is NOT the target of a drop
    */
   handleNoDrop = () => {
-    if(this.isDestroyed) return
+    if (this.isDestroyed) return
     // for each selected element that is not part of the target zone, remove the classes
     this.DS.SelectedSet.forEach((item) => {
       item.classList.remove(this.Settings.droppedTargetClass)
       item.classList.remove(`${this.Settings.droppedTargetClass}-${this.id}`)
     })
     // and remove them from the zones dropped items
-    this._itemsDropped = this._itemsDropped.filter((item) => !this.DS.SelectedSet.has(item))
+    this._itemsDropped = this._itemsDropped.filter(
+      (item) => !this.DS.SelectedSet.has(item)
+    )
     // if the zone has no dropped left, also remove the zones class
-    if(!this._itemsDropped?.length)
+    if (!this._itemsDropped?.length)
       this.element.classList.remove(`${this.Settings.dropZoneTargetClass}`)
   }
 
@@ -110,16 +128,21 @@ export default class DropZone {
    * This zone IS the target of a drop
    */
   handleDrop = () => {
-    if(this.isDestroyed) return
-    // @ts-ignore
-    this._itemsDropped = [...new Set([...this._itemsDropped, ...this.droppables?.filter((item) => this.DS.SelectedSet.has(item))])]
+    if (this.isDestroyed) return
+    this._itemsDropped = [
+      // @ts-ignore
+      ...new Set([
+        ...this._itemsDropped,
+        ...this.droppables?.filter((item) => this.DS.SelectedSet.has(item)),
+      ]),
+    ]
     // add the target class to the zones dropped items
     this._itemsDropped?.forEach((item) => {
       item.classList.add(`${this.Settings.droppedTargetClass}`)
       item.classList.add(`${this.Settings.droppedTargetClass}-${this.id}`)
     })
     // if the zone has dropped, add the zones class
-    if(this._itemsDropped?.length)
+    if (this._itemsDropped?.length)
       this.element.classList.add(`${this.Settings.dropZoneTargetClass}`)
   }
 
@@ -131,15 +154,15 @@ export default class DropZone {
         item.classList.add(`${this.Settings.droppedInsideClass}-${this.id}`)
         isAnyInside = true
       } else {
-        item.classList.remove(`${this.Settings.droppedInsideClass}`)
         item.classList.remove(`${this.Settings.droppedInsideClass}-${this.id}`)
+        if (!item.className.includes(`${this.Settings.droppedInsideClass}-`))
+          item.classList.remove(`${this.Settings.droppedInsideClass}`)
       }
     })
 
     if (isAnyInside)
       this.element.classList.add(`${this.Settings.dropZoneInsideClass}`)
-    else
-      this.element.classList.remove(`${this.Settings.dropZoneInsideClass}`)
+    else this.element.classList.remove(`${this.Settings.dropZoneInsideClass}`)
   }
 
   start = ({ isDragging }) => {
@@ -192,7 +215,7 @@ export default class DropZone {
   }
 
   get itemsDropped() {
-    if(this.isDestroyed) return null
+    if (this.isDestroyed) return null
     return this._itemsDropped
   }
 
@@ -201,18 +224,23 @@ export default class DropZone {
     if (this._itemsInside) return this._itemsInside
 
     this._itemsInside = this.droppables.flatMap((item) => {
-      if(isCollision(
-        this.DS.SelectableSet.rects.get(item),
-        this.rect,
-        this.Settings.dropInsideThreshold
-      ))
+      if (
+        isCollision(
+          this.DS.SelectableSet.rects.get(item),
+          this.rect,
+          this.Settings.dropInsideThreshold
+        )
+      )
         return [item]
       return []
     })
 
     // since elements can be moved while this getter is called, we need to update the values every X seconds
     if (this._timeout) clearTimeout(this._timeout)
-    this._timeout = setTimeout(() => this._itemsInside = null, this.Settings.refreshMemoryRate)
+    this._timeout = setTimeout(
+      () => (this._itemsInside = null),
+      this.Settings.refreshMemoryRate
+    )
 
     return this._itemsInside
   }

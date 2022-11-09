@@ -1,3 +1,7 @@
+# 2.5.1
+
+- Fix: when an item had multiple dropzones, the `${droppedInsideClass}` was removed even tho’ the item was dropped inside a zone
+
 # 2.5.0
 
 - Add dropZones! Solves #115
