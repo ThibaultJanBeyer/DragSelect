@@ -1,3 +1,7 @@
+# 2.5.3
+
+- Fix a bug where `setSettings` would not work with dropZones.
+
 # 2.5.2
 
 - Make `droppables` within `dropZones` optional and use all selectables as default value if no droppables are provided.
