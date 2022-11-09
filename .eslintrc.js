@@ -27,6 +27,11 @@ module.exports = {
     'prettier/prettier': 'error',
     'no-extra-parens': 'off',
     'no-mixed-operators': 'off',
+    'no-underscore-dangle': 'off',
+    'no-return-assign': 'off',
+    'no-unused-vars': 'off',
+    'consistent-return': 'off',
+    'no-plusplus': 'off',
   },
   env: {
     'jest/globals': true,
