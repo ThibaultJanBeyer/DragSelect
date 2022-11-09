@@ -1,6 +1,6 @@
 /***
 
- ~~~ Version 2.5.2 ~~~
+ ~~~ Version 2.5.3 ~~~
 
  ******************************************
 
@@ -554,7 +554,8 @@
     var scroll = getCurrentScroll(area);
     if (scroll.x || scroll.y) return true;
     if (area instanceof Document) {
-      if (area.body) return !!(area.body.scrollTop = 1);else return !!(area.documentElement.scrollTop = 1);
+      if (area.body) return !!(area.body.scrollTop = 1);
+      return !!(area.documentElement.scrollTop = 1);
     }
     return !!(area.scrollTop = 1);
   });
@@ -656,9 +657,8 @@
         toWatch.push(parent);
         index++;
         return traverse(toWatch, index);
-      } else {
-        return toWatch;
       }
+      return toWatch;
     };
     return traverse([node]);
   });
@@ -837,24 +837,23 @@
     var computed = window.getComputedStyle(element);
     if (!computed.transform || computed.transform === 'none') return position;
     if (computed.transform.indexOf('3d') >= 0) {
-      var match = computed.transform.trim().match(/matrix3d\((.*?)\)/);
-      if (match && match.length) {
+      var _match = computed.transform.trim().match(/matrix3d\((.*?)\)/);
+      if (_match && _match.length) {
         var _match$;
-        var values = (_match$ = match[1]) === null || _match$ === void 0 ? void 0 : _match$.split(',');
+        var values = (_match$ = _match[1]) === null || _match$ === void 0 ? void 0 : _match$.split(',');
         position.x = parseInt(values[12]) || 0;
         position.y = parseInt(values[13]) || 0;
       }
       return position;
-    } else {
-      var _match = computed.transform.trim().match(/matrix\((.*?)\)/);
-      if (_match && _match.length) {
-        var _match$2;
-        var _values = (_match$2 = _match[1]) === null || _match$2 === void 0 ? void 0 : _match$2.split(',');
-        position.x = parseInt(_values[4]) || 0;
-        position.y = parseInt(_values[5]) || 0;
-      }
-      return position;
     }
+    var match = computed.transform.trim().match(/matrix\((.*?)\)/);
+    if (match && match.length) {
+      var _match$2;
+      var _values = (_match$2 = match[1]) === null || _match$2 === void 0 ? void 0 : _match$2.split(',');
+      position.x = parseInt(_values[4]) || 0;
+      position.y = parseInt(_values[5]) || 0;
+    }
+    return position;
   };
 
   /**
@@ -913,7 +912,8 @@
    * @return {Vect2}
    */
   var getStylePosition = (function (element, useTranslate) {
-    if (useTranslate) return getTranslatedPositions(element);else return getTopLeftPosition(element);
+    if (useTranslate) return getTranslatedPositions(element);
+    return getTopLeftPosition(element);
   });
 
   // @ts-check
@@ -1238,8 +1238,8 @@
     // 3.
     element1.bottom > el2.top // 4.
     ) return true;
-      // collision detected!
-    else return false;
+    // collision detected!
+    return false;
   });
 
   // @ts-check
@@ -1557,7 +1557,7 @@
     /** @param {DSArea} area */
     _createClass(Area, [{
       key: "HTMLNode",
-      //////////////////////////////////////////////////////////////////////////////////////
+      /// ///////////////////////////////////////////////////////////////////////////////////
       // Node Getters
       get: function get() {
         return (/** @type {DSArea} */this._node
@@ -1586,7 +1586,8 @@
       key: "computedStyle",
       get: function get() {
         if (this._computedStyle) return this._computedStyle;
-        if (this.HTMLNode instanceof Document) return this._computedStyle = window.getComputedStyle(this.HTMLNode.body || this.HTMLNode.documentElement);else return this._computedStyle = window.getComputedStyle(this.HTMLNode);
+        if (this.HTMLNode instanceof Document) return this._computedStyle = window.getComputedStyle(this.HTMLNode.body || this.HTMLNode.documentElement);
+        return this._computedStyle = window.getComputedStyle(this.HTMLNode);
       }
       /**
        * The element rect (caches result) (without scrollbar or borders)
@@ -2134,7 +2135,10 @@
     this.Settings = DS.stores.SettingsStore.s;
 
     // @ts-ignore: @todo: update to typescript
-    this.DS.subscribe('Settings:updated:dropZones', this.setDropZones);
+    this.DS.subscribe('Settings:updated:dropZones', function (_ref5) {
+      var settings = _ref5.settings;
+      return _this.setDropZones(settings);
+    });
     this.setDropZones({
       dropZones: /** @type {DSDropZone[]} */this.DS.stores.SettingsStore.s.dropZones
     });
@@ -2310,7 +2314,7 @@
         this.isInteracting ||
         // fix double-click issues
         event.target && !this.DS.SelectorArea.isInside( /** @type {DSElement} */event.target) ||
-        //fix outside elements issue
+        // fix outside elements issue
         !isKeyboardClick && !this.DS.SelectorArea.isClicked(event) // make sure the mouse click is inside the area
         ) return false;
         return true;
@@ -2756,7 +2760,7 @@
       this.DS.subscribe('Settings:updated:selectorClass', function (_ref4) {
         var settings = _ref4.settings;
         _this.HTMLNode.classList.remove(settings['selectorClass:pre']);
-        _this.HTMLNode.classList.add(settings['selectorClass']);
+        _this.HTMLNode.classList.add(settings.selectorClass);
       });
       // @ts-ignore: @todo: update to typescript
       this.DS.subscribe('Settings:updated:selector', this.attachSelector);
