@@ -58,9 +58,9 @@
 
 /**
  * @typedef {Object} DSInputDropZone
- * @property {string} id
- * @property {DSElement} element
- * @property {DSInputElements} droppables
+ * @property {string} id can be any unique identifier of type string
+ * @property {DSElement} element is the dropzone itself
+ * @property {DSInputElements} [droppables] the elements that can be dropped into that zone. This is optional, by default it will be all selectables
  */
 /**
  * @typedef {Object} DSDropZone

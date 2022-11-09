@@ -1,3 +1,7 @@
+# 2.5.2
+
+- Make `droppables` within `dropZones` optional and use all selectables as default value if no droppables are provided.
+
 # 2.5.1
 
 - Fix: when an item had multiple dropzones, the `${droppedInsideClass}` was removed even tho’ the item was dropped inside a zone

@@ -24,7 +24,7 @@ export default class DropZone {
   /**
    * @type {DSElements}
    */
-  droppables
+  _droppables
 
   /**
    * @type {DOMRect}
@@ -62,7 +62,7 @@ export default class DropZone {
    * @param {DragSelect} obj.DS
    * @param {string} obj.id
    * @param {DSElement} obj.element
-   * @param {DSInputElements} obj.droppables
+   * @param {DSInputElements} [obj.droppables]
    * @ignore
    */
   constructor({ DS, id, element, droppables }) {
@@ -71,7 +71,7 @@ export default class DropZone {
 
     this.id = id
     this.element = element
-    this.droppables = toArray(droppables)
+    if (droppables) this.droppables = toArray(droppables)
     this.element.classList.add(`${this.Settings.dropZoneClass}`)
 
     // @ts-ignore: @todo: update to typescript
@@ -248,5 +248,14 @@ export default class DropZone {
   get parentNodes() {
     if (this._parentNodes) return this._parentNodes
     return (this._parentNodes = getAllParentNodes(this.element))
+  }
+
+  get droppables() {
+    if (this._droppables) return this._droppables
+    return this.DS.SelectableSet.elements
+  }
+
+  set droppables(value) {
+    this._droppables = value
   }
 }
