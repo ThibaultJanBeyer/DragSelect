@@ -31,6 +31,8 @@ export default class Selector {
     })
     // @ts-ignore: @todo: update to typescript
     this.DS.subscribe('Settings:updated:selector', this.attachSelector)
+    // @ts-ignore: @todo: update to typescript
+    this.DS.subscribe('Settings:updated:customStyles', this.attachSelector)
     this.attachSelector()
 
     this.DS.subscribe('Interaction:start', this.start)
