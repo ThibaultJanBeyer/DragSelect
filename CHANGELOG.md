@@ -1,3 +1,8 @@
+# 2.5.4
+
+- Fix a bug where `setSettings` would not work with `customStyles`.
+- Beautify the default selector using rgb(0,175,255) as base blue color
+
 # 2.5.3
 
 - Fix a bug where `setSettings` would not work with dropZones.
