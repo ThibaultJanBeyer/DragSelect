@@ -45,13 +45,13 @@ export default {
       file: 'dist/DragSelect.es6m.js',
       format: 'es',
       name: 'DragSelect',
-      banner: banner,
+      banner,
     },
     {
       file: 'dist/DragSelect.js',
       format: 'umd',
       name: 'DragSelect',
-      banner: banner,
+      banner,
     },
     {
       file: 'dist/ds.es6m.min.js',
