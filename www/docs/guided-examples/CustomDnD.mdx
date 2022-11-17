@@ -1,0 +1,69 @@
+---
+sidebar_position: 10
+---
+
+# Custom Drag and Drop
+
+> Note: this functionality is still a work in progress. If you find what you want to do is not working, please give your use-case and feedback in the [Discussions](https://github.com/ThibaultJanBeyer/DragSelect/discussions) section and we’ll try to support it.
+
+DragSelect comes with a build-in Drag and Drop functionality. However, the ideal is to be as extensible as possible. So the usage of other libraries in combination with DragSelect is definitively welcome! There is multiple ways to achieve this:
+
+## Using `.stop()`
+
+```js
+// 1. Setup DragSelect:
+const ds = new DragSelect({ 
+  // if your library can not handle keyboard dragging
+  keyboardDragSpeed: 0, 
+  keyboardDrag: false,
+  // …your other settings…
+})
+
+// 2. Setup the other library. Here we call it MyCustomDrag
+const myCustomDrag = new MyCustomDrag({/* …your settings… */})
+
+// 3. Stop DragSelect dragging
+ds.subscribe('predragstart', ({ items, isDragging, isDraggingKeyboard }) => {
+  if(isDragging) {
+    ds.stop(false, false)
+    // if anything is necessary in MyCustomDrag, here is the place
+    myCustomDrag.start(items)
+  }
+})
+
+// 4. ReStart DragSelect when the other library is done dragging
+myCustomDrag.subscribe('finished', () => ds.start())
+```
+
+If your library has no callback you could try to disable, then re-enable directly:
+
+```js
+ds.subscribe('predragstart', ({ isDragging, isDraggingKeyboard }) => {
+   if(isDragging) {
+     ds.stop(false, false)
+     setTimeout(ds.start)
+   }
+})
+```
+
+*Note: it is important to debounce (i.e. with `setTimeout(ds.start)`) the start function if it's called within a single subscriber so that all the scheduled callbacks finish triggering before we start again.*
+
+## Using `.break()`
+
+> /!\ only use break when you know what you're doing
+
+In case you want to build something completely custom on top of DragSelect, we got you covered! You can use `.break` for this.  
+
+This utility to override DragSelects internal functionality allowing you to write it all yourself: You can write your own drag and drop, if you want, you can even write your own selection:  
+
+```js
+ds.subscribe('predragmove', ({ isDragging, isDraggingKeyboard }) => {
+  if(isDragging || isDraggingKeyboard) {
+    ds.break()
+    /* your custom logic for drag handling here. */
+  } else {
+    ds.break()
+    /* your custom logic for selection handling here. */
+  }
+}
+```

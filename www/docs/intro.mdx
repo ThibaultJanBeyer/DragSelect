@@ -1,0 +1,220 @@
+---
+sidebar_position: 2
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import GitHubButton from 'react-github-btn'
+
+# Getting Started
+
+DragSelect is a small but professional, cross platform library with no dependencies that adds a selection mechanism similar to your operating system to the browser. It allows you to select multiple elements and drag and drop them around.  
+
+Let's discover how to use **DragSelect in less than 2 minutes**. You don’t believe me? It’s very easy, you’ll see!
+
+## 🧩 Installation (Install it)
+
+You can download the binary files and add them to your document.
+Or better use a Content Delivery Network (CDN).
+Or even better install it via a package manager like NPM:
+
+<Tabs>
+  <TabItem value="npm" label="NPM" default>
+
+```
+npm i -S dragselect
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+
+```
+yarn add dragselect
+```
+
+  </TabItem>
+  <TabItem value="download" label="Download">
+
+  - [DragSelect](https://dragselect.com/v2/DragSelect.js) ([minified](https://dragselect.com/v2/ds.min.js))
+  - [DragSelect ES6 Module](https://dragselect.com/v2/DragSelect.es6m.js) ([minified](https://dragselect.com/v2/ds.es6m.min.js))
+  - From our website:
+
+```html
+<script src="https://dragselect.com/v2/ds.min.js"></script>
+```
+  > We don't recommend the direct linking for production set-up since you'll not benefit from versioning. Please use `npm` if you can.
+
+  </TabItem>
+  <TabItem value="cdn" label="CDN">
+    <Tabs>
+  <TabItem value="modules" label="Modules" default>
+
+```html
+<script type=module src="https://unpkg.com/dragselect@latest/dist/DragSelect.es6m.js"></script>
+```
+Or Minified:
+```html
+<script type=module src="https://unpkg.com/dragselect@latest/dist/ds.es6m.min.js"></script>
+```
+
+  </TabItem>
+  <TabItem value="traditional" label="Traditional" default>
+
+```html
+<script src="https://unpkg.com/dragselect@latest/dist/DragSelect.js"></script>
+```
+Or Minified:
+```html
+<script src="https://unpkg.com/dragselect@latest/dist/ds.min.js"></script>
+```
+
+  </TabItem>
+    </Tabs>
+  </TabItem>
+  <TabItem value="bower" label="Bower (deprecated)" default>
+
+```console
+bower install --save dragselect
+```
+
+  > Note: the Bower project is deprecated. Please use npm instead. If you have to use bower, you'll have to build the project after installing it via `npm run rollup`
+
+  </TabItem>
+</Tabs>
+
+## 🎸 That's it, you're ready to rock! (Use it)  
+
+DragSelect supports `module.exports`, `AMD Modules` with `define`, `es6 modules` with `.es6m` versions and has a fallback to global namespace for maximum out of the box support:
+
+<Tabs>
+  <TabItem value="es6" label="ES6" default>
+
+```js
+import DragSelect from 'dragselect';
+
+const ds = new DragSelect({
+  selectables: document.querySelectorAll('.selectable'),
+});
+
+ds.subscribe('callback', (e) => {
+  console.log(e);
+});
+```
+
+  </TabItem>
+  <TabItem value="commonjs" label="CommonJS">
+
+```js
+const DragSelect = require('dragselect');
+
+const ds = new DragSelect({
+  selectables: document.querySelectorAll('.selectable'),
+});
+
+ds.subscribe('callback', (e) => {
+  console.log(e);
+});
+```
+
+  </TabItem>
+  <TabItem value="amd" label="AMD">
+
+```js
+require(['dragselect'], function (DragSelect) {
+  const ds = new DragSelect({
+    selectables: document.querySelectorAll('.selectable'),
+  });
+
+  ds.subscribe('callback', (e) => {
+    console.log(e);
+  });
+});
+```
+
+  </TabItem>
+  <TabItem value="global" label="Global">
+
+```js
+const ds = new DragSelect({
+  selectables: document.querySelectorAll('.selectable'),
+});
+
+ds.subscribe('callback', (e) => {
+  console.log(e);
+});
+```
+
+  </TabItem>
+  <TabItem value="cdn" label="From CDN">
+
+```js
+import DragSelect from 'https://unpkg.com/dragselect@latest/dist/ds.es6m.min.js'
+
+const ds = new DragSelect({
+  selectables: document.querySelectorAll('.selectable'),
+});
+
+ds.subscribe('callback', (e) => {
+  console.log(e)
+});
+```
+
+  </TabItem>
+</Tabs>
+
+## 🎬 Aaaand action! (See it)
+
+<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect" src="https://codepen.io/ThibaultJanBeyer/embed/prpwYG?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen>
+  See <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG">this Pen about DragSelect</a> on CodePen.
+</iframe>
+
+*Pssst: try using your keyboard only or selecting multiple elements with Shift. It just works ;-)*
+
+### Within a scroll-able Area
+
+<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/Nvobgq?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen>
+  See <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq">this Pen about DragSelect</a> on CodePen.
+</iframe>
+
+### With DropZones
+
+<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/bGKgVxp?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen>
+  See <a href="https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp">this Pen about DragSelect</a> on CodePen.
+</iframe>
+
+## 📚 What next?
+
+Most importantly:
+
+<ul>
+<li>If you like what you see, make sure to {' '}
+<GitHubButton
+  href="https://github.com/ThibaultJanBeyer/DragSelect"
+  data-icon="octicon-star"
+  data-show-count="true"
+  aria-label="Star ThibaultJanBeyer/DragSelect on GitHub"
+>
+  Star
+</GitHubButton> DragSelect</li>
+<li>Tell all your friends/colleagues.</li>
+<li>If you think it is worth continuing developing & maintaining DragSelect, please{' '}
+<GitHubButton
+  href="https://github.com/sponsors/ThibaultJanBeyer"
+  data-icon="octicon-heart"
+  aria-label="Sponsor @ThibaultJanBeyer on GitHub"
+>
+  Sponsor
+</GitHubButton> or <a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md">contribute</a>!
+</li>
+</ul>
+
+> Creating and maintaining useful tools is a lot of work. Thank you :-)
+
+### Learn
+This page is just a very brief introduction showcasing a limited set of the many features. 
+DragSelect is ultra extensible and feature rich!
+Make sure to read the guides and the documentation. If you’re stuck feel free to [reach out on Github](https://github.com/ThibaultJanBeyer/DragSelect).
+
+- [API](/docs/category/API)
+- [Guided Examples](/docs/category/guided-examples)
+
+[![Typewriter Gif](/img/typewriter.gif)](https://thibaultjanbeyer.com/)

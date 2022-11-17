@@ -1,0 +1,76 @@
+---
+sidebar_position: 3
+---
+
+# Methods
+
+DragSelect exposes some useful methods.
+When the function is saved into a variable `const ds = new DragSelect()` you have access to all its inner functions. You can simply use them like this:
+  
+```js
+const ds = new DragSelect({});
+ds.methodName(method_props);
+```
+
+## Methods
+
+### Functionality
+| method | properties | usage |
+|--- |--- |--- |
+| `stop` | / | Will teardown/stop the whole functionality
+| `start` | / | Reset the functionality after a stop/teardown
+| `break` | / | Utility to override DragSelect internal functionality. Breaks out of current flow. Read [Custom Drag and Drop](/docs/guided-examples/CustomDnD) for more info.
+
+### Settings
+| method | properties | usage |
+|--- |--- |--- |
+| `setSettings` | [Settings](Settings) | Update any setting dynamically, see [Updating Settings](/docs/guided-examples/Updating-Settings)
+
+### Interaction
+| method | properties | usage |
+|--- |--- |--- |
+| `isDragging` | / | Whether the user is currently drag n dropping elements (instead of selection)
+| `isMultiSelect` | event:KeyboardEvent|MouseEvent|TouchEvent (optional) | Whether the multi-select key is currently pressed
+
+### Selection
+| method | properties | usage |
+|--- |--- |--- |
+| `getSelection` | / | Returns all currently selected nodes 
+| `addSelection` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, triggerCallback:boolean, dontAddToSelectables:boolean | adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true) 
+| `removeSelection` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, triggerCallback:boolean, removeFromSelectables:boolean | removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last boolean is set to true, it also removes them from the possible selectable nodes if they were. 
+| `toggleSelection` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, triggerCallback:boolean, removeFromSelectables:boolean | toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If `triggerCallback` is set to true: callback will be called afterward. If `removeFromSelectables` is set to true: will NOT add elements to the list of selectable elements but will remove elements from the selectables if they are toggled off. (By default the toggling will add elements to the list of selectables and will not remove them).
+| `setSelection` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, triggerCallback:boolean, dontAddToSelectables:boolean |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true)
+| `clearSelection` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, triggerCallback:boolean | Removes all elements from the selection. If callback is set to true: callback will be called afterwards. |
+| `clearSelection` | triggerCallback:boolean | Unselect / Deselect all current selected Nodes |
+
+### Selectables
+| method | properties | usage |
+|--- |--- |--- |
+| `addSelectables` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, addToSelection:boolean | Adds elements that can be selected. Don’t worry, nodes are never added twice. `addToSelection`: elements will also be added to current selection.
+| `removeSelectables` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, removeFromSelection:boolean | Remove elements from the set of elements that can be selected. `removeFromSelection`: elements will also be removed from current selection.
+| `getSelectables` | / | Returns array with all nodes that can be selected.
+
+### Pointer
+| method | properties | usage |
+|--- |--- |--- |
+| `getInitialCursorPosition` | / | Returns the registered x, y coordinates the cursor had when first clicked 
+| `getCurrentCursorPosition` | / | Returns current x, y coordinates of the cursor 
+| `getPreviousCursorPosition` | / | Returns last registered x, y coordinates of the cursor (after last callback) 
+| `getInitialCursorPositionArea` | / | Returns the registered x, y coordinates relative to the area the cursor had when first clicked 
+| `getCurrentCursorPositionArea` | / | Returns current x, y coordinates of the cursor relative to the area
+| `getPreviousCursorPositionArea` | / | Returns last registered x, y coordinates of the cursor relative to the area (after last callback) 
+
+### DropZones
+| method | properties | usage |
+|--- |--- |--- |
+| `getZoneByCoordinates` | coordinates:{ x:number, y:number } (Optional) | Returns the first drop target under the current mouse position, or, if provided at the coordinates.
+| `getItemsDroppedByZoneId` | zoneId:string | Returns the items dropped into a specific zone (by zone.id)
+| `getItemsInsideByZoneId` | zoneId:string, addClasses:boolean | Returns the items that are visually inside a specific zone (by zone.id). `addClasses`: also add the respective CSS classes to those elements if they don’t have them yet.
+
+## Example
+
+```js
+const ds = new DragSelect({});
+ds.setSettings({ selectables: document.querySelectorAll('.selectable') });
+ds.getSelection();
+```

@@ -1,0 +1,55 @@
+---
+sidebar_position: 2
+---
+
+# Events
+
+DragSelect follows a PubSub pattern. It will emit useful events you can subscribe to like this:
+  
+```js
+const ds = new DragSelect({});
+ds.subscribe('<event_name>', (callback_object) => {})
+```
+
+## Public Events
+
+|event_name |callback_object |description |
+|--- |--- |---
+|`callback` |{ items, event, isDragging, dropTarget, … } |Fired after the selection (i.e. on mouse-up). 
+|`dragstart` |{ items, event, isDragging, isDraggingKeyboard, … } |Fired when the selection starts (i.e. on mouse-down). 
+|`dragmove` |{ items, event, isDragging, isDraggingKeyboard, … } |Fired when the mouse moves while dragging (i.e. on mouse-move).
+|`autoscroll` |{ items, isDragging, scroll_directions, scroll_multiplier, … } |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
+|`elementselect` |{ items, item, … } |Fired when an element is added to the selection.
+|`elementunselect` |{ items, item, … } |Fired when an element is removed from the selection.
+
+> Note: all your callbacks subscribers will run after the internal code ran. If you want to run something before everything else, use the `pre` prefix. I.e. `predragstart` is an event that runs before any internal start logic.
+
+> Note: there are way more so called "internal events" but hooking to those is not recommended since they might change in future and break your implementation.
+
+## Callback Object
+
+The callback object is made up of different parts depending of the event. All properties are not guaranteed so it is important to check for their availability before using them. I.e. like this:
+
+```js
+const ds = new DragSelect({});
+ds.subscribe('callback', (callback_object) => {
+  if(callback_object.items) {
+    // do something with the items
+  }
+})
+```
+
+|callback_object_keys |type |description |
+|--- |--- |---
+| `event` | MouseEvent &#124 TouchEvent &#124 KeyboardEvent &#124 any | The native browser event, the type is depending on the situational context
+| `items` | [ HTMLElement &#124 SVGElement &#124 any ] | Current selected elements
+| `item` | HTMLElement &#124 SVGElement &#124 any | The single element currently being interacted with if any
+| `isDragging` | boolean | If true, the user is dragging the selected elements, if false the user is selecting
+| `isDraggingKeyboard` | boolean | If true, the user is dragging the selected elements with the keyboard
+| `scroll_directions` | [ 'top' &#124 'bottom' &#124 'left' &#124 'right' &#124 undefined ] | The direction in which the event is happening (i.e. scroll direction)
+| `scroll_multiplier` | number | The scrolling speed
+| `dropTarget` | { <br />&nbsp;&nbsp;`id`: string,<br />&nbsp;&nbsp;`element`: HTMLElement &#124 SVGElement &#124 any,<br />&nbsp;&nbsp;`droppables`: [ HTMLElement &#124 SVGElement &#124 any ],<br />&nbsp;&nbsp;`itemsDropped`: [ HTMLElement &#124 SVGElement &#124 any ],<br />&nbsp;&nbsp;`itemsInside`: [ HTMLElement &#124 SVGElement &#124 * ] <br />} | dropZone in which the droppable elements were dropped into. `id`: is the identifier string of the zone. `droppables`: the elements that are assigned to this zone. `itemsDropped`: all items that were dropped on the target. `itemsInside`: all items that are within the bounds of the zone |
+| `key` | string | Pressed key (lowercase)
+| `settings` | [Settings](Settings) | The settings being updates/manipulated/passed, also holds the previous value. i.e. updating selectorClass will publish { settings: { selectorClass: 'newVal', 'selectorClass:pre': 'oldVal' } }
+
+> Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first

@@ -1,0 +1,47 @@
+@import '../_common.scss';
+
+.root {
+  @extend .inner;
+  overflow: auto;
+}
+
+.approveReject {
+  display: grid;
+  position: sticky;
+  width: 100px;
+  height: 100%;
+  // height: stretch;
+  // height: -moz-available;
+  // height: -webkit-fill-available;
+  top: 0;
+  float: right;
+}
+
+.approve, .reject {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.approve {
+  background: lightgreen;
+}
+
+.reject {
+  background: lightcoral;
+}
+
+.selectable img {
+  pointer-events: none;
+}
+
+.selected > div {
+  background: $blue;
+  color: white;
+}
+
+.dropZoneReady {
+  border: 1px solid $blue;
+  color: $blue;
+  text-decoration: underline;
+}
