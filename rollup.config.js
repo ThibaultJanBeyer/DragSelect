@@ -6,6 +6,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
 
 let typesDone = false
+let copyDocsDone = false
 const banner = `/***
 
  ~~~ Version ${process.env.npm_package_version} ~~~
@@ -75,18 +76,22 @@ export default {
       name: 'copy',
       writeBundle(options) {
         if (!process.argv.includes('--ci')) return
+
+        // v1
         if (!fs.existsSync('docs/')) fs.mkdirSync('docs')
         fs.copyFileSync(
           `.v1/${path.basename(options.file)}`,
           `docs/${path.basename(options.file)}`
         )
-        console.log(
+        console.info(
           `.v1/${path.basename(options.file)}`,
           `docs/${path.basename(options.file)}`
         )
+
+        // v2
         if (!fs.existsSync('docs/v2')) fs.mkdirSync('docs/v2')
         fs.copyFileSync(options.file, `docs/v2/${path.basename(options.file)}`)
-        console.log(options.file, `docs/v2/${path.basename(options.file)}`)
+        console.info(options.file, `docs/v2/${path.basename(options.file)}`)
       },
     },
     {
@@ -94,7 +99,7 @@ export default {
       writeBundle() {
         if (typesDone) return
         typesDone = true
-        console.log(`Adding types to all ts files`)
+        console.info(`Adding types to all ts files`)
         glob('dist/**/*.d.ts', (er, files) => {
           if (er) throw er
           files.forEach((fileName) => {
@@ -106,6 +111,15 @@ export default {
             })
           })
         })
+      },
+    },
+    {
+      name: 'copy-www-docs',
+      writeBundle() {
+        if (copyDocsDone) return
+        copyDocsDone = true
+        console.info(`Adding www/build output to docs/ folder`)
+        fs.cpSync(`www/build`, `docs/`, { recursive: true })
       },
     },
     {

@@ -18,7 +18,7 @@
     "test:watch": "npm run test -- --watch",
     "\n# BUILDING:": "",
     "build": "npm run rollup",
-    "docs": "jsdoc -c jsdoc.json",
+    "docs": "cd www && yarn && yarn build && cd ..",
     "premedia": "rm -r docs/media &",
     "media": "cp -R .media docs/media",
     "prerollup": "npm run types",
@@ -27,7 +27,7 @@
     "rollup:watch": "npm run rollup -- -w",
     "types": "tsc src/DragSelect.js --lib es2019,dom -t es5 --declaration --allowJs --emitDeclarationOnly --skipLibCheck --outDir dist",
     "\n## PROD:": "",
-    "ci:build": "npm run rollup:ci && npm run media && npm run docs",
+    "ci:build": "npm run docs && npm run rollup:ci && npm run media",
     "ci:test": "npm run test"
   },
   "devDependencies": {
@@ -62,7 +62,6 @@
     "glob": "^7.1.7",
     "jest": "^26.6.3",
     "jest-puppeteer": "^6.1.1",
-    "jsdoc": "^3.6.11",
     "minami": "^1.2.3",
     "prettier": "^2.2.1",
     "puppeteer": "18.1.0",
