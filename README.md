@@ -1,15 +1,23 @@
-```
-    ____                   _____      __          __ 
-   / __ \_________ _____ _/ ___/___  / /__  _____/ /_
-  / / / / ___/ __ `/ __ `/\__ \/ _ \/ / _ \/ ___/ __/
- / /_/ / /  / /_/ / /_/ /___/ /  __/ /  __/ /__/ /_  
-/_____/_/   \__,_/\__, //____/\___/_/\___/\___/\__/  
-                 /____/                              
-```
-
-[GitHub](https://github.com/ThibaultJanBeyer/DragSelect/) | [NPM](https://www.npmjs.com/package/dragselect) | [Project-Page](https://dragselect.com/)  
-
-[![Build Status](https://github.com/ThibaultJanBeyer/DragSelect/actions/workflows/github-actions-build.yml/badge.svg)](https://github.com/ThibaultJanBeyer/DragSelect/actions) ![gzip size](https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip) ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) [![No Dependency](https://img.shields.io/badge/dependencies-none-informational)](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/package.json) [![Contributors Welcome](https://img.shields.io/badge/contributors-welcome-blueviolet)](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md) [![Sponsors Welcome](https://img.shields.io/badge/sponsors-welcome-blueviolet)](https://github.com/sponsors/ThibaultJanBeyer)
+<p align="center" style="text-align: center" >
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="https://dragselect.com/media/dragselect-logo.png">
+    <source media="(prefers-color-scheme: dark)" srcset="https://dragselect.com/media/dragselect-logo-alt.png">
+    <img alt="The DragSelect logo: a selection symbol, a hand, a drop symbol and a mouse within a selection square." width="300" src="https://dragselect.com/media/dragselect-logo.png">
+  </picture>  
+</p>
+<p align="center" style="text-align: center">
+  <a href="https://github.com/ThibaultJanBeyer/DragSelect/">Github</a> | 
+  <a href="https://www.npmjs.com/package/dragselect">NPM</a> | 
+  <a href="https://dragselect.com/">Project-Page</a>
+</p>
+<p align="center" style="text-align: center; margin-bottom: 50px;">
+<a href="https://github.com/ThibaultJanBeyer/DragSelect/actions"><img alt="Build Status" src="https://github.com/ThibaultJanBeyer/DragSelect/actions/workflows/github-actions-build.yml/badge.svg"></a>
+<a href="https://dragselect.com/v2/ds.min.js"><img alt="gzip size" src="https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip"></a>
+<a href="https://www.npmjs.com/package/dragselect"><img alt="npm downloads count" src="https://img.shields.io/npm/dt/dragselect.svg"></a>
+<a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/package.json"><img alt="No Dependency" src="https://img.shields.io/badge/dependencies-none-informational"></a>
+<a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md"><img alt="Contributors Welcome" src="https://img.shields.io/badge/contributors-welcome-blueviolet"></a>
+<a href="https://github.com/sponsors/ThibaultJanBeyer"><img alt="Sponsors Welcome" src="https://img.shields.io/badge/sponsors-welcome-blueviolet"></a>
+</p>
 
 # DragSelect ![GitHub package.json version](https://img.shields.io/github/package-json/v/ThibaultJanBeyer/DragSelect.svg)
 easily add a selection algorithm to your application/website.
@@ -88,12 +96,9 @@ If you're too poor or broke you can still support us with your time instead by [
 
 ## Thanks to:  
 
-| ![BrowserStack](https://dragselect.com/media/browserstack.jpg) | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
-|--- |--- |
-|[BrowserStack](https://www.browserstack.com/) is a testing service which helps testing the tool on various browsers. They support this open source projects by providing us with a [free account](https://www.browserstack.com/open-source)! | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (via Bitcoin: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`). Or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com). | 
-| Via BTC: | [1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (direct) |
-| Via GitHub: | [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) (monthly & one-time) |
-| Other: | [get in touch](mailto:thibault.beyer@gmail.com) |
+| <a href="https://www.browserstack.com/"><img src="https://dragselect.com/media/browserstack.jpg" alt="Browserstack" width="100%"></a> | <a href="https://www.digitalocean.com/"><img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_vertical_blue.svg" alt="DigitalOcean" width="100%"></a> | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
+|--- |--- |--- |
+|[BrowserStack](https://www.browserstack.com/) is a service for cross-browser testing. They support this open source projects by providing us with a [free account](https://www.browserstack.com/open-source)! | [DigitalOcean](https://www.digitalocean.com/) is a cloud infrastructure provider. They support this open source projects by providing us with [free credits](https://www.digitalocean.com/open-source/credits-for-projects) to host this project | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (via Bitcoin: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`). Or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com). 
 
 All donations are distributed with all project contributors proportionally to their involvement. We are grateful for any amount:  
 We have more than ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg), imagine how much we'd have if everyone would have had donated only 1$ 🤩 (unfortunately this did not happen)  
