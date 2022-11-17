@@ -2,3 +2,5 @@
 node_modules
 bower_components
 __tests__
+www
+docs
