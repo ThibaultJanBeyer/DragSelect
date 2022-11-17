@@ -21,6 +21,12 @@ ds.methodName(method_props);
 | `start` | / | Reset the functionality after a stop/teardown
 | `break` | / | Utility to override DragSelect internal functionality. Breaks out of current flow. Read [Custom Drag and Drop](/docs/guided-examples/CustomDnD) for more info.
 
+### Pub/Sub
+| `subscribe` | (event_name, callback:(callback_object) => void):number | Subscribes to an event, see the [Events API](Events) for infos on the names and callback_object.
+| `unsubscribe` | (event_name, callback, id) | Unsubscribes from an event, either pass the exact same callback method as when subscribing or the ID which is returned from the subscribe method
+| `publish` | (event_name, callback_object:any) | Publishes an event, see the [Events API](Events) for infos on the names and callback_object.
+Read the [Events API](Events) for more information
+
 ### Settings
 | method | properties | usage |
 |--- |--- |--- |
