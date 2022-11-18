@@ -96,8 +96,8 @@ If you're too poor or broke you can still support us with your time instead by [
 
 ## Thanks to:  
 
-| <a href="https://www.browserstack.com/"><img src="https://dragselect.com/media/browserstack.jpg" alt="Browserstack" width="100%"></a> | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
-|--- |--- |--- |
+| <a href="https://www.browserstack.com/"><img src="https://dragselect.com/media/browserstack.jpg" alt="Browserstack" width="150px"></a> | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
+|--- |--- |
 |[BrowserStack](https://www.browserstack.com/) is a service for cross-browser testing. They support this open source projects by providing us with a [free account](https://www.browserstack.com/open-source)! | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (via Bitcoin: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`). Or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com). 
 
 All donations are distributed with all project contributors proportionally to their involvement. We are grateful for any amount:  
