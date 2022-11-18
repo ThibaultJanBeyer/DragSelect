@@ -3,10 +3,10 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --color-base: rgb(0, 155, 255);
+  --color-base: rgb(0, 135, 255);
   --color-highlight: rgb(0, 255, 255);
-  --ifm-color-primary: rgb(0, 155, 255);
-  --ifm-color-primary-dark: rgb(0, 122, 255);
+  --ifm-color-primary: var(--color-base);
+  --ifm-color-primary-dark: rgb(0, 115, 255);
   --ifm-color-primary-darker: rgb(0, 100, 255);
   --ifm-color-primary-darkest: rgb(0, 55, 255);
   --ifm-color-primary-light: rgb(0, 188, 255);
@@ -18,8 +18,8 @@
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: rgb(0, 155, 255);
-  --ifm-color-primary-dark: rgb(0, 122, 255);
+  --ifm-color-primary: var(--color-base);
+  --ifm-color-primary-dark: rgb(0, 115, 255);
   --ifm-color-primary-darker: rgb(0, 100, 255);
   --ifm-color-primary-darkest: rgb(0, 55, 255);
   --ifm-color-primary-light: rgb(0, 188, 255);
