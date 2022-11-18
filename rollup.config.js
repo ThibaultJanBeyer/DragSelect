@@ -116,7 +116,7 @@ export default {
     {
       name: 'copy-www-docs',
       writeBundle() {
-        if (copyDocsDone) return
+        if (!process.argv.includes('--ci') || copyDocsDone) return
         copyDocsDone = true
         console.info(`Adding www/build output to docs/ folder`)
         fs.cpSync(`www/build`, `docs/`, { recursive: true })
