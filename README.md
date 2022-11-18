@@ -96,9 +96,9 @@ If you're too poor or broke you can still support us with your time instead by [
 
 ## Thanks to:  
 
-| <a href="https://www.browserstack.com/"><img src="https://dragselect.com/media/browserstack.jpg" alt="Browserstack" width="100%"></a> | <a href="https://www.digitalocean.com/"><img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_vertical_blue.svg" alt="DigitalOcean" width="100%"></a> | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
+| <a href="https://www.browserstack.com/"><img src="https://dragselect.com/media/browserstack.jpg" alt="Browserstack" width="100%"></a> | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
 |--- |--- |--- |
-|[BrowserStack](https://www.browserstack.com/) is a service for cross-browser testing. They support this open source projects by providing us with a [free account](https://www.browserstack.com/open-source)! | [DigitalOcean](https://www.digitalocean.com/) is a cloud infrastructure provider. They support this open source projects by providing us with [free credits](https://www.digitalocean.com/open-source/credits-for-projects) to host this project | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (via Bitcoin: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`). Or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com). 
+|[BrowserStack](https://www.browserstack.com/) is a service for cross-browser testing. They support this open source projects by providing us with a [free account](https://www.browserstack.com/open-source)! | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (via Bitcoin: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`). Or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com). 
 
 All donations are distributed with all project contributors proportionally to their involvement. We are grateful for any amount:  
 We have more than ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg), imagine how much we'd have if everyone would have had donated only 1$ 🤩 (unfortunately this did not happen)  
