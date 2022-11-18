@@ -68,6 +68,19 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      metadata: [
+        {
+          name: 'keywords',
+          content:
+            'javascript, npm, drag-and-drop, drag, selection, dragselect, drag-n-drop, drag-selection, drag-select, drag-selection library, open source, free',
+        },
+        { name: 'author', content: 'Thibault Jan Beyer' },
+        {
+          name: 'description',
+          content:
+            'A JavaScript library for selecting and moving elements in the browser.',
+        },
+      ],
       colorMode: {
         defaultMode: 'dark',
         respectPrefersColorScheme: true,
