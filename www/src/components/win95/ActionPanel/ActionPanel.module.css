@@ -6,3 +6,9 @@
 .group {
   margin-right: 10px;
 }
+
+@media (max-width: 600px) {
+  .group {
+    margin-right: 5px;
+  }
+}
