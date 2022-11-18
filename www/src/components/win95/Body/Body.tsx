@@ -2,10 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import styles from './Body.module.scss'
 import { Item } from './Item/Item'
-import {
-  useDragSelect,
-  CallbackObject,
-} from '../../DragSelectContext'
+import { useDragSelect, CallbackObject } from '../../DragSelectContext'
 import { Icon } from '../Icon/Icon'
 import { handleApproveReject } from './approveReject'
 
@@ -53,7 +50,7 @@ export const Body: React.FC<Props> = ({}) => {
         })
         setTimeout(() => ds.removeSelectables(items, true, true))
       } else if (dropTarget?.id === 'reject') {
-        await handleApproveReject({
+        handleApproveReject({
           items,
           content: '"❌"',
         })
