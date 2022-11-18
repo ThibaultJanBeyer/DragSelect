@@ -55,6 +55,12 @@ html, body {
   font-size: 6rem;
 }
 
+@media (max-width: 600px) {
+  .huge-text {
+    font-size: 4rem;
+  }
+}
+
 .visuallyhidden {
   border: 0;
   clip: rect(0 0 0 0);
