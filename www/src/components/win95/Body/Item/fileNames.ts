@@ -27,6 +27,7 @@ const fileNames = [
   `Put garbage can on your desk. Label it "IN"`,
   `Develop an unnatural fear of staplers`,
   `Decorate your office with pictures of ${getRandomHumanName()}`,
+  `Decorate your office with pictures of the CEO`,
   `Put decaf in the coffeemaker for 3 weeks`,
   `Compose all e-mail in the form of a Haiku`,
   `If someone asks to do something, ask them to sign a waiver`,

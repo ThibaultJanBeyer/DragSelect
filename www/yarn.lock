@@ -2698,10 +2698,10 @@ batch@0.6.1:
   resolved "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz#dc34314f4e679318093fc760272525f94bf25c16"
   integrity sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==
 
-beautiful-web-animations@^0.1.28:
-  version "0.1.28"
-  resolved "https://registry.yarnpkg.com/beautiful-web-animations/-/beautiful-web-animations-0.1.28.tgz#12d6fce9a6e5c13132709d1fb8c322e4189d7378"
-  integrity sha512-zslDpkcjFtzife0UTxDy+cV7/6Qw/vQXKRNG2qIsy9P++WLuTtWoYOnkHAdH0jt8OcWEyya9q+JzJEx+tYFF8g==
+beautiful-web-animations@^0.1.37:
+  version "0.1.37"
+  resolved "https://registry.yarnpkg.com/beautiful-web-animations/-/beautiful-web-animations-0.1.37.tgz#bf87ee8aa68dd6699a520c521bab9b64b7753d14"
+  integrity sha512-nNsLICecjUOkJvde1q1qb42vNcD2dmhimtGfrjaYQPq0bw6972wR6l9hbnOkqD7M5dFUgSN9NZJLFbunJtcOpQ==
   dependencies:
     rollup "^3.1.0"
     uuid "^9.0.0"

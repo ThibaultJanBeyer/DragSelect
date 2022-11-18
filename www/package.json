@@ -21,7 +21,7 @@
     "@mdx-js/react": "^1.6.22",
     "@react-spring/web": "^9.5.5",
     "autoprefixer": "^10.4.13",
-    "beautiful-web-animations": "^0.1.28",
+    "beautiful-web-animations": "^0.1.37",
     "clsx": "^1.2.1",
     "docusaurus-plugin-sass": "^0.2.2",
     "dragselect": "^2.5.4",
