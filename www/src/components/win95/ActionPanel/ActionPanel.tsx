@@ -45,7 +45,7 @@ export const ActionPanel: React.FC<Props> = ({ title, icon }) => {
     <div className={styles.root}>
       <DropDown title={title} icon={icon} />
       <div className={styles.group}>
-        <IconButton iconPath={w95up} disabled />
+        <IconButton iconPath={w95up} title="Up" disabled />
       </div>
       <div className={styles.group}>
         <IconButton
@@ -65,9 +65,9 @@ export const ActionPanel: React.FC<Props> = ({ title, icon }) => {
         />
       </div>
       <div className={styles.group}>
-        <IconButton iconPath={w95cut} disabled />
-        <IconButton iconPath={w95copy} disabled />
-        <IconButton iconPath={w95paste} disabled />
+        <IconButton iconPath={w95cut} title="Cut" disabled />
+        <IconButton iconPath={w95copy} title="Copy" disabled />
+        <IconButton iconPath={w95paste} title="paste" disabled />
       </div>
       <IconButton
         iconPath={w95del}

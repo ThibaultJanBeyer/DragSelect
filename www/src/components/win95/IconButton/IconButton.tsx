@@ -23,7 +23,7 @@ export const IconButton: React.FC<Props> = ({
   <button
     className={styles.button}
     disabled={disabled}
-    title={title}
+    title={`${title}${disabled ? ' (disabled)' : ''}`}
     onClick={onClick}
   >
     {iconPath && <Icon iconPath={iconPath} size={size} />}
