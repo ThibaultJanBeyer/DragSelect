@@ -14,6 +14,6 @@ export const DropDown: React.FC<Props> = ({ title, icon }) => (
   <div className={styles.root}>
     <Icon iconPath={icon} size="l" />
     <div className={styles.text}>{title}</div>
-    <IconButton disabled>▼</IconButton>
+    <IconButton title='dropdown' disabled>▼</IconButton>
   </div>
 )
