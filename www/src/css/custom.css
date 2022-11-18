@@ -72,7 +72,7 @@ html, body {
 }
 
 .metalink {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 35%, rgba(0, 155, 255, 0.4) 35%, rgba(0, 155, 255, 0.4) 40%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 35%, rgba(0, 135, 255, 0.4) 35%, rgba(0, 135, 255, 0.4) 40%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0) 100%);
   background-position: 0% 30%;
   background-size: 100% 200%;
   transition: background-position .1s ease-out;
