@@ -72,6 +72,7 @@ const config = {
         defaultMode: 'dark',
         respectPrefersColorScheme: true,
       },
+      image: 'img/dragselect-logo.png',
       navbar: {
         title: 'DragSelect',
         logo: {
