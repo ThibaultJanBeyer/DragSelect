@@ -1,14 +1,17 @@
 <p align="center" style="text-align: center" >
-  <picture>
-    <source media="(prefers-color-scheme: light)" srcset="https://dragselect.com/media/dragselect-logo.png">
-    <source media="(prefers-color-scheme: dark)" srcset="https://dragselect.com/media/dragselect-logo-alt.png">
-    <img alt="The DragSelect logo: a selection symbol, a hand, a drop symbol and a mouse within a selection square." width="300" src="https://dragselect.com/media/dragselect-logo.png">
-  </picture>  
+  <a href="https://DragSelect.com/">
+    <picture>
+      <source media="(prefers-color-scheme: light)" srcset="https://dragselect.com/media/dragselect-logo.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://dragselect.com/media/dragselect-logo-alt.png">
+      <img alt="The DragSelect logo: a selection symbol, a hand, a drop symbol and a mouse within a selection square." width="300" src="https://dragselect.com/media/dragselect-logo.png">
+    </picture>
+  </a>
 </p>
 <p align="center" style="text-align: center">
+  <a href="https://dragselect.com/">Project-Page</a> |
+  <a href="https://dragselect.com/docs/intro">Documentation</a> |
   <a href="https://github.com/ThibaultJanBeyer/DragSelect/">Github</a> | 
   <a href="https://www.npmjs.com/package/dragselect">NPM</a> | 
-  <a href="https://dragselect.com/">Project-Page</a>
 </p>
 <p align="center" style="text-align: center; margin-bottom: 50px;">
 <a href="https://github.com/ThibaultJanBeyer/DragSelect/actions"><img alt="Build Status" src="https://github.com/ThibaultJanBeyer/DragSelect/actions/workflows/github-actions-build.yml/badge.svg"></a>
