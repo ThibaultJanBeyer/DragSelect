@@ -3381,7 +3381,7 @@ function SettingsStore(_ref) {
 /** @param {{settings: Settings, init?: boolean}} props */;
 
 // Setup
-//////////////////////////////////////////////////////////////////////////////////////
+/// ///////////////////////////////////////////////////////////////////////////////////
 var DragSelect = /*#__PURE__*/function () {
   /**
    * used to skip all current Selection and dragNdrop functionality
@@ -3512,7 +3512,7 @@ var DragSelect = /*#__PURE__*/function () {
   }
 
   // Useful methods for the user
-  //////////////////////////////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////////////////////////////
   /**
    * Initializes the functionality. Automatically triggered when created.
    * Also, reset the functionality after a teardown
@@ -3596,7 +3596,7 @@ var DragSelect = /*#__PURE__*/function () {
      * Multiple elements can be given at once.
      * @param {DSInputElements} elements one or multiple elements
      * @param {boolean} [triggerCallback] - if callback should be called
-     * @param {boolean} [alsoSelectables] - if element should not be added/removed to the list of selectable elements accordingly
+     * @param {boolean} [removeFromSelectables] - if element should not be added/removed to the list of selectable elements accordingly
      * @return {DSElements} all selected elements
      */
   }, {
@@ -3604,9 +3604,9 @@ var DragSelect = /*#__PURE__*/function () {
     value: function toggleSelection(elements) {
       var _this2 = this;
       var triggerCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var alsoSelectables = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      var removeFromSelectables = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       toArray(elements).forEach(function (el) {
-        return _this2.SelectedSet.has(el) ? _this2.removeSelection(elements, triggerCallback, alsoSelectables) : _this2.addSelection(elements, triggerCallback, alsoSelectables);
+        return _this2.SelectedSet.has(el) ? _this2.removeSelection(elements, triggerCallback, removeFromSelectables) : _this2.addSelection(elements, triggerCallback, removeFromSelectables);
       });
       if (triggerCallback) this.PubSub.publish('callback', {
         items: this.getSelection()
