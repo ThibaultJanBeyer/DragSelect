@@ -12,18 +12,18 @@ export const SectionExample: React.FC<{}> = () => {
     if (!bgRef?.current) return
 
     const handleScroll = () => {
-      const scrollY = window.scrollY
+      const {scrollY} = window
       if (bgRef?.current)
         (bgRef.current as any).style.backgroundPositionY = `${
           scrollY * 0.35 - 300
         }px`
     }
 
-    if (inView) document.addEventListener('scroll', handleScroll)
-    else document.removeEventListener('scroll', handleScroll)
+    if (inView) document.addEventListener('scroll', handleScroll, {passive: true})
+    else document.removeEventListener('scroll', handleScroll, {passive: true})
 
     return () => {
-      document.removeEventListener('scroll', handleScroll)
+      document.removeEventListener('scroll', handleScroll, {passive: true})
     }
   }, [bgRef, inView])
 

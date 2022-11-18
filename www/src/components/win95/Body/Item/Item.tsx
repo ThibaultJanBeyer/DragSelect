@@ -51,10 +51,12 @@ const _Item: React.FC = () => {
 
   if (!available) return null
 
+  const name = getRandomFileName()
+
   return (
-    <button className={styles.root} ref={inputEl}>
+    <button className={styles.root} ref={inputEl} aria-labelledby={name}>
       <FileIcon />
-      <div>{getRandomFileName()}</div>
+      <div>{name}</div>
     </button>
   )
 }
