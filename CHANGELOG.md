@@ -1,3 +1,7 @@
+# 2.5.5
+
+- Fix bug where setting a new area via `.setSettings({ area: '...' })` would not remove the old event listeners. Which causes the mobile touch scroll from being blocked when switching between the Document to an areas.
+
 # 2.5.4
 
 - Fix a bug where `setSettings` would not work with `customStyles`.
