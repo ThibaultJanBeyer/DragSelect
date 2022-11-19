@@ -1,6 +1,6 @@
 /***
 
- ~~~ Version 2.5.4 ~~~
+ ~~~ Version 2.5.5 ~~~
 
  ******************************************
 
@@ -1494,6 +1494,7 @@
       _defineProperty(this, "_computedBorder", void 0);
       _defineProperty(this, "_rect", void 0);
       _defineProperty(this, "setArea", function (area) {
+        _this.reset();
         _this._node = area;
         handleElementPositionAttribute({
           computedStyle: _this.computedStyle,
@@ -1548,7 +1549,7 @@
       // @ts-ignore: @todo: update to typescript
       this.DS.PubSub.subscribe('Settings:updated:area', function (_ref2) {
         var settings = _ref2.settings;
-        return _this.setArea(settings.area);
+        _this.setArea(settings.area);
       });
       this.DS.PubSub.subscribe('Interaction:init', this.start);
       this.DS.PubSub.subscribe('Interaction:end', this.reset);
@@ -2234,22 +2235,23 @@
         _this.reset(); // simulate mouse-up (that does not exist on keyboard)
       });
       _defineProperty(this, "stop", function () {
+        var area = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _this.DS.Area.HTMLNode;
         _this.isInteracting = false;
         _this.isDragging = false;
 
         // @TODO: fix pointer events mixing issue see [PR](https://github.com/ThibaultJanBeyer/DragSelect/pull/128#issuecomment-1154885289)
         if (_this.Settings.usePointerEvents) {
-          _this.DS.Area.HTMLNode.removeEventListener('pointerdown', _this.start, {
+          area.removeEventListener('pointerdown', _this.start, {
             // @ts-ignore
             passive: false
           });
           document.removeEventListener('pointerup', _this.reset);
           document.removeEventListener('pointercancel', _this.reset);
         } else {
-          _this.DS.Area.HTMLNode.removeEventListener('mousedown', _this.start);
+          area.removeEventListener('mousedown', _this.start);
           document.removeEventListener('mouseup', _this.reset);
         }
-        _this.DS.Area.HTMLNode.removeEventListener('touchstart', _this.start, {
+        area.removeEventListener('touchstart', _this.start, {
           // @ts-ignore
           passive: false
         });
@@ -2284,20 +2286,24 @@
       this.DS = DS;
       this.Settings = DS.stores.SettingsStore.s;
       // @ts-ignore: @todo: update to typescript
-      this.DS.subscribe('Settings:updated:area', this.init);
+      this.DS.subscribe('Settings:updated:area', function (_ref4) {
+        var settings = _ref4.settings;
+        _this.stop(settings['area:pre']);
+        _this.init();
+      });
       this.DS.subscribe('PointerStore:updated', this.update);
       this.DS.subscribe('Selectable:click', this.onClick);
-      this.DS.subscribe('Selectable:pointer', function (_ref4) {
-        var event = _ref4.event;
+      this.DS.subscribe('Selectable:pointer', function (_ref5) {
+        var event = _ref5.event;
         return _this.start(event);
       });
-      this.DS.subscribe('Interaction:start:pre', function (_ref5) {
-        var event = _ref5.event;
+      this.DS.subscribe('Interaction:start:pre', function (_ref6) {
+        var event = _ref6.event;
         return _this._start(event);
       });
       this.DS.subscribe('Interaction:init:pre', this._init);
-      this.DS.subscribe('Interaction:end:pre', function (_ref6) {
-        var event = _ref6.event;
+      this.DS.subscribe('Interaction:end:pre', function (_ref7) {
+        var event = _ref7.event;
         return _this._reset(event);
       });
       this.DS.subscribe('Area:scroll', this.update);
