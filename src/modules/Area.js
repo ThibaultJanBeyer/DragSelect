@@ -64,9 +64,9 @@ export default class Area {
 
     this.setArea(this.DS.stores.SettingsStore.s.area)
     // @ts-ignore: @todo: update to typescript
-    this.DS.PubSub.subscribe('Settings:updated:area', ({ settings }) =>
+    this.DS.PubSub.subscribe('Settings:updated:area', ({ settings }) => {
       this.setArea(settings.area)
-    )
+    })
 
     this.DS.PubSub.subscribe('Interaction:init', this.start)
     this.DS.PubSub.subscribe('Interaction:end', this.reset)
@@ -74,6 +74,7 @@ export default class Area {
 
   /** @param {DSArea} area */
   setArea = (area) => {
+    this.reset()
     this._node = area
     handleElementPositionAttribute({
       computedStyle: this.computedStyle,
