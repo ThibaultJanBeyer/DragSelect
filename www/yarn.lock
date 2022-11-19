@@ -3679,10 +3679,10 @@ dot-prop@^5.2.0:
   dependencies:
     is-obj "^2.0.0"
 
-dragselect@^2.5.4:
-  version "2.5.4"
-  resolved "https://registry.yarnpkg.com/dragselect/-/dragselect-2.5.4.tgz#edf13b86ae09e88f4cc88b243724fc472b10f111"
-  integrity sha512-//57Xe+aBl0uE+3wUZ1UDhxN0nLu/zRtBE2Px8UozWmYVa0yvaNryzF7Nw89d831RcJ6vXE3nK1Ae4DqtrUnNw==
+dragselect@^2.5.5:
+  version "2.5.5"
+  resolved "https://registry.yarnpkg.com/dragselect/-/dragselect-2.5.5.tgz#d7386c76acc8b51b29be1dc181ccfe57625031cf"
+  integrity sha512-fdyi1Uw9swNoeSl6pBjlmaOn8v1zrngLOVbRswjQ9/6808o8Fk6U/uqgKtEflaxw8iwjI0kE8L6gI2aijUO7qA==
 
 duplexer3@^0.1.4:
   version "0.1.5"
