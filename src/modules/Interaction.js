@@ -18,7 +18,10 @@ export default class Interaction {
     this.DS = DS
     this.Settings = DS.stores.SettingsStore.s
     // @ts-ignore: @todo: update to typescript
-    this.DS.subscribe('Settings:updated:area', this.init)
+    this.DS.subscribe('Settings:updated:area', ({ settings }) => {
+      this.stop(settings['area:pre'])
+      this.init()
+    })
     this.DS.subscribe('PointerStore:updated', this.update)
     this.DS.subscribe('Selectable:click', this.onClick)
     this.DS.subscribe('Selectable:pointer', ({ event }) => this.start(event))
@@ -156,24 +159,24 @@ export default class Interaction {
     this.reset() // simulate mouse-up (that does not exist on keyboard)
   }
 
-  stop = () => {
+  stop = (area = this.DS.Area.HTMLNode) => {
     this.isInteracting = false
     this.isDragging = false
 
     // @TODO: fix pointer events mixing issue see [PR](https://github.com/ThibaultJanBeyer/DragSelect/pull/128#issuecomment-1154885289)
     if (this.Settings.usePointerEvents) {
-      this.DS.Area.HTMLNode.removeEventListener('pointerdown', this.start, {
+      area.removeEventListener('pointerdown', this.start, {
         // @ts-ignore
         passive: false,
       })
       document.removeEventListener('pointerup', this.reset)
       document.removeEventListener('pointercancel', this.reset)
     } else {
-      this.DS.Area.HTMLNode.removeEventListener('mousedown', this.start)
+      area.removeEventListener('mousedown', this.start)
       document.removeEventListener('mouseup', this.reset)
     }
 
-    this.DS.Area.HTMLNode.removeEventListener('touchstart', this.start, {
+    area.removeEventListener('touchstart', this.start, {
       // @ts-ignore
       passive: false,
     })
