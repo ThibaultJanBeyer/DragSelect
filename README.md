@@ -346,6 +346,7 @@ Here is the full list:
 |dropInsideThreshold |number |How much % of the item has to be inside the dropzone to be considered inside (0 = barely touching, 1 = completely inside) |`1`
 |dropTargetThreshold |number |How much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone) |`0`
 |usePointerEvents |boolean |Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly. |`false`
+|multiSelectIgnoreParents |boolean |Whether or not to ignore parent elements and only select children when they intersect while multi-selecting. Useful for tools like Google Blockly. |`false`
 |selectedClass |string |The class name assigned to the selected items. |[see classes](#classes)
 |hoverClass |string |The class name assigned to the mouse hovered items. |[see classes](#classes)
 |selectorClass |string |The class name assigned to the square selector helper. |[see classes](#classes)
