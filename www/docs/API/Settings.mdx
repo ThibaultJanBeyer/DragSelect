@@ -20,7 +20,8 @@ const ds = new DragSelect({
 |--- |--- |--- |---
 | `selectables`         | [HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement | []        | The elements that can be selected
 | `area`                | HTMLElement &#124; SVGElement &#124; Document       | document                     | The square in which you are able to select the elements
-| `selector`            | HTMLElement                                             | Is Auto-Created              | The square that will be used to draw the selection.
+| `selector`            | HTMLElement &#124; any                                | Is Auto-Created              | The square that will draw the selection. By default it will create one for you
+| `selectorArea`        | HTMLElement &#124; any                                | Is Auto-Created              | The element in which the selector will be placed. It is recommended to have a `position:absolute` on that element. By default it will create one for you.
 | `selectionThreshold`  | number                                                  | 0                            | How much % of the element has to be selected to be considered selected (0 = just touching, 1 = fully inside the selection)
 | `multiSelectMode`     | boolean                                                 | false                        | Add newly selected elements to the selection instead of replacing them
 | `multiSelectToggling` | boolean                                                 | true                         | Whether or not to toggle already active elements while multi-selecting (default mimics MacOS behavior)
@@ -82,6 +83,7 @@ new DragSelect({
   selectables: document.querySelectorAll('.selectable'),
   area: document.querySelector('#area'),
   selector: document.querySelector('#selector'),
+  selectorArea: document.querySelector('#selector-area'),
   selectionThreshold: 0,
   multiSelectMode: false,
   multiSelectToggling: true,

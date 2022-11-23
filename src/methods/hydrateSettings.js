@@ -138,6 +138,7 @@ export default (settings, withFallback) => ({
     'Meta',
   ]),
   ...hydrateHelper('selector', settings.selector, withFallback, null),
+  ...hydrateHelper('selectorArea', settings.selectorArea, withFallback, null),
   ...hydrateHelper(
     'selectionThreshold',
     settings.selectionThreshold,

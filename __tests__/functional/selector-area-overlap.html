@@ -4,6 +4,10 @@
     margin: 0;
   }
 
+  #ds-area-element {
+    position: absolute;
+  }
+
   ::selection {
       background: none !important;
   }
@@ -41,6 +45,7 @@
 </style>
 <main class="main">
   <div id="ds-area" class="ds-area">
+    <div id="ds-area-element"></div>
     
     <div class="selectable"></div>
     <div class="selectable"></div>
@@ -82,8 +87,12 @@
   let parentDS = new DragSelect({
     selectables: document.querySelectorAll('#ds-area > .selectable'),
     area: document.getElementById('ds-area'),
-    selectedClass: "selected"
+    selectedClass: "selected",
   });
+
+  parentDS.setSettings({
+    selectorArea: document.querySelector('#ds-area-element'),
+  })
 
   // Child DS
   let childDS = new DragSelect({

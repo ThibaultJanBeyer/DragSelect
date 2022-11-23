@@ -14,11 +14,13 @@ export default class SelectorArea {
    * @private
    * */
   _scrollInterval
+
   /**
    * @type {DSBoundingRect}
    * @private
    */
   _rect
+
   /**
    * @type {DSEdges}
    * @private
@@ -33,14 +35,19 @@ export default class SelectorArea {
    */
   constructor({ DS }) {
     this.DS = DS
+    this.Settings = this.DS.stores.SettingsStore.s
+    this._initHTMLNode()
 
-    this.HTMLNode = createSelectorAreaElement()
+    // @ts-ignore: @todo: update to typescript
+    this.DS.subscribe('Settings:updated:selectorArea', () => {
+      this._initHTMLNode()
+      this.applyElements('append')
+    })
     // @ts-ignore: @todo: update to typescript
     this.DS.subscribe('Settings:updated:selectorAreaClass', ({ settings }) => {
       this.HTMLNode.classList.remove(settings['selectorAreaClass:pre'])
-      this.HTMLNode.classList.add(settings['selectorAreaClass'])
+      this.HTMLNode.classList.add(settings.selectorAreaClass)
     })
-    this.HTMLNode.classList.add(this.DS.stores.SettingsStore.s.selectorAreaClass)
 
     this.DS.subscribe('Area:modified', this.updatePos)
     this.DS.subscribe('Area:modified', this.updatePos)
@@ -50,6 +57,12 @@ export default class SelectorArea {
       this.updatePos()
       this.stopAutoScroll()
     })
+  }
+
+  _initHTMLNode = () => {
+    if (this.HTMLNode) this.HTMLNode.remove()
+    this.HTMLNode = this.Settings.selectorArea || createSelectorAreaElement()
+    this.HTMLNode.classList.add(this.Settings.selectorAreaClass)
   }
 
   start = () => this.applyElements('append')
@@ -62,13 +75,16 @@ export default class SelectorArea {
     const docEl = document.body ? 'body' : 'documentElement'
     const methodName = `${method}Child`
     this.HTMLNode[methodName](this.DS.Selector.HTMLNode)
+
+    // don’t manage (add/remove) custom selector area element
+    if (this.Settings.selectorArea) return
     document[docEl][methodName](this.HTMLNode)
   }
 
   /** Updates the selectorAreas positions to match the areas */
   updatePos = () => {
     this._rect = null
-    const rect = this.DS.Area.rect
+    const { rect } = this.DS.Area
     const border = this.DS.Area.computedBorder
     const { style } = this.HTMLNode
     const top = `${rect.top + border.top}px`
@@ -86,7 +102,7 @@ export default class SelectorArea {
     if (remove) this.applyElements('remove')
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////////////////////////////
   // AutoScroll
 
   startAutoScroll = () => {
@@ -105,11 +121,11 @@ export default class SelectorArea {
     this.currentEdges = getOverflowEdges({
       elementRect: vect2.vect2rect(PointerStore.currentVal),
       containerRect: this.rect,
-      tolerance: this.DS.stores.SettingsStore.s.overflowTolerance,
+      tolerance: this.Settings.overflowTolerance,
     })
 
     if (this.currentEdges.length)
-      Area.scroll(this.currentEdges, this.DS.stores.SettingsStore.s.autoScrollSpeed)
+      Area.scroll(this.currentEdges, this.Settings.autoScrollSpeed)
   }
 
   stopAutoScroll = () => {
@@ -117,7 +133,7 @@ export default class SelectorArea {
     clearInterval(this._scrollInterval)
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////////////////////////////
   // Booleans
 
   /**

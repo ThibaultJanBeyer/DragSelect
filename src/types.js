@@ -10,7 +10,8 @@
  * @property {boolean} [multiSelectMode=false] Add newly selected elements to the selection instead of replacing them
  * @property {boolean} [multiSelectToggling=true] Whether or not to toggle already active elements while multi-selecting
  * @property {DSMultiSelectKeys} [multiSelectKeys=['Control', 'Shift', 'Meta']] Keys that allows switching to the multi-select mode (see the multiSelectMode option). Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). Note that the best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
- * @property {HTMLElement} [selector=HTMLElement] the square that will draw the selection
+ * @property {HTMLElement|null} [selector=null] the square that will draw the selection. By default it will create one for you
+ * @property {HTMLElement|null} [selectorArea=null] the element in which the selector will be placed. It is recommended to have a `position:absolute`. By default it will create one for you.
  * @property {number} [selectionThreshold=0] how much % of the element has to be selected to be considered selected (0 = just touching, 1 = inside the selection)
  * @property {boolean} [draggability=true] When a user is dragging on an already selected element, the selection is dragged.
  * @property {boolean} [immediateDrag=true] Whether an element is draggable from the start or needs to be selected first

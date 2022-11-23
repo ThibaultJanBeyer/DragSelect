@@ -1,7 +1,8 @@
 # Next
 
-- Add possibility to manage the selector areas position in the DOM. This solves [#125](https://github.com/ThibaultJanBeyer/DragSelect/issues/125)
-- Note However, that this is deviating from the normal behavior of the library. If you want to use this feature, do so at your own risk. It is not recommended to use this feature.
+- Add possibility to use a custom selector area. This solves [#125](https://github.com/ThibaultJanBeyer/DragSelect/issues/125)
+- `selectorArea`: the element in which the selector will be placed. It is recommended to have a `position:absolute`. By default it will create one for you.
+- Note However, that this is deviating from the normal behavior of the library. If you want to use this feature, do so at your own risk. It is not recommended to use this feature. Same as with the `selector` setting.
 
 # 2.5.5
 
