@@ -124,7 +124,7 @@ const SomeOtherComponentsThatNeedsDragSelect = () => {
   const ds = useDragSelect()
   const inputEl = useRef(null)
 
-  // adding an element
+  // adding a selectable element
   useEffect(() => {
     const element = inputEl.current as unknown as HTMLElement
     if (!element || !ds) return
@@ -133,13 +133,13 @@ const SomeOtherComponentsThatNeedsDragSelect = () => {
 
   // subscribing to a callback
   useEffect(() => {
-    ds.subscribe('callback', (e) => {
+    const id = ds.subscribe('callback', (e) => {
       // do something
       console.log(e)
     })
 
     return () => {
-      ds.unsubscribe('callback', cb)
+      ds.unsubscribe('callback', null, id)
     }
   }, [])
 
