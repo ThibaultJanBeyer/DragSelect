@@ -1,0 +1,23 @@
+---
+sidebar_position: 5
+description: DragSelect is very flexible and can be used in many different ways. This guide will show you how to update any settings.
+---
+
+# Updating Settings
+
+*DragSelect is hyper customizable*: all properties are optional, you can totally just pass an empty object and set the settings later.
+
+## setSettings
+
+Any setting can be updated/added after the initialization by using the `setSettings` method. Here is an example updating the `area` and the `selectables`:
+
+```js
+const ds = new DragSelect({})
+// And set any settings at any point in time
+ds.setSettings({
+  selectables: document.getElementsByClassName('selectable-nodes'),
+  area: document.getElementById('area')
+})
+```
+
+See the [Settings](../API/Settings) page for a list of all possible options.

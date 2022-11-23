@@ -10,21 +10,25 @@ export default class Drag {
    * @private
    */
   _prevCursorPos
+
   /**
    * @type {Vect2}
    * @private
    */
   _prevScrollPos
+
   /**
    * @type {DSElements}
    * @private
    */
   _elements = []
+
   /**
    * @type {DSDragKeys}
    * @private
    */
   _dragKeys
+
   /**
    * @type {string[]}
    * @private
@@ -51,10 +55,18 @@ export default class Drag {
 
   assignDragkeys = () => {
     this._dragKeys = {
-      up: this.DS.stores.SettingsStore.s.dragKeys.up.map((k) => k.toLowerCase()),
-      down: this.DS.stores.SettingsStore.s.dragKeys.down.map((k) => k.toLowerCase()),
-      left: this.DS.stores.SettingsStore.s.dragKeys.left.map((k) => k.toLowerCase()),
-      right: this.DS.stores.SettingsStore.s.dragKeys.right.map((k) => k.toLowerCase()),
+      up: this.DS.stores.SettingsStore.s.dragKeys.up.map((k) =>
+        k.toLowerCase()
+      ),
+      down: this.DS.stores.SettingsStore.s.dragKeys.down.map((k) =>
+        k.toLowerCase()
+      ),
+      left: this.DS.stores.SettingsStore.s.dragKeys.left.map((k) =>
+        k.toLowerCase()
+      ),
+      right: this.DS.stores.SettingsStore.s.dragKeys.right.map((k) =>
+        k.toLowerCase()
+      ),
     }
     this._dragKeysFlat = [
       ...this._dragKeys.up,

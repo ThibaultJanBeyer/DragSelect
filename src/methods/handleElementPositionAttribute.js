@@ -8,7 +8,7 @@ import '../types'
  * @param {DSArea} p.node
  */
 export default ({ computedStyle, node }) => {
-  const position = computedStyle.position
+  const { position } = computedStyle
   const isPositioned =
     position === 'absolute' || position === 'relative' || position === 'fixed'
   if (!(node instanceof Document) && !isPositioned)

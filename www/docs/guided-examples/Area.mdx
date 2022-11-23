@@ -1,0 +1,28 @@
+---
+sidebar_position: 2
+description: DragSelect can be restricted to a specific area. This is useful if you want to restrict the selection and dragging to a specific container.
+---
+
+# With an Area
+
+- You can restrict DragSelect to only operate within a certain area
+- This Area will also be auto-scrollable by default
+
+For example:
+
+```javascript
+new DragSelect({
+  selectables: document.getElementsByClassName('selectable'),
+  area: document.getElementById('area'),
+});
+```
+
+^ given this example you can only use the selection/drag inside of the container with the ID `area`.
+
+## Example
+
+Try it out yourself:
+
+<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/Nvobgq?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen>
+  See <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq">this Pen about DragSelect</a> on CodePen.
+</iframe>

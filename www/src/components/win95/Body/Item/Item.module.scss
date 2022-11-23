@@ -1,0 +1,21 @@
+@import '../../_common.scss';
+
+.root {
+  // Resets
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: normal;
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+  -webkit-appearance: none;
+
+  // styling
+  display: inline-block;
+  font-size: .8rem;
+  text-align: center;
+  width: 75px;
+  margin: 5px;
+  user-select: none;
+}

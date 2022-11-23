@@ -1,5 +1,5 @@
 // @ts-check
-import '../types.js'
+import '../types'
 import DragSelect from '../DragSelect'
 
 import {
@@ -17,31 +17,37 @@ export default class Area {
    * @private
    */
   DS
+
   /**
    * @type {{cleanup:() => void}}
    * @private
    */
   _observers
+
   /**
    * @type {DSArea}
    * @private
    */
   _node
+
   /**
    * @type {DSArea[]}
    * @private
    */
   _parentNodes
+
   /**
    * @type {CSSStyleDeclaration}
    * @private
    * */
   _computedStyle
+
   /**
    * @type {{top:number,bottom:number,left:number,right:number}}
    * @private
    * */
   _computedBorder
+
   /**
    * @type {DSBoundingRect}
    * @private
@@ -58,9 +64,9 @@ export default class Area {
 
     this.setArea(this.DS.stores.SettingsStore.s.area)
     // @ts-ignore: @todo: update to typescript
-    this.DS.PubSub.subscribe('Settings:updated:area', ({ settings }) =>
+    this.DS.PubSub.subscribe('Settings:updated:area', ({ settings }) => {
       this.setArea(settings.area)
-    )
+    })
 
     this.DS.PubSub.subscribe('Interaction:init', this.start)
     this.DS.PubSub.subscribe('Interaction:end', this.reset)
@@ -68,6 +74,7 @@ export default class Area {
 
   /** @param {DSArea} area */
   setArea = (area) => {
+    this.reset()
     this._node = area
     handleElementPositionAttribute({
       computedStyle: this.computedStyle,
@@ -105,7 +112,7 @@ export default class Area {
     this.reset()
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////////////////////////////
   // Scroll
 
   /**
@@ -123,7 +130,7 @@ export default class Area {
     this.DS.PubSub.publish('Area:scroll', data)
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////////////////////////////
   // Node Getters
 
   get HTMLNode() {
@@ -154,7 +161,7 @@ export default class Area {
       return (this._computedStyle = window.getComputedStyle(
         this.HTMLNode.body || this.HTMLNode.documentElement
       ))
-    else return (this._computedStyle = window.getComputedStyle(this.HTMLNode))
+    return (this._computedStyle = window.getComputedStyle(this.HTMLNode))
   }
 
   /**
@@ -163,7 +170,10 @@ export default class Area {
    */
   get rect() {
     if (this._rect) return this._rect
-    return (this._rect = getAreaRect(this.HTMLNode, this.DS.stores.SettingsStore.s.zoom))
+    return (this._rect = getAreaRect(
+      this.HTMLNode,
+      this.DS.stores.SettingsStore.s.zoom
+    ))
   }
 
   get parentNodes() {

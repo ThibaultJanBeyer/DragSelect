@@ -1,0 +1,8 @@
+{
+  "label": "Guided Examples",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Hand-holding you through some code examples using DragSelect."
+  }
+}

@@ -1,0 +1,150 @@
+---
+sidebar_position: 8
+description: DragSelect can be used with React, Angular, Vue, Svelte, and any library of your choice. This guide will show you how to use DragSelect with React.
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# React
+
+DragSelect works well with *any* library out of the box.
+But for your convenience we created this example page to see how we use it in the "react way"!
+
+> PS: We are looking into creating custom wrappers for libraries. We will update this guide as soon as available.
+
+## 1. Create a context
+Feel free to copy+paste the code:
+
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+
+```tsx DragSelectContext.tsx
+import React, { createContext, useState, useEffect, useContext } from 'react'
+import DragSelect from 'dragselect'
+
+type ProviderProps = {
+  children: React.ReactNode
+  settings?: ConstructorParameters<typeof DragSelect>[0]
+}
+
+const Context = createContext<DragSelect | undefined>(undefined)
+
+function DragSelectProvider({ children, settings = {} }: ProviderProps) {
+  const [ds, setDS] = useState<DragSelect>()
+
+  useEffect(() => {
+    setDS((prevState) => {
+      if (prevState) return prevState
+      return new DragSelect({})
+    })
+    return () => {
+      if (ds) {
+        ds.stop()
+        setDS(undefined)
+      }
+    }
+  }, [ds])
+
+  useEffect(() => {
+    ds?.setSettings(settings)
+  }, [ds, settings])
+
+  return <Context.Provider value={ds}>{children}</Context.Provider>
+}
+
+function useDragSelect() {
+  return useContext(Context)
+}
+
+export { DragSelectProvider, useDragSelect }
+```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript" default>
+
+```jsx DragSelectContext.jsx
+import React, { createContext, useState, useEffect, useContext } from 'react'
+import DragSelect from 'dragselect'
+
+const Context = createContext(undefined)
+
+function DragSelectProvider({ children, settings = {} }) {
+  const [ds, setDS] = useState()
+
+  useEffect(() => {
+    setDS((prevState) => {
+      if (prevState) return prevState
+      return new DragSelect({})
+    })
+    return () => {
+      if (ds) {
+        ds.stop()
+        setDS(undefined)
+      }
+    }
+  }, [ds])
+
+  useEffect(() => {
+    ds?.setSettings(settings)
+  }, [ds, settings])
+
+  return <Context.Provider value={ds}>{children}</Context.Provider>
+}
+
+function useDragSelect() {
+  return useContext(Context)
+}
+
+export { DragSelectProvider, useDragSelect }
+```
+
+  </TabItem>
+</Tabs>
+
+## 2. Wrap it
+```jsx MyComponent.tsx
+import React from 'react'
+
+import { DragSelectProvider } from '../DragSelectContext'
+
+export const MyComponent = () => (
+  // you can add initial settings by passing a settings object
+  <DragSelectProvider settings={{ selectorClass: styles.selector }}>
+    <SomeOtherComponentsThatNeedsDragSelect />
+  </DragSelectProvider>
+)
+```
+
+## 3. Use it
+```jsx SomeOtherComponentsThatNeedsDragSelect.tsx
+import React, { useEffect, useRef } from 'react'
+import { useDragSelect } from '../../../DragSelectContext'
+
+const SomeOtherComponentsThatNeedsDragSelect = () => {
+  const ds = useDragSelect()
+  const inputEl = useRef(null)
+
+  // adding an element
+  useEffect(() => {
+    const element = inputEl.current as unknown as HTMLElement
+    if (!element || !ds) return
+    ds.addSelectables(element)
+  }, [ds, inputEl])
+
+  // subscribing to a callback
+  useEffect(() => {
+    ds.subscribe('callback', (e) => {
+      // do something
+      console.log(e)
+    })
+
+    return () => {
+      ds.unsubscribe('callback', cb)
+    }
+  }, [])
+
+  return (
+    <button ref={inputEl} aria-labelledby="Selectable">Selectable</button>
+  )
+}
+```

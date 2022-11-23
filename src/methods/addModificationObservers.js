@@ -1,7 +1,7 @@
 // @ts-check
 import '../types'
 
-import { removeModificationObservers } from './'
+import { removeModificationObservers } from '.'
 
 /**
  * Removes event-listeners from the DOMNode
@@ -32,10 +32,7 @@ export default (nodes, cb) => {
   /**
    * Removes all observers
    */
-  const cleanup = () => removeModificationObservers(
-    observer,
-    callback,
-  )
+  const cleanup = () => removeModificationObservers(observer, callback)
 
   return { observer, callback, cleanup }
 }

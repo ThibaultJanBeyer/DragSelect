@@ -1,0 +1,87 @@
+@tailwind components;
+@tailwind utilities;
+
+/* You can override the default Infima variables here. */
+:root {
+  --color-base: rgb(0, 135, 255);
+  --color-highlight: rgb(0, 255, 255);
+  --ifm-color-primary: var(--color-base);
+  --ifm-color-primary-dark: rgb(0, 115, 255);
+  --ifm-color-primary-darker: rgb(0, 100, 255);
+  --ifm-color-primary-darkest: rgb(0, 55, 255);
+  --ifm-color-primary-light: rgb(0, 188, 255);
+  --ifm-color-primary-lighter: rgb(0, 222, 255);
+  --ifm-color-primary-lightest: rgb(0, 255, 255);
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: var(--color-base);
+  --ifm-color-primary-dark: rgb(0, 115, 255);
+  --ifm-color-primary-darker: rgb(0, 100, 255);
+  --ifm-color-primary-darkest: rgb(0, 55, 255);
+  --ifm-color-primary-light: rgb(0, 188, 255);
+  --ifm-color-primary-lighter: rgb(0, 222, 255);
+  --ifm-color-primary-lightest: rgb(0, 255, 255);
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: 'W95';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/W95.woff2) format('woff2');
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.005rem;
+  font-feature-settings: 'liga' 1, 'kern' 1;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+}
+
+.huge-text {
+  font-size: 6rem;
+}
+
+@media (max-width: 600px) {
+  .huge-text {
+    font-size: 4rem;
+  }
+}
+
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.metalink {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 35%, rgba(0, 135, 255, 0.4) 35%, rgba(0, 135, 255, 0.4) 40%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0) 100%);
+  background-position: 0% 30%;
+  background-size: 100% 200%;
+  transition: background-position .1s ease-out;
+}
+
+.metalink:hover,
+.metalink:active,
+.metalink:focus {
+  background-position: 0% 0%;
+  text-decoration: underline;
+  color: var(--color-base)
+}

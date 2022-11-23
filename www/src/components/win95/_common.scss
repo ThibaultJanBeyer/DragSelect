@@ -1,0 +1,31 @@
+$blue: #000181;
+
+.border {
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 0;
+
+  &--extrude {
+    @extend .border;
+    border-top-color: white;
+    border-left-color: white;
+    border-right-color: #393939;
+    border-bottom-color: #393939;
+  }
+
+  &--intrude {
+    @extend .border;
+    border-right-color: white;
+    border-bottom-color: white;
+    border-left-color: #393939;
+    border-top-color: #393939;
+  }
+}
+
+.inner {
+  @extend .border--intrude;
+  color: #393939;
+  border-width: 1px;
+  margin: 2px;
+  background: white;
+}

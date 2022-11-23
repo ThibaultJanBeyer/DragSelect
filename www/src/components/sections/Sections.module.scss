@@ -1,0 +1,31 @@
+.logo {
+  width: 250px;
+  margin: auto;
+}
+
+.container {
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+.expanded {
+  max-width: 800px;
+}
+
+.hArea {
+  background: url("/img/win95clouds-mobile.webp");
+  padding: 12rem 0;
+  margin: 12rem 0;
+  position: relative;
+  background-size: 120%;
+  background-position-y: -300px;
+}
+
+.highlight {
+  padding: 0 15px;
+  display: inline-block;
+  outline: 1px solid var(--color-base);
+  outline-offset: -5px;
+}

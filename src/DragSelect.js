@@ -59,7 +59,7 @@ import { PointerStore, ScrollStore, KeyStore, SettingsStore } from './stores'
 import { toArray, subscriberAliases } from './methods'
 
 // Setup
-//////////////////////////////////////////////////////////////////////////////////////
+/// ///////////////////////////////////////////////////////////////////////////////////
 
 class DragSelect {
   /**
@@ -67,6 +67,7 @@ class DragSelect {
    * @type {boolean}
    */
   continue = false
+
   /**
    * @class DragSelect
    * @constructor DragSelect
@@ -113,7 +114,7 @@ class DragSelect {
   }
 
   // Useful methods for the user
-  //////////////////////////////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////////////////////////////
   /**
    * Initializes the functionality. Automatically triggered when created.
    * Also, reset the functionality after a teardown
@@ -122,6 +123,7 @@ class DragSelect {
     this.stopped = false
     this.Interaction.init()
   }
+
   /**
    * Complete function teardown
    * Will teardown/stop the whole functionality
@@ -146,23 +148,27 @@ class DragSelect {
 
     this.stopped = true
   }
+
   /**
    * Utility to override DragSelect internal functionality:
    * Break will skip the selection or dragging functionality (until after the callback) but let everything continue to run.
    * Useful utility to write your own functionality/move/dragNdrop based on DragSelect pointer positions.
    */
   break = () => (this.continue = true)
+
   /**
    * Update any setting dynamically
    * @param {Settings} settings
    * @return {void}
    */
   setSettings = (settings) => this.stores.SettingsStore.update({ settings })
+
   /**
    * Returns the current selected nodes
    * @return {DSElements}
    */
   getSelection = () => this.SelectedSet.elements
+
   /**
    * Adds several elements to the selection list also adds the specific classes and take into account all calculations.
    * Does not clear the selection, in contrary to .setSelection. Can add multiple elements at once
@@ -182,6 +188,7 @@ class DragSelect {
       this.PubSub.publish('callback', { items: this.getSelection() })
     return this.getSelection()
   }
+
   /**
    * Removes specific elements from the selection
    * Multiple elements can be given at once, in contrary to unselect
@@ -201,25 +208,31 @@ class DragSelect {
       this.PubSub.publish('callback', { items: this.getSelection() })
     return this.getSelection()
   }
+
   /**
    * Toggles specific elements from the selection:
    * If element is not in selection it will be added, if it is already selected, it will be removed.
    * Multiple elements can be given at once.
    * @param {DSInputElements} elements one or multiple elements
    * @param {boolean} [triggerCallback] - if callback should be called
-   * @param {boolean} [alsoSelectables] - if element should not be added/removed to the list of selectable elements accordingly
+   * @param {boolean} [removeFromSelectables] - if element should not be added/removed to the list of selectable elements accordingly
    * @return {DSElements} all selected elements
    */
-  toggleSelection(elements, triggerCallback = false, alsoSelectables = false) {
+  toggleSelection(
+    elements,
+    triggerCallback = false,
+    removeFromSelectables = false
+  ) {
     toArray(elements).forEach((el) =>
       this.SelectedSet.has(el)
-        ? this.removeSelection(elements, triggerCallback, alsoSelectables)
-        : this.addSelection(elements, triggerCallback, alsoSelectables)
+        ? this.removeSelection(elements, triggerCallback, removeFromSelectables)
+        : this.addSelection(elements, triggerCallback, removeFromSelectables)
     )
     if (triggerCallback)
       this.PubSub.publish('callback', { items: this.getSelection() })
     return this.getSelection()
   }
+
   /**
    * Sets the current selected elements and optionally run the callback
    * By default, adds new elements also to the list of selectables
@@ -237,6 +250,7 @@ class DragSelect {
     this.addSelection(elements, triggerCallback, dontAddToSelectables)
     return this.getSelection()
   }
+
   /**
    * Unselect / Deselect all current selected Nodes
    * @param {boolean} [triggerCallback] - if callback should be called
@@ -248,6 +262,7 @@ class DragSelect {
       this.PubSub.publish('callback', { items: this.getSelection() })
     return this.getSelection()
   }
+
   /**
    * Add elements that can be selected. No node is added twice
    * @param {DSInputElements} elements dom element(s)
@@ -263,11 +278,13 @@ class DragSelect {
       this.PubSub.publish('callback', { items: this.getSelection() })
     return elements
   }
+
   /**
    * Gets all nodes that can potentially be selected
    * @return {DSElements} this.selectables
    */
   getSelectables = () => this.SelectableSet.elements
+
   /**
    * Sets all elements that can be selected.
    * Removes all current selectables (& their respective classes).
@@ -282,10 +299,13 @@ class DragSelect {
     removeFromSelection = false,
     addToSelection = false
   ) {
-    console.warn('[DragSelect] DEPRECATION ".setSelectables" is deprecated and will be removed soon. Please use "ds.setSettings({ selectables: << new dom elements >> })" instead (see docs)')
+    console.warn(
+      '[DragSelect] DEPRECATION ".setSelectables" is deprecated and will be removed soon. Please use "ds.setSettings({ selectables: << new dom elements >> })" instead (see docs)'
+    )
     this.removeSelectables(elements, removeFromSelection)
     return this.addSelectables(elements, addToSelection)
   }
+
   /**
    * Remove elements from the elements that can be selected.
    * @param {DSInputElements} elements – dom element(s)
@@ -300,49 +320,63 @@ class DragSelect {
       this.PubSub.publish('callback', { items: this.getSelection() })
     return elements
   }
+
   /** The starting/initial position of the cursor/selector @return {Vect2} */
   getInitialCursorPosition = () => this.stores.PointerStore.initialVal
+
   /** The last seen position of the cursor/selector @return {Vect2} */
   getCurrentCursorPosition = () => this.stores.PointerStore.currentVal
+
   /** The previous position of the cursor/selector @return {Vect2} */
   getPreviousCursorPosition = () => this.stores.PointerStore.lastVal
+
   /** The starting/initial position of the cursor/selector @return {Vect2} */
   getInitialCursorPositionArea = () => this.stores.PointerStore.initialValArea
+
   /** The last seen position of the cursor/selector @return {Vect2} */
   getCurrentCursorPositionArea = () => this.stores.PointerStore.currentValArea
+
   /** The previous position of the cursor/selector @return {Vect2} */
   getPreviousCursorPositionArea = () => this.stores.PointerStore.lastValArea
+
   /**
    * Whether the multi-selection key was pressed
    * @param {DSEvent|KeyboardEvent} [event]
    * @return {boolean}
    */
   isMultiSelect = (event) => this.stores.KeyStore.isMultiSelectKeyPressed(event)
+
   /**
    * Whether the user is currently drag n dropping elements (instead of selection)
    * @return {boolean}
    */
   isDragging = () => this.Interaction.isDragging
+
   /**
    * Returns first DropsZone under coordinates,
    * if no coordinated provided current pointer coordinates are used
    * @param {Vect2} [coordinates]
    * @returns {DSDropZone | undefined}
    */
-  getZoneByCoordinates = (coordinates) => this.DropZones.getTarget(coordinates)?.toObject()
+  getZoneByCoordinates = (coordinates) =>
+    this.DropZones.getTarget(coordinates)?.toObject()
+
   /**
    * Returns itemsDropped into zone by zone id
    * @param {string} zoneId
    * @returns {DSElements|void}
    */
-  getItemsDroppedByZoneId = (zoneId) => this.DropZones.getItemsDroppedById(zoneId)
+  getItemsDroppedByZoneId = (zoneId) =>
+    this.DropZones.getItemsDroppedById(zoneId)
+
   /**
    * Returns itemsInside by zone id
    * @param {string} zoneId
    * @param {boolean} addClasses whether or not to add/remove the "inside" classes to the items
    * @returns {DSElements|void}
    */
-  getItemsInsideByZoneId = (zoneId, addClasses) => this.DropZones.getItemsInsideById(zoneId, addClasses)
+  getItemsInsideByZoneId = (zoneId, addClasses) =>
+    this.DropZones.getItemsInsideById(zoneId, addClasses)
 }
 
 export default DragSelect

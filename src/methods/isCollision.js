@@ -51,5 +51,5 @@ export default (el1, el2, percent = 0) => {
   )
     return true
   // collision detected!
-  else return false
+  return false
 }

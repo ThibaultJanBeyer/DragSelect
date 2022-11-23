@@ -1,0 +1,24 @@
+---
+sidebar_position: 4
+description: DragSelect is accessible by default! Learn how to use it with your keyboard.
+---
+
+# Accessibility (a11y)
+
+**Congratulations, DragSelect is accessible by default 🎉**
+
+> TLDR;  
+> => Your `selectables` should be buttons: `<button type="button"></button>`.  
+> => <kbd>ArrowKeys</kbd> are used for keyboard dragging.  
+
+Obviously, keyboard users won’t get the full visual experience but it works similarly to the OS default behavior.  
+
+1. Selection: You can select items using the default select keys (usually space or enter) and also multi-select when using a modifier key at the same time. There is one little thing you have to do tho’: the `selectables` have to be pressable (clickable)! To achieve this, they should be of type `<button type="button"></button>`.  
+
+2. Drag: You can drag elements using the keyboard arrow keys, this will also scroll the area by default. You can press <kbd>Shift</kbd> in combination with an arrow i.e. <kbd>Shift</kbd>+<kbd>ArrowRight</kbd> to move the element 4x faster and also not scroll the area.
+
+Try it out with your keyboard:  
+
+<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/prpwYG?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen>
+  See <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG">this Pen about DragSelect</a> on CodePen.
+</iframe>

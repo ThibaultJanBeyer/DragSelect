@@ -9,9 +9,8 @@ export default (node) => {
       toWatch.push(parent)
       index++
       return traverse(toWatch, index)
-    } else {
-      return toWatch
     }
+    return toWatch
   }
 
   return traverse([node])

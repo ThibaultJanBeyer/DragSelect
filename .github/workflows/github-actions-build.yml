@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, main ]
   pull_request:
 
 jobs:
@@ -13,6 +13,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 19
+          cache: npm
 
       - run: npm ci
       - run: npm run ci:test

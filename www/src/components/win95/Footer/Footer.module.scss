@@ -1,0 +1,12 @@
+@import '../_common.scss';
+
+.root {
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+.element {
+  @extend .inner;
+  padding: 2px 60px 1px 3px;
+  background: inherit;
+}

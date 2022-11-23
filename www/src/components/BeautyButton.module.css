@@ -1,0 +1,148 @@
+
+/* Button concept from https://codepen.io/ThibaultJanBeyer/pen/JNEdqq */
+
+.btn {
+  display: inline-block;
+  background: var(--color-base);
+  background: linear-gradient(to bottom right, var(--color-highlight) 0%, var(--color-base) 100%);
+  border: 0;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  outline: 0;
+  padding: 1px;
+  position: relative;
+  transition: box-shadow 150ms ease-in-out,
+              background 200ms ease-in-out;
+}
+
+.btnHelper {
+  background: white;
+  display: block;
+  outline-offset: -1px;
+  outline: 1px solid transparent;
+  padding: 5px 10px;
+  position: relative;
+  transition: outline 200ms ease-in-out;
+}
+
+.btn:hover,
+.btn:focus {
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+  color: var(--color-base);
+}
+
+.btn:hover:disabled,
+.btn:focus:disabled {
+  color: grey;
+  cursor: not-allowed;
+  box-shadow: 0 0 0 transparent;
+}
+
+.btn:hover .btnHelper,
+.btn:focus .btnHelper {
+  outline-offset: -2px;
+  outline: 1px solid rgba(0, 0, 0, 0.10);
+  text-decoration: underline;
+}
+
+.btn:hover:disabled .btnHelper,
+.btn:focus:disabled .btnHelper {
+  text-decoration: none;
+  outline: none;
+}
+
+.btn:active {
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.btnLoading {
+  animation: loading 2s linear infinite;
+  background: linear-gradient(to right, aqua, royalblue, red, royalblue, aqua);
+  background-size: 300% 100%;
+  box-shadow: 0 0 0 transparent;
+}
+
+
+.btnLoading .btnHelper {
+  padding-right: 20px;
+}
+
+.btnLoading .btnHelper::after {
+  animation: rotateLoader 2s linear infinite;
+  color: var(--color-base);
+  content: "↻";
+  font-size: 1.5rem;
+  line-height: 0;
+  position: absolute;
+  right: 6px;
+  text-align: center;
+  top: 50%;
+}
+
+@keyframes loading {
+  0%   { background-position: 0 100% }
+  100% { background-position: 300% 100% }
+}
+
+@keyframes rotateLoader {
+  0%   { transform: rotate(0deg) }
+  100% { transform: rotate(360deg) }
+}
+
+
+.btnAlt {
+  display: inline-block;
+  background: white;
+  border-image-slice: 1;
+  border-image: linear-gradient(to bottom right, lightgrey 0%, darkgray 100%);
+  border: 1px solid lightgrey;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  outline-offset: -2px;
+  outline: 1px solid transparent;
+  padding: 5px 10px;
+  transition: outline 200ms ease-in-out,
+              box-shadow 150ms ease-in-out,
+              color 200ms ease-in-out;
+}
+
+.btnAlt:hover,
+.btnAlt:focus {
+  color: var(--color-base);
+  outline-offset: -3px;
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+  text-decoration: underline;
+}
+
+.btnAlt:active {
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+
+.btnError, .btnSuccess {
+  background: springgreen;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.btnSuccess .btnHelper, .btnError .btnHelper {
+  padding-right: 20px;
+}
+
+.btnSuccess .btnHelper::after, .btnError .btnHelper::after {
+  color: springgreen;
+  content: "✔";
+  font-size: 0.7rem;
+  line-height: 0;
+  position: absolute;
+  right: 6px;
+  top: 50%;
+}
+
+.btnError {
+  background: crimson;
+}
+
+.btnError .btnHelper::after {
+  color: crimson;
+  content: "✖";
+}

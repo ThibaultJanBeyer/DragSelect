@@ -4,7 +4,7 @@ import '../types'
 import DragSelect from '../DragSelect'
 import DropZone from './DropZone'
 
-import { isCollision, toArray } from '../methods'
+import { isCollision } from '../methods'
 
 export default class DropZones {
   /**
@@ -13,18 +13,21 @@ export default class DropZones {
    * @private
    */
   _zoneByElement = new Map()
+
   /**
    * Get the drop zone by the zone id
    * @type {Map<string, DropZone>}
    * @private
    */
   _zoneById = new Map()
+
   /**
    * Get the drop zones by one zone item
    * @type {Map<DSElement,DropZone[]>}
    * @private
    */
   _zonesByDroppable = new Map()
+
   /**
    * Get the drop zones by one zone item
    * @type {DropZone[]}
@@ -42,10 +45,14 @@ export default class DropZones {
     this.Settings = DS.stores.SettingsStore.s
 
     // @ts-ignore: @todo: update to typescript
-    this.DS.subscribe('Settings:updated:dropZones', this.setDropZones)
-    this.setDropZones({ dropZones: /** @type {DSDropZone[]} */(this.DS.stores.SettingsStore.s.dropZones) })
+    this.DS.subscribe('Settings:updated:dropZones', ({ settings }) =>
+      this.setDropZones(settings)
+    )
+    this.setDropZones({
+      dropZones: /** @type {DSDropZone[]} */ (this.DS.stores.SettingsStore.s
+        .dropZones),
+    })
 
-    this.DS.subscribe('Interaction:start', this.start)
     this.DS.subscribe('Interaction:end', this.stop)
   }
 
@@ -57,7 +64,9 @@ export default class DropZones {
     if (!dropZones) return
     if (this._zones) this._zones.forEach((zone) => zone.destroy())
 
-    this._zones = dropZones.map((zone) => new DropZone({ DS: this.DS, ...zone }))
+    this._zones = dropZones.map(
+      (zone) => new DropZone({ DS: this.DS, ...zone })
+    )
     this._zones.forEach((zone) => {
       this._zoneByElement.set(zone.element, zone)
       this._zoneById.set(zone.id, zone)
@@ -85,7 +94,7 @@ export default class DropZones {
    * @returns {DropZone|undefined}
    */
   _getZoneByElementsFromPoint = (elements, { x, y }) => {
-    for(let i = 0, il = elements.length; i < il; i++) {
+    for (let i = 0, il = elements.length; i < il; i++) {
       const zone = this._zoneByElement.get(elements[i])
       if (
         zone &&
@@ -100,21 +109,17 @@ export default class DropZones {
     }
   }
 
-  start = ({ isDragging }) => {
-    if (!isDragging) return
-  }
-
   stop = ({ isDragging }) => {
     if (!isDragging) return
     const target = this.getTarget()
     this._handleDrop(target)
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////////////////////////////
   // Getters
 
   /**
-   * @param {string} zoneId 
+   * @param {string} zoneId
    * @returns {DSElements|void}
    */
   getItemsDroppedById = (zoneId) => {
@@ -124,15 +129,15 @@ export default class DropZones {
   }
 
   /**
-   * @param {string} zoneId 
+   * @param {string} zoneId
    * @param {boolean} addClasses
    * @returns {DSElements|void}
    */
   getItemsInsideById = (zoneId, addClasses) => {
     const zone = this._zoneById.get(zoneId)
     if (!zone) return console.warn(`[DragSelect] No zone found (id: ${zoneId})`)
-    const itemsInside = zone.itemsInside
-    if(addClasses) zone.handleItemsInsideClasses()
+    const { itemsInside } = zone
+    if (addClasses) zone.handleItemsInsideClasses()
     return itemsInside
   }
 
@@ -143,11 +148,14 @@ export default class DropZones {
    */
   getTarget = (coordinates) => {
     if (!this._zones?.length) return
-    
+
     const x = coordinates?.x || this.DS.stores.PointerStore.currentVal.x
     const y = coordinates?.y || this.DS.stores.PointerStore.currentVal.y
-    
+
     const elements = document.elementsFromPoint(x, y)
-    return this._getZoneByElementsFromPoint(/** @type {DSElements} */(elements), { x, y })
+    return this._getZoneByElementsFromPoint(
+      /** @type {DSElements} */ (elements),
+      { x, y }
+    )
   }
 }

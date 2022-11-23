@@ -1,0 +1,13 @@
+@import '../_common.scss';
+
+.root {
+  background-color: $blue;
+  color: white;
+  margin: 2px;
+  font-weight: 900;
+  line-height: 1;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  align-items: center;
+  grid-gap: 2px;
+}

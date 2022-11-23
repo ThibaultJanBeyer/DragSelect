@@ -1,0 +1,19 @@
+/* Window.module.scss */
+@import './_common.scss';
+
+.root {
+  @extend .border--extrude;
+  text-align: left;
+  font-family: 'W95';
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+  font-size: 1rem;
+  background: #c0c0c0;
+  user-select: none;
+}
+
+.selector {
+  box-shadow: 0 0 5px 0 rgba(0, 100, 255, .25);
+}

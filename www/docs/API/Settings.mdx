@@ -1,0 +1,117 @@
+---
+sidebar_position: 1
+description: DragSelect Settings (API)
+---
+
+# Settings
+
+aka `Constructor Properties` aka `Properties` aka `options`.  
+
+```js
+const ds = new DragSelect({
+  selectables: document.querySelectorAll('.selectable'),
+});
+```
+
+*DragSelect is hyper customizable*: all properties are optional, you can totally just pass an empty object and set the settings later. See [updating-settings](../guided-examples/Updating-Settings)
+
+## Selecting
+| property              | type                                                    | default                     | description
+|--- |--- |--- |---
+| `selectables`         | [HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement | []        | The elements that can be selected
+| `area`                | HTMLElement &#124; SVGElement &#124; Document       | document                     | The square in which you are able to select the elements
+| `selector`            | HTMLElement                                             | Is Auto-Created              | The square that will be used to draw the selection.
+| `selectionThreshold`  | number                                                  | 0                            | How much % of the element has to be selected to be considered selected (0 = just touching, 1 = fully inside the selection)
+| `multiSelectMode`     | boolean                                                 | false                        | Add newly selected elements to the selection instead of replacing them
+| `multiSelectToggling` | boolean                                                 | true                         | Whether or not to toggle already active elements while multi-selecting (default mimics MacOS behavior)
+| `multiSelectKeys`     | ['Shift'&#124;'Control'&#124;'Meta'&#124;string]  | ['Control', 'Shift', 'Meta'] | Keys for multi-selection. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). The best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
+
+## AutoScroll
+| property              | type                                                    | default                     | description
+|--- |--- |--- |---
+| `autoScrollSpeed`     | number                                                  | 5                            | The speed in which the area scrolls while selecting (if available). The unit is arbitrary (aims for 30fps). Set to `0.0001` to disable auto-scrolling
+| `overflowTolerance`   | { x:number, y:number }                                  | { x: 25, y: 25 }             | Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start)
+
+## Dragging
+| property       | type    | default | description
+|--- |--- |--- |---
+| `draggability` | boolean | true    | When a user is dragging on an already selected element, the selection is dragged.
+| `useTransform` | boolean | true    | Whether to use the more performant hardware accelerated css transforms when dragging instead of the top/left positions.
+| `immediateDrag`| boolean | true    | Whether a selectable element is draggable before being selected or needs to be selected first
+| `keyboardDrag` | boolean | true    |Whether or not the user can drag with the keyboard (Accessibility).
+| `dragKeys` | { up:string[], down:string[], left:string[], right:string[] } | { up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'] } |The keys available to drag element using the keyboard. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)).
+| `keyboardDragSpeed` | number | 10  | The speed at which elements are dragged using the keyboard. In pixels per keyDown.
+
+## Dropping
+| property       | type    | default | description
+|--- |--- |--- |---
+| `dropZones` | [{ id:string, element:HTMLElement, droppables?: [HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement }] | [] | Zones with association of droppable items that can be dropped into them. `id`: any unique identifying string. `element`: is the dropzone itself. `droppables`: the elements that can be dropped into that zone. This is optional, by default it is all selectables
+| `dropInsideThreshold` | number | 1 | How much % of the item has to be inside the dropzone to be considered inside (0 = barely touching, 1 = completely inside)
+| `dropTargetThreshold` | number | 0 | How much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone)
+
+## Styling
+| property              | type    | default            | description |
+|--- |--- |--- |--- |
+| `customStyles`        | boolean | false              | If true, no styles will be automatically applied to the selector element (except position: absolute)
+| `selectedClass`       | string  | ds-selected                | The class name assigned to the selected items.
+| `hoverClass`          | string  | ds-hover                | The class name assigned to the mouse hovered items.
+| `selectorClass`       | string  | ds-selector        | The class name assigned to the square selector helper.
+| `selectableClass`     | string  | ds-selectable                | The class name assigned to the elements that can be selected.
+| `selectorAreaClass`   | string  | ds-selector-area   | The class assigned to the square in which the selector resides. By default it's invisible
+| `droppedTargetClass`  | string  | ds-dropped-target & ds-dropped-target-${zone.id} | On an item corresponding the target dropzone. This is also the prefix for ds-dropped-target-${zone.id}.
+| `droppedInsideClass`  | string  | ds-dropped-inside & ds-dropped-inside-${zone.id} | On an item that is within its dropzone bounds after a drop. This is also the prefix for ds-dropped-inside-${zone.id}
+| `droppableClass`      | string  | ds-droppable & ds-droppable-${zone.id} | On element that can be dropped into at least one container. This is also the prefix for ds-droppable-${zone.id}
+| `dropZoneClass`       | string  | ds-dropzone        | On each dropZone
+| `dropZoneReadyClass`  | string  | ds-dropzone-ready  | On corresponding dropZone when element is dragged
+| `dropZoneTargetClass` | string  | ds-dropzone-target | On dropZone that has elements from any successful target drop
+| `dropZoneInsideClass` | string  | ds-dropzone-inside | On dropZone that has elements inside after any drop
+
+## Miscellaneous
+| property            | type                  | default | description
+|--- |--- |--- |---
+| `refreshMemoryRate` | number (milliseconds) | 80      | Refresh rate on memoization, higher numbers mean better performance but more lag if elements are moving while interacting/selecting, lower numbers mean less lag but worse performance. If none of your DOMNodes are moving, you can set it to a very high number to increase performance
+| `usePointerEvents`  | boolean               | false   | Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly.
+| `zoom`              | number                | 1       | Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom. (deprecated)
+
+## DragSelect Example with all Props
+
+Here is an example using all available settings for your convenience:
+  
+```js
+new DragSelect({
+  selectables: document.querySelectorAll('.selectable'),
+  area: document.querySelector('#area'),
+  selector: document.querySelector('#selector'),
+  selectionThreshold: 0,
+  multiSelectMode: false,
+  multiSelectToggling: true,
+  multiSelectKeys: ['Control', 'Shift', 'Meta'],
+  autoScrollSpeed: 5,
+  overflowTolerance: { x: 25, y: 25 },
+  draggability: true,
+  useTransform: true,
+  immediateDrag: true,
+  keyboardDrag: true,
+  dragKeys: { up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'] },
+  keyboardDragSpeed: 10,
+  dropZones: [{ id: 'foo', element: document.querySelector('#zone') }],
+  dropInsideThreshold: 1,
+  dropTargetThreshold: 0,
+  customStyles: false,
+  selectedClass: 'ds-selected',
+  hoverClass: 'ds-hover',
+  selectorClass: 'ds-selector',
+  selectableClass: 'ds-selectable',
+  selectorAreaClass: 'ds-selector-area',
+  droppedTargetClass: 'ds-dropped-target',
+  droppedInsideClass: 'ds-dropped-inside',
+  droppableClass: 'ds-droppable',
+  dropZoneClass: 'ds-dropzone',
+  dropZoneReadyClass: 'ds-dropzone-ready',
+  dropZoneTargetClass: 'ds-dropzone-target',
+  dropZoneInsideClass: 'ds-dropzone-inside',
+  refreshMemoryRate: 80,
+  usePointerEvents: false,
+  zoom: 1,
+});
+```

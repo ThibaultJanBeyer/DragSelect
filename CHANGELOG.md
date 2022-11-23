@@ -3,6 +3,27 @@
 - Add possibility to manage the selector areas position in the DOM. This solves [#125](https://github.com/ThibaultJanBeyer/DragSelect/issues/125)
 - Note However, that this is deviating from the normal behavior of the library. If you want to use this feature, do so at your own risk. It is not recommended to use this feature.
 
+# 2.5.5
+
+- Fix bug where setting a new area via `.setSettings({ area: '...' })` would not remove the old event listeners. Which causes the mobile touch scroll from being blocked when switching between the Document to an areas.
+
+# 2.5.4
+
+- Fix a bug where `setSettings` would not work with `customStyles`.
+- Beautify the default selector using rgb(0,175,255) as base blue color
+
+# 2.5.3
+
+- Fix a bug where `setSettings` would not work with dropZones.
+
+# 2.5.2
+
+- Make `droppables` within `dropZones` optional and use all selectables as default value if no droppables are provided.
+
+# 2.5.1
+
+- Fix: when an item had multiple dropzones, the `${droppedInsideClass}` was removed even tho’ the item was dropped inside a zone
+
 # 2.5.0
 
 - Add dropZones! Solves #115

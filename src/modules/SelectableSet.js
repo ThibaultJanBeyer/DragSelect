@@ -10,11 +10,13 @@ export default class SelectableSet extends Set {
    * @private
    */
   _rects
+
   /**
    * @type {NodeJS.Timeout}
    * @private
    */
   _timeout
+
   /**
    * @constructor SelectableSet
    * @param {{DS:DragSelect}} obj
@@ -34,15 +36,12 @@ export default class SelectableSet extends Set {
     this.DS.subscribe('Settings:updated:selectableClass', ({ settings }) => {
       this.forEach((el) => {
         el.classList.remove(settings['selectableClass:pre'])
-        el.classList.add(settings['selectableClass'])
+        el.classList.add(settings.selectableClass)
       })
     })
   }
 
-  init = () =>
-    toArray(this.Settings.selectables).forEach((el) =>
-      this.add(el)
-    )
+  init = () => toArray(this.Settings.selectables).forEach((el) => this.add(el))
 
   /** @param {DSElement} element */
   add(element) {
@@ -54,23 +53,20 @@ export default class SelectableSet extends Set {
     this.DS.publish('Selectable:added:pre', publishData)
     element.classList.add(this.Settings.selectableClass)
     element.addEventListener('click', this._onClick)
-    
+
     if (this.Settings.usePointerEvents)
       element.addEventListener('pointerdown', this._onPointer, {
         // @ts-ignore
         passive: false,
       })
     else element.addEventListener('mousedown', this._onPointer)
-    
+
     element.addEventListener('touchstart', this._onPointer, {
       // @ts-ignore
       passive: false,
     })
 
-    if (
-      this.Settings.draggability &&
-      !this.Settings.useTransform
-    )
+    if (this.Settings.draggability && !this.Settings.useTransform)
       handleElementPositionAttribute({
         computedStyle: window.getComputedStyle(element),
         node: element,
@@ -111,13 +107,16 @@ export default class SelectableSet extends Set {
 
   _onClick = (event) =>
     this.DS.publish(['Selectable:click:pre', 'Selectable:click'], { event })
+
   _onPointer = (event) =>
     this.DS.publish(['Selectable:pointer:pre', 'Selectable:pointer'], { event })
 
   /** @param {DSElements} elements */
   addAll = (elements) => elements.forEach((el) => this.add(el))
+
   /** @param {DSElements} elements */
   deleteAll = (elements) => elements.forEach((el) => this.delete(el))
+
   /** @return {DSElements} */
   get elements() {
     return Array.from(this.values())
@@ -126,11 +125,16 @@ export default class SelectableSet extends Set {
   get rects() {
     if (this._rects) return this._rects
     this._rects = new Map()
-    this.forEach((element) => this._rects.set(element, element.getBoundingClientRect()))
+    this.forEach((element) =>
+      this._rects.set(element, element.getBoundingClientRect())
+    )
 
     // since elements can be moved, we need to update the rects every X ms
     if (this._timeout) clearTimeout(this._timeout)
-    this._timeout = setTimeout(() => this._rects = null, this.Settings.refreshMemoryRate)
+    this._timeout = setTimeout(
+      () => (this._rects = null),
+      this.Settings.refreshMemoryRate
+    )
 
     return this._rects
   }

@@ -1,0 +1,23 @@
+.codebox {
+  width: 400px;
+  height: 320px;
+  margin-top: -150px;
+}
+
+.text {
+  min-height: 350px;
+}
+
+@media (max-width: 700px) {
+  .codebox {
+    width: 100%;
+    margin-bottom: 25px;
+  }
+
+  .text {
+    width: 100%;
+    min-height: auto;
+    text-align: center;
+  }
+}
+

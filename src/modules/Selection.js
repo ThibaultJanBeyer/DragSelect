@@ -66,14 +66,15 @@ export default class Selection {
     const select = []
     const unselect = []
 
-    for(const [element, rect] of elRects) {
+    for (const [element, rect] of elRects) {
       if (!SelectorArea.isInside(element, rect)) continue
-      if (isCollision(rect, Selector.rect, this.Settings.selectionThreshold)) select.push(element)
+      if (isCollision(rect, Selector.rect, this.Settings.selectionThreshold))
+        select.push(element)
       else unselect.push(element)
     }
 
     const multiSelectionToggle =
-      (this.DS.stores.KeyStore.isMultiSelectKeyPressed(event)) &&
+      this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) &&
       this.Settings.multiSelectToggling
 
     if (this.DS.continue) return

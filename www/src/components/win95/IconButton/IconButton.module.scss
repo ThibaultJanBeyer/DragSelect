@@ -1,0 +1,26 @@
+@import '../_common.scss';
+
+.button {
+  @extend .border--extrude;
+  display: inline-block;
+  font-weight: 900;
+  font-size: 0.7rem;
+  background: #c0c0c0;
+  cursor: pointer;
+  padding: 1px 4px;
+}
+
+.button:disabled {
+  border-width: 1px;
+  cursor: not-allowed;
+  opacity: .8;
+  color: inherit;
+
+  & > * {
+    opacity: .8;
+  }
+}
+
+.button:active:enabled {
+  @extend .border--intrude;
+}

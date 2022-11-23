@@ -1,5 +1,5 @@
 // @ts-check
-import '../types.js'
+import '../types'
 import DragSelect from '../DragSelect'
 
 import {
@@ -27,17 +27,19 @@ export default class Selector {
     // @ts-ignore: @todo: update to typescript
     this.DS.subscribe('Settings:updated:selectorClass', ({ settings }) => {
       this.HTMLNode.classList.remove(settings['selectorClass:pre'])
-      this.HTMLNode.classList.add(settings['selectorClass'])
+      this.HTMLNode.classList.add(settings.selectorClass)
     })
     // @ts-ignore: @todo: update to typescript
     this.DS.subscribe('Settings:updated:selector', this.attachSelector)
+    // @ts-ignore: @todo: update to typescript
+    this.DS.subscribe('Settings:updated:customStyles', this.attachSelector)
     this.attachSelector()
 
     this.DS.subscribe('Interaction:start', this.start)
     this.DS.subscribe('Interaction:update', this.update)
     this.DS.subscribe('Interaction:end', this.stop)
   }
-  
+
   attachSelector = () => {
     if (this.HTMLNode && this.DS.SelectorArea?.HTMLNode)
       this.DS.SelectorArea.HTMLNode.removeChild(this.HTMLNode)

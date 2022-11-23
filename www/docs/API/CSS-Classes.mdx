@@ -1,0 +1,36 @@
+---
+sidebar_position: 4
+description: DragSelect CSS Classes (API)
+---
+
+# CSS Classes (Styling)
+
+DragSelect adds some useful classes to the elements by default.
+*note: you can change every class name via settings, see [Settings](Settings) section.*
+
+## Selection
+| name | trigger |
+|--- |--- |
+| `ds-selected` | On items that are selected
+| `ds-hover` | On items that are currently hovered
+| `ds-selector` | On the selector element
+| `ds-selector-area` | The overlay where the selector resides in
+| `ds-selectable` | On items that can be selected
+
+## Drop
+| name | trigger |
+|--- |--- |
+| `ds-droppable` | On item that can be dropped into at least one zone
+| `ds-droppable-${id}` | On item that can be dropped into a zone with specific identifier, `${id}` will be replaced by the corresponding zone.id
+| `ds-dropped-target` | On an item corresponding the target dropzone
+| `ds-dropped-target-${id}` | On an item corresponding the target dropzone with specific identifier, `${id}` will be replaced by the corresponding zone.id
+| `ds-dropped-inside` | On an item that is within its dropzone bounds after a drop
+| `ds-dropped-inside-${id}` | On an item that is within its dropzone bounds after a drop with specific identifier, `${id}` will be replaced by the corresponding zone.id
+
+## DropZone
+| name | trigger |
+|--- |--- |
+| `ds-dropzone` | On each dropZone
+| `ds-dropzone-ready` | On corresponding dropZone when corresponding item is being dragged
+| `ds-dropzone-target` | On dropZone when it was target of a successful drop
+| `ds-dropzone-inside` | On dropZone that has elements inside after any drop

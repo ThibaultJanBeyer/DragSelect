@@ -22,15 +22,14 @@ const getComputedTranslatePositions = (element) => {
       position.y = parseInt(values[13]) || 0
     }
     return position
-  } else {
-    const match = computed.transform.trim().match(/matrix\((.*?)\)/)
-    if (match && match.length) {
-      const values = match[1]?.split(',')
-      position.x = parseInt(values[4]) || 0
-      position.y = parseInt(values[5]) || 0
-    }
-    return position
   }
+  const match = computed.transform.trim().match(/matrix\((.*?)\)/)
+  if (match && match.length) {
+    const values = match[1]?.split(',')
+    position.x = parseInt(values[4]) || 0
+    position.y = parseInt(values[5]) || 0
+  }
+  return position
 }
 
 /**
@@ -38,7 +37,7 @@ const getComputedTranslatePositions = (element) => {
  * @return {Vect2}
  */
 const getTranslatedPositions = (element) => {
-  const transform = element.style.transform
+  const { transform } = element.style
 
   if (!transform || transform.indexOf('translate') < 0)
     return getComputedTranslatePositions(element)
@@ -68,7 +67,7 @@ const getTranslatedPositions = (element) => {
  * @return {Vect2}
  */
 const getTopLeftPosition = (element) => {
-  const style = element.style
+  const { style } = element
 
   const position = {
     x: parseInt(style.left) || 0,
@@ -96,5 +95,5 @@ const getTopLeftPosition = (element) => {
  */
 export default (element, useTranslate) => {
   if (useTranslate) return getTranslatedPositions(element)
-  else return getTopLeftPosition(element)
+  return getTopLeftPosition(element)
 }
