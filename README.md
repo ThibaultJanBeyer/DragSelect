@@ -25,13 +25,15 @@
 # DragSelect ![GitHub package.json version](https://img.shields.io/github/package-json/v/ThibaultJanBeyer/DragSelect.svg)
 easily add a selection algorithm to your application/website.
 
+The documentation is being migrated to [https://dragselect.com/](https://dragselect.com/). Find the [most up to date documentation there](http://dragselect.com/docs/intro).
+
 # TOC
 
-- [Project Page: Demo & Info](#project-page-demo--info)
+- [Project Page: Demo \& Info](#project-page-demo--info)
 - [Key-Features](#key-features)
 - [Why?](#why)
 - [Supporters](#supporters)
-  - [Thanks to:](#thanks-to)
+  - [Thanks To:](#thanks-to)
 - [Installation](#installation)
   - [NPM](#npm)
   - [Yarn](#yarn)
@@ -40,23 +42,20 @@ easily add a selection algorithm to your application/website.
   - [That's it, you're ready to rock!](#thats-it-youre-ready-to-rock)
 - [Usage](#usage)
   - [Simple](#simple)
-  - [Within a scroll-able Area](#within-a-scroll-able-area)
+  - [Within a Scroll-Able Area](#within-a-scroll-able-area)
   - [With DropZones](#with-dropzones)
   - [Extended](#extended)
+  - [React](#react)
   - [Mobile/Touch usage](#mobiletouch-usage)
   - [Accessibility (a11y)](#accessibility-a11y)
-  - [Use your own Drag And Drop](#use-your-own-drag-and-drop)
-    - [Using another plugin/tool (3rd party)](#using-another-plugintool-3rd-party)
-      - [Example](#example)
-    - [Writing a fully custom solution](#writing-a-fully-custom-solution)
-      - [Example](#example-1)
+  - [Use Your Own Drag \& Drop](#use-your-own-drag--drop)
 - [Constructor Properties (Settings)](#constructor-properties-settings)
   - [Post-Initialization Setting-Updates](#post-initialization-setting-updates)
 - [Event Callbacks](#event-callbacks)
   - [Events](#events)
     - [Callback Object Keys](#callback-object-keys)
 - [Methods](#methods)
-- [Classes](#classes)
+- [CSS Classes](#css-classes)
 - [Have Fun!](#have-fun)
 
 # Project Page: Demo & Info
@@ -97,7 +96,7 @@ Please donate to support the countless hours of hard work & support. Especially 
 
 If you're too poor or broke you can still support us with your time instead by [contributing to the code](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md)!
 
-## Thanks to:  
+## Thanks To:  
 
 | <a href="https://www.browserstack.com/"><img src="https://dragselect.com/media/browserstack.jpg" alt="Browserstack" width="150px"></a> | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
 |--- |--- |
@@ -109,6 +108,9 @@ We have more than ![npm downloads count](https://img.shields.io/npm/dt/dragselec
 If you donate, we can display your logo here if you want, which will give you fame, fortune and help you recruit great talent and boosting your SEO. 
 
 # Installation
+
+Read the [Getting Started](http://dragselect.com/docs/intro).
+
 ## NPM
 ```console
 npm install --save dragselect
@@ -145,6 +147,8 @@ Now in your JavaScript you can simply pass elements to the function like so:
 
 ## Simple
 
+Read the [Simple Usage Guide](http://dragselect.com/docs/guided-examples/Simple)
+
 The simplest possible usage.  
 Choose which elements can be selected:
 
@@ -154,9 +158,11 @@ new DragSelect({
 });
 ```
 
-<p data-height="350" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="prpwYG" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">prpwYG</a> on CodePen.</p>
+See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">prpwYG</a>
 
-## Within a scroll-able Area
+## Within a Scroll-Able Area
+
+Read the [Area Guide](http://dragselect.com/docs/guided-examples/Area)
 
 Here the selection is constrained. You can only use the selection/drag inside of the area container:
 
@@ -167,9 +173,11 @@ new DragSelect({
 });
 ```
 
-<p data-height="350" data-theme-id="0" data-slug-hash="Nvobgq" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect with Scrollable AREA" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a> on CodePen.</p>
+See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a>.
 
 ## With DropZones
+
+Read the [DropZones Guide](http://dragselect.com/docs/guided-examples/DropZones)
 
 Example of DropZones. DropZones are areas where you can drop the selected elements into.
 
@@ -201,7 +209,7 @@ ds.subscribe('callback', ({
 
 This will also add some respective [classes](#classes)
 
-<p data-height="350" data-theme-id="0" data-slug-hash="bGKgVxp" data-default-tab="js,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect with DropZones" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp">DragSelect with DropZones</a> on CodePen.</p>
+See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp">DragSelect with DropZones</a>.
 
 ## Extended
 
@@ -237,10 +245,13 @@ ds.start();
 
 > You can also use the "shift", "ctrl" or "command" key to make multiple independent selections.
 
+## React
+
+Read the [React Guide](http://dragselect.com/docs/guided-examples/React)
+
 ## Mobile/Touch usage
 
-Keep in mind that using DragSelect on a mobile/touch device will also turn off the default scroll behavior (on `click` + `drag` interaction).
-In 99% of the use-cases, this is what you want. If DragSelect is only one part of a website, and you still want to be able to scroll the page on mobile, you can use an `area` [property](#constructor-properties). This way the default scroll behavior remains intact for the rest of the page.
+Read the [Mobile Touch Guide](http://dragselect.com/docs/guided-examples/Mobile-Touch)
 
 ## Accessibility (a11y)
 
@@ -250,71 +261,15 @@ In 99% of the use-cases, this is what you want. If DragSelect is only one part o
 > => Your `selectables` should be buttons: `<button type="button"></button>`.  
 > => <kbd>ArrowKeys</kbd> are used for keyboard dragging.  
 
-Obviously, keyboard users won’t get the full visual experience but it works similarly to the OS default behavior.  
+Read the [Accessibility Guide](http://dragselect.com/docs/guided-examples/Accessibility)
 
-1. Selection: You can select items using the default select keys (usually space or enter) and also multi-select when using a modifier key at the same time. There is one little thing you have to do tho’: the `selectables` have to be pressable (clickable)! To achieve this, they should be of type `<button type="button"></button>`.  
+## Use Your Own Drag & Drop
 
-2. Drag: You can drag elements using the keyboard arrow keys, this will also scroll the area by default. You can press <kbd>Shift</kbd> in combination with an arrow i.e. <kbd>Shift</kbd>+<kbd>ArrowRight</kbd> to move the element 4x faster to the right and also not scroll the area
-
-<p data-height="350" data-theme-id="0" data-slug-hash="prpwYG" data-default-tab="html,result" data-user="ThibaultJanBeyer" data-embed-version="2" data-pen-title="DragSelect" class="codepen">See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">DragSelect</a> on CodePen.</p>
-
-## Use your own Drag And Drop
-
-### Using another plugin/tool (3rd party)
-
-DragSelect comes with a build-in dragNdrop. Before, `.break` was used for this. But with v2, using your own is now very simple: listen to any DragSelect event to `.stop` it. Then, re-`.start` it after your custom dragNdrop was performed. Check for `isDragging`, which indicates when the users drags (moving the element) and `isDraggingKeyboard` for the keyboard drag events. I.e. use `predragstart`.
-
-#### Example
-
-```JavaScript
-const ds = new DragSelect({ 
-  keyboardDragSpeed: 0, 
-  // keyboardDrag: false, // if your library can not handle keyboard dragging
-  /* …other settings… */
-})
-const myCustomDrag = new MyCustomDrag({/* …your settings… */})
-
-ds.subscribe('predragstart', ({ isDragging, isDraggingKeyboard }) =>
-  isDragging && ds.stop(false, false))
-myCustomDrag.subscribe('finished', () => ds.start())
-```
-
-Disabling then re-enabling directly can also work (i.e. when your library has no callback):
-
-```JavaScript
-ds.subscribe('predragstart', ({ isDragging, isDraggingKeyboard }) => {
-   if(isDragging) {
-     ds.stop(false, false)
-     setTimeout(ds.start)
-   }
-})
-```
-
-Note: it is important to debounce (i.e. with `setTimeout(ds.start)`) the start function if it's called within a single subscriber so that all the scheduled callbacks finish triggering before we start again.
-
-### Writing a fully custom solution
-
-In case you want to build something completely custom on top of DragSelect, we got you covered! You can use `.break` for this. You heard right, break is back baby :)  
-
-This utility to override DragSelects internal functionality allows you to write it all yourself: You can write your own drag and drop but you can also write your own selection:  
-
-#### Example
-
-> /!\ only use break when you know what you're doing. Support is limited /!\
-
-```JavaScript
-ds.subscribe('predragmove', ({ isDragging, isDraggingKeyboard }) => {
-  if(isDragging || isDraggingKeyboard) {
-    ds.break()
-    /* your custom logic for drag handling here. */
-  } else {
-    ds.break()
-    /* your custom logic for selection handling here. */
-  }
-}
-```
+Read the [Custom Drag and Drop Guide](http://dragselect.com/docs/guided-examples/CustomDnD)
 
 # Constructor Properties (Settings)
+
+Read the [Settings API docs](http://dragselect.com/docs/API/Settings)
 
 *DragSelect is hyper customizable*. Note, all properties are optional. See **[the docs](https://dragselect.com/DragSelect.html)** for more info.  
 
@@ -374,6 +329,8 @@ ds.setSettings({
 
 # Event Callbacks
 
+Read the [Events API docs](http://dragselect.com/docs/API/Events)
+
 Event Callbacks are used like this:
 
 ```JavaScript
@@ -381,6 +338,8 @@ ds.subscribe('<event_name>', (callback_object) => {})
 ```
 
 ## Events
+
+Read the [Events API docs](http://dragselect.com/docs/API/Events)
 
 |event_name |callback_object |description |
 |--- |--- |---
@@ -394,6 +353,8 @@ ds.subscribe('<event_name>', (callback_object) => {})
 > Note: all your callbacks subscribers will run happen after the internal code ran. If you want to run something before everything else, use the `pre` prefix. I.e. `predragstart` is an event that runs before any internal start logic.
 
 ### Callback Object Keys
+
+Read the [Callback Object docs](http://dragselect.com/docs/API/Events#callback-object)
 
 |callback_object_keys |type |description |
 |--- |--- |---
@@ -409,6 +370,9 @@ ds.subscribe('<event_name>', (callback_object) => {})
 > Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first
 
 # Methods
+
+Read the [Methods API docs](http://dragselect.com/docs/API/Methods)
+
 When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions.  
 Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 
@@ -440,7 +404,10 @@ Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
 |getItemsDroppedByZoneId |`zoneId: string` |Returns the items dropped into a specific zone (by zone.id)
 |getItemsInsideByZoneId |`zoneId: string`,`addClasses: boolean` |Returns the items that are visually inside a specific zone (by zone.id)
 
-# Classes
+# CSS Classes
+
+Read the [CSS Classes API docs](http://dragselect.com/docs/API/CSS-Classes)
+
 | name | trigger |
 |--- |--- |
 |.ds-selected |On items that are selected
@@ -468,11 +435,5 @@ So don’t forget to give this repository a star if you find it useful.
 Star this repo, tell all your friends and start contributing and/or [donating 1$](https://github.com/sponsors/ThibaultJanBeyer) to keep it running. Thank you :)
 
 [![Typewriter Gif](https://dragselect.com/media/typewriter.gif)](https://thibaultjanbeyer.com/)
-
-
-<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
-<br>
-<br>
-<br>
 
 [documentation](https://dragselect.com/DragSelect.html)

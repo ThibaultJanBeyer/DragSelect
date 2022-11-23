@@ -23,6 +23,8 @@ ds.methodName(method_props);
 | `break` | / | Utility to override DragSelect internal functionality. Breaks out of current flow. Read [Custom Drag and Drop](/docs/guided-examples/CustomDnD) for more info.
 
 ### Pub/Sub
+| method | properties | usage |
+|--- |--- |--- |
 | `subscribe` | (event_name, callback:(callback_object) => void):number | Subscribes to an event, see the [Events API](Events) for infos on the names and callback_object.
 | `unsubscribe` | (event_name, callback, id) | Unsubscribes from an event, either pass the exact same callback method as when subscribing or the ID which is returned from the subscribe method
 | `publish` | (event_name, callback_object:any) | Publishes an event, see the [Events API](Events) for infos on the names and callback_object.
@@ -72,7 +74,7 @@ Read the [Events API](Events) for more information
 |--- |--- |--- |
 | `getZoneByCoordinates` | coordinates:{ x:number, y:number } (Optional) | Returns the first drop target under the current mouse position, or, if provided at the coordinates.
 | `getItemsDroppedByZoneId` | zoneId:string | Returns the items dropped into a specific zone (by zone.id)
-| `getItemsInsideByZoneId` | zoneId:string, addClasses:boolean | Returns the items that are visually inside a specific zone (by zone.id). `addClasses`: also add the respective CSS classes to those elements if they don’t have them yet.
+| `getItemsInsideByZoneId` | zoneId:string, addClasses:boolean | Returns the items that are visually inside a specific zone (by zone.id). `addClasses`: also add the [respective CSS classes](CSS-Classes) to those elements if they don’t have them yet.
 
 ## Example
 
