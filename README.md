@@ -68,19 +68,16 @@ The documentation is being migrated to [https://dragselect.com/](https://dragsel
 - Hyper customizable
 - Replicates operating system drag-selection in the browser
 - Accessibility (a11y)
-- Add drag selection
 - Use modifier keys to make multiple independent selections
-- Select, Drag and Drop also via keyboard
-- Choose which elements can be selected
+- Select, Drag and Drop also also via keyboard
 - Supports all major browsers
-- Selected elements can be dragged and dropped
 - Lightweight, only ![gzip size](https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip)
 - Popular: ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) on npm
 - DragSelect was written with Performance in mind (can easily select >15.000 Elements)
 - Supports SVG
 - Supports mobile (touch interaction)
-- Free & open source under MIT License
-- Ease of use
+- Free & open source
+- Easy to use
 
 ![demo-gif](https://dragselect.com/media/dragselect.gif)
 
@@ -158,7 +155,7 @@ new DragSelect({
 });
 ```
 
-See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">prpwYG</a>
+Find a live [example in the Guide](http://dragselect.com/docs/guided-examples/Simple)
 
 ## Within a Scroll-Able Area
 
@@ -173,7 +170,7 @@ new DragSelect({
 });
 ```
 
-See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a>.
+Find a live [example in the Area Guide](http://dragselect.com/docs/guided-examples/Area)
 
 ## With DropZones
 
@@ -209,12 +206,12 @@ ds.subscribe('callback', ({
 
 This will also add some respective [classes](#classes)
 
-See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp">DragSelect with DropZones</a>.
+Find a live [example in the guide](http://dragselect.com/docs/guided-examples/DropZones)
 
 ## Extended
 
 All options are optional. You could also just initiate the Dragselect by `new DragSelect({});` without any option.  
-Find all possible properties and methods in **[the docs](https://dragselect.com/DragSelect.html)**  
+Find all possible properties and methods in **[the docs](https://dragselect.com/docs/category/api)**  
 
 ```javascript
 // if you add the function to a variable like this, you have access to all its functions
@@ -269,9 +266,9 @@ Read the [Custom Drag and Drop Guide](http://dragselect.com/docs/guided-examples
 
 # Constructor Properties (Settings)
 
-Read the [Settings API docs](http://dragselect.com/docs/API/Settings)
+*DragSelect is hyper customizable*. Note, all properties are optional.
 
-*DragSelect is hyper customizable*. Note, all properties are optional. See **[the docs](https://dragselect.com/DragSelect.html)** for more info.  
+Read the [Settings API docs](http://dragselect.com/docs/API/Settings)
 
 Moreover any setting can also be updated or added after the initialization, see [post-initialization setting updates](#post-initialization-setting-updates).
 
@@ -373,9 +370,6 @@ Read the [Callback Object docs](http://dragselect.com/docs/API/Events#callback-o
 
 Read the [Methods API docs](http://dragselect.com/docs/API/Methods)
 
-When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions.  
-Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
-
 | method | properties | usage |
 |--- |--- |--- |
 |stop |/ |Will teardown/stop the whole functionality
@@ -426,7 +420,7 @@ Read the [CSS Classes API docs](http://dragselect.com/docs/API/CSS-Classes)
 |.ds-dropzone-target |on dropZone when it was target of a successful drop |
 |.ds-dropzone-inside |on dropZone that has elements inside after any drop |
 
-*note: you can change the class names setting the respective property on the constructor, see **[the docs](https://dragselect.com/DragSelect.html)** properties section.*
+*note: you can change the class names setting the respective property on the constructor, see **[the docs](http://dragselect.com/docs/API/Settings)** properties section.*
 
 # Have Fun!
 
@@ -436,4 +430,4 @@ Star this repo, tell all your friends and start contributing and/or [donating 1$
 
 [![Typewriter Gif](https://dragselect.com/media/typewriter.gif)](https://thibaultjanbeyer.com/)
 
-[documentation](https://dragselect.com/DragSelect.html)
+[http://dragselect.com/](http://dragselect.com/) | [documentation](http://dragselect.com/docs/intro)
