@@ -1,3 +1,4 @@
+console.warn('[DragSelect] v1 is deprecated and will be removed soon. Please switch to v2, see: https://dragselect.com/')
 function _typeof(obj) {
   "@babel/helpers - typeof";
 

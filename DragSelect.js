@@ -1,3 +1,4 @@
+console.warn('[DragSelect] v1 is deprecated and will be removed soon. Please switch to v2, see: https://dragselect.com/')
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
