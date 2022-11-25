@@ -1,9 +1,9 @@
 <p align="center" style="text-align: center" >
   <a href="https://DragSelect.com/">
     <picture>
-      <source media="(prefers-color-scheme: light)" srcset="https://dragselect.com/media/dragselect-logo.png">
-      <source media="(prefers-color-scheme: dark)" srcset="https://dragselect.com/media/dragselect-logo-alt.png">
-      <img alt="The DragSelect logo: a selection symbol, a hand, a drop symbol and a mouse within a selection square." width="300" src="https://dragselect.com/media/dragselect-logo.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://dragselect.com/img/dragselect-logo.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://dragselect.com/img/dragselect-logo-alt.png">
+      <img alt="The DragSelect logo: a selection symbol, a hand, a drop symbol and a mouse within a selection square." width="300" src="https://dragselect.com/img/dragselect-logo.png">
     </picture>
   </a>
 </p>
@@ -79,7 +79,7 @@ The documentation is being migrated to [https://dragselect.com/](https://dragsel
 - Free & open source
 - Easy to use
 
-![demo-gif](https://dragselect.com/media/dragselect.gif)
+![demo-gif](https://dragselect.com/img/dragselect.gif)
 
 # Why?
 
@@ -95,7 +95,7 @@ If you're too poor or broke you can still support us with your time instead by [
 
 ## Thanks To:  
 
-| <a href="https://www.browserstack.com/"><img src="https://dragselect.com/media/browserstack.jpg" alt="Browserstack" width="150px"></a> | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
+| <a href="https://www.browserstack.com/"><img src="https://cdn.worldvectorlogo.com/logos/browserstack.svg" alt="Browserstack" width="150px"></a> | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
 |--- |--- |
 |[BrowserStack](https://www.browserstack.com/) is a service for cross-browser testing. They support this open source projects by providing us with a [free account](https://www.browserstack.com/open-source)! | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (via Bitcoin: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`). Or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com). 
 
@@ -428,6 +428,6 @@ Creating and maintaining useful tools is a lot of work.
 So don’t forget to give this repository a star if you find it useful.
 Star this repo, tell all your friends and start contributing and/or [donating 1$](https://github.com/sponsors/ThibaultJanBeyer) to keep it running. Thank you :)
 
-[![Typewriter Gif](https://dragselect.com/media/typewriter.gif)](https://thibaultjanbeyer.com/)
+[![Typewriter Gif](https://dragselect.com/img/typewriter.gif)](https://thibaultjanbeyer.com/)
 
 [http://dragselect.com/](http://dragselect.com/) | [documentation](http://dragselect.com/docs/intro)
