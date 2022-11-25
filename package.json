@@ -24,7 +24,7 @@
     "rollup:watch": "npm run rollup -- -w",
     "types": "tsc src/DragSelect.js --lib es2019,dom -t es5 --declaration --allowJs --emitDeclarationOnly --skipLibCheck --outDir dist",
     "\n## PROD:": "",
-    "ci:build": "npm run docs && npm run rollup:ci && npm run media",
+    "ci:build": "npm run docs && npm run rollup:ci",
     "ci:test": "npm run test"
   },
   "devDependencies": {
