@@ -6,29 +6,38 @@ Since I’ve not so much free time, contributions are very welcome.
 Please follow this [tutorial on collaborating via github](https://www.youtube.com/watch?time_continue=4&v=81uKcXZoQ2A).  
 Thanks in advance!
 
+## Prerequisite
+
+We use `yarn` as package manager. Make sure [to install yarn](https://classic.yarnpkg.com/lang/en/docs/install/).
 
 ## Setup
 
 The project is kept as simple as possible, so it is very easy to set up.  
-Actually, you don’t need to do anything. You will find all work files under `src/`.  
-I.e. `src/DragSelect.js`. Don’t touch the files in `docs/` nor in `dist/`. They are automatically generated.
+Actually, you don’t need to do anything. You will find all work files under `./DragSelect/src/`.  
+I.e. `./DragSelect/src/DragSelect.js`. Don’t touch the files in `dist/`. They are automatically generated.
 
 Run:
 
 ```
-npm start
+yarn initial
 ```
 
-it will install dependencies & run the dev mode (& on osx open `tests/quicktest.html` for your convenience).  
+Then run
+
+```
+yarn start
+```
+
+it will install dependencies & run the dev mode (& on osx open `./DragSelect/tests/quicktest.html` for your convenience).  
 
 *Note: opening quicktest will fail on other operating systems than Mac because I’m using the mac specific `open` command to open the file. However, that is not an issue and you can go on opening the file manually.*
 
-Now whenever you make a change to the `DragSelect.js` in `src/` it will be transpiled and updated in `docs/` and `dist/` automatically. This is important since clients use those files.
+Now whenever you make a change to the `DragSelect.js` in `./DragSelect/src/` it will be transpiled and updated in `./DragSelect/dist/` automatically. This is important since clients use those files.
 
 
 ## Testing
 
-- You will want to see if your changes work, use `tests/quicktest.html`. Modify that file as much as you want to match your test cases.  
+- You will want to see if your changes work, use `./DragSelect/tests/quicktest.html`. Modify that file as much as you want to match your test cases. Don’t commit any changes to that file.  
 
 ### Automatic
 
