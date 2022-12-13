@@ -68,6 +68,11 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      algolia: {
+        appId: 'TJ22T26SP7',
+        apiKey: 'f72a0eb90358d7a0644c0157d20833bf',
+        indexName: 'dragselect',
+      },
       metadata: [
         {
           name: 'keywords',
