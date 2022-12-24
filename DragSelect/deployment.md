@@ -15,15 +15,15 @@ If this was successful, the next step is to publish the new version on `npm`:
 - Check if the `changelog` reflects the latest version
 
 ```
+yarn build
+```
+- Build is necessary for npm packages (since `dist` will be deployed to npm but is ignored in repo)
+
+```
 npm version patch
 ```
 - versions are either `patch` wich changes 0.0.x, `minor` wich changes 0.x.0 or `major` for x.0.0.  
   See [npm docs](https://docs.npmjs.com/getting-started/publishing-npm-packages)  
-
-```
-npm run rollup
-```
-- Rollup is necessary for npm packages (since `dist` will be deployed to npm but is ignored in repo)
 
 - After that push again, just to make sure and then publish:
 ```
