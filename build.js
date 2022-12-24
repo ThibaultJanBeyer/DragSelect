@@ -9,7 +9,7 @@ const copy = () => {
   fs.cpSync(`www/build`, `docs/`, { recursive: true })
 
   console.info(`Copy v1 to docs/ folder`)
-  fs.cpSync(`.v1`, `docs/`, { recursive: true })
+  fs.cpSync(`DragSelect/.v1`, `docs/`, { recursive: true })
 
   console.info(`Copy dragselect/dist to docs/v2 folder`)
   fs.cpSync(`DragSelect/dist`, `docs/v2`, { recursive: true })
