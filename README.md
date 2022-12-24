@@ -17,7 +17,7 @@
 <a href="https://github.com/ThibaultJanBeyer/DragSelect/actions"><img alt="Build Status" src="https://github.com/ThibaultJanBeyer/DragSelect/actions/workflows/github-actions-build.yml/badge.svg"></a>
 <a href="https://dragselect.com/v2/ds.min.js"><img alt="gzip size" src="https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip"></a>
 <a href="https://www.npmjs.com/package/dragselect"><img alt="npm downloads count" src="https://img.shields.io/npm/dt/dragselect.svg"></a>
-<a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/package.json"><img alt="No Dependency" src="https://img.shields.io/badge/dependencies-none-informational"></a>
+<a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/DragSelect/package.json"><img alt="No Dependency" src="https://img.shields.io/badge/dependencies-none-informational"></a>
 <a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md"><img alt="Contributors Welcome" src="https://img.shields.io/badge/contributors-welcome-blueviolet"></a>
 <a href="https://github.com/sponsors/ThibaultJanBeyer"><img alt="Sponsors Welcome" src="https://img.shields.io/badge/sponsors-welcome-blueviolet"></a>
 </p>
@@ -64,7 +64,7 @@ The documentation is being migrated to [https://dragselect.com/](https://dragsel
 
 # Key-Features
 
-- **No dependencies** [![No Dependency](https://img.shields.io/badge/dependencies-none-informational)](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/package.json)
+- **No dependencies** [![No Dependency](https://img.shields.io/badge/dependencies-none-informational)](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/DragSelect/package.json)
 - Hyper customizable
 - Replicates operating system drag-selection in the browser
 - Accessibility (a11y)

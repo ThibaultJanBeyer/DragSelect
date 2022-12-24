@@ -1,0 +1,10 @@
+.idea
+.vscode
+node_modules
+tests/DragSelect.js
+.DS_Store
+.publish
+package-lock.json
+npm-debug.log
+original
+dist
