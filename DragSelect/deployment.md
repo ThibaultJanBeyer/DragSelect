@@ -21,6 +21,7 @@ yarn build
 
 ```
 npm version patch
+yarn build
 ```
 - versions are either `patch` wich changes 0.0.x, `minor` wich changes 0.x.0 or `major` for x.0.0.  
   See [npm docs](https://docs.npmjs.com/getting-started/publishing-npm-packages)  
