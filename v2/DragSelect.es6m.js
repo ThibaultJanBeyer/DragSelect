@@ -25,10 +25,58 @@
  ********* The MIT License (MIT) **********
  ******************************************
  Created 2017 by ThibaultJanBeyer
- web: http://www.dragselect.com/
+ web: http://www.DragSelect.com/
  github: https://github.com/ThibaultJanBeyer/DragSelect
 
 */
+function _iterableToArrayLimit(arr, i) {
+  var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"];
+  if (null != _i) {
+    var _s,
+      _e,
+      _x,
+      _r,
+      _arr = [],
+      _n = !0,
+      _d = !1;
+    try {
+      if (_x = (_i = _i.call(arr)).next, 0 === i) {
+        if (Object(_i) !== _i) return;
+        _n = !1;
+      } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0);
+    } catch (err) {
+      _d = !0, _e = err;
+    } finally {
+      try {
+        if (!_n && null != _i.return && (_r = _i.return(), Object(_r) !== _r)) return;
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+    return _arr;
+  }
+}
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    enumerableOnly && (symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    })), keys.push.apply(keys, symbols);
+  }
+  return keys;
+}
+function _objectSpread2(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = null != arguments[i] ? arguments[i] : {};
+    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+      _defineProperty(target, key, source[key]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+    });
+  }
+  return target;
+}
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -40,15 +88,19 @@ function _defineProperties(target, props) {
     descriptor.enumerable = descriptor.enumerable || false;
     descriptor.configurable = true;
     if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
+    Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor);
   }
 }
 function _createClass(Constructor, protoProps, staticProps) {
   if (protoProps) _defineProperties(Constructor.prototype, protoProps);
   if (staticProps) _defineProperties(Constructor, staticProps);
+  Object.defineProperty(Constructor, "prototype", {
+    writable: false
+  });
   return Constructor;
 }
 function _defineProperty(obj, key, value) {
+  key = _toPropertyKey(key);
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -61,34 +113,6 @@ function _defineProperty(obj, key, value) {
   }
   return obj;
 }
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-  return keys;
-}
-function _objectSpread2(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-  return target;
-}
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -100,16 +124,19 @@ function _inherits(subClass, superClass) {
       configurable: true
     }
   });
+  Object.defineProperty(subClass, "prototype", {
+    writable: false
+  });
   if (superClass) _setPrototypeOf(subClass, superClass);
 }
 function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) {
     return o.__proto__ || Object.getPrototypeOf(o);
   };
   return _getPrototypeOf(o);
 }
 function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
     o.__proto__ = p;
     return o;
   };
@@ -120,7 +147,7 @@ function _isNativeReflectConstruct() {
   if (Reflect.construct.sham) return false;
   if (typeof Proxy === "function") return true;
   try {
-    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
     return true;
   } catch (e) {
     return false;
@@ -128,7 +155,7 @@ function _isNativeReflectConstruct() {
 }
 function _construct(Parent, args, Class) {
   if (_isNativeReflectConstruct()) {
-    _construct = Reflect.construct;
+    _construct = Reflect.construct.bind();
   } else {
     _construct = function _construct(Parent, args, Class) {
       var a = [null];
@@ -179,6 +206,8 @@ function _assertThisInitialized(self) {
 function _possibleConstructorReturn(self, call) {
   if (call && (typeof call === "object" || typeof call === "function")) {
     return call;
+  } else if (call !== void 0) {
+    throw new TypeError("Derived constructors may only return object or undefined");
   }
   return _assertThisInitialized(self);
 }
@@ -203,21 +232,21 @@ function _superPropBase(object, property) {
   }
   return object;
 }
-function _get(target, property, receiver) {
+function _get() {
   if (typeof Reflect !== "undefined" && Reflect.get) {
-    _get = Reflect.get;
+    _get = Reflect.get.bind();
   } else {
     _get = function _get(target, property, receiver) {
       var base = _superPropBase(target, property);
       if (!base) return;
       var desc = Object.getOwnPropertyDescriptor(base, property);
       if (desc.get) {
-        return desc.get.call(receiver);
+        return desc.get.call(arguments.length < 3 ? target : receiver);
       }
       return desc.value;
     };
   }
-  return _get(target, property, receiver || target);
+  return _get.apply(this, arguments);
 }
 function _slicedToArray(arr, i) {
   return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
@@ -232,30 +261,7 @@ function _arrayWithHoles(arr) {
   if (Array.isArray(arr)) return arr;
 }
 function _iterableToArray(iter) {
-  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
-}
-function _iterableToArrayLimit(arr, i) {
-  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-  return _arr;
+  if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
 }
 function _unsupportedIterableToArray(o, minLen) {
   if (!o) return;
@@ -277,8 +283,8 @@ function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 function _createForOfIteratorHelper(o, allowArrayLike) {
-  var it;
-  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+  var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
+  if (!it) {
     if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
       if (it) o = it;
       var i = 0;
@@ -307,7 +313,7 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
     err;
   return {
     s: function () {
-      it = o[Symbol.iterator]();
+      it = it.call(o);
     },
     n: function () {
       var step = it.next();
@@ -326,6 +332,20 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
       }
     }
   };
+}
+function _toPrimitive(input, hint) {
+  if (typeof input !== "object" || input === null) return input;
+  var prim = input[Symbol.toPrimitive];
+  if (prim !== undefined) {
+    var res = prim.call(input, hint || "default");
+    if (typeof res !== "object") return res;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return (hint === "string" ? String : Number)(input);
+}
+function _toPropertyKey(arg) {
+  var key = _toPrimitive(arg, "string");
+  return typeof key === "symbol" ? key : String(key);
 }
 
 /**
@@ -1552,12 +1572,15 @@ var Area = /*#__PURE__*/function () {
   /** @param {DSArea} area */
   _createClass(Area, [{
     key: "HTMLNode",
+    get:
     /// ///////////////////////////////////////////////////////////////////////////////////
     // Node Getters
-    get: function get() {
+
+    function get() {
       return (/** @type {DSArea} */this._node
       );
     }
+
     /**
      * The computed border from the element (caches result)
      * @type {{top:number,bottom:number,left:number,right:number}}
@@ -1573,6 +1596,7 @@ var Area = /*#__PURE__*/function () {
         right: parseInt(this.computedStyle.borderRightWidth)
       };
     }
+
     /**
      * The computed styles from the element (caches result)
      * @type {CSSStyleDeclaration}
@@ -1584,6 +1608,7 @@ var Area = /*#__PURE__*/function () {
       if (this.HTMLNode instanceof Document) return this._computedStyle = window.getComputedStyle(this.HTMLNode.body || this.HTMLNode.documentElement);
       return this._computedStyle = window.getComputedStyle(this.HTMLNode);
     }
+
     /**
      * The element rect (caches result) (without scrollbar or borders)
      * @type {DSBoundingRect}
@@ -1961,6 +1986,7 @@ var DropZone = /*#__PURE__*/function () {
       this._itemsInside = null;
       this.isDestroyed = true;
     }
+
     /**
      * @returns {DSDropZone}
      */
@@ -2014,7 +2040,7 @@ var DropZone = /*#__PURE__*/function () {
   return DropZone;
 }();
 
-var DropZones =
+var DropZones = /*#__PURE__*/_createClass(
 /**
  * Get the drop zone by the zone element
  * @type {Map<DSElement, DropZone>}
@@ -2143,7 +2169,7 @@ function DropZones(_ref) {
 /**
  * @param {Object} obj
  * @param {DSDropZone[]} [obj.dropZones]
- */;
+ */);
 
 var Interaction = /*#__PURE__*/function () {
   /** @type {boolean} */
@@ -2215,6 +2241,7 @@ var Interaction = /*#__PURE__*/function () {
       var event = _ref2.event;
       if (!_this._canInteract(event)) return;
       if (event.detail > 0) return; // mouse interaction
+
       var _this$DS = _this.DS,
         _this$DS$stores = _this$DS.stores,
         PointerStore = _this$DS$stores.PointerStore,
@@ -2304,10 +2331,11 @@ var Interaction = /*#__PURE__*/function () {
   }
   _createClass(Interaction, [{
     key: "_canInteract",
+    value:
     /**
      * @param {DSEvent} event
      */
-    value: function _canInteract(event) {
+    function _canInteract(event) {
       var isKeyboardClick = /** @type {MouseEvent} */event.clientX === 0 && /** @type {MouseEvent} */event.clientY === 0 && /** @type {MouseEvent} */event.detail === 0 && event.target;
       if ( /** @type {MouseEvent} */event.button === 2 ||
       // right-clicks
@@ -2319,6 +2347,7 @@ var Interaction = /*#__PURE__*/function () {
       ) return false;
       return true;
     }
+
     /**
      * @param {DSEvent} event
      */
@@ -2326,7 +2355,7 @@ var Interaction = /*#__PURE__*/function () {
   return Interaction;
 }();
 
-var PubSub = function PubSub(_ref) {
+var PubSub = /*#__PURE__*/_createClass(function PubSub(_ref) {
   var _this = this;
   var DS = _ref.DS;
   _classCallCheck(this, PubSub);
@@ -2374,7 +2403,7 @@ var PubSub = function PubSub(_ref) {
  * @param {DSCallbackNames} eventName
  * @param {DSCallback} callback
  * @returns {number} event id, can be used to unsubscribe more efficiently
- */;
+ */);
 
 var SelectableSet = /*#__PURE__*/function (_Set) {
   _inherits(SelectableSet, _Set);
@@ -2451,7 +2480,8 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
   }
   _createClass(SelectableSet, [{
     key: "add",
-    /** @param {DSElement} element */value: function add(element) {
+    value: /** @param {DSElement} element */
+    function add(element) {
       if (_get(_getPrototypeOf(SelectableSet.prototype), "has", this).call(this, element)) return;
       var publishData = {
         items: this.elements,
@@ -2474,7 +2504,9 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
       });
       this.DS.publish('Selectable:added', publishData);
       return _get(_getPrototypeOf(SelectableSet.prototype), "add", this).call(this, element);
-    } /** @param {DSElement} element */
+    }
+
+    /** @param {DSElement} element */
   }, {
     key: "delete",
     value: function _delete(element) {
@@ -2500,7 +2532,8 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
     }
   }, {
     key: "elements",
-    /** @return {DSElements} */get: function get() {
+    get: /** @return {DSElements} */
+    function get() {
       return Array.from(this.values());
     }
   }, {
@@ -2571,7 +2604,9 @@ var SelectedSet = /*#__PURE__*/function (_Set) {
       element.style.zIndex = "".concat((parseInt(element.style.zIndex) || 0) + 1);
       this.DS.publish('Selected:added', publishData);
       return this;
-    } /** @param {DSElement} element */
+    }
+
+    /** @param {DSElement} element */
   }, {
     key: "delete",
     value: function _delete(element) {
@@ -2589,18 +2624,22 @@ var SelectedSet = /*#__PURE__*/function (_Set) {
     }
   }, {
     key: "toggle",
+    value:
     /**
      * Adds/Removes an element. If it is already selected = remove, if not = add.
      * @param {DSElement} element
      * @return {DSElement}
      */
-    value: function toggle(element) {
+    function toggle(element) {
       if (this.has(element)) this["delete"](element);else this.add(element);
       return element;
-    } /** @param {DSElements} elements */
+    }
+
+    /** @param {DSElements} elements */
   }, {
     key: "elements",
-    /** @return {DSElements} */get: function get() {
+    get: /** @return {DSElements} */
+    function get() {
       return Array.from(this.values());
     }
   }]);
@@ -2640,6 +2679,7 @@ var Selection = /*#__PURE__*/function () {
         SelectableSet = _this$DS.SelectableSet,
         SelectorArea = _this$DS.SelectorArea,
         Selector = _this$DS.Selector;
+
       /** @type {any} */
       var elRects = SelectableSet.rects;
       var select = [];
@@ -2698,7 +2738,9 @@ var Selection = /*#__PURE__*/function () {
         KeyStore = _this$DS2.stores.KeyStore,
         SelectedSet = _this$DS2.SelectedSet;
       if (KeyStore.isMultiSelectKeyPressed(event)) this._prevSelectedSet = new Set(SelectedSet);else this._prevSelectedSet = new Set();
-    } /** @param {{event:DSEvent,isDragging:boolean}} event */
+    }
+
+    /** @param {{event:DSEvent,isDragging:boolean}} event */
   }]);
   return Selection;
 }();
@@ -2884,12 +2926,13 @@ var SelectorArea = /*#__PURE__*/function () {
   }
   _createClass(SelectorArea, [{
     key: "isClicked",
+    value:
     /**
      * checks if the click was triggered on the area.
      * @param {DSEvent} [event]
      * @returns {boolean}
      */
-    value: function isClicked(event) {
+    function isClicked(event) {
       var PointerStore = this.DS.stores.PointerStore;
       var initialVal = event ? PointerStore.getPointerPosition(event) : PointerStore.initialVal;
       return isCollision({
@@ -2979,7 +3022,8 @@ var KeyStore = /*#__PURE__*/function () {
   }
   _createClass(KeyStore, [{
     key: "isMultiSelectKeyPressed",
-    /** @param {KeyboardEvent|MouseEvent|PointerEvent|TouchEvent} [event] */value: function isMultiSelectKeyPressed(event) {
+    value: /** @param {KeyboardEvent|MouseEvent|PointerEvent|TouchEvent} [event] */
+    function isMultiSelectKeyPressed(event) {
       var _this2 = this;
       if (this.DS.stores.SettingsStore.s.multiSelectMode) return true;
       var multiSelectKeys = this.DS.stores.SettingsStore.s.multiSelectKeys.map(function (key) {
@@ -3121,25 +3165,31 @@ var PointerStore = /*#__PURE__*/function () {
   }
   _createClass(PointerStore, [{
     key: "start",
-    /** @param {DSEvent} [event] */value: function start(event) {
+    value: /** @param {DSEvent} [event] */
+    function start(event) {
       if (!event) return;
       this._isMouseInteraction = true;
       this.currentVal = this.initialVal = this.getPointerPosition(event);
-    } /** @param {DSEvent} event */
+    }
+
+    /** @param {DSEvent} event */
   }, {
     key: "_normalizedEvent",
+    value:
     /**
      * @param {DSEvent} event
      * @return {MouseEvent|PointerEvent|Touch}
      * @private
      */
-    value: function _normalizedEvent(event) {
+    function _normalizedEvent(event) {
       // touchend has not touches. so we take the last touch if a touchevent, we need to store the positions
       if ('touches' in event && event.type !== 'touchend') this._lastTouch = event;
       // if a touchevent, return the last touch rather than the regular event
       // we need .touches[0] from that event instead
       return 'touches' in event ? this._lastTouch.touches[0] : event;
-    } /** First recorded pointer position within the area */
+    }
+
+    /** First recorded pointer position within the area */
   }, {
     key: "initialValArea",
     get: function get() {
@@ -3148,7 +3198,9 @@ var PointerStore = /*#__PURE__*/function () {
         y: 0
       };
       return this._initialValArea;
-    } /** Current pointer position within the area */
+    }
+
+    /** Current pointer position within the area */
   }, {
     key: "currentValArea",
     get: function get() {
@@ -3157,7 +3209,9 @@ var PointerStore = /*#__PURE__*/function () {
         y: 0
       };
       return this._currentValArea;
-    } /** Last recorded pointer position within the area */
+    }
+
+    /** Last recorded pointer position within the area */
   }, {
     key: "lastValArea",
     get: function get() {
@@ -3166,7 +3220,9 @@ var PointerStore = /*#__PURE__*/function () {
         y: 0
       };
       return this._lastValArea;
-    } /** First recorded pointer position */
+    }
+
+    /** First recorded pointer position */
   }, {
     key: "initialVal",
     get: function get() {
@@ -3175,7 +3231,9 @@ var PointerStore = /*#__PURE__*/function () {
         y: 0
       };
       return this._initialVal;
-    } /** Current pointer position */,
+    }
+
+    /** Current pointer position */,
     set: function set(value) {
       this._initialVal = value;
       this._initialValArea = value && calc(value, '-', calc(rect2vect(this.DS.Area.rect), '+', rect2vect(this.DS.Area.computedBorder)));
@@ -3188,7 +3246,9 @@ var PointerStore = /*#__PURE__*/function () {
         y: 0
       };
       return this._currentVal;
-    } /** Last recorded pointer position */,
+    }
+
+    /** Last recorded pointer position */,
     set: function set(value) {
       this._currentVal = value;
       this._currentValArea = value && calc(value, '-', calc(rect2vect(this.DS.Area.rect), '+', rect2vect(this.DS.Area.computedBorder)));
@@ -3305,7 +3365,7 @@ var ScrollStore = /*#__PURE__*/function () {
   return ScrollStore;
 }();
 
-var SettingsStore =
+var SettingsStore = /*#__PURE__*/_createClass(
 /**
  * @type {Settings}
  * @private
@@ -3384,7 +3444,7 @@ function SettingsStore(_ref) {
   });
 }
 
-/** @param {{settings: Settings, init?: boolean}} props */;
+/** @param {{settings: Settings, init?: boolean}} props */);
 
 // Setup
 /// ///////////////////////////////////////////////////////////////////////////////////
@@ -3525,6 +3585,7 @@ var DragSelect = /*#__PURE__*/function () {
    */
   _createClass(DragSelect, [{
     key: "stop",
+    value:
     /**
      * Complete function teardown
      * Will teardown/stop the whole functionality
@@ -3532,7 +3593,7 @@ var DragSelect = /*#__PURE__*/function () {
      * @param {boolean} [fromSelection] - if elements should also be added/removed to the selection.
      * @param {boolean} [withCallback] - if elements should also be added/removed to the selection.
      */
-    value: function stop() {
+    function stop() {
       var remove = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       var fromSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
       var withCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
@@ -3551,6 +3612,7 @@ var DragSelect = /*#__PURE__*/function () {
       if (fromSelection) this.SelectedSet.clear();
       this.stopped = true;
     }
+
     /**
      * Utility to override DragSelect internal functionality:
      * Break will skip the selection or dragging functionality (until after the callback) but let everything continue to run.
@@ -3558,6 +3620,7 @@ var DragSelect = /*#__PURE__*/function () {
      */
   }, {
     key: "addSelection",
+    value:
     /**
      * Adds several elements to the selection list also adds the specific classes and take into account all calculations.
      * Does not clear the selection, in contrary to .setSelection. Can add multiple elements at once
@@ -3566,7 +3629,7 @@ var DragSelect = /*#__PURE__*/function () {
      * @param {boolean} [dontAddToSelectables] - if element should not be added to the list of selectable elements
      * @return {DSElements} all selected elements
      */
-    value: function addSelection(elements) {
+    function addSelection(elements) {
       var triggerCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var dontAddToSelectables = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       this.SelectedSet.addAll(toArray(elements));
@@ -3576,6 +3639,7 @@ var DragSelect = /*#__PURE__*/function () {
       });
       return this.getSelection();
     }
+
     /**
      * Removes specific elements from the selection
      * Multiple elements can be given at once, in contrary to unselect
@@ -3596,6 +3660,7 @@ var DragSelect = /*#__PURE__*/function () {
       });
       return this.getSelection();
     }
+
     /**
      * Toggles specific elements from the selection:
      * If element is not in selection it will be added, if it is already selected, it will be removed.
@@ -3619,6 +3684,7 @@ var DragSelect = /*#__PURE__*/function () {
       });
       return this.getSelection();
     }
+
     /**
      * Sets the current selected elements and optionally run the callback
      * By default, adds new elements also to the list of selectables
@@ -3636,6 +3702,7 @@ var DragSelect = /*#__PURE__*/function () {
       this.addSelection(elements, triggerCallback, dontAddToSelectables);
       return this.getSelection();
     }
+
     /**
      * Unselect / Deselect all current selected Nodes
      * @param {boolean} [triggerCallback] - if callback should be called
@@ -3651,6 +3718,7 @@ var DragSelect = /*#__PURE__*/function () {
       });
       return this.getSelection();
     }
+
     /**
      * Add elements that can be selected. No node is added twice
      * @param {DSInputElements} elements dom element(s)
@@ -3669,12 +3737,14 @@ var DragSelect = /*#__PURE__*/function () {
       });
       return elements;
     }
+
     /**
      * Gets all nodes that can potentially be selected
      * @return {DSElements} this.selectables
      */
   }, {
     key: "setSelectables",
+    value:
     /**
      * Sets all elements that can be selected.
      * Removes all current selectables (& their respective classes).
@@ -3684,13 +3754,14 @@ var DragSelect = /*#__PURE__*/function () {
      * @param {boolean} [addToSelection] if elements should also be added to current selection
      * @return {DSInputElements} elements – the added element(s)
      */
-    value: function setSelectables(elements) {
+    function setSelectables(elements) {
       var removeFromSelection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var addToSelection = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       console.warn('[DragSelect] DEPRECATION ".setSelectables" is deprecated and will be removed soon. Please use "ds.setSettings({ selectables: << new dom elements >> })" instead (see docs)');
       this.removeSelectables(elements, removeFromSelection);
       return this.addSelectables(elements, addToSelection);
     }
+
     /**
      * Remove elements from the elements that can be selected.
      * @param {DSInputElements} elements – dom element(s)
@@ -3707,9 +3778,11 @@ var DragSelect = /*#__PURE__*/function () {
         items: this.getSelection()
       });
       return elements;
-    } /** The starting/initial position of the cursor/selector @return {Vect2} */
+    }
+
+    /** The starting/initial position of the cursor/selector @return {Vect2} */
   }]);
   return DragSelect;
 }();
 
-export default DragSelect;
+export { DragSelect as default };
