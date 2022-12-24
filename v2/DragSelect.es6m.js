@@ -25,7 +25,7 @@
  ********* The MIT License (MIT) **********
  ******************************************
  Created 2017 by ThibaultJanBeyer
- web: http://www.thibaultjanbeyer.com/
+ web: http://www.dragselect.com/
  github: https://github.com/ThibaultJanBeyer/DragSelect
 
 */
