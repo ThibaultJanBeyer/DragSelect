@@ -117,6 +117,19 @@ export default class SelectableSet extends Set {
   /** @param {DSElements} elements */
   deleteAll = (elements) => elements.forEach((el) => this.delete(el))
 
+  /** @param {DSElement} element */
+  /** @return {Boolean} whether the element can be dragged */
+  canBeDragged = (element) =>
+    !element.classList.contains(this.DS.stores.SettingsStore.s.noDragClass)
+
+  /** @param {DSElement} element */
+  makeDraggable = (element) =>
+    element.classList.remove(this.DS.stores.SettingsStore.s.noDragClass)
+
+  /** @param {DSElement} element */
+  makeNonDraggable = (element) =>
+    element.classList.add(this.DS.stores.SettingsStore.s.noDragClass)
+
   /** @return {DSElements} */
   get elements() {
     return Array.from(this.values())
