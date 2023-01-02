@@ -311,6 +311,7 @@ Here is the full list:
 |dropZoneReadyClass |string |On corresponding dropZone when element is dragged |ds-dropzone-ready
 |dropZoneTargetClass |string |On dropZone that has elements from any successful target drop |ds-dropzone-target
 |dropZoneInsideClass |string |On dropZone that has elements inside after any drop |ds-dropzone-inside
+|noDragClass |string |The class assigned to a non-draggable element |ds-no-drag
 
 ## Post-Initialization Setting-Updates
 
@@ -397,6 +398,9 @@ Read the [Methods API docs](http://dragselect.com/docs/API/Methods)
 |getZoneByCoordinates |Optional `{x: number, y: number}` |Returns the first drop target under the current mouse position, or, if provided at coordinates x/y
 |getItemsDroppedByZoneId |`zoneId: string` |Returns the items dropped into a specific zone (by zone.id)
 |getItemsInsideByZoneId |`zoneId: string`,`addClasses: boolean` |Returns the items that are visually inside a specific zone (by zone.id)
+|canBeDragged |`element:DOM Element` |Whether the element can be dragged
+|makeDraggable |`element:DOM Element` |Make element draggable
+|makeNonDraggable |`element:DOM Element` |Make element non-draggable
 
 # CSS Classes
 
@@ -419,6 +423,7 @@ Read the [CSS Classes API docs](http://dragselect.com/docs/API/CSS-Classes)
 |.ds-dropzone-ready |on corresponding dropZone when corresponding item is being dragged |
 |.ds-dropzone-target |on dropZone when it was target of a successful drop |
 |.ds-dropzone-inside |on dropZone that has elements inside after any drop |
+|.ds-no-drag |On items that cannot be dragged |
 
 *note: you can change the class names setting the respective property on the constructor, see **[the docs](http://dragselect.com/docs/API/Settings)** properties section.*
 
