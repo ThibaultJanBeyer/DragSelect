@@ -35,6 +35,7 @@
  * @property {string} [dropZoneReadyClass=ds-dropzone-ready] on corresponding dropZone when element is dragged
  * @property {string} [dropZoneTargetClass=ds-dropzone-target] on dropZone that has elements from any successful target drop
  * @property {string} [dropZoneInsideClass=ds-dropzone-inside] on dropZone that has elements inside after any drop
+ * @property {string} [noDragClass=ds-no-drag] the class assigned to a non-draggable element
  */
 
 /**

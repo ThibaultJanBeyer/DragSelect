@@ -252,4 +252,5 @@ export default (settings, withFallback) => ({
     withFallback,
     'ds-dropzone-inside'
   ),
+  ...hydrateHelper('noDragClass', settings.noDragClass, withFallback, 'ds-no-drag'),
 })
