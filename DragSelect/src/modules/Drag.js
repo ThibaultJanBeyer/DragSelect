@@ -108,14 +108,15 @@ export default class Drag {
       dragKeys: this._dragKeys,
     })
 
-    this._elements.forEach((element) =>
+    this._elements.forEach((element) => {
+      if (!this.DS.SelectableSet.canBeDragged(element)) return
       moveElement({
         element,
         posDirection,
         containerRect: this.DS.SelectorArea.rect,
         useTransform: this.DS.stores.SettingsStore.s.useTransform,
       })
-    )
+    })
 
     this.DS.publish(
       ['Interaction:update:pre', 'Interaction:update'],
@@ -167,14 +168,15 @@ export default class Drag {
 
     const posDirection = vect2.calc(this._cursorDiff, '+', this._scrollDiff)
 
-    this._elements.forEach((element) =>
+    this._elements.forEach((element) => {
+      if (!this.DS.SelectableSet.canBeDragged(element)) return
       moveElement({
         element,
         posDirection,
         containerRect: this.DS.SelectorArea.rect,
         useTransform: this.DS.stores.SettingsStore.s.useTransform,
       })
-    )
+    })
   }
 
   handleZIndex = (add) => {
