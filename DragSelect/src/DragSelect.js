@@ -377,6 +377,27 @@ class DragSelect {
    */
   getItemsInsideByZoneId = (zoneId, addClasses) =>
     this.DropZones.getItemsInsideById(zoneId, addClasses)
+
+  /**
+   * Make element draggable
+   * @param {DSElement} element
+   * @returns {Boolean} whether the element can be dragged
+   */
+  canBeDragged = (element) => this.SelectableSet.canBeDragged(element)
+
+  /**
+   * Make element draggable
+   * @param {DSElement} element
+   * @returns {void}
+   */
+  makeDraggable = (element) => this.SelectableSet.makeDraggable(element)
+
+  /**
+   * Make element non-draggable
+   * @param {DSElement} element
+   * @returns {void}
+   */
+  makeNonDraggable = (element) => this.SelectableSet.makeNonDraggable(element)
 }
 
 export default DragSelect
