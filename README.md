@@ -311,6 +311,7 @@ Here is the full list:
 |dropZoneReadyClass |string |On corresponding dropZone when element is dragged |ds-dropzone-ready
 |dropZoneTargetClass |string |On dropZone that has elements from any successful target drop |ds-dropzone-target
 |dropZoneInsideClass |string |On dropZone that has elements inside after any drop |ds-dropzone-inside
+|dragAsBlock |boolean |Whether to drag multiple elements as a single block or as individual items |false
 
 ## Post-Initialization Setting-Updates
 
