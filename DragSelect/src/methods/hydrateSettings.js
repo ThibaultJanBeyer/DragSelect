@@ -252,4 +252,5 @@ export default (settings, withFallback) => ({
     withFallback,
     'ds-dropzone-inside'
   ),
+  ...hydrateHelper('dragAsBlock', settings.dragAsBlock, withFallback, false),
 })
