@@ -2,7 +2,12 @@
 import '../types'
 import DragSelect from '../DragSelect'
 
-import { vect2, moveElement, handleKeyboardDragPosDifference } from '../methods'
+import {
+  getBoundingClientRect,
+  handleKeyboardDragPosDifference,
+  moveElement,
+  vect2,
+} from '../methods'
 
 export default class Drag {
   /**
@@ -97,7 +102,7 @@ export default class Drag {
     this._elements = this.DS.getSelection()
     this.handleZIndex(true)
 
-    const posDirection = handleKeyboardDragPosDifference({
+    let posDirection = handleKeyboardDragPosDifference({
       shiftKey: this.DS.stores.KeyStore.currentValues.includes('shift'),
       keyboardDragSpeed: this.DS.stores.SettingsStore.s.keyboardDragSpeed,
       zoom: this.DS.stores.SettingsStore.s.zoom,
@@ -107,6 +112,10 @@ export default class Drag {
       canScroll: this.DS.stores.ScrollStore.canScroll,
       dragKeys: this._dragKeys,
     })
+
+    if (this.DS.stores.SettingsStore.s.dragAsBlock) {
+      posDirection = this.limitDirection(posDirection)
+    }
 
     this._elements.forEach((element) =>
       moveElement({
@@ -165,7 +174,10 @@ export default class Drag {
     )
       return
 
-    const posDirection = vect2.calc(this._cursorDiff, '+', this._scrollDiff)
+    let posDirection = vect2.calc(this._cursorDiff, '+', this._scrollDiff)
+    if (this.DS.stores.SettingsStore.s.dragAsBlock) {
+      posDirection = this.limitDirection(posDirection)
+    }
 
     this._elements.forEach((element) =>
       moveElement({
@@ -175,6 +187,32 @@ export default class Drag {
         useTransform: this.DS.stores.SettingsStore.s.useTransform,
       })
     )
+  }
+
+  /**
+   * Modify direction value so that the rect of draggable elements
+   * does not exceed the boundaries of container rect
+   * @param {Vect2} direction
+   * @return {Vect2}
+   */
+  limitDirection = (direction) => {
+    const containerRect = this.DS.SelectorArea.rect
+    const selectionRect = getBoundingClientRect(this._elements)
+    const delta = {
+      top: containerRect.top - selectionRect.top,
+      left: containerRect.left - selectionRect.left,
+      bottom: containerRect.bottom - selectionRect.bottom,
+      right: containerRect.right - selectionRect.right,
+    }
+
+    this._elements.forEach((_) => {
+      if (direction.y < 0) direction.y = Math.max(direction.y, delta.top)
+      if (direction.x < 0) direction.x = Math.max(direction.x, delta.left)
+      if (direction.y > 0) direction.y = Math.min(direction.y, delta.bottom)
+      if (direction.x > 0) direction.x = Math.min(direction.x, delta.right)
+    })
+
+    return direction
   }
 
   handleZIndex = (add) => {
