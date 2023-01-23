@@ -27,6 +27,14 @@ Multi-Select-Toggling: OFF
     <button type="button" id="five3" class="item c five">5</button>
 </div>
 
+Multi-Select-Ignore-Parents: ON
+<div>
+    <button type="button" id="one4" class="item d one">1</button>
+    <div style="display: inline;">
+        <button type="button" id="two4" class="item d two" style="left: -20px;">2</button>
+    </div>
+</div>
+
 <script src="../../dist/DragSelect.js"></script>
 <script>
     window.selected = [];
@@ -51,4 +59,13 @@ Multi-Select-Toggling: OFF
         multiSelectToggling: false,
     });
     ds3.subscribe('callback', ({items}) => window.multiSelectTogglingOff = items.map(item => item.id))
+</script>
+<script>
+    window.multiSelectIgnoreParents = [];
+
+    const ds4 = new DragSelect({
+        selectables: document.querySelectorAll('.item.d'),
+        multiSelectIgnoreParents: true,
+    });
+    ds4.subscribe('callback', ({items}) => window.multiSelectIgnoreParents = items.map(item => item.id))
 </script>
