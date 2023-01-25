@@ -5,7 +5,6 @@ export { default as createSelectorAreaElement } from './createSelectorAreaElemen
 export { default as createSelectorElement } from './createSelectorElement'
 export { default as debounce } from './debounce'
 export { default as documentScroll } from './documentScroll'
-export { default as filterParent } from './filterParent'
 export { default as getAllParentNodes } from './getAllParentNodes'
 export { default as getAreaRect } from './getAreaRect'
 export { default as getCurrentScroll } from './getCurrentScroll'
