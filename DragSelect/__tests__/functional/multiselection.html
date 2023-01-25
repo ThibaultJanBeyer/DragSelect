@@ -65,7 +65,45 @@ Multi-Select-Ignore-Parents: ON
 
     const ds4 = new DragSelect({
         selectables: document.querySelectorAll('.item.d'),
-        multiSelectIgnoreParents: true,
     });
+
+    /**
+     * @param {Map<DSElement,DSBoundingRect>} list 
+     * @param {DSBoundingRect} rect
+     * @returns {DSElement[]}
+     */
+    const filterParent = (list, rect) => {
+        const toRemove = []
+        for (const [parent, parentRect] of list.entries()) {
+            for (const [child, childRect] of list.entries()) {
+                if (parent === child || !DragSelect.isCollision(childRect, parentRect, 0) ||
+                    parent.parentNode === null || child.parentNode === null ||
+                    parent.parentNode === child.parentNode) continue
+                else if (parent.parentNode.contains(child.parentNode) &&
+                    // Continue to select if user draws a rectangle that
+                    // covers more than then child ifself
+                    DragSelect.isCollision(rect, childRect, 1)) {
+                    toRemove.push(parent)
+                    break
+                }
+            }
+        }
+        return toRemove
+    }
+
+    /**
+     * @param {{select:Map<DSElement,DSBoundingRect>, unselect:Map<DSElement,DSBoundingRect>, selectorRect:DSBoundingRect}} obj 
+     */
+    ds4.Selection.filterSelected = ({ selectorRect, select: _select, unselect: _unselect }) => {
+        let select = _select, unselect = _unselect
+        const toRemove = filterParent(select, selectorRect)
+        toRemove.forEach(el => {
+            const rect = select.get(el)
+            select.delete(el)
+            unselect.set(el, rect)
+        })
+        return { select, unselect }
+    }
+
     ds4.subscribe('callback', ({items}) => window.multiSelectIgnoreParents = items.map(item => item.id))
 </script>
