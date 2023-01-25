@@ -1,8 +1,9 @@
 // @ts-check
 import '../types'
+
+// [PUBLICLY EXPOSED METHOD]
+
 /**
- * [PUBLICLY EXPOSED METHOD]
- *
  * Axis-Aligned Bounding Box Collision Detection.
  * Imagine following Example:
  *
