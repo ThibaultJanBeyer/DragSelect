@@ -68,14 +68,13 @@ Multi-Select-Ignore-Parents: ON
     });
 
     /**
-     * @param {Map<DSElement,DSBoundingRect>} list 
-     * @param {DSBoundingRect} rect
-     * @returns {DSElement[]}
+     * @param {{select:Map<DSElement,DSBoundingRect>, unselect:Map<DSElement,DSBoundingRect>, selectorRect:DSBoundingRect}} obj 
      */
-    const filterParent = (list, rect) => {
-        const toRemove = []
-        for (const [parent, parentRect] of list.entries()) {
-            for (const [child, childRect] of list.entries()) {
+    ds4.Selection.filterSelected = ({ selectorRect, select: _select, unselect: _unselect }) => {
+        const select = new Map(_select), unselect = new Map(_unselect)
+
+        for (const [parent, parentRect] of select.entries()) {
+            for (const [child, childRect] of select.entries()) {
                 if (parent === child || !DragSelect.isCollision(childRect, parentRect, 0) ||
                     parent.parentNode === null || child.parentNode === null ||
                     parent.parentNode === child.parentNode) continue
@@ -83,25 +82,13 @@ Multi-Select-Ignore-Parents: ON
                     // Continue to select if user draws a rectangle that
                     // covers more than then child ifself
                     DragSelect.isCollision(rect, childRect, 1)) {
-                    toRemove.push(parent)
+                    select.delete(parent)
+                    unselect.set(parent, parentRect)
                     break
                 }
             }
         }
-        return toRemove
-    }
 
-    /**
-     * @param {{select:Map<DSElement,DSBoundingRect>, unselect:Map<DSElement,DSBoundingRect>, selectorRect:DSBoundingRect}} obj 
-     */
-    ds4.Selection.filterSelected = ({ selectorRect, select: _select, unselect: _unselect }) => {
-        let select = _select, unselect = _unselect
-        const toRemove = filterParent(select, selectorRect)
-        toRemove.forEach(el => {
-            const rect = select.get(el)
-            select.delete(el)
-            unselect.set(el, rect)
-        })
         return { select, unselect }
     }
 
