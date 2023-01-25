@@ -2,7 +2,7 @@
 import '../types'
 import DragSelect from '../DragSelect'
 
-import { isCollision, handleSelection, handleUnSelection } from '../methods'
+import { isCollision, handleSelection, filterParent, handleUnSelection } from '../methods'
 
 export default class Selection {
   /**
@@ -63,13 +63,16 @@ export default class Selection {
     /** @type {any} */
     const elRects = SelectableSet.rects
 
-    const select = []
+    let select = []
+    const selectRec = []
     const unselect = []
 
     for (const [element, rect] of elRects) {
       if (!SelectorArea.isInside(element, rect)) continue
-      if (isCollision(rect, Selector.rect, this.Settings.selectionThreshold))
+      if (isCollision(rect, Selector.rect, this.Settings.selectionThreshold)) {
         select.push(element)
+        selectRec.push(rect)
+      }
       else unselect.push(element)
     }
 
@@ -78,6 +81,14 @@ export default class Selection {
       this.Settings.multiSelectToggling
 
     if (this.DS.continue) return
+
+    // Filter out elements that are parents of other selected elements when they intersect
+    if (this.Settings.multiSelectIgnoreParents) {
+      const toRemove = filterParent(select, selectRec, Selector.rect)
+      select = select.filter(el => !toRemove.includes(el))
+      unselect.push(...toRemove)
+    }
+
     select.forEach((element) =>
       handleSelection({
         element,

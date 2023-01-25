@@ -185,6 +185,12 @@ export default (settings, withFallback) => ({
     withFallback,
     false
   ),
+  ...hydrateHelper(
+    'multiSelectIgnoreParents',
+    settings.multiSelectIgnoreParents,
+    withFallback,
+    false
+  ),
   ...hydrateHelper('hoverClass', settings.hoverClass, withFallback, 'ds-hover'),
   ...hydrateHelper(
     'selectableClass',
