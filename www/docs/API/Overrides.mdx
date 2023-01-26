@@ -1,0 +1,27 @@
+---
+sidebar_position: 5
+description: DragSelect Overrides (API)
+---
+
+# Overrides (Exposed Methods to Override)
+
+DragSelect exposes some internal methods that are available to overide. It is not recommended to use them unless you know what you are doing. Please use [Methods](Methods) or [Events](Events) instead wherever possible!
+
+For a concrete example on how to use the overrides see [CustomSelectionFilter](/docs/guided-examples/CustomSelectionFilter).
+
+## Selection
+| method | properties | returns | usage |
+|--- |--- |--- |--- |
+| `Selection.filterSelected` | {<br/>select: Map<DSElement, DSBoundingRect>,<br/>unselect: Map<DSElement, DSBoundingRect>,<br/>selectorRect: DSBoundingRect<br/>} | {<br/>select: Map<DSElement, DSBoundingRect>,<br/>unselect: Map<DSElement, DSBoundingRect><br/>} | Can be overridden to apply further filtering logic after the items to select are identified but before they actually get selected. Is expected to return the select / unselect maps in the same shape as passed in
+
+## Example
+
+```js
+const ds = new DragSelect({});
+ds.Selection.filterSelected = (obj) => {
+  // do something here
+  console.log('filterSelected', obj)
+  // return what needs to be returned
+  return obj
+}
+```
