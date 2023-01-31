@@ -5,19 +5,20 @@ description: DragSelect is very customizable. You can even hook into the selecti
 
 # Custom Selection Filter (Advanced Override)
 
-> Disclaimer: By hooking into the selection you’re modifying internal behavior. Don’t expect support for any misbehaving caused by hooking in. We will try our best to not introduce breaking changes the overrideable methods but it’s best if you double check each time before updating the library.
+> Disclaimer: By hooking into the selection you’re modifying internal behavior. Don’t expect support for any misbehaving caused by hooking in. We will try our best to not introduce breaking changes the overrideable methods but if you use them, it’s best if you double check each time before updating the library even on minor changes.
 
 The logic for actually selecting elements is straight forward, it all happens [in the Selection module](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/DragSelect/src/modules/Selection.js).
 
-If you want to change the selectioning during the selection process (not before, not after) you can use the exposed method `filterSelected`. We’ll explain how here.
+You can change the selectioning during the selection process (not before, not after) by overwriting the `filterSelected` method.
 But why? Well, you might want to change the selection logic to your likings. 
-Maybe you want to select only elements that have a certain class, or maybe you want to select only elements that are in a certain area. Or maybe you want to filter out the parent elements of the selected elements to prevent multiple elements laying on top of each other to be all selected/deselected together.
-You can do that with the `filterSelected` method.
-We’ll explain how here:
+One use-case we had for example is to filter out the parent elements of the selected elements to prevent multiple elements laying on top of each other to be all selected/deselected together. Overwriting is perfect for this use-case since the recommended [Methods](Methods) or [Events](Events) are not applicable here.
+
+We’ll take an easier example to show how you can overwrite certain methods:
 
 ## Have a look at `.filterSelected()`
 
-The method is called after the elements that are going to be selected/unselected were already collected. Just before the actual selection happens.
+The method is called after the elements that are going to be selected/unselected have already been collected.
+Just before the actual selection happens.
 It gets called with the following arguments:
 
 ```ts 
@@ -30,7 +31,8 @@ Selection.filterSelected = ({ select, unselect, selectorRect }: {
 
 ## Use the `.filterSelected()`
 
-Now that we know how that looks like we can use it like so:
+Now that we know how the method looks like,
+we can use it:
 
 ```ts
 // initialize like you do before
@@ -56,4 +58,4 @@ ds.Selection.filterSelected = ({ selectorRect, select: _select, unselect: _unsel
 }
 ```
 
-That’s it, you’ve successfully added a custom filter to the selection logic. Now go celebrate that you’ve just learned something new! 🎉
+That’s it, you’ve successfully overwritten a method to add your custom filter to the selection logic. Now go celebrate that you’ve just learned something new! 🎉
