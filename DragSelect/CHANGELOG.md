@@ -1,3 +1,10 @@
+# 2.6.0
+
+- Introducing Overrides as a new concept to help advanced modification use-cases like [#150](https://github.com/ThibaultJanBeyer/DragSelect/issues/150) in collaboration with [@HollowMan6](https://github.com/HollowMan6)
+- - See [Example use-case](https://dragselect.com/docs/guided-examples/Custom-Selection-Filter-Override) & [API for overrides](https://dragselect.com/docs/API/Overrides)
+- Expose `filterSelected` in  `Selection` module
+- Expose `isCollision` helper method
+
 # 2.5.6
 
 - Test refactor to monorepo and yarn for npm compatibility
