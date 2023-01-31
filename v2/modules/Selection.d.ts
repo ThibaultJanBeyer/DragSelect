@@ -35,6 +35,20 @@ export default class Selection {
      * @private
      */
     private _handleInsideSelection;
+    /**
+     * Can be overridden to apply further filtering logic after the items to select are identified but before they actually get selected
+     * Is expected to return the select / unselect maps in the same shape as passed in
+     * @param {{select:Map<DSElement,DSBoundingRect>, unselect:Map<DSElement,DSBoundingRect>, selectorRect:DSBoundingRect}} obj
+     * @returns {{select:Map<DSElement,DSBoundingRect>, unselect:Map<DSElement,DSBoundingRect>}}
+     */
+    filterSelected: ({ select, unselect, selectorRect }: {
+        select: Map<DSElement, DSBoundingRect>;
+        unselect: Map<DSElement, DSBoundingRect>;
+        selectorRect: DSBoundingRect;
+    }) => {
+        select: Map<DSElement, DSBoundingRect>;
+        unselect: Map<DSElement, DSBoundingRect>;
+    };
 }
 import DragSelect from "../DragSelect";
 import "../types"

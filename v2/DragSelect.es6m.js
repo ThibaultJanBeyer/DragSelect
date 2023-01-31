@@ -1202,6 +1202,9 @@ var hydrateSettings = (function (settings, withFallback) {
 });
 
 // @ts-check
+
+// [PUBLICLY EXPOSED METHOD]
+
 /**
  * Axis-Aligned Bounding Box Collision Detection.
  * Imagine following Example:
@@ -2679,29 +2682,41 @@ var Selection = /*#__PURE__*/function () {
         SelectableSet = _this$DS.SelectableSet,
         SelectorArea = _this$DS.SelectorArea,
         Selector = _this$DS.Selector;
+      var multiSelectionToggle = _this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) && _this.Settings.multiSelectToggling;
+      var selectionThreshold = _this.Settings.selectionThreshold;
 
       /** @type {any} */
       var elRects = SelectableSet.rects;
-      var select = [];
-      var unselect = [];
+      var selectorRect = Selector.rect;
+
+      /** @type {Map<DSElement,DSBoundingRect>} */
+      var select = new Map();
+      /** @type {Map<DSElement,DSBoundingRect>} */
+      var unselect = new Map();
       var _iterator = _createForOfIteratorHelper(elRects),
         _step;
       try {
         for (_iterator.s(); !(_step = _iterator.n()).done;) {
           var _step$value = _slicedToArray(_step.value, 2),
             element = _step$value[0],
-            rect = _step$value[1];
-          if (!SelectorArea.isInside(element, rect)) continue;
-          if (isCollision(rect, Selector.rect, _this.Settings.selectionThreshold)) select.push(element);else unselect.push(element);
+            elementRect = _step$value[1];
+          if (!SelectorArea.isInside(element, elementRect)) continue;
+          if (isCollision(elementRect, selectorRect, selectionThreshold)) select.set(element, elementRect);else unselect.set(element, elementRect);
         }
       } catch (err) {
         _iterator.e(err);
       } finally {
         _iterator.f();
       }
-      var multiSelectionToggle = _this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) && _this.Settings.multiSelectToggling;
       if (_this.DS["continue"]) return;
-      select.forEach(function (element) {
+      var _this$filterSelected = _this.filterSelected({
+          select: select,
+          unselect: unselect,
+          selectorRect: selectorRect
+        }),
+        filteredSelect = _this$filterSelected.select,
+        filteredUnselect = _this$filterSelected.unselect;
+      filteredSelect.forEach(function (_, element) {
         return handleSelection({
           element: element,
           force: force,
@@ -2710,7 +2725,7 @@ var Selection = /*#__PURE__*/function () {
           hoverClassName: _this.Settings.hoverClass
         });
       });
-      unselect.forEach(function (element) {
+      filteredUnselect.forEach(function (_, element) {
         return handleUnSelection({
           element: element,
           force: force,
@@ -2719,6 +2734,15 @@ var Selection = /*#__PURE__*/function () {
           PrevSelectedSet: _this._prevSelectedSet
         });
       });
+    });
+    _defineProperty(this, "filterSelected", function (_ref4) {
+      var select = _ref4.select,
+        unselect = _ref4.unselect;
+        _ref4.selectorRect;
+      return {
+        select: select,
+        unselect: unselect
+      };
     });
     this.DS = DS;
     this.Settings = this.DS.stores.SettingsStore.s;
@@ -3784,5 +3808,6 @@ var DragSelect = /*#__PURE__*/function () {
   }]);
   return DragSelect;
 }();
+DragSelect.isCollision = isCollision;
 
 export { DragSelect as default };

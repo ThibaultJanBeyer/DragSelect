@@ -179,6 +179,9 @@ declare class DragSelect {
      */
     getItemsInsideByZoneId: (zoneId: string, addClasses: boolean) => DSElements | void;
 }
+declare namespace DragSelect {
+    export { isCollision };
+}
 import { PubSub } from "./modules";
 import { SettingsStore } from "./stores";
 import { PointerStore } from "./stores";
@@ -193,4 +196,5 @@ import { Selection } from "./modules";
 import { Drag } from "./modules";
 import { DropZones } from "./modules";
 import { Interaction } from "./modules";
+import { isCollision } from "./methods";
 import "./types"
