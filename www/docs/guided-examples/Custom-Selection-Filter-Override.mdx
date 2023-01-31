@@ -1,0 +1,61 @@
+---
+sidebar_position: 11
+description: DragSelect is very customizable. You can even hook into the selection logic and change it to your likings
+---
+
+# Custom Selection Filter (Advanced Override)
+
+> Disclaimer: By hooking into the selection you’re modifying internal behavior. Don’t expect support for any misbehaving caused by hooking in. We will try our best to not introduce breaking changes the overrideable methods but if you use them, it’s best if you double check each time before updating the library even on minor changes.
+
+The logic for actually selecting elements is straight forward, it all happens [in the Selection module](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/DragSelect/src/modules/Selection.js).
+
+You can change the selectioning during the selection process (not before, not after) by overwriting the `filterSelected` method.
+But why? Well, you might want to change the selection logic to your likings. 
+One use-case we had for example is to filter out the parent elements of the selected elements to prevent multiple elements laying on top of each other to be all selected/deselected together. Overwriting is perfect for this use-case since the recommended [Methods](/docs/API/Methods) or [Events](/docs/API/Events) are not applicable here.
+
+We’ll take an easier example to show how you can overwrite certain methods:
+
+## Have a look at `.filterSelected()`
+
+The method is called after the elements that are going to be selected/unselected have already been collected.
+Just before the actual selection happens.
+It gets called with the following arguments:
+
+```ts 
+Selection.filterSelected = ({ select, unselect, selectorRect }: {
+  select:Map<DSElement,DSBoundingRect>, // the elements and their bounds that are supposed to be selected
+  unselect:Map<DSElement,DSBoundingRect>, // the elements and their bounds that are supposed to be de-selected (or un-selected)
+  selectorRect:DSBoundingRect // the bounds of the selector element
+}) => ({ select, unselect }) // it expects you to return an object that holds the select and unselect keys of same type as the arguments
+```
+
+## Use the `.filterSelected()`
+
+Now that we know how the method looks like,
+we can use it:
+
+```ts
+// initialize like you do before
+const ds = new DragSelect({…})
+
+// then you can override the exposed internal method
+ds.Selection.filterSelected = ({ selectorRect, select: _select, unselect: _unselect }: {
+  select:Map<DSElement,DSBoundingRect>,
+  unselect:Map<DSElement,DSBoundingRect>,
+  selectorRect:DSBoundingRect
+}) => {
+  // here we just re-assign the maps to new variables so we can modify them without changing the original ones
+  const select = new Map(_select), unselect = new Map(_unselect)
+  // now we can do whatever, in this example we just filter out all elements that have a red color style if there is more than five selected elements in total
+  select.forEach((boundingRect, element) => {
+    if(element.style.color === 'red' && select.size > 5) {
+      select.delete(element)
+      unselect.set(element, boundingRect)
+    }
+  })
+  // we return the modified maps
+  return { select, unselect }
+}
+```
+
+That’s it, you’ve successfully overwritten a method to add your custom filter to the selection logic. Now go celebrate that you’ve just learned something new! 🎉

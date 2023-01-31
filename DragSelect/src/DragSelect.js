@@ -56,7 +56,7 @@ import {
   SelectorArea,
 } from './modules'
 import { PointerStore, ScrollStore, KeyStore, SettingsStore } from './stores'
-import { toArray, subscriberAliases } from './methods'
+import { toArray, subscriberAliases, isCollision } from './methods'
 
 // Setup
 /// ///////////////////////////////////////////////////////////////////////////////////
@@ -378,5 +378,7 @@ class DragSelect {
   getItemsInsideByZoneId = (zoneId, addClasses) =>
     this.DropZones.getItemsInsideById(zoneId, addClasses)
 }
+
+DragSelect.isCollision = isCollision
 
 export default DragSelect

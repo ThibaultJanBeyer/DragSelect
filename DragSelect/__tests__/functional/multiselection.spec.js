@@ -79,4 +79,44 @@ describe('Multiselection', () => {
     const expected = ['one3', 'two3', 'four3', 'three3']
     expect(multiSelectTogglingOff.sort()).toEqual(expected.sort())
   })
+
+  it('multiSelect-ingore-parents should only select the child when intersecting with parent and the selection area is within the child', async () => {
+    await page.goto(`${baseUrl}/multiselection.html`)
+
+    const mouse = page.mouse
+    const keyboard = page.keyboard
+    await keyboard.down('Shift')
+    await mouse.move(50, 240, { steps: 10 })
+    await mouse.down()
+    await mouse.move(40, 240, { steps: 10 })
+    await mouse.up()
+    await wait(100)
+
+    const { multiSelectIgnoreParents } = await page.evaluate(() => ({
+      multiSelectIgnoreParents,
+    }))
+
+    const expected = ['two4']
+    expect(multiSelectIgnoreParents).toEqual(expected)
+  })
+
+  it('multiSelect-ingore-parents should select both when the selection area is not completely inside the child', async () => {
+    await page.goto(`${baseUrl}/multiselection.html`)
+
+    const mouse = page.mouse
+    const keyboard = page.keyboard
+    await keyboard.down('Shift')
+    await mouse.move(50, 240, { steps: 10 })
+    await mouse.down()
+    await mouse.move(20, 240, { steps: 10 })
+    await mouse.up()
+    await wait(100)
+
+    const { multiSelectIgnoreParents } = await page.evaluate(() => ({
+      multiSelectIgnoreParents,
+    }))
+
+    const expected = ['one4', 'two4']
+    expect(multiSelectIgnoreParents.sort()).toEqual(expected.sort())
+  })
 })

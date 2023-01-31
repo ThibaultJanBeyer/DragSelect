@@ -60,25 +60,33 @@ export default class Selection {
   _handleInsideSelection = (force, event) => {
     const { SelectableSet, SelectorArea, Selector } = this.DS
 
-    /** @type {any} */
-    const elRects = SelectableSet.rects
-
-    const select = []
-    const unselect = []
-
-    for (const [element, rect] of elRects) {
-      if (!SelectorArea.isInside(element, rect)) continue
-      if (isCollision(rect, Selector.rect, this.Settings.selectionThreshold))
-        select.push(element)
-      else unselect.push(element)
-    }
-
     const multiSelectionToggle =
       this.DS.stores.KeyStore.isMultiSelectKeyPressed(event) &&
       this.Settings.multiSelectToggling
+    const selectionThreshold = this.Settings.selectionThreshold
+
+    /** @type {any} */
+    const elRects = SelectableSet.rects
+    const selectorRect = Selector.rect
+
+    /** @type {Map<DSElement,DSBoundingRect>} */
+    const select = new Map()
+    /** @type {Map<DSElement,DSBoundingRect>} */
+    const unselect = new Map()
+
+    for (const [element, elementRect] of elRects) {
+      if (!SelectorArea.isInside(element, elementRect)) continue
+      if (isCollision(elementRect, selectorRect, selectionThreshold))
+        select.set(element, elementRect)
+      else unselect.set(element, elementRect)
+    }
 
     if (this.DS.continue) return
-    select.forEach((element) =>
+
+    const { select: filteredSelect, unselect: filteredUnselect } =
+      this.filterSelected({ select, unselect, selectorRect })
+
+    filteredSelect.forEach((_, element) =>
       handleSelection({
         element,
         force,
@@ -87,7 +95,7 @@ export default class Selection {
         hoverClassName: this.Settings.hoverClass,
       })
     )
-    unselect.forEach((element) =>
+    filteredUnselect.forEach((_, element) =>
       handleUnSelection({
         element,
         force,
@@ -97,4 +105,14 @@ export default class Selection {
       })
     )
   }
+
+  // [PUBLICLY EXPOSED METHODS]
+
+  /**
+   * Can be overridden to apply further filtering logic after the items to select are identified but before they actually get selected
+   * Is expected to return the select / unselect maps in the same shape as passed in
+   * @param {{select:Map<DSElement,DSBoundingRect>, unselect:Map<DSElement,DSBoundingRect>, selectorRect:DSBoundingRect}} obj 
+   * @returns {{select:Map<DSElement,DSBoundingRect>, unselect:Map<DSElement,DSBoundingRect>}}
+   */
+  filterSelected = ({ select, unselect, selectorRect }) => ({ select, unselect })
 }
