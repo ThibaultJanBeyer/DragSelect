@@ -11,7 +11,7 @@ The logic for actually selecting elements is straight forward, it all happens [i
 
 You can change the selectioning during the selection process (not before, not after) by overwriting the `filterSelected` method.
 But why? Well, you might want to change the selection logic to your likings. 
-One use-case we had for example is to filter out the parent elements of the selected elements to prevent multiple elements laying on top of each other to be all selected/deselected together. Overwriting is perfect for this use-case since the recommended [Methods](Methods) or [Events](Events) are not applicable here.
+One use-case we had for example is to filter out the parent elements of the selected elements to prevent multiple elements laying on top of each other to be all selected/deselected together. Overwriting is perfect for this use-case since the recommended [Methods](/docs/API/Methods) or [Events](/docs/API/Events) are not applicable here.
 
 We’ll take an easier example to show how you can overwrite certain methods:
 
