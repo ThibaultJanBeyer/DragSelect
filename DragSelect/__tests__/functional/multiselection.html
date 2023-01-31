@@ -40,7 +40,7 @@ Multi-Select-Ignore-Parents: ON
     window.selected = [];
 
     const ds1 = new DragSelect({ selectables: document.querySelectorAll('.item.a') });
-    ds1.subscribe('callback', ({items}) => window.selected = items.map(item => item.id))
+    ds1.subscribe('callback', ({ items }) => window.selected = items.map(item => item.id))
 </script>
 <script>
     window.multiselected = [];
@@ -49,7 +49,7 @@ Multi-Select-Ignore-Parents: ON
         selectables: document.querySelectorAll('.item.b'),
         multiSelectMode: true,
     });
-    ds2.subscribe('callback', ({items}) => window.multiselected = items.map(item => item.id))
+    ds2.subscribe('callback', ({ items }) => window.multiselected = items.map(item => item.id))
 </script>
 <script>
     window.multiSelectTogglingOff = [];
@@ -58,7 +58,7 @@ Multi-Select-Ignore-Parents: ON
         selectables: document.querySelectorAll('.item.c'),
         multiSelectToggling: false,
     });
-    ds3.subscribe('callback', ({items}) => window.multiSelectTogglingOff = items.map(item => item.id))
+    ds3.subscribe('callback', ({ items }) => window.multiSelectTogglingOff = items.map(item => item.id))
 </script>
 <script>
     window.multiSelectIgnoreParents = [];
@@ -81,7 +81,7 @@ Multi-Select-Ignore-Parents: ON
                 else if (parent.parentNode.contains(child.parentNode) &&
                     // Continue to select if user draws a rectangle that
                     // covers more than then child ifself
-                    DragSelect.isCollision(rect, childRect, 1)) {
+                    DragSelect.isCollision(selectorRect, childRect, 1)) {
                     select.delete(parent)
                     unselect.set(parent, parentRect)
                     break
@@ -92,5 +92,5 @@ Multi-Select-Ignore-Parents: ON
         return { select, unselect }
     }
 
-    ds4.subscribe('callback', ({items}) => window.multiSelectIgnoreParents = items.map(item => item.id))
+    ds4.subscribe('callback', ({ items }) => window.multiSelectIgnoreParents = items.map(item => item.id))
 </script>
