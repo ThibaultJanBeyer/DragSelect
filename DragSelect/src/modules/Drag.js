@@ -41,6 +41,12 @@ export default class Drag {
   _dragKeysFlat = []
 
   /**
+   * @type {DSBoundingRect}
+   * @private
+   */
+  _selectionRect
+
+  /**
    * @constructor Drag
    * @param {{DS:DragSelect}} obj
    * @ignore
@@ -100,6 +106,7 @@ export default class Drag {
     this.DS.publish(['Interaction:start:pre', 'Interaction:start'], publishData)
 
     this._elements = this.DS.getSelection()
+    this._selectionRect = getBoundingClientRect(this._elements)
     this.handleZIndex(true)
 
     let posDirection = handleKeyboardDragPosDifference({
@@ -154,6 +161,7 @@ export default class Drag {
     this._prevCursorPos = null
     this._prevScrollPos = null
     this._elements = this.DS.getSelection()
+    this._selectionRect = getBoundingClientRect(this._elements)
     this.handleZIndex(true)
   }
 
@@ -196,21 +204,25 @@ export default class Drag {
    * @return {Vect2}
    */
   limitDirection = (direction) => {
-    const containerRect = this.DS.SelectorArea.rect
-    const selectionRect = getBoundingClientRect(this._elements)
+    const containerRect = this.DS.SelectorArea.rect;
+    const scrollAmount = this.DS.stores.ScrollStore.scrollAmount;
+
     const delta = {
-      top: containerRect.top - selectionRect.top,
-      left: containerRect.left - selectionRect.left,
-      bottom: containerRect.bottom - selectionRect.bottom,
-      right: containerRect.right - selectionRect.right,
+      top: containerRect.top - this._selectionRect.top + scrollAmount.y,
+      left: containerRect.left - this._selectionRect.left + scrollAmount.x,
+      bottom: containerRect.bottom - this._selectionRect.bottom + scrollAmount.y,
+      right: containerRect.right - this._selectionRect.right + scrollAmount.x,
     }
 
-    this._elements.forEach((_) => {
-      if (direction.y < 0) direction.y = Math.max(direction.y, delta.top)
-      if (direction.x < 0) direction.x = Math.max(direction.x, delta.left)
-      if (direction.y > 0) direction.y = Math.min(direction.y, delta.bottom)
-      if (direction.x > 0) direction.x = Math.min(direction.x, delta.right)
-    })
+    if (direction.y < 0) direction.y = Math.max(direction.y, delta.top)
+    if (direction.x < 0) direction.x = Math.max(direction.x, delta.left)
+    if (direction.y > 0) direction.y = Math.min(direction.y, delta.bottom)
+    if (direction.x > 0) direction.x = Math.min(direction.x, delta.right)
+    
+    this._selectionRect.top += direction.y;
+    this._selectionRect.bottom += direction.y;
+    this._selectionRect.left += direction.x;
+    this._selectionRect.right += direction.x;
 
     return direction
   }
