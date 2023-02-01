@@ -1,12 +1,10 @@
 import babel from '@rollup/plugin-babel'
 import fs from 'fs'
 import glob from 'glob'
-import path from 'path'
 import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
 
 let typesDone = false
-let copyDocsDone = false
 const banner = `/***
 
  ~~~ Version ${process.env.npm_package_version} ~~~
@@ -34,7 +32,7 @@ const banner = `/***
  ********* The MIT License (MIT) **********
  ******************************************
  Created 2017 by ThibaultJanBeyer
- web: http://www.thibaultjanbeyer.com/
+ web: http://www.DragSelect.com/
  github: https://github.com/ThibaultJanBeyer/DragSelect
 
 */`
@@ -73,28 +71,6 @@ export default {
     resolve(),
     babel({ babelHelpers: 'bundled' }),
     {
-      name: 'copy',
-      writeBundle(options) {
-        if (!process.argv.includes('--ci')) return
-
-        // v1
-        if (!fs.existsSync('docs/')) fs.mkdirSync('docs')
-        fs.copyFileSync(
-          `.v1/${path.basename(options.file)}`,
-          `docs/${path.basename(options.file)}`
-        )
-        console.info(
-          `.v1/${path.basename(options.file)}`,
-          `docs/${path.basename(options.file)}`
-        )
-
-        // v2
-        if (!fs.existsSync('docs/v2')) fs.mkdirSync('docs/v2')
-        fs.copyFileSync(options.file, `docs/v2/${path.basename(options.file)}`)
-        console.info(options.file, `docs/v2/${path.basename(options.file)}`)
-      },
-    },
-    {
       name: 'add-types', // solves build issue caused by types (#100)
       writeBundle() {
         if (typesDone) return
@@ -111,15 +87,6 @@ export default {
             })
           })
         })
-      },
-    },
-    {
-      name: 'copy-www-docs',
-      writeBundle() {
-        if (!process.argv.includes('--ci') || copyDocsDone) return
-        copyDocsDone = true
-        console.info(`Adding www/build output to docs/ folder`)
-        fs.cpSync(`www/build`, `docs/`, { recursive: true })
       },
     },
     {

@@ -1,0 +1,96 @@
+<link rel="stylesheet" href="basics.css">
+
+Normal:
+<div>
+    <button type="button" id="one" class="item a one">1</button>
+    <button type="button" id="two" class="item a two">2</button>
+    <button type="button" id="three" class="item a three">3</button>
+    <button type="button" id="four" class="item a four">4</button>
+    <button type="button" id="five" class="item a five">5</button>
+</div>
+
+Multi-Select-Mode:
+<div>
+    <button type="button" id="one2" class="item b one">1</button>
+    <button type="button" id="two2" class="item b two">2</button>
+    <button type="button" id="three2" class="item b three">3</button>
+    <button type="button" id="four2" class="item b four">4</button>
+    <button type="button" id="five2" class="item b five">5</button>
+</div>
+
+Multi-Select-Toggling: OFF
+<div>
+    <button type="button" id="one3" class="item c one">1</button>
+    <button type="button" id="two3" class="item c two">2</button>
+    <button type="button" id="three3" class="item c three">3</button>
+    <button type="button" id="four3" class="item c four">4</button>
+    <button type="button" id="five3" class="item c five">5</button>
+</div>
+
+Multi-Select-Ignore-Parents (custom override)
+<div>
+    <button type="button" id="one4" class="item d one">1</button>
+    <div style="display: inline;">
+        <button type="button" id="two4" class="item d two" style="left: -20px;">2</button>
+    </div>
+</div>
+
+<script src="../../dist/DragSelect.js"></script>
+<script>
+    window.selected = [];
+
+    const ds1 = new DragSelect({ selectables: document.querySelectorAll('.item.a') });
+    ds1.subscribe('callback', ({ items }) => window.selected = items.map(item => item.id))
+</script>
+<script>
+    window.multiselected = [];
+
+    const ds2 = new DragSelect({
+        selectables: document.querySelectorAll('.item.b'),
+        multiSelectMode: true,
+    });
+    ds2.subscribe('callback', ({ items }) => window.multiselected = items.map(item => item.id))
+</script>
+<script>
+    window.multiSelectTogglingOff = [];
+
+    const ds3 = new DragSelect({
+        selectables: document.querySelectorAll('.item.c'),
+        multiSelectToggling: false,
+    });
+    ds3.subscribe('callback', ({ items }) => window.multiSelectTogglingOff = items.map(item => item.id))
+</script>
+<script>
+    window.multiSelectIgnoreParents = [];
+
+    const ds4 = new DragSelect({
+        selectables: document.querySelectorAll('.item.d'),
+    });
+
+    /**
+     * @param {{select:Map<DSElement,DSBoundingRect>, unselect:Map<DSElement,DSBoundingRect>, selectorRect:DSBoundingRect}} obj 
+     */
+    ds4.Selection.filterSelected = ({ selectorRect, select: _select, unselect: _unselect }) => {
+        const select = new Map(_select), unselect = new Map(_unselect)
+
+        for (const [parent, parentRect] of select.entries()) {
+            for (const [child, childRect] of select.entries()) {
+                if (parent === child || !DragSelect.isCollision(childRect, parentRect, 0) ||
+                    parent.parentNode === null || child.parentNode === null ||
+                    parent.parentNode === child.parentNode) continue
+                else if (parent.parentNode.contains(child.parentNode) &&
+                    // Continue to select if user draws a rectangle that
+                    // covers more than then child ifself
+                    DragSelect.isCollision(selectorRect, childRect, 1)) {
+                    select.delete(parent)
+                    unselect.set(parent, parentRect)
+                    break
+                }
+            }
+        }
+
+        return { select, unselect }
+    }
+
+    ds4.subscribe('callback', ({ items }) => window.multiSelectIgnoreParents = items.map(item => item.id))
+</script>

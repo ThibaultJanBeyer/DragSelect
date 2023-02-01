@@ -3679,10 +3679,10 @@ dot-prop@^5.2.0:
   dependencies:
     is-obj "^2.0.0"
 
-dragselect@^2.5.5:
-  version "2.5.5"
-  resolved "https://registry.yarnpkg.com/dragselect/-/dragselect-2.5.5.tgz#d7386c76acc8b51b29be1dc181ccfe57625031cf"
-  integrity sha512-fdyi1Uw9swNoeSl6pBjlmaOn8v1zrngLOVbRswjQ9/6808o8Fk6U/uqgKtEflaxw8iwjI0kE8L6gI2aijUO7qA==
+dragselect@^2.5.6:
+  version "2.5.6"
+  resolved "https://registry.yarnpkg.com/dragselect/-/dragselect-2.5.6.tgz#f03aecd3bff95bbca276d4419fba541091b4cf6e"
+  integrity sha512-TiiMmwUyIWk8C/CEA8r9Za87rw7Z2/smnXwHBfhPhPylD6vZwHWR6JQSBOr+IdU86XIEtrQfDmOrbsCCbVhTnw==
 
 duplexer3@^0.1.4:
   version "0.1.5"
@@ -4986,9 +4986,9 @@ json-schema-traverse@^1.0.0:
   integrity sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==
 
 json5@^2.1.2, json5@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.1.tgz#655d50ed1e6f95ad1a3caababd2b0efda10b395c"
-  integrity sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.3.tgz#78cd6f1a19bdc12b73db5ad0c61efd66c1e29283"
+  integrity sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==
 
 jsonfile@^6.0.1:
   version "6.1.0"

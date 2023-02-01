@@ -1,0 +1,53 @@
+---
+sidebar_position: 5
+description: DragSelect Overrides (API)
+---
+
+# Overrides & Exposed Methods (Advanced)
+
+> Disclaimer: By hooking into the selection you’re modifying internal behavior. Don’t expect support for any misbehaving caused by hooking in. We will try our best to not introduce breaking changes the overrideable methods but if you use them, it’s best if you double check each time before updating the library even on minor changes.
+
+DragSelect exposes some internal methods that are available to overide. It is not recommended to use them unless [Methods](Methods) or [Events](Events) are not possible for your use-case and you know what you are doing.
+
+For a concrete example on how to use the overrides see [CustomSelectionFilter](/docs/guided-examples/Custom-Selection-Filter-Override).
+
+## [.Selection](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/DragSelect/src/modules/Selection.js)
+| method | properties | returns | usage |
+|--- |--- |--- |--- |
+| `filterSelected` | {<br/>select: Map<DSElement, DSBoundingRect>,<br/>unselect: Map<DSElement, DSBoundingRect>,<br/>selectorRect: DSBoundingRect<br/>} | {<br/>select: Map<DSElement, DSBoundingRect>,<br/>unselect: Map<DSElement, DSBoundingRect><br/>} | Can be overridden to apply further filtering logic after the items to select are identified but before they actually get selected. Is expected to return the select / unselect maps in the same shape as passed in
+
+### Example
+
+```js
+const ds = new DragSelect({});
+ds.Selection.filterSelected = (obj) => obj
+```
+
+## Exposed Helper Methods
+| method | properties | usage |
+|--- |--- |--- |
+| `isCollision` | el1: { left:number, right:number, top:number, bottom:number }, el2: { left:number, right:number, top:number, bottom:number }, percent:number | Axis-Aligned Bounding Box Collision Detection. ([Docs](https://github.com/ThibaultJanBeyer/DragSelect/tree/master/DragSelect/src/methods/isCollision.js#L3))
+
+### Example
+
+```js
+DragSelect.isCollision(document.querySelector('#foo'), document.querySelector('#bar'), 1)
+```
+
+## Example
+
+```js
+const ds = new DragSelect({});
+ds.Selection.filterSelected = (obj) => {
+  // do something here
+  console.log('filterSelected', obj)
+  // you can also use helper methods:
+  if(DragSelect.isCollision(document.querySelector('#foo'), obj.selectorRect, 1)) {
+    console.log('#foo is inside the selector')
+  }
+  // return what needs to be returned
+  return obj
+}
+```
+
+Feel free to open a [feature request](https://github.com/ThibaultJanBeyer/DragSelect/issues/new?assignees=&labels=&template=feature_request.md) for more overrides.

@@ -19,7 +19,7 @@
  ********* The MIT License (MIT) **********
  ******************************************
  Copyright (c) 2017 ThibaultJanBeyer
- web: http://www.thibaultjanbeyer.com/
+ web: http://www.dragselect.com/
  github: https://github.com/ThibaultJanBeyer/DragSelect
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -56,7 +56,7 @@ import {
   SelectorArea,
 } from './modules'
 import { PointerStore, ScrollStore, KeyStore, SettingsStore } from './stores'
-import { toArray, subscriberAliases } from './methods'
+import { toArray, subscriberAliases, isCollision } from './methods'
 
 // Setup
 /// ///////////////////////////////////////////////////////////////////////////////////
@@ -378,5 +378,7 @@ class DragSelect {
   getItemsInsideByZoneId = (zoneId, addClasses) =>
     this.DropZones.getItemsInsideById(zoneId, addClasses)
 }
+
+DragSelect.isCollision = isCollision
 
 export default DragSelect

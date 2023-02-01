@@ -1,9 +1,9 @@
 <p align="center" style="text-align: center" >
   <a href="https://DragSelect.com/">
     <picture>
-      <source media="(prefers-color-scheme: light)" srcset="https://dragselect.com/media/dragselect-logo.png">
-      <source media="(prefers-color-scheme: dark)" srcset="https://dragselect.com/media/dragselect-logo-alt.png">
-      <img alt="The DragSelect logo: a selection symbol, a hand, a drop symbol and a mouse within a selection square." width="300" src="https://dragselect.com/media/dragselect-logo.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://dragselect.com/img/dragselect-logo.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://dragselect.com/img/dragselect-logo-alt.png">
+      <img alt="The DragSelect logo: a selection symbol, a hand, a drop symbol and a mouse within a selection square." width="300" src="https://dragselect.com/img/dragselect-logo.png">
     </picture>
   </a>
 </p>
@@ -17,12 +17,12 @@
 <a href="https://github.com/ThibaultJanBeyer/DragSelect/actions"><img alt="Build Status" src="https://github.com/ThibaultJanBeyer/DragSelect/actions/workflows/github-actions-build.yml/badge.svg"></a>
 <a href="https://dragselect.com/v2/ds.min.js"><img alt="gzip size" src="https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip"></a>
 <a href="https://www.npmjs.com/package/dragselect"><img alt="npm downloads count" src="https://img.shields.io/npm/dt/dragselect.svg"></a>
-<a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/package.json"><img alt="No Dependency" src="https://img.shields.io/badge/dependencies-none-informational"></a>
+<a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/DragSelect/package.json"><img alt="No Dependency" src="https://img.shields.io/badge/dependencies-none-informational"></a>
 <a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md"><img alt="Contributors Welcome" src="https://img.shields.io/badge/contributors-welcome-blueviolet"></a>
 <a href="https://github.com/sponsors/ThibaultJanBeyer"><img alt="Sponsors Welcome" src="https://img.shields.io/badge/sponsors-welcome-blueviolet"></a>
 </p>
 
-# DragSelect ![GitHub package.json version](https://img.shields.io/github/package-json/v/ThibaultJanBeyer/DragSelect.svg)
+# DragSelect [![GitHub release](https://img.shields.io/github/release/ThibaultJanBeyer/DragSelect.svg)](https://GitHub.com/ThibaultJanBeyer/DragSelect/releases/)
 easily add a selection algorithm to your application/website.
 
 The documentation is being migrated to [https://dragselect.com/](https://dragselect.com/). Find the [most up to date documentation there](http://dragselect.com/docs/intro).
@@ -64,25 +64,22 @@ The documentation is being migrated to [https://dragselect.com/](https://dragsel
 
 # Key-Features
 
-- **No dependencies** [![No Dependency](https://img.shields.io/badge/dependencies-none-informational)](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/package.json)
+- **No dependencies** [![No Dependency](https://img.shields.io/badge/dependencies-none-informational)](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/DragSelect/package.json)
 - Hyper customizable
 - Replicates operating system drag-selection in the browser
 - Accessibility (a11y)
-- Add drag selection
 - Use modifier keys to make multiple independent selections
-- Select, Drag and Drop also via keyboard
-- Choose which elements can be selected
+- Select, Drag and Drop also also via keyboard
 - Supports all major browsers
-- Selected elements can be dragged and dropped
 - Lightweight, only ![gzip size](https://img.badgesize.io/https://dragselect.com/v2/ds.min.js?compression=gzip)
 - Popular: ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg) on npm
 - DragSelect was written with Performance in mind (can easily select >15.000 Elements)
 - Supports SVG
 - Supports mobile (touch interaction)
-- Free & open source under MIT License
-- Ease of use
+- Free & open source
+- Easy to use
 
-![demo-gif](https://dragselect.com/media/dragselect.gif)
+![demo-gif](https://dragselect.com/img/dragselect.gif)
 
 # Why?
 
@@ -98,14 +95,11 @@ If you're too poor or broke you can still support us with your time instead by [
 
 ## Thanks To:  
 
-| <a href="https://www.browserstack.com/"><img src="https://dragselect.com/media/browserstack.jpg" alt="Browserstack" width="150px"></a> | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
-|--- |--- |
-|[BrowserStack](https://www.browserstack.com/) is a service for cross-browser testing. They support this open source projects by providing us with a [free account](https://www.browserstack.com/open-source)! | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (via Bitcoin: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`). Or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com). 
+| <a href="https://www.browserstack.com/"><img src="https://cdn.worldvectorlogo.com/logos/browserstack.svg" alt="Browserstack" width="100px" /></a> | <a href="https://www.digitalocean.com/"><img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_vertical_blue.svg" alt="DigitalOcean" width="150px" /></a> | [You?](https://github.com/sponsors/ThibaultJanBeyer) |
+|--- |--- |--- |
+|[BrowserStack](https://www.browserstack.com/) is a service for cross-browser testing. They support this open source projects by providing us with a [free account](https://www.browserstack.com/open-source)! |[DigitalOcean](https://www.digitalocean.com/) is a cloud hosting service. They support this open source projects by providing us with [free credits](https://www.digitalocean.com/open-source/credits-for-projects)! | Thank and support us by making a [Direct Donation to DragSelect](https://www.blockchain.com/btc/address/1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC) (via Bitcoin: `1LdweSpjgSeJC8XxX3swrohBMBLUzg6cmC`). Or sponsor via [GitHub Sponsors](https://github.com/sponsors/ThibaultJanBeyer) or [Get in touch](mailto:thibault.beyer@gmail.com). 
 
-All donations are distributed with all project contributors proportionally to their involvement. We are grateful for any amount:  
-We have more than ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg), imagine how much we'd have if everyone would have had donated only 1$ 🤩 (unfortunately this did not happen)  
-
-If you donate, we can display your logo here if you want, which will give you fame, fortune and help you recruit great talent and boosting your SEO. 
+Donations are distributed with all project contributors proportionally to their involvement. We are grateful for any amount: we have more than ![npm downloads count](https://img.shields.io/npm/dt/dragselect.svg), imagine how much we'd have if everyone would have had donated only 1$ 🤩 (unfortunately this did not happen). If you donate, we can display your logo here if you want, which will give you fame, fortune and help you recruit great talent and boosting your SEO.
 
 # Installation
 
@@ -158,7 +152,7 @@ new DragSelect({
 });
 ```
 
-See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG/">prpwYG</a>
+Find a live [example in the Guide](http://dragselect.com/docs/guided-examples/Simple)
 
 ## Within a Scroll-Able Area
 
@@ -173,7 +167,7 @@ new DragSelect({
 });
 ```
 
-See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq/">DragSelect with Scrollable AREA</a>.
+Find a live [example in the Area Guide](http://dragselect.com/docs/guided-examples/Area)
 
 ## With DropZones
 
@@ -209,12 +203,12 @@ ds.subscribe('callback', ({
 
 This will also add some respective [classes](#classes)
 
-See the Pen <a href="https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp">DragSelect with DropZones</a>.
+Find a live [example in the guide](http://dragselect.com/docs/guided-examples/DropZones)
 
 ## Extended
 
 All options are optional. You could also just initiate the Dragselect by `new DragSelect({});` without any option.  
-Find all possible properties and methods in **[the docs](https://dragselect.com/DragSelect.html)**  
+Find all possible properties and methods in **[the docs](https://dragselect.com/docs/category/api)**  
 
 ```javascript
 // if you add the function to a variable like this, you have access to all its functions
@@ -269,9 +263,9 @@ Read the [Custom Drag and Drop Guide](http://dragselect.com/docs/guided-examples
 
 # Constructor Properties (Settings)
 
-Read the [Settings API docs](http://dragselect.com/docs/API/Settings)
+*DragSelect is hyper customizable*. Note, all properties are optional.
 
-*DragSelect is hyper customizable*. Note, all properties are optional. See **[the docs](https://dragselect.com/DragSelect.html)** for more info.  
+Read the [Settings API docs](http://dragselect.com/docs/API/Settings)
 
 Moreover any setting can also be updated or added after the initialization, see [post-initialization setting updates](#post-initialization-setting-updates).
 
@@ -373,9 +367,6 @@ Read the [Callback Object docs](http://dragselect.com/docs/API/Events#callback-o
 
 Read the [Methods API docs](http://dragselect.com/docs/API/Methods)
 
-When the function is saved into a variable `var foo = new DragSelect()` you have access to all its inner functions.  
-Also check **[the docs](https://dragselect.com/DragSelect.html)** for more info.
-
 | method | properties | usage |
 |--- |--- |--- |
 |stop |/ |Will teardown/stop the whole functionality
@@ -426,7 +417,7 @@ Read the [CSS Classes API docs](http://dragselect.com/docs/API/CSS-Classes)
 |.ds-dropzone-target |on dropZone when it was target of a successful drop |
 |.ds-dropzone-inside |on dropZone that has elements inside after any drop |
 
-*note: you can change the class names setting the respective property on the constructor, see **[the docs](https://dragselect.com/DragSelect.html)** properties section.*
+*note: you can change the class names setting the respective property on the constructor, see **[the docs](http://dragselect.com/docs/API/Settings)** properties section.*
 
 # Have Fun!
 
@@ -434,6 +425,6 @@ Creating and maintaining useful tools is a lot of work.
 So don’t forget to give this repository a star if you find it useful.
 Star this repo, tell all your friends and start contributing and/or [donating 1$](https://github.com/sponsors/ThibaultJanBeyer) to keep it running. Thank you :)
 
-[![Typewriter Gif](https://dragselect.com/media/typewriter.gif)](https://thibaultjanbeyer.com/)
+[![Typewriter Gif](https://dragselect.com/img/typewriter.gif)](https://thibaultjanbeyer.com/)
 
-[documentation](https://dragselect.com/DragSelect.html)
+[http://dragselect.com/](http://dragselect.com/) | [documentation](http://dragselect.com/docs/intro)
