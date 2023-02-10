@@ -1953,6 +1953,7 @@ var DropZone = /*#__PURE__*/function () {
     // @ts-ignore: @todo: update to typescript
     this.DS.subscribe('Settings:updated:dropZoneClass', function (_ref4) {
       var settings = _ref4.settings;
+      if (!_this.element) return;
       _this.element.classList.remove(settings['dropZoneClass:pre']);
       _this.element.classList.add(settings.dropZoneClass);
     });
