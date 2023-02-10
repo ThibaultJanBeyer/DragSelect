@@ -1,3 +1,7 @@
+# 2.6.1
+
+- Fix bug calling dropZones [ #168](https://github.com/ThibaultJanBeyer/DragSelect/pull/168) by [@fredrikvin](https://github.com/fredrikvin)
+
 # 2.6.0
 
 - Introducing Overrides as a new concept to help advanced modification use-cases like [#150](https://github.com/ThibaultJanBeyer/DragSelect/issues/150) in collaboration with [@HollowMan6](https://github.com/HollowMan6)

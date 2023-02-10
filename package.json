@@ -11,7 +11,7 @@
     "build:docs": "cd www && yarn && yarn build && cd ..",
     "build:dragselect": "cd ./DragSelect && yarn build -- --ci && cd ..",
     "prebuild": "yarn initial:ci",
-    "build": "yarn build:docs && yarn build:dragselect && yarn test && node ./build.js"
+    "build": "yarn build:docs && yarn build:dragselect && node ./build.js && yarn test"
   },
   "repository": {
     "type": "git",
