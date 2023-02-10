@@ -76,6 +76,7 @@ export default class DropZone {
 
     // @ts-ignore: @todo: update to typescript
     this.DS.subscribe('Settings:updated:dropZoneClass', ({ settings }) => {
+      if (!this.element) return
       this.element.classList.remove(settings['dropZoneClass:pre'])
       this.element.classList.add(settings.dropZoneClass)
     })
