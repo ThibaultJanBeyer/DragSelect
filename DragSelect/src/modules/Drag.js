@@ -2,7 +2,12 @@
 import '../types'
 import DragSelect from '../DragSelect'
 
-import { vect2, moveElement, handleKeyboardDragPosDifference } from '../methods'
+import {
+  getBoundingClientRect,
+  handleKeyboardDragPosDifference,
+  moveElement,
+  vect2,
+} from '../methods'
 
 export default class Drag {
   /**
@@ -34,6 +39,12 @@ export default class Drag {
    * @private
    */
   _dragKeysFlat = []
+
+  /**
+   * @type {DSBoundingRect}
+   * @private
+   */
+  _selectionRect
 
   /**
    * @constructor Drag
@@ -95,9 +106,10 @@ export default class Drag {
     this.DS.publish(['Interaction:start:pre', 'Interaction:start'], publishData)
 
     this._elements = this.DS.getSelection()
+    this._selectionRect = getBoundingClientRect(this._elements)
     this.handleZIndex(true)
 
-    const posDirection = handleKeyboardDragPosDifference({
+    let posDirection = handleKeyboardDragPosDifference({
       shiftKey: this.DS.stores.KeyStore.currentValues.includes('shift'),
       keyboardDragSpeed: this.DS.stores.SettingsStore.s.keyboardDragSpeed,
       zoom: this.DS.stores.SettingsStore.s.zoom,
@@ -107,6 +119,10 @@ export default class Drag {
       canScroll: this.DS.stores.ScrollStore.canScroll,
       dragKeys: this._dragKeys,
     })
+
+    if (this.DS.stores.SettingsStore.s.dragAsBlock) {
+      posDirection = this.limitDirection(posDirection)
+    }
 
     this._elements.forEach((element) =>
       moveElement({
@@ -145,6 +161,7 @@ export default class Drag {
     this._prevCursorPos = null
     this._prevScrollPos = null
     this._elements = this.DS.getSelection()
+    this._selectionRect = getBoundingClientRect(this._elements)
     this.handleZIndex(true)
   }
 
@@ -165,7 +182,10 @@ export default class Drag {
     )
       return
 
-    const posDirection = vect2.calc(this._cursorDiff, '+', this._scrollDiff)
+    let posDirection = vect2.calc(this._cursorDiff, '+', this._scrollDiff)
+    if (this.DS.stores.SettingsStore.s.dragAsBlock) {
+      posDirection = this.limitDirection(posDirection)
+    }
 
     this._elements.forEach((element) =>
       moveElement({
@@ -175,6 +195,36 @@ export default class Drag {
         useTransform: this.DS.stores.SettingsStore.s.useTransform,
       })
     )
+  }
+
+  /**
+   * Modify direction value so that the rect of draggable elements
+   * does not exceed the boundaries of container rect
+   * @param {Vect2} direction
+   * @return {Vect2}
+   */
+  limitDirection = (direction) => {
+    const containerRect = this.DS.SelectorArea.rect;
+    const scrollAmount = this.DS.stores.ScrollStore.scrollAmount;
+
+    const delta = {
+      top: containerRect.top - this._selectionRect.top + scrollAmount.y,
+      left: containerRect.left - this._selectionRect.left + scrollAmount.x,
+      bottom: containerRect.bottom - this._selectionRect.bottom + scrollAmount.y,
+      right: containerRect.right - this._selectionRect.right + scrollAmount.x,
+    }
+
+    if (direction.y < 0) direction.y = Math.max(direction.y, delta.top)
+    if (direction.x < 0) direction.x = Math.max(direction.x, delta.left)
+    if (direction.y > 0) direction.y = Math.min(direction.y, delta.bottom)
+    if (direction.x > 0) direction.x = Math.min(direction.x, delta.right)
+    
+    this._selectionRect.top += direction.y;
+    this._selectionRect.bottom += direction.y;
+    this._selectionRect.left += direction.x;
+    this._selectionRect.right += direction.x;
+
+    return direction
   }
 
   handleZIndex = (add) => {
