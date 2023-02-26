@@ -391,6 +391,7 @@
    * @property {string} [dropZoneReadyClass=ds-dropzone-ready] on corresponding dropZone when element is dragged
    * @property {string} [dropZoneTargetClass=ds-dropzone-target] on dropZone that has elements from any successful target drop
    * @property {string} [dropZoneInsideClass=ds-dropzone-inside] on dropZone that has elements inside after any drop
+   * @property {boolean} [dragAsBlock=false] whether to drag multiple elements as a single block or as individual items
    */
 
   /**
@@ -710,6 +711,34 @@
       width: (area.clientWidth || rect.width) * zoom,
       height: (area.clientHeight || rect.height) * zoom
     };
+  });
+
+  // @ts-check
+  /**
+   * Returns the compound bounding rect of multiple elements.
+   * @param {DSElements} elements
+   * @returns {DSBoundingRect}
+   */
+  var getBoundingClientRect = (function (elements) {
+    var rect = {
+      top: Number.POSITIVE_INFINITY,
+      left: Number.POSITIVE_INFINITY,
+      bottom: Number.NEGATIVE_INFINITY,
+      right: Number.NEGATIVE_INFINITY,
+      width: Number.NEGATIVE_INFINITY,
+      height: Number.NEGATIVE_INFINITY
+    };
+    elements = Array.isArray(elements) ? elements : [elements];
+    elements.forEach(function (element) {
+      var elementRect = element.getBoundingClientRect();
+      rect.top = Math.min(rect.top, elementRect.top);
+      rect.left = Math.min(rect.left, elementRect.left);
+      rect.bottom = Math.max(rect.bottom, elementRect.bottom);
+      rect.right = Math.max(rect.right, elementRect.right);
+    });
+    rect.height = rect.bottom - rect.top;
+    rect.width = rect.right - rect.left;
+    return rect;
   });
 
   // @ts-check
@@ -1196,7 +1225,7 @@
    * @param {boolean} withFallback
    */
   var hydrateSettings = (function (settings, withFallback) {
-    return _objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2({}, hydrateHelper('area', settings.area, withFallback, document)), hydrateHelper('selectables', settings.selectables, withFallback, null)), hydrateHelper('autoScrollSpeed', settings.autoScrollSpeed, withFallback, 5)), hydrateHelper('overflowTolerance', settings.overflowTolerance, withFallback, {
+    return _objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2({}, hydrateHelper('area', settings.area, withFallback, document)), hydrateHelper('selectables', settings.selectables, withFallback, null)), hydrateHelper('autoScrollSpeed', settings.autoScrollSpeed, withFallback, 5)), hydrateHelper('overflowTolerance', settings.overflowTolerance, withFallback, {
       x: 25,
       y: 25
     })), hydrateHelper('zoom', settings.zoom, withFallback, 1)), hydrateHelper('customStyles', settings.customStyles, withFallback, false)), hydrateHelper('multiSelectMode', settings.multiSelectMode, withFallback, false)), hydrateHelper('multiSelectToggling', settings.multiSelectToggling, withFallback, true)), hydrateHelper('multiSelectKeys', settings.multiSelectKeys, withFallback, ['Control', 'Shift', 'Meta'])), hydrateHelper('selector', settings.selector, withFallback, null)), hydrateHelper('selectionThreshold', settings.selectionThreshold, withFallback, 0)), hydrateHelper('draggability', settings.draggability, withFallback, true)), hydrateHelper('immediateDrag', settings.immediateDrag, withFallback, true)), hydrateHelper('keyboardDrag', settings.keyboardDrag, withFallback, true)), hydrateHelper('dragKeys', settings.dragKeys, withFallback, {
@@ -1204,7 +1233,7 @@
       down: ['ArrowDown'],
       left: ['ArrowLeft'],
       right: ['ArrowRight']
-    })), hydrateHelper('keyboardDragSpeed', settings.keyboardDragSpeed, withFallback, 10)), hydrateHelper('useTransform', settings.useTransform, withFallback, true)), hydrateHelper('refreshMemoryRate', settings.refreshMemoryRate, withFallback, 80)), hydrateHelper('dropZones', settings.dropZones, withFallback, [])), hydrateHelper('dropInsideThreshold', settings.dropInsideThreshold, withFallback, 1)), hydrateHelper('dropTargetThreshold', settings.dropTargetThreshold, withFallback, 0)), hydrateHelper('usePointerEvents', settings.usePointerEvents, withFallback, false)), hydrateHelper('hoverClass', settings.hoverClass, withFallback, 'ds-hover')), hydrateHelper('selectableClass', settings.selectableClass, withFallback, 'ds-selectable')), hydrateHelper('selectedClass', settings.selectedClass, withFallback, 'ds-selected')), hydrateHelper('selectorClass', settings.selectorClass, withFallback, 'ds-selector')), hydrateHelper('selectorAreaClass', settings.selectorAreaClass, withFallback, 'ds-selector-area')), hydrateHelper('droppedTargetClass', settings.droppedTargetClass, withFallback, 'ds-dropped-target')), hydrateHelper('droppedInsideClass', settings.droppedInsideClass, withFallback, 'ds-dropped-inside')), hydrateHelper('droppableClass', settings.droppableClass, withFallback, 'ds-droppable')), hydrateHelper('dropZoneClass', settings.dropZoneClass, withFallback, 'ds-dropzone')), hydrateHelper('dropZoneReadyClass', settings.dropZoneReadyClass, withFallback, 'ds-dropzone-ready')), hydrateHelper('dropZoneTargetClass', settings.dropZoneTargetClass, withFallback, 'ds-dropzone-target')), hydrateHelper('dropZoneInsideClass', settings.dropZoneInsideClass, withFallback, 'ds-dropzone-inside'));
+    })), hydrateHelper('keyboardDragSpeed', settings.keyboardDragSpeed, withFallback, 10)), hydrateHelper('useTransform', settings.useTransform, withFallback, true)), hydrateHelper('refreshMemoryRate', settings.refreshMemoryRate, withFallback, 80)), hydrateHelper('dropZones', settings.dropZones, withFallback, [])), hydrateHelper('dropInsideThreshold', settings.dropInsideThreshold, withFallback, 1)), hydrateHelper('dropTargetThreshold', settings.dropTargetThreshold, withFallback, 0)), hydrateHelper('usePointerEvents', settings.usePointerEvents, withFallback, false)), hydrateHelper('hoverClass', settings.hoverClass, withFallback, 'ds-hover')), hydrateHelper('selectableClass', settings.selectableClass, withFallback, 'ds-selectable')), hydrateHelper('selectedClass', settings.selectedClass, withFallback, 'ds-selected')), hydrateHelper('selectorClass', settings.selectorClass, withFallback, 'ds-selector')), hydrateHelper('selectorAreaClass', settings.selectorAreaClass, withFallback, 'ds-selector-area')), hydrateHelper('droppedTargetClass', settings.droppedTargetClass, withFallback, 'ds-dropped-target')), hydrateHelper('droppedInsideClass', settings.droppedInsideClass, withFallback, 'ds-dropped-inside')), hydrateHelper('droppableClass', settings.droppableClass, withFallback, 'ds-droppable')), hydrateHelper('dropZoneClass', settings.dropZoneClass, withFallback, 'ds-dropzone')), hydrateHelper('dropZoneReadyClass', settings.dropZoneReadyClass, withFallback, 'ds-dropzone-ready')), hydrateHelper('dropZoneTargetClass', settings.dropZoneTargetClass, withFallback, 'ds-dropzone-target')), hydrateHelper('dropZoneInsideClass', settings.dropZoneInsideClass, withFallback, 'ds-dropzone-inside')), hydrateHelper('dragAsBlock', settings.dragAsBlock, withFallback, false));
   });
 
   // @ts-check
@@ -1665,6 +1694,11 @@
      */
 
     /**
+     * @type {DSBoundingRect}
+     * @private
+     */
+
+    /**
      * @constructor Drag
      * @param {{DS:DragSelect}} obj
      * @ignore
@@ -1678,6 +1712,7 @@
       _defineProperty(this, "_elements", []);
       _defineProperty(this, "_dragKeys", void 0);
       _defineProperty(this, "_dragKeysFlat", []);
+      _defineProperty(this, "_selectionRect", void 0);
       _defineProperty(this, "assignDragkeys", function () {
         _this._dragKeys = {
           up: _this.DS.stores.SettingsStore.s.dragKeys.up.map(function (k) {
@@ -1707,6 +1742,7 @@
         };
         _this.DS.publish(['Interaction:start:pre', 'Interaction:start'], publishData);
         _this._elements = _this.DS.getSelection();
+        _this._selectionRect = getBoundingClientRect(_this._elements);
         _this.handleZIndex(true);
         var posDirection = handleKeyboardDragPosDifference({
           shiftKey: _this.DS.stores.KeyStore.currentValues.includes('shift'),
@@ -1718,6 +1754,9 @@
           canScroll: _this.DS.stores.ScrollStore.canScroll,
           dragKeys: _this._dragKeys
         });
+        if (_this.DS.stores.SettingsStore.s.dragAsBlock) {
+          posDirection = _this.limitDirection(posDirection);
+        }
         _this._elements.forEach(function (element) {
           return moveElement({
             element: element,
@@ -1747,6 +1786,7 @@
         _this._prevCursorPos = null;
         _this._prevScrollPos = null;
         _this._elements = _this.DS.getSelection();
+        _this._selectionRect = getBoundingClientRect(_this._elements);
         _this.handleZIndex(true);
       });
       _defineProperty(this, "stop", function (evt) {
@@ -1761,6 +1801,9 @@
           isDraggingKeyboard = _ref5.isDraggingKeyboard;
         if (!isDragging || !_this._elements.length || isDraggingKeyboard || _this.DS["continue"]) return;
         var posDirection = calc(_this._cursorDiff, '+', _this._scrollDiff);
+        if (_this.DS.stores.SettingsStore.s.dragAsBlock) {
+          posDirection = _this.limitDirection(posDirection);
+        }
         _this._elements.forEach(function (element) {
           return moveElement({
             element: element,
@@ -1769,6 +1812,25 @@
             useTransform: _this.DS.stores.SettingsStore.s.useTransform
           });
         });
+      });
+      _defineProperty(this, "limitDirection", function (direction) {
+        var containerRect = _this.DS.SelectorArea.rect;
+        var scrollAmount = _this.DS.stores.ScrollStore.scrollAmount;
+        var delta = {
+          top: containerRect.top - _this._selectionRect.top + scrollAmount.y,
+          left: containerRect.left - _this._selectionRect.left + scrollAmount.x,
+          bottom: containerRect.bottom - _this._selectionRect.bottom + scrollAmount.y,
+          right: containerRect.right - _this._selectionRect.right + scrollAmount.x
+        };
+        if (direction.y < 0) direction.y = Math.max(direction.y, delta.top);
+        if (direction.x < 0) direction.x = Math.max(direction.x, delta.left);
+        if (direction.y > 0) direction.y = Math.min(direction.y, delta.bottom);
+        if (direction.x > 0) direction.x = Math.min(direction.x, delta.right);
+        _this._selectionRect.top += direction.y;
+        _this._selectionRect.bottom += direction.y;
+        _this._selectionRect.left += direction.x;
+        _this._selectionRect.right += direction.x;
+        return direction;
       });
       _defineProperty(this, "handleZIndex", function (add) {
         _this._elements.forEach(function (element) {

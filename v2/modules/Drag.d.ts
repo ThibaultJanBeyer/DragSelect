@@ -32,6 +32,11 @@ export default class Drag {
      * @private
      */
     private _dragKeysFlat;
+    /**
+     * @type {DSBoundingRect}
+     * @private
+     */
+    private _selectionRect;
     DS: DragSelect;
     assignDragkeys: () => void;
     keyboardDrag: ({ event, key }: {
@@ -51,6 +56,13 @@ export default class Drag {
         isDragging: any;
         isDraggingKeyboard: any;
     }) => void;
+    /**
+     * Modify direction value so that the rect of draggable elements
+     * does not exceed the boundaries of container rect
+     * @param {Vect2} direction
+     * @return {Vect2}
+     */
+    limitDirection: (direction: Vect2) => Vect2;
     handleZIndex: (add: any) => void;
     get _cursorDiff(): Vect2;
     get _scrollDiff(): Vect2;

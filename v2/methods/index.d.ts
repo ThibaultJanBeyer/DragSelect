@@ -7,6 +7,7 @@ export { default as debounce } from "./debounce";
 export { default as documentScroll } from "./documentScroll";
 export { default as getAllParentNodes } from "./getAllParentNodes";
 export { default as getAreaRect } from "./getAreaRect";
+export { default as getBoundingClientRect } from "./getBoundingClientRect";
 export { default as getCurrentScroll } from "./getCurrentScroll";
 export { default as getOverflowEdges } from "./getOverflowEdges";
 export { default as getPointerPos } from "./getPointerPos";

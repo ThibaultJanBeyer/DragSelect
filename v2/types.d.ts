@@ -138,6 +138,10 @@ type Settings = {
      * on dropZone that has elements inside after any drop
      */
     dropZoneInsideClass?: string;
+    /**
+     * whether to drag multiple elements as a single block or as individual items
+     */
+    dragAsBlock?: boolean;
 };
 /**
  * The Object that is passed back to any callback method
