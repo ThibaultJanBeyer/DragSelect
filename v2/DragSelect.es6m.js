@@ -2940,7 +2940,8 @@ var SelectorArea = /*#__PURE__*/function () {
     _defineProperty(this, "_rect", void 0);
     _defineProperty(this, "currentEdges", []);
     _defineProperty(this, "start", function () {
-      return _this.applyElements('append');
+      _this.applyElements('append');
+      _this.updatePos();
     });
     _defineProperty(this, "applyElements", function () {
       var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'append';
@@ -3022,6 +3023,7 @@ var SelectorArea = /*#__PURE__*/function () {
     function isClicked(event) {
       var PointerStore = this.DS.stores.PointerStore;
       var initialVal = event ? PointerStore.getPointerPosition(event) : PointerStore.initialVal;
+      console.log('isClicked', initialVal, this.rect, this.HTMLNode);
       return isCollision({
         left: initialVal.x,
         top: initialVal.y,
