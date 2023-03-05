@@ -52,7 +52,10 @@ export default class SelectorArea {
     })
   }
 
-  start = () => this.applyElements('append')
+  start = () => {
+    this.applyElements('append')
+    this.updatePos()
+  }
 
   /**
    * Adding / Removing elements to document
@@ -153,6 +156,7 @@ export default class SelectorArea {
       ? PointerStore.getPointerPosition(event)
       : PointerStore.initialVal
 
+    console.log('isClicked', initialVal, this.rect, this.HTMLNode);
     return isCollision(
       {
         left: initialVal.x,
