@@ -13,6 +13,7 @@ if you are a regular contributor, see [contibuting](../CONTRIBUTING.md) and make
 If tests were successful, the next step is to publish the new version on `npm`:
 
 - Check if the `changelog` reflects the latest version
+- `cd DragSelect/` if not already
 
 ```
 yarn build
