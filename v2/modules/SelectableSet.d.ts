@@ -30,6 +30,8 @@ export default class SelectableSet extends Set<any> {
     addAll: (elements: DSElements) => void;
     /** @param {DSElements} elements */
     deleteAll: (elements: DSElements) => void;
+    /** @param {DSElement} element */
+    getRect: (element: DSElement) => DSBoundingRect | DOMRect;
     /** @return {DSElements} */
     get elements(): DSElements;
     get rects(): Map<DSElement, DSBoundingRect>;

@@ -1,6 +1,6 @@
 /***
 
- ~~~ Version 2.6.1 ~~~
+ ~~~ Version 2.7.0 ~~~
 
  ******************************************
 
@@ -711,9 +711,10 @@ var getAreaRect = (function (area, zoom) {
 /**
  * Returns the compound bounding rect of multiple elements.
  * @param {DSElements} elements
+ * @param {SelectableSet} SelectableSet
  * @returns {DSBoundingRect}
  */
-var getBoundingClientRect = (function (elements) {
+var getBoundingClientRect = (function (elements, SelectableSet) {
   var rect = {
     top: Number.POSITIVE_INFINITY,
     left: Number.POSITIVE_INFINITY,
@@ -722,9 +723,8 @@ var getBoundingClientRect = (function (elements) {
     width: Number.NEGATIVE_INFINITY,
     height: Number.NEGATIVE_INFINITY
   };
-  elements = Array.isArray(elements) ? elements : [elements];
-  elements.forEach(function (element) {
-    var elementRect = element.getBoundingClientRect();
+  toArray(elements).forEach(function (element) {
+    var elementRect = SelectableSet.getRect(element);
     rect.top = Math.min(rect.top, elementRect.top);
     rect.left = Math.min(rect.left, elementRect.left);
     rect.bottom = Math.max(rect.bottom, elementRect.bottom);
@@ -1736,7 +1736,7 @@ var Drag = /*#__PURE__*/function () {
       };
       _this.DS.publish(['Interaction:start:pre', 'Interaction:start'], publishData);
       _this._elements = _this.DS.getSelection();
-      _this._selectionRect = getBoundingClientRect(_this._elements);
+      if (_this.DS.stores.SettingsStore.s.dragAsBlock) _this._selectionRect = getBoundingClientRect(_this._elements, _this.DS.SelectableSet);
       _this.handleZIndex(true);
       var posDirection = handleKeyboardDragPosDifference({
         shiftKey: _this.DS.stores.KeyStore.currentValues.includes('shift'),
@@ -1748,9 +1748,7 @@ var Drag = /*#__PURE__*/function () {
         canScroll: _this.DS.stores.ScrollStore.canScroll,
         dragKeys: _this._dragKeys
       });
-      if (_this.DS.stores.SettingsStore.s.dragAsBlock) {
-        posDirection = _this.limitDirection(posDirection);
-      }
+      if (_this.DS.stores.SettingsStore.s.dragAsBlock) posDirection = _this.limitDirection(posDirection);
       _this._elements.forEach(function (element) {
         return moveElement({
           element: element,
@@ -1780,7 +1778,7 @@ var Drag = /*#__PURE__*/function () {
       _this._prevCursorPos = null;
       _this._prevScrollPos = null;
       _this._elements = _this.DS.getSelection();
-      _this._selectionRect = getBoundingClientRect(_this._elements);
+      if (_this.DS.stores.SettingsStore.s.dragAsBlock) _this._selectionRect = getBoundingClientRect(_this._elements, _this.DS.SelectableSet);
       _this.handleZIndex(true);
     });
     _defineProperty(this, "stop", function (evt) {
@@ -1795,9 +1793,7 @@ var Drag = /*#__PURE__*/function () {
         isDraggingKeyboard = _ref5.isDraggingKeyboard;
       if (!isDragging || !_this._elements.length || isDraggingKeyboard || _this.DS["continue"]) return;
       var posDirection = calc(_this._cursorDiff, '+', _this._scrollDiff);
-      if (_this.DS.stores.SettingsStore.s.dragAsBlock) {
-        posDirection = _this.limitDirection(posDirection);
-      }
+      if (_this.DS.stores.SettingsStore.s.dragAsBlock) posDirection = _this.limitDirection(posDirection);
       _this._elements.forEach(function (element) {
         return moveElement({
           element: element,
@@ -1816,6 +1812,7 @@ var Drag = /*#__PURE__*/function () {
         bottom: containerRect.bottom - _this._selectionRect.bottom + scrollAmount.y,
         right: containerRect.right - _this._selectionRect.right + scrollAmount.x
       };
+      if (direction.x === 0 && direction.y === 0) return direction;
       if (direction.y < 0) direction.y = Math.max(direction.y, delta.top);
       if (direction.x < 0) direction.x = Math.max(direction.x, delta.left);
       if (direction.y > 0) direction.y = Math.min(direction.y, delta.bottom);
@@ -2525,6 +2522,9 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
       return elements.forEach(function (el) {
         return _this["delete"](el);
       });
+    });
+    _defineProperty(_assertThisInitialized(_this), "getRect", function (element) {
+      return _this._rects ? _this.rects.get(element) : element.getBoundingClientRect();
     });
     _this.DS = DS;
     _this.Settings = DS.stores.SettingsStore.s;
