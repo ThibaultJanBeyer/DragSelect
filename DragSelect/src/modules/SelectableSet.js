@@ -117,6 +117,9 @@ export default class SelectableSet extends Set {
   /** @param {DSElements} elements */
   deleteAll = (elements) => elements.forEach((el) => this.delete(el))
 
+  /** @param {DSElement} element */
+  getRect = (element) => this._rects ? this.rects.get(element) : element.getBoundingClientRect()
+
   /** @return {DSElements} */
   get elements() {
     return Array.from(this.values())

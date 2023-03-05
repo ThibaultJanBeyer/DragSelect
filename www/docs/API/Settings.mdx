@@ -39,6 +39,7 @@ const ds = new DragSelect({
 | `useTransform` | boolean | true    | Whether to use the more performant hardware accelerated css transforms when dragging instead of the top/left positions.
 | `immediateDrag`| boolean | true    | Whether a selectable element is draggable before being selected or needs to be selected first
 | `keyboardDrag` | boolean | true    |Whether or not the user can drag with the keyboard (Accessibility).
+| `dragAsBlock`  | boolean | false   | Whether to drag multiple elements as a single block or as individual items.
 | `dragKeys` | { up:string[], down:string[], left:string[], right:string[] } | { up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'] } |The keys available to drag element using the keyboard. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)).
 | `keyboardDragSpeed` | number | 10  | The speed at which elements are dragged using the keyboard. In pixels per keyDown.
 

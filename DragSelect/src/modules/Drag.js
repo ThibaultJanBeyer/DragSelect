@@ -106,7 +106,8 @@ export default class Drag {
     this.DS.publish(['Interaction:start:pre', 'Interaction:start'], publishData)
 
     this._elements = this.DS.getSelection()
-    this._selectionRect = getBoundingClientRect(this._elements)
+    if (this.DS.stores.SettingsStore.s.dragAsBlock)
+      this._selectionRect = getBoundingClientRect(this._elements, this.DS.SelectableSet)
     this.handleZIndex(true)
 
     let posDirection = handleKeyboardDragPosDifference({
@@ -120,9 +121,8 @@ export default class Drag {
       dragKeys: this._dragKeys,
     })
 
-    if (this.DS.stores.SettingsStore.s.dragAsBlock) {
+    if (this.DS.stores.SettingsStore.s.dragAsBlock)
       posDirection = this.limitDirection(posDirection)
-    }
 
     this._elements.forEach((element) =>
       moveElement({
@@ -161,7 +161,8 @@ export default class Drag {
     this._prevCursorPos = null
     this._prevScrollPos = null
     this._elements = this.DS.getSelection()
-    this._selectionRect = getBoundingClientRect(this._elements)
+    if (this.DS.stores.SettingsStore.s.dragAsBlock)
+      this._selectionRect = getBoundingClientRect(this._elements, this.DS.SelectableSet)
     this.handleZIndex(true)
   }
 
@@ -183,9 +184,8 @@ export default class Drag {
       return
 
     let posDirection = vect2.calc(this._cursorDiff, '+', this._scrollDiff)
-    if (this.DS.stores.SettingsStore.s.dragAsBlock) {
+    if (this.DS.stores.SettingsStore.s.dragAsBlock)
       posDirection = this.limitDirection(posDirection)
-    }
 
     this._elements.forEach((element) =>
       moveElement({
@@ -213,7 +213,8 @@ export default class Drag {
       bottom: containerRect.bottom - this._selectionRect.bottom + scrollAmount.y,
       right: containerRect.right - this._selectionRect.right + scrollAmount.x,
     }
-
+    
+    if(direction.x === 0 && direction.y === 0) return direction
     if (direction.y < 0) direction.y = Math.max(direction.y, delta.top)
     if (direction.x < 0) direction.x = Math.max(direction.x, delta.left)
     if (direction.y > 0) direction.y = Math.min(direction.y, delta.bottom)

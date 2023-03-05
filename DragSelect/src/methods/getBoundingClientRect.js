@@ -1,11 +1,14 @@
 // @ts-check
 import '../types'
+import { SelectableSet } from '../modules'
+import {toArray} from './'
 /**
  * Returns the compound bounding rect of multiple elements.
  * @param {DSElements} elements
+ * @param {SelectableSet} SelectableSet
  * @returns {DSBoundingRect}
  */
-export default (elements) => {
+export default (elements, SelectableSet) => {
   const rect = {
     top: Number.POSITIVE_INFINITY,
     left: Number.POSITIVE_INFINITY,
@@ -15,9 +18,8 @@ export default (elements) => {
     height: Number.NEGATIVE_INFINITY,
   }
 
-  elements = Array.isArray(elements) ? elements : [elements]
-  elements.forEach((element) => {
-    const elementRect = element.getBoundingClientRect()
+  toArray(elements).forEach((element) => {
+    const elementRect = SelectableSet.getRect(element)
     rect.top = Math.min(rect.top, elementRect.top)
     rect.left = Math.min(rect.left, elementRect.left)
     rect.bottom = Math.max(rect.bottom, elementRect.bottom)

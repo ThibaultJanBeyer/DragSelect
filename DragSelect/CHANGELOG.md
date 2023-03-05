@@ -1,3 +1,9 @@
+# 2.7.0
+
+- Introduce blog-drag as alpha. It is supposed to fix dragging of multiple elements: dragging them as one block keeping aspect ratio positions on drag-scroll. Instead of moving elements individually. This was considered a bug. However as it is not fully tested it comes under a flag, please turn it on by setting `dragAsBlock: true`  and [report any issue you find here](https://github.com/ThibaultJanBeyer/DragSelect/issues). Thanks to [@rendertom](https://github.com/rendertom) for the addition [#162](https://github.com/ThibaultJanBeyer/DragSelect/pull/162).
+
+*Note: this feature will be turned on by default in a future release once proper testing and all bugs are fixed*
+
 # 2.6.1
 
 - Fix bug calling dropZones [ #168](https://github.com/ThibaultJanBeyer/DragSelect/pull/168) by [@fredrikvin](https://github.com/fredrikvin)
