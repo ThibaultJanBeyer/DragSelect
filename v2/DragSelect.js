@@ -1,6 +1,6 @@
 /***
 
- ~~~ Version 2.7.2 ~~~
+ ~~~ Version 2.7.3 ~~~
 
  ******************************************
 
@@ -3029,7 +3029,6 @@
       function isClicked(event) {
         var PointerStore = this.DS.stores.PointerStore;
         var initialVal = event ? PointerStore.getPointerPosition(event) : PointerStore.initialVal;
-        console.log('isClicked', initialVal, this.rect, this.HTMLNode);
         return isCollision({
           left: initialVal.x,
           top: initialVal.y,
