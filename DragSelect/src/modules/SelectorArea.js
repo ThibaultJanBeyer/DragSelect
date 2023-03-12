@@ -156,7 +156,6 @@ export default class SelectorArea {
       ? PointerStore.getPointerPosition(event)
       : PointerStore.initialVal
 
-    console.log('isClicked', initialVal, this.rect, this.HTMLNode);
     return isCollision(
       {
         left: initialVal.x,
