@@ -3,6 +3,7 @@ import fs from 'fs'
 import glob from 'glob'
 import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
+import typescript from '@rollup/plugin-typescript';
 
 let typesDone = false
 const banner = `/***
@@ -37,8 +38,11 @@ const banner = `/***
 
 */`
 
+/**
+ * @type {import('rollup').RollupOptions}
+ */
 export default {
-  input: 'src/DragSelect.js',
+  input: 'src/DragSelect.ts',
   output: [
     {
       file: 'dist/DragSelect.es6m.js',
@@ -68,6 +72,7 @@ export default {
     },
   ],
   plugins: [
+    typescript(),
     resolve(),
     babel({ babelHelpers: 'bundled' }),
     {
@@ -76,17 +81,16 @@ export default {
         if (typesDone) return
         typesDone = true
         console.info(`Adding types to all ts files`)
-        glob('dist/**/*.d.ts', (er, files) => {
-          if (er) throw er
-          files.forEach((fileName) => {
-            if (fileName.includes('types.d.ts')) return
-            const depth = fileName.match(/\//g).length
-            const relativeDir = depth === 1 ? './' : '../'.repeat(depth - 1)
-            fs.appendFile(fileName, `import "${relativeDir}types"\n`, (err) => {
-              if (err) throw err
+        glob('dist/**/*.d.ts', { ignore: 'dist/types.d.ts' })
+          .then((files) => {
+            files.forEach((fileName) => {
+              const depth = fileName.match(/\//g)?.length || 0
+              const relativeDir = depth === 1 ? './' : '../'.repeat(depth - 1)
+              fs.appendFile(fileName, `import "${relativeDir}types"\n`, (err) => {
+                if (err) throw err
+              })
             })
           })
-        })
       },
     },
     {
