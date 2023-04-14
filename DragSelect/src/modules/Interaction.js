@@ -78,11 +78,14 @@ export default class Interaction {
   /**
    * @param {DSEvent} event
    */
-  start = (event) =>
+  start = (event) => {
+    this.DS.Area.reset();
+    this.DS.SelectorArea.updatePos();
     this.DS.publish('Interaction:start:pre', {
       event,
       isDragging: this.isDragging,
-    })
+    });
+  }
 
   _start = (event) => {
     if (event.type === 'touchstart') event.preventDefault() // Call preventDefault() to prevent double click issue, see https://github.com/ThibaultJanBeyer/DragSelect/pull/29 & https://developer.mozilla.org/vi/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent
