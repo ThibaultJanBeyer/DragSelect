@@ -79,12 +79,12 @@ export default class Interaction {
    * @param {DSEvent} event
    */
   start = (event) => {
-    this.DS.Area.reset();
-    this.DS.SelectorArea.updatePos();
+    this.DS.Area.reset()
+    this.DS.SelectorArea.updatePos()
     this.DS.publish('Interaction:start:pre', {
       event,
       isDragging: this.isDragging,
-    });
+    })
   }
 
   _start = (event) => {
