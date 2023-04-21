@@ -1,3 +1,7 @@
+# 2.7.3
+
+- Fix typing issues [#175](https://github.com/ThibaultJanBeyer/DragSelect/issues/175) thanks [@Ruslan207](https://github.com/Ruslan207)
+
 # 2.7.2
 
 - Add readme to npmjs
