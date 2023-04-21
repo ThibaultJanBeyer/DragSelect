@@ -5,7 +5,6 @@ import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
 import typescript from '@rollup/plugin-typescript';
 
-let typesDone = false
 const banner = `/***
 
  ~~~ Version ${process.env.npm_package_version} ~~~
@@ -75,31 +74,5 @@ export default {
     typescript(),
     resolve(),
     babel({ babelHelpers: 'bundled' }),
-    {
-      name: 'add-types', // solves build issue caused by types (#100)
-      writeBundle() {
-        if (typesDone) return
-        typesDone = true
-        console.info(`Adding types to all ts files`)
-        glob('dist/**/*.d.ts', { ignore: 'dist/types.d.ts' })
-          .then((files) => {
-            files.forEach((fileName) => {
-              const depth = fileName.match(/\//g)?.length || 0
-              const relativeDir = depth === 1 ? './' : '../'.repeat(depth - 1)
-              fs.appendFile(fileName, `import "${relativeDir}types"\n`, (err) => {
-                if (err) throw err
-              })
-            })
-          })
-      },
-    },
-    {
-      name: 'disable-treeshaking',
-      transform(code, id) {
-        if (id.endsWith('types.js')) {
-          return { moduleSideEffects: 'no-treeshake' }
-        }
-      },
-    },
   ],
 }

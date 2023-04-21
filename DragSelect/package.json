@@ -10,8 +10,6 @@
     "start": "yarn open & yarn watch",
     "watch": "concurrently --kill-others \"yarn checkjs:watch\" \"yarn rollup:watch\" \"yarn test:watch\"",
     "\n# TESTING:": "",
-    "checkjs": "tsc --lib es2019,dom -t es5 --allowJs --skipLibCheck --checkJs --noEmit src/*.js",
-    "checkjs:watch": "yarn checkjs -- -w",
     "pretest": "yarn build",
     "jest": "jest --detectOpenHandles",
     "test": "yarn checkjs && yarn jest",
@@ -22,7 +20,7 @@
     "prerollup": "yarn types",
     "rollup": "rollup -c",
     "rollup:watch": "yarn rollup -- -w",
-    "types": "tsc src/DragSelect.ts --lib es2019,dom -t es5 --declaration --allowJs --emitDeclarationOnly --skipLibCheck --outDir dist"
+    "ts": "tsc"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",
