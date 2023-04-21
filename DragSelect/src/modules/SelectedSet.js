@@ -13,7 +13,10 @@ export default class SelectedSet extends Set {
     this.DS = DS
   }
 
-  /** @param {DSElement} element */
+  /** 
+   * @param {DSElement} element
+   * @return {this}
+   * */
   add(element) {
     if (super.has(element)) return this
     const publishData = {

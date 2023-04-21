@@ -43,7 +43,10 @@ export default class SelectableSet extends Set {
 
   init = () => toArray(this.Settings.selectables).forEach((el) => this.add(el))
 
-  /** @param {DSElement} element */
+  /** 
+   * @param {DSElement} element
+   * @return {this}
+   * */
   add(element) {
     if (super.has(element)) return this
     const publishData = {
