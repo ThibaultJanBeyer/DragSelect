@@ -1,9 +1,8 @@
 import babel from '@rollup/plugin-babel'
-import fs from 'fs'
-import glob from 'glob'
 import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
 import typescript from '@rollup/plugin-typescript';
+import dts from 'rollup-plugin-dts';
 
 const banner = `/***
 
@@ -40,39 +39,49 @@ const banner = `/***
 /**
  * @type {import('rollup').RollupOptions}
  */
-export default {
-  input: 'src/DragSelect.ts',
-  output: [
-    {
-      file: 'dist/DragSelect.es6m.js',
+export default [
+  {
+    input: 'src/DragSelect.ts',
+    output: [
+      {
+        file: 'dist/DragSelect.es6m.js',
+        format: 'es',
+        name: 'DragSelect',
+        banner,
+      },
+      {
+        file: 'dist/DragSelect.js',
+        format: 'umd',
+        name: 'DragSelect',
+        banner,
+      },
+      {
+        file: 'dist/ds.es6m.min.js',
+        format: 'es',
+        name: 'DragSelect',
+        compact: true,
+        plugins: [terser()],
+      },
+      {
+        file: 'dist/ds.min.js',
+        format: 'umd',
+        name: 'DragSelect',
+        compact: true,
+        plugins: [terser()],
+      },
+    ],
+    plugins: [
+      typescript(),
+      resolve(),
+      babel({ babelHelpers: 'bundled' }),
+    ],
+  },
+  {
+    input: `src/DragSelect.ts`,
+    plugins: [dts()],
+    output: {
+      file: `dist/DragSelect.d.ts`,
       format: 'es',
-      name: 'DragSelect',
-      banner,
     },
-    {
-      file: 'dist/DragSelect.js',
-      format: 'umd',
-      name: 'DragSelect',
-      banner,
-    },
-    {
-      file: 'dist/ds.es6m.min.js',
-      format: 'es',
-      name: 'DragSelect',
-      compact: true,
-      plugins: [terser()],
-    },
-    {
-      file: 'dist/ds.min.js',
-      format: 'umd',
-      name: 'DragSelect',
-      compact: true,
-      plugins: [terser()],
-    },
-  ],
-  plugins: [
-    typescript(),
-    resolve(),
-    babel({ babelHelpers: 'bundled' }),
-  ],
-}
+  }
+]

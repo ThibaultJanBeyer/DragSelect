@@ -56,7 +56,7 @@ export default class SettingsStore {
 
   update = ({ settings, init }: { settings: Settings, init?: boolean }) => {
     this.PS.publish('Settings:updated:pre', {
-      settings: structuredClone(this._settings),
+      settings: this._settings,
       'settings:init': Boolean(init),
       'settings:new': settings 
     })
@@ -79,7 +79,7 @@ export default class SettingsStore {
         this._settings[key] = value
 
         const update = { 
-          settings: structuredClone(this._settings),
+          settings: this._settings,
           'settings:init': init,
           'settings:new': settings
         }
