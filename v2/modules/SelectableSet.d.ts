@@ -20,8 +20,11 @@ export default class SelectableSet extends Set<any> {
     DS: DragSelect;
     Settings: Settings;
     init: () => void;
-    /** @param {DSElement} element */
-    add(element: DSElement): SelectableSet;
+    /**
+     * @param {DSElement} element
+     * @return {this}
+     * */
+    add(element: DSElement): this;
     /** @param {DSElement} element */
     delete(element: DSElement): boolean;
     _onClick: (event: any) => void;

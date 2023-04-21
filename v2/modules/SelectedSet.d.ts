@@ -8,8 +8,11 @@ export default class SelectedSet extends Set<any> {
         DS: DragSelect;
     });
     DS: DragSelect;
-    /** @param {DSElement} element */
-    add(element: DSElement): SelectedSet;
+    /**
+     * @param {DSElement} element
+     * @return {this}
+     * */
+    add(element: DSElement): this;
     /** @param {DSElement} element */
     delete(element: DSElement): boolean;
     /**

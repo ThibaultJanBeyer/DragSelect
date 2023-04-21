@@ -1,6 +1,6 @@
 /***
 
- ~~~ Version 2.7.3 ~~~
+ ~~~ Version 2.7.4 ~~~
 
  ******************************************
 
@@ -2546,9 +2546,13 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
   }
   _createClass(SelectableSet, [{
     key: "add",
-    value: /** @param {DSElement} element */
+    value:
+    /** 
+     * @param {DSElement} element
+     * @return {this}
+     * */
     function add(element) {
-      if (_get(_getPrototypeOf(SelectableSet.prototype), "has", this).call(this, element)) return;
+      if (_get(_getPrototypeOf(SelectableSet.prototype), "has", this).call(this, element)) return this;
       var publishData = {
         items: this.elements,
         item: element
@@ -2568,15 +2572,16 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
         computedStyle: window.getComputedStyle(element),
         node: element
       });
+      _get(_getPrototypeOf(SelectableSet.prototype), "add", this).call(this, element);
       this.DS.publish('Selectable:added', publishData);
-      return _get(_getPrototypeOf(SelectableSet.prototype), "add", this).call(this, element);
+      return this;
     }
 
     /** @param {DSElement} element */
   }, {
     key: "delete",
     value: function _delete(element) {
-      if (!_get(_getPrototypeOf(SelectableSet.prototype), "has", this).call(this, element)) return;
+      if (!_get(_getPrototypeOf(SelectableSet.prototype), "has", this).call(this, element)) return true;
       var publishData = {
         items: this.elements,
         item: element
@@ -2593,8 +2598,9 @@ var SelectableSet = /*#__PURE__*/function (_Set) {
         // @ts-ignore
         passive: false
       });
+      _get(_getPrototypeOf(SelectableSet.prototype), "delete", this).call(this, element);
       this.DS.publish('Selectable:removed', publishData);
-      return _get(_getPrototypeOf(SelectableSet.prototype), "delete", this).call(this, element);
+      return true;
     }
   }, {
     key: "elements",
@@ -2655,11 +2661,14 @@ var SelectedSet = /*#__PURE__*/function (_Set) {
     return _this;
   }
 
-  /** @param {DSElement} element */
+  /** 
+   * @param {DSElement} element
+   * @return {this}
+   * */
   _createClass(SelectedSet, [{
     key: "add",
     value: function add(element) {
-      if (_get(_getPrototypeOf(SelectedSet.prototype), "has", this).call(this, element)) return;
+      if (_get(_getPrototypeOf(SelectedSet.prototype), "has", this).call(this, element)) return this;
       var publishData = {
         items: this.elements,
         item: element
@@ -2676,7 +2685,7 @@ var SelectedSet = /*#__PURE__*/function (_Set) {
   }, {
     key: "delete",
     value: function _delete(element) {
-      if (!_get(_getPrototypeOf(SelectedSet.prototype), "has", this).call(this, element)) return;
+      if (!_get(_getPrototypeOf(SelectedSet.prototype), "has", this).call(this, element)) return true;
       var publishData = {
         items: this.elements,
         item: element
