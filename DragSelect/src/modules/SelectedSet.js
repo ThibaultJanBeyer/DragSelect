@@ -15,7 +15,7 @@ export default class SelectedSet extends Set {
 
   /** @param {DSElement} element */
   add(element) {
-    if (super.has(element)) return
+    if (super.has(element)) return this
     const publishData = {
       items: this.elements,
       item: element,
@@ -30,7 +30,7 @@ export default class SelectedSet extends Set {
 
   /** @param {DSElement} element */
   delete(element) {
-    if (!super.has(element)) return
+    if (!super.has(element)) return true
     const publishData = {
       items: this.elements,
       item: element,

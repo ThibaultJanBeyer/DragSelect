@@ -45,7 +45,7 @@ export default class SelectableSet extends Set {
 
   /** @param {DSElement} element */
   add(element) {
-    if (super.has(element)) return
+    if (super.has(element)) return this
     const publishData = {
       items: this.elements,
       item: element,
@@ -72,13 +72,14 @@ export default class SelectableSet extends Set {
         node: element,
       })
 
+    super.add(element)
     this.DS.publish('Selectable:added', publishData)
-    return super.add(element)
+    return this
   }
 
   /** @param {DSElement} element */
   delete(element) {
-    if (!super.has(element)) return
+    if (!super.has(element)) return true
     const publishData = {
       items: this.elements,
       item: element,
@@ -99,8 +100,9 @@ export default class SelectableSet extends Set {
       // @ts-ignore
       passive: false,
     })
+    super.delete(element)
     this.DS.publish('Selectable:removed', publishData)
-    return super.delete(element)
+    return true
   }
 
   clear = () => this.forEach((el) => this.delete(el))
