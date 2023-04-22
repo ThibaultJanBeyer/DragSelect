@@ -6,10 +6,7 @@ import { DSElement } from '../types'
 import { DSInteractionPublishEventData } from '../modules/Interaction'
 import { DSSelectedPublishEventData } from '../modules/SelectedSet'
 
-type DSEventName = 'DS:scroll'|'DS:start'|'DS:select'|'DS:unselect'|'DS:update'|'DS:end'
-type DSEventNamePre = 'DS:scroll:pre'|'DS:start:pre'|'DS:select:pre'|'DS:unselect:pre'|'DS:update:pre'|'DS:end:pre'
-
-export type DSPublicPublishEventNames = DSEventNamePre|DSEventName
+export type DSPublicPublishEventNames = keyof DSPublicPublish
 
 export type DSPublicPublishAdditionalEventData = {
   /** The dropZone element that the element was dropped into (or the mouse is currently hovering over) */
@@ -31,17 +28,50 @@ type ScrollCB = Pick<DSAreaPublishEventData, 'scroll_directions' | 'scroll_multi
 type InteractionCB = DSInteractionPublishEventData
 type InteractionEndCB = Partial<DSInteractionPublishEventData> & DSPublicPublishAdditionalEventData
 
+export const deprecatedNamesMap = {
+  "elementselect": "DS:select",
+  "elementunselect": "DS:unselect",
+  "autoscroll": "DS:scroll",
+  "dragstart": "DS:start",
+  "dragmove": "DS:update",
+  "callback": "DS:end",
+  "preelementselect": "DS:select:pre",
+  "preelementunselect": "DS:unselect:pre",
+  "preautoscroll": "DS:scroll:pre",
+  "predragstart": "DS:start:pre",
+  "predragmove": "DS:update:pre",
+  "precallback": "DS:end:pre",
+}
+
 export type DSPublicPublish = {
+  // Select Events
+  "preelementselect": SelectionCB
+  "elementselect": SelectionCB
   "DS:select": SelectionCB
   "DS:select:pre": SelectionCB
+  // Unselect Events
+  "preelementunselect": SelectionCB
+  "elementunselect": SelectionCB
   "DS:unselect": SelectionCB
   "DS:unselect:pre": SelectionCB
+  // Scroll Events
+  "preautoscroll": ScrollCB
+  "autoscroll": ScrollCB
   "DS:scroll": ScrollCB
   "DS:scroll:pre": ScrollCB
+  // Interaction Start Events
+  "predragstart": InteractionCB
+  "dragstart": InteractionCB
   "DS:start": InteractionCB
   "DS:start:pre": InteractionCB
+  // Interaction Update Events
+  "predragmove": InteractionCB
+  "dragmove": InteractionCB
   "DS:update": InteractionCB
   "DS:update:pre": InteractionCB
+  // Interaction End Events
+  "precallback": InteractionEndCB
+  "callback": InteractionEndCB
   "DS:end": InteractionEndCB
   "DS:end:pre": InteractionEndCB
 }
@@ -70,62 +100,76 @@ type DSMappings = {
 
 const mapping: DSMappings = {
   'Selected:added': [
+    { name: 'preelementselect' },
+    { name: 'elementselect' },
+    { name: 'DS:select:pre' },
     { name: 'DS:select' },
   ],
   'Selected:removed': [
-    { name: 'DS:unselect' }
+    { name: 'preelementunselect' },
+    { name: 'elementunselect' },
+    { name: 'DS:unselect:pre' },
+    { name: 'DS:unselect' },
   ],
   'Area:scroll': [
-    { name: 'DS:scroll' }
+    { name: 'preautoscroll' },
+    { name: 'autoscroll' },
+    { name: 'DS:scroll:pre' },
+    { name: 'DS:scroll' },
   ],
   'Interaction:start': [
-    { name: 'DS:start' }
+    { name: 'predragstart' },
+    { name: 'dragstart' },
+    { name: 'DS:start:pre' },
+    { name: 'DS:start' },
   ],
   'Interaction:update': [
+    { name: 'predragmove', condition: (data) => data.event ? data : null },
+    { name: 'dragmove', condition: (data) => data.event ? data : null },
+    { name: 'DS:update:pre', condition: (data) => data.event ? data : null },
     { name: 'DS:update', condition: (data) => data.event ? data : null },
   ],
   'Interaction:end': [
-    {
-      name: 'DS:end',
-      extraData: (data, DS) => {
-        const target = DS.DropZones.getTarget()
-        return {
-          ...data,
-          ...(target ? { dropTarget: target.toObject() } : {}),
-        }
-      },
-    },
+    { name: 'precallback', extraData: (data, DS) => endExtraData(data, DS) },
+    { name: 'callback', extraData: (data, DS) => endExtraData(data, DS) },
+    { name: 'DS:end:pre', extraData: (data, DS) => endExtraData(data, DS) },
+    { name: 'DS:end', extraData: (data, DS) => endExtraData(data, DS) },
   ],
+}
+
+const endExtraData = (data: UsedPublishMappings["Interaction:end"], DS: DragSelect) => {
+  const target = DS.DropZones.getTarget()
+  return {
+    ...data,
+    ...(target ? { dropTarget: target.toObject() } : {}),
+  }
 }
 
 /** Maps internal events to external ones */
 export const subscriberAliases = ({ PS, DS }: { PS: PubSub; DS: DragSelect }) => {
   for (const [sub_name, sub_pubs] of Object.entries(mapping) as [keyof UsedPublishMappings, DSMappings[keyof UsedPublishMappings]][])
-    // add `pre` mapping to it
-    ['pre', undefined].forEach((filler?: string) => addSubscribers({ sub_name, sub_pubs, DS, PS, filler }))
+    addSubscribers({ sub_name, sub_pubs, DS, PS })
 }
 
 const addSubscribers = <K extends keyof UsedPublishMappings>(
-  { sub_name, filler, DS, PS, sub_pubs }:
-  { sub_name: K, filler?: string, sub_pubs: DSMappings[K], DS: DragSelect, PS: PubSub }
+  { sub_name, DS, PS, sub_pubs }:
+  { sub_name: K, sub_pubs: DSMappings[K], DS: DragSelect, PS: PubSub }
 ) => {
-  const subscribeName = `${sub_name}${filler ? `:${filler}` : ''}` as K
   // Subscribe to the internal event
-  PS.subscribe(subscribeName, (data) => 
+  PS.subscribe(sub_name, (data) => 
     // publish to each of the mapped ones
-    sub_pubs.forEach(sub_pub => publish({ sub_pub, data, filler, DS })))
+    sub_pubs.forEach(sub_pub => publish({ sub_pub, data, DS })))
 }
 
 const publish = <K extends keyof UsedPublishMappings>(
-  { sub_pub, filler, data, DS }:
-  { sub_pub: MappingObj<K>, filler?: string, data: DSPublishMappings[K], DS: DragSelect }
+  { sub_pub, data, DS }:
+  { sub_pub: MappingObj<K>, data: DSPublishMappings[K], DS: DragSelect }
 ) => {
-  const publishName = `${sub_pub.name}${filler ? `:${filler}` : ''}` as DSPublicPublishEventNames
   // If the events condition is met, publish the external event
   const cleanedData = !sub_pub.condition ? data : sub_pub.condition(data, DS)
   if(cleanedData) {
     const extra = sub_pub.extraData && sub_pub.extraData(data, DS) || {}
-    DS.publish(publishName, {
+    DS.publish(sub_pub.name, {
       // add extra data as needed
       items: DS.SelectedSet.elements,
       isDragging: DS.Interaction.isDragging,

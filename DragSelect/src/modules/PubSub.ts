@@ -6,7 +6,7 @@ import { DSPointerStorePublish } from '../stores/PointerStore';
 import { DSSelectablePublish } from './SelectableSet';
 import { DSSelectedPublish } from './SelectedSet';
 import { DSSettingsPublish } from '../stores/SettingsStore';
-import { DSPublicPublish } from '../methods/subscriberAliases';
+import { DSPublicPublish, deprecatedNamesMap } from '../methods/subscriberAliases';
 
 export type DSPublishMappings = 
   & DSSettingsPublish

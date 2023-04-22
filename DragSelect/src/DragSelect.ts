@@ -57,7 +57,7 @@ import SelectorArea from './modules/SelectorArea'
 import SettingsStore from './stores/SettingsStore'
 import { DSCallbackName, DSElement, DSInputElements, Settings, Vect2 } from './types'
 import { IsCollision, isCollision } from './methods/isCollision'
-import { DSPublicPublish, subscriberAliases } from './methods/subscriberAliases'
+import { DSPublicPublish, deprecatedNamesMap, subscriberAliases } from './methods/subscriberAliases'
 import { toArray } from './methods/toArray'
 import { DSDropZone } from './modules/DropZone'
 
@@ -127,7 +127,13 @@ class DragSelect {
   
   // any input data from the user is valid in this public PubSub but the exposed values are recommended
   /** Subscribe to events */
-  public subscribe = <T extends keyof DSPublicPublish>(eventName: T, callback: DSCallback<DSPublishMappings[T]>) => this.PubSub.subscribe(eventName, callback)
+  public subscribe = <T extends keyof DSPublicPublish>(eventName: T, callback: DSCallback<DSPublishMappings[T]>) => {
+    // Deprecation warnings
+    if(deprecatedNamesMap[eventName as keyof typeof deprecatedNamesMap])
+      console.warn(`[DragSelect]: The event name "${eventName}" is deprecated and will be removed in a future version. Please use the new event name "${deprecatedNamesMap[eventName as keyof typeof deprecatedNamesMap]}" instead.`)
+
+    this.PubSub.subscribe(eventName, callback)
+  }
   /** Un-Subscribe from events */
   public unsubscribe = <T extends keyof DSPublicPublish>(eventName: T, callback: DSCallback<DSPublishMappings[T]>, id: number) => this.PubSub.unsubscribe(eventName, callback, id)
   /** Publish events */
