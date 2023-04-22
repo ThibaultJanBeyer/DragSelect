@@ -33,8 +33,8 @@ export default class PubSub {
    * @returns event id, can be used to unsubscribe more efficiently
    */
   subscribe = <K extends keyof DSPublishMappings>(eventName: K, callback: DSCallback<DSPublishMappings[K]>) => {
-    const ensureArray = <T>(value?: T[]): T[] => !Array.isArray(value) ? value = [] : value
-    const subscribers = ensureArray(this.subscribers[eventName]);
+    if(!Array.isArray(this.subscribers[eventName])) this.subscribers[eventName] = []
+    const subscribers = this.subscribers[eventName] as DSCallback<DSPublishMappings[K]>[]
     subscribers.push(callback)
     return subscribers.length - 1
   }
