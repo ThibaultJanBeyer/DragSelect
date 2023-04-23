@@ -106,7 +106,7 @@ export type DSInputDropZone = {
   /** the dropzone itself */
   element: DSElement
   /** elements that can be dropped into that zone. This is optional, by default it will be all selectables */
-  droppables: DSInputElements
+  droppables?: DSInputElements
 }
 
 export type DSElementPos = {

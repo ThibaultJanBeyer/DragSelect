@@ -135,7 +135,7 @@ class DragSelect {
     this.PubSub.subscribe(eventName, callback)
   }
   /** Un-Subscribe from events */
-  public unsubscribe = <T extends keyof DSPublicPublish>(eventName: T, callback: DSCallback<DSPublishMappings[T]>, id: number) => this.PubSub.unsubscribe(eventName, callback, id)
+  public unsubscribe = <T extends keyof DSPublicPublish>(eventName: T, callback?: DSCallback<DSPublishMappings[T]>, id?: number) => this.PubSub.unsubscribe(eventName, callback, id)
   /** Publish events */
   public publish = <T extends DSCallbackName>(eventName: T|T[], data: DSPublishMappings[T]) => this.PubSub.publish(eventName, data)
 
