@@ -16,9 +16,9 @@ export const Footer: React.FC<Props> = ({}) => {
       console.log('CALLBACK', items)
       setSelectedAmount(items.length)
     }
-    ds?.subscribe('callback', cb)
+    ds?.subscribe('DS:end', cb)
     return () => {
-      ds?.unsubscribe('callback', cb)
+      ds?.unsubscribe('DS:end', cb)
     }
   }, [ds])
 

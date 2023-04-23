@@ -57,14 +57,14 @@ export const Body: React.FC<Props> = ({}) => {
         setTimeout(() => ds.removeSelectables(items, true, true))
       }
     }
-    ds.subscribe('callback', dsCallback)
+    ds.subscribe('DS:end', dsCallback)
 
     const add = ({ value = 1 }) => setItemCount((count) => count + value)
     // @ts-ignore
     ds.subscribe('__add', add)
 
     return () => {
-      ds.unsubscribe('callback', dsCallback)
+      ds.unsubscribe('DS:end', dsCallback)
       // @ts-ignore
       ds.unsubscribe('__add', add)
     }

@@ -7,7 +7,7 @@ description: DragSelect can be used for drag and drop. Learn how to use DropZone
 
 DropZones are areas where you can drop the selected elements into. 
 - Set it up via [Settings](/docs/API/Settings#dropping).
-- When dropped you’ll find a `dropTarget` in the [callback](/docs/API/Events#callback-object).
+- When dropped you’ll find a `dropTarget` in the [DS:end](/docs/API/Events#callback-object) event callback.
 - You can also use some useful [methods](/docs/API/Methods#dropzones) related to DropZones.
 - Using DropZones will also automatically add respective [classes](/docs/API/CSS-Classes#drop).
 
@@ -33,11 +33,11 @@ const ds = new DragSelect({
 
 Find all possible keys in the [DropZone Settings](/docs/API/Settings#dropping) section.
 
-## The callback
-Now you will see the `dropTarget` in the `callback`, which represents the topmost Zone that was targeted by the mouse on drag release. Here is an example on how you could use it:
+## The DS:end callback
+Now you will see the `dropTarget` in the `DS:end` callback, which represents the topmost Zone that was targeted by the mouse on drag release. Here is an example on how you could use it:
 
 ```js
-ds.subscribe('callback', ({
+ds.subscribe('DS:end', ({
   // 4. If successfully drop by mouse, you’ll find a dropTarget key
   dropTarget: {
     // 5. It is an object with following keys

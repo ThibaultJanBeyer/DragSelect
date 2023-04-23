@@ -133,14 +133,12 @@ const SomeOtherComponentsThatNeedsDragSelect = () => {
 
   // subscribing to a callback
   useEffect(() => {
-    const id = ds.subscribe('callback', (e) => {
+    const id = ds.subscribe('DS:end', (e) => {
       // do something
       console.log(e)
     })
 
-    return () => {
-      ds.unsubscribe('callback', null, id)
-    }
+    return () => ds.unsubscribe('DS:end', null, id)
   }, [])
 
   return (

@@ -96,7 +96,7 @@ const ds = new DragSelect({
   selectables: document.querySelectorAll('.selectable'),
 });
 
-ds.subscribe('callback', (e) => {
+ds.subscribe('DS:end', (e) => {
   console.log(e);
 });
 ```
@@ -111,7 +111,7 @@ const ds = new DragSelect({
   selectables: document.querySelectorAll('.selectable'),
 });
 
-ds.subscribe('callback', (e) => {
+ds.subscribe('DS:end', (e) => {
   console.log(e);
 });
 ```
@@ -125,7 +125,7 @@ require(['dragselect'], function (DragSelect) {
     selectables: document.querySelectorAll('.selectable'),
   });
 
-  ds.subscribe('callback', (e) => {
+  ds.subscribe('DS:end', (e) => {
     console.log(e);
   });
 });
@@ -139,7 +139,7 @@ const ds = new DragSelect({
   selectables: document.querySelectorAll('.selectable'),
 });
 
-ds.subscribe('callback', (e) => {
+ds.subscribe('DS:end', (e) => {
   console.log(e);
 });
 ```
@@ -154,7 +154,7 @@ const ds = new DragSelect({
   selectables: document.querySelectorAll('.selectable'),
 });
 
-ds.subscribe('callback', (e) => {
+ds.subscribe('DS:end', (e) => {
   console.log(e)
 });
 ```
