@@ -16,6 +16,6 @@
         selectables: document.querySelectorAll('.generated-item'),
         immediateDrag: false,
     });
-    ds.subscribe('callback', ({ items }) => { console.log(items); window.selected = items.map(item => item.id) })
+    ds.subscribe('DS:end', ({ items }) => window.selected = items.map(item => item.id))
 </script>
 </body>

@@ -40,7 +40,7 @@ Multi-Select-Ignore-Parents (custom override)
     window.selected = [];
 
     const ds1 = new DragSelect({ selectables: document.querySelectorAll('.item.a') });
-    ds1.subscribe('callback', ({ items }) => window.selected = items.map(item => item.id))
+    ds1.subscribe('DS:end', ({ items }) => window.selected = items.map(item => item.id))
 </script>
 <script>
     window.multiselected = [];
@@ -49,7 +49,7 @@ Multi-Select-Ignore-Parents (custom override)
         selectables: document.querySelectorAll('.item.b'),
         multiSelectMode: true,
     });
-    ds2.subscribe('callback', ({ items }) => window.multiselected = items.map(item => item.id))
+    ds2.subscribe('DS:end', ({ items }) => window.multiselected = items.map(item => item.id))
 </script>
 <script>
     window.multiSelectTogglingOff = [];
@@ -58,7 +58,7 @@ Multi-Select-Ignore-Parents (custom override)
         selectables: document.querySelectorAll('.item.c'),
         multiSelectToggling: false,
     });
-    ds3.subscribe('callback', ({ items }) => window.multiSelectTogglingOff = items.map(item => item.id))
+    ds3.subscribe('DS:end', ({ items }) => window.multiSelectTogglingOff = items.map(item => item.id))
 </script>
 <script>
     window.multiSelectIgnoreParents = [];
@@ -92,5 +92,5 @@ Multi-Select-Ignore-Parents (custom override)
         return { select, unselect }
     }
 
-    ds4.subscribe('callback', ({ items }) => window.multiSelectIgnoreParents = items.map(item => item.id))
+    ds4.subscribe('DS:end', ({ items }) => window.multiSelectIgnoreParents = items.map(item => item.id))
 </script>

@@ -19,22 +19,18 @@
         selectables: document.querySelectorAll('.item'),
         draggability: false
     });
-    ds.subscribe('callback', ({ isDragging, items }) => {
+    ds.subscribe('DS:end', ({ isDragging, items }) => {
         window.dragged = []
         window.selected = []
-        console.log('callback', isDragging, items)
         window[isDragging ? 'dragged' : 'selected'] = items.map(item => item.id)
     })
-    ds.subscribe('predragstart', ({ isDragging, items }) => {
-        console.log('predragstart', isDragging, items)
+    ds.subscribe('preDS:start', ({ isDragging, items }) => {
         if(isDragging) window.preDragStart.push(items.map(item => item.id))
     })
-    ds.subscribe('dragstart', ({ isDragging, items }) => {
-        console.log('dragstart', isDragging, items)
+    ds.subscribe('DS:start', ({ isDragging, items }) => {
         if(isDragging) window.dragStart.push(items.map(item => item.id))
     })
-    ds.subscribe('dragmove', ({ isDragging, items }) => {
-        console.log('dragmove', isDragging, items)
+    ds.subscribe('DS:update', ({ isDragging, items }) => {
         if(isDragging) window.dragMove.push(items.map(item => item.id))
     })
 </script>

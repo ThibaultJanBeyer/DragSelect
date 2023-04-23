@@ -75,7 +75,7 @@ describe('Imports', () => {
           selectables: document.querySelectorAll('.item'),
         })
         window.ds.subscribe(
-          'callback',
+          'DS:end',
           ({ items }) => (window.callback = items.map((item) => item.id))
         )
       })
@@ -131,7 +131,7 @@ describe('Imports', () => {
           });
           require(['DragSelect'], function (DragSelect) {
             window.ds = new DragSelect({ selectables: document.querySelectorAll('.item') });
-            window.ds.subscribe('callback', ({ items }) => (window.callback = items.map((item) => item.id)))
+            window.ds.subscribe('DS:end', ({ items }) => (window.callback = items.map((item) => item.id)))
           });
         `
         document.body.appendChild(window.dsScript)
@@ -163,7 +163,7 @@ describe('Imports', () => {
         window.dsScript.innerHTML = /*javascript*/ `
           import DragSelect from "${uri}";
           window.ds = new DragSelect({ selectables: document.querySelectorAll('.item') });
-          window.ds.subscribe('callback', ({ items }) => (window.callback = items.map((item) => item.id)))
+          window.ds.subscribe('DS:end', ({ items }) => (window.callback = items.map((item) => item.id)))
           `
         document.body.appendChild(window.dsScript)
         setTimeout(() => {
