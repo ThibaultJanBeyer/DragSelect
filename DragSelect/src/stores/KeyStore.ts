@@ -14,9 +14,11 @@ export type DSKeyStorePublish = {
   [K in DSKeyStorePublishEventNames]: DSKeyStorePublishEventData
 }
 
+type KeyMapping = { [key in 'control'|'shift'|'meta']: 'ctrlKey'|'shiftKey'|'metaKey' }
+
 export default class KeyStore {
   private _currentValues = new Set<string>()
-  private _keyMapping: { [key: string]: string } = {
+  private _keyMapping: KeyMapping = {
     control: 'ctrlKey',
     shift: 'shiftKey',
     meta: 'metaKey',
@@ -68,15 +70,15 @@ export default class KeyStore {
 
   public isMultiSelectKeyPressed(event?: KeyboardEvent|MouseEvent|PointerEvent|TouchEvent) {
     if(this.settings.multiSelectMode) return true
-
+    
     const multiSelectKeys = this.settings.multiSelectKeys?.map(
-      (key) => key.toLocaleLowerCase()
-    )
-
-    if (this.currentValues.some((key) => multiSelectKeys.includes(key)))
+      (key) => key.toLocaleLowerCase() as keyof KeyMapping
+    ) ?? []
+      
+    if (this.currentValues.some((key) => multiSelectKeys.includes(key as keyof KeyMapping)))
       return true
 
-    if (event && multiSelectKeys.some((key) => this._keyMapping[key] in event))
+    if (event && multiSelectKeys.some((key) => event[this._keyMapping[key]]))
       return true
 
     return false
