@@ -1,19 +1,19 @@
 import DragSelect from '../DragSelect'
 import PubSub from '../modules/PubSub'
-import { Settings, Vect2 } from '../types'
+import { DSInputElement, Settings, Vect2 } from '../types'
 import { calcVect, num2vect } from "../methods/vect2"
 import { canScroll } from '../methods/canScroll'
 import { getCurrentScroll } from '../methods/getCurrentScroll'
 
-export default class ScrollStore {
+export default class ScrollStore<E extends DSInputElement> {
   private _initialVal: Vect2 = { x: 0, y: 0 }
   private _currentVal: Vect2 = { x: 0, y: 0 }
   private _canScroll?: boolean
-  private DS: DragSelect
-  private PS: PubSub
-  private Settings: Required<Settings>
+  private DS: DragSelect<E>
+  private PS: PubSub<E>
+  private Settings: Required<Settings<E>>
 
-  constructor({ DS, PS }: { DS: DragSelect, PS: PubSub }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>, PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s

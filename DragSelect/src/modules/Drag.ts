@@ -1,24 +1,24 @@
 import DragSelect from '../DragSelect'
 import PubSub from './PubSub'
-import { DSBoundingRect, DSDragKeys, DSElement, DSEvent, Vect2 } from '../types'
+import { DSBoundingRect, DSDragKeys, DSInputElement, Vect2 } from '../types'
 import { DSSettings } from '../stores/SettingsStore'
 import { calcVect, num2vect, vect2rect } from '../methods/vect2'
 import { getBoundingClientRect } from '../methods/getBoundingClientRect'
 import { handleKeyboardDragPosDifference } from '../methods/handleKeyboardDragPosDifference'
 import { moveElement } from '../methods/moveElement'
 
-export default class Drag {
+export default class Drag<E extends DSInputElement> {
   private _prevCursorPos?: Vect2
   private _prevScrollPos?: Vect2
-  private _elements: DSElement[] = []
+  private _elements: E[] = []
   private _dragKeys?: DSDragKeys
   private _dragKeysFlat: string[] = []
   private _selectionRect: DSBoundingRect = vect2rect(num2vect(0))
-  DS: DragSelect
-  PS: PubSub
-  Settings: DSSettings
+  DS: DragSelect<E>
+  PS: PubSub<E>
+  Settings: DSSettings<E>
 
-  constructor({ DS, PS }: { DS: DragSelect, PS: PubSub }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>, PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s

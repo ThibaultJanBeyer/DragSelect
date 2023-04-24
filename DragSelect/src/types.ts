@@ -1,6 +1,5 @@
 import { DSPublicPublishAdditionalEventData, DSPublicPublishEventNames } from "./methods/subscriberAliases"
 import { DSAreaPublishEventData, DSAreaPublishEventNames } from "./modules/Area"
-import { DSDropZone } from "./modules/DropZone"
 import { DSInteractionPublishEventData, DSInteractionPublishEventNames } from "./modules/Interaction"
 import { DSSelectablePublishEventData, DSSelectablePublishEventNames } from "./modules/SelectableSet"
 import { DSSelectedPublishEventData, DSSelectedPublishEventNames } from "./modules/SelectedSet"
@@ -13,11 +12,11 @@ export type Vect2 = {
   y: number
 }
 
-export type Settings = {
+export type Settings<E extends DSInputElement> = {
   /** area in which you can drag. If not provided it will be the whole document. Default Document */
   area?: HTMLElement | SVGElement | Document
   /** [=[]] the elements that can be selected. */
-  selectables?: DSInputElements 
+  selectables?: E | E[]
   /** [=5] Speed in which the area scrolls while selecting (if available). Unit is pixel per movement. */
   autoScrollSpeed?: number
   /** [={x:25,y:25}] Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start). */
@@ -51,7 +50,7 @@ export type Settings = {
   /** [=80] Refresh rate on memoization, higher numbers mean better performance but more lag if elements are moving, lower numbers mean less lag but worse performance. If none of your DOMNodes are moving, you can set it to a very high number to increase performance. Value in milliseconds. */
   refreshMemoryRate?: number
   /** [=[]] one or more drop-elements: where the selectables can be dropped into */
-  dropZones?: DSInputDropZone[]
+  dropZones?: DSInputDropZone<E>[]
   /** [=1] how much % of the item has to be inside the dropzone to be considered inside (0 = barely touching, 1 = completely inside) */
   dropInsideThreshold?: number
   /** [=0] how much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone) */ 
@@ -86,27 +85,27 @@ export type Settings = {
   dragAsBlock?: boolean
 }
 
-export type DSCallbackObject = 
+export type DSCallbackObject<E extends DSInputElement> = 
   Readonly<
     Partial<
-      & DSSettingsPublishEventData
-      & DSAreaPublishEventData
+      & DSSettingsPublishEventData<E>
+      & DSAreaPublishEventData<E>
       & DSKeyStorePublishEventData
       & DSPointerStorePublishEventData
       & DSInteractionPublishEventData
-      & DSSelectablePublishEventData
-      & DSSelectedPublishEventData
-      & DSPublicPublishAdditionalEventData
+      & DSSelectablePublishEventData<E>
+      & DSSelectedPublishEventData<E>
+      & DSPublicPublishAdditionalEventData<E>
     >
   >
 
-export type DSInputDropZone = {
+export type DSInputDropZone<E extends DSInputElement> = {
   /** can be any unique identifier of type string */
   id: string
   /** the dropzone itself */
-  element: DSElement
+  element: E // @TODO this would not be of type InputElement!
   /** elements that can be dropped into that zone. This is optional, by default it will be all selectables */
-  droppables?: DSInputElements
+  droppables?: E[]
 }
 
 export type DSElementPos = {
@@ -128,10 +127,10 @@ export type DSArea = HTMLElement|SVGElement|Document
 export type DSSelectorArea = HTMLElement
 
 /** elements that can be selected */
-export type DSInputElements = Array<HTMLElement|SVGElement> | HTMLElement | SVGElement
+export type DSInputElement = HTMLElement | SVGElement
 
 /** element that can be selected */
-export type DSElement = HTMLElement|SVGElement
+// export type DSElement = HTMLElement|SVGElement
 
 /** An array of keys that allows switching to the multi-select mode */
 export type DSMultiSelectKeys = Array<'Shift'|'Control'|'Meta'|string>
@@ -139,7 +138,7 @@ export type DSMultiSelectKeys = Array<'Shift'|'Control'|'Meta'|string>
 export type DSEvent = KeyboardEvent|MouseEvent|PointerEvent|TouchEvent
 
 export type DSInternalEventName = DSSettingsPublishEventNames|DSAreaPublishEventNames|DSKeyStorePublishEventNames|DSPointerStorePublishEventNames|DSInteractionPublishEventNames|DSSelectablePublishEventNames|DSSelectedPublishEventNames
-export type DSCallbackName = DSPublicPublishEventNames|DSInternalEventName
+export type DSCallbackName<E extends DSInputElement> = DSPublicPublishEventNames<E>|DSInternalEventName
 
 export type DSBoundingRectBase = {
   top: number,

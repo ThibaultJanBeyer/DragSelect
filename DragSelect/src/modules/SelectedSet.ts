@@ -1,32 +1,32 @@
 import DragSelect from "../DragSelect"
 import PubSub from "./PubSub"
-import { DSElement } from "../types"
 import { DSSettings } from "../stores/SettingsStore"
+import { DSInputElement } from "../types";
 
 export type DSSelectedPublishEventNames = "Selected:added:pre"|"Selected:added"|"Selected:removed"|"Selected:removed:pre"
 
-export type DSSelectedPublishEventData = {
-  items: DSElement[],
-  item: DSElement,
+export type DSSelectedPublishEventData<E extends DSInputElement> = {
+  items: E[],
+  item: E,
 };
 
-export type DSSelectedPublish = {
-  [K in DSSelectedPublishEventNames]: DSSelectedPublishEventData
+export type DSSelectedPublish<E extends DSInputElement> = {
+  [K in DSSelectedPublishEventNames]: DSSelectedPublishEventData<E>
 }
 
-export default class SelectedSet extends Set<DSElement> {
-  private DS: DragSelect
-  private PS: PubSub
-  private Settings: DSSettings
+export default class SelectedSet<E extends DSInputElement> extends Set<E> {
+  private DS: DragSelect<E>
+  private PS: PubSub<E>
+  private Settings: DSSettings<E>
 
-  constructor({ DS, PS }: { DS: DragSelect, PS: PubSub }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>, PS: PubSub<E> }) {
     super()
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s
   }
 
-  public add(element?: DSElement) {
+  public add(element?: E) {
     if (!element || super.has(element)) return this
     const publishData = {
       items: this.elements,
@@ -40,7 +40,7 @@ export default class SelectedSet extends Set<DSElement> {
     return this
   }
 
-  public delete(element: DSElement) {
+  public delete(element: E) {
     if (!element || !super.has(element)) return true
     const publishData = {
       items: this.elements,
@@ -57,15 +57,15 @@ export default class SelectedSet extends Set<DSElement> {
   public clear = () => this.forEach((el) => this.delete(el))
 
   /** Adds/Removes an element. If it is already selected = remove, if not = add. */
-  public toggle(element: DSElement) {
+  public toggle(element: E) {
     if (this.has(element)) this.delete(element)
     else this.add(element)
     return element
   }
 
-  public addAll = (elements: DSElement[]) => elements.forEach((el) => this.add(el))
+  public addAll = (elements: E[]) => elements.forEach((el) => this.add(el))
 
-  public deleteAll = (elements: DSElement[]) => elements.forEach((el) => this.delete(el))
+  public deleteAll = (elements: E[]) => elements.forEach((el) => this.delete(el))
 
   get elements() {
     return Array.from(this.values())

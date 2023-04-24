@@ -4,17 +4,17 @@ import { getSelectorPosition } from "../methods/getSelectorPosition";
 import updateElementStylePos from "../methods/updateElementStylePos";
 import { vect2rect } from "../methods/vect2";
 import { DSSettings } from "../stores/SettingsStore";
-import { DSBoundingRect } from "../types"
+import { DSBoundingRect, DSInputElement } from "../types"
 import PubSub from "./PubSub";
 
-export default class Selector {
+export default class Selector<E extends DSInputElement> {
   private _rect?: DSBoundingRect
-  private DS: DragSelect;
-  private PS: PubSub;
-  private Settings: DSSettings;
+  private DS: DragSelect<E>;
+  private PS: PubSub<E>;
+  private Settings: DSSettings<E>;
   public HTMLNode: HTMLElement;
 
-  constructor({ DS, PS }: { DS: DragSelect; PS: PubSub }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>; PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s

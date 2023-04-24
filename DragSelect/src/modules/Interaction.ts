@@ -1,6 +1,6 @@
 import DragSelect from "../DragSelect"
 import PubSub from "./PubSub"
-import { DSEdges, DSElement, DSEvent } from "../types";
+import { DSEdges, DSInputElement } from "../types";
 import { DSSettings } from "../stores/SettingsStore"
 
 export type DSInteractionPublishEventNames = "Interaction:init:pre"|"Interaction:init"|"Interaction:start:pre"|"Interaction:start"|"Interaction:update:pre"|"Interaction:update"|"Interaction:end:pre"|"Interaction:end"
@@ -29,14 +29,14 @@ export type DSInteractionPublish = {
 
 export type InteractionEvent = MouseEvent|PointerEvent|TouchEvent
 
-export default class Interaction {
+export default class Interaction<E extends DSInputElement> {
   private isInteracting?: boolean
   public isDragging: boolean = false
-  private DS: DragSelect
-  private PS: PubSub
-  private Settings: DSSettings
+  private DS: DragSelect<E>
+  private PS: PubSub<E>
+  private Settings: DSSettings<E>
 
-  constructor({ DS, PS }: { DS: DragSelect, PS: PubSub }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>, PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s
@@ -79,7 +79,7 @@ export default class Interaction {
     if (
       ('button' in event && event.button === 2) || // right-clicks
       this.isInteracting || // fix double-click issues
-      (event.target && !this.DS.SelectorArea.isInside(event.target as DSElement)) || // fix outside elements issue
+      (event.target && !this.DS.SelectorArea.isInside(event.target as E)) || // fix outside elements issue
       (!isKeyboardClick && !this.DS.SelectorArea.isClicked(event)) // make sure the mouse click is inside the area
     )
       return false
@@ -115,9 +115,9 @@ export default class Interaction {
   }
 
   private isDragEvent = (event: InteractionEvent | KeyboardEvent) => {
-    let clickedElement: DSElement | null = null
+    let clickedElement: E | null = null
     if(event.target && 'closest' in event.target)
-      clickedElement = (event.target as DSElement).closest(`.${this.Settings.selectableClass}`)
+      clickedElement = (event.target as E).closest(`.${this.Settings.selectableClass}`)
 
     if (
       !this.Settings.draggability ||
@@ -156,7 +156,7 @@ export default class Interaction {
 
     PointerStore.start(event)
 
-    const node = event.target as DSElement
+    const node = event.target as E
     if (node && !SelectableSet.has(node)) return
 
     if (!KeyStore.isMultiSelectKeyPressed(event)) SelectedSet.clear()

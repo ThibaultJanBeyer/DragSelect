@@ -1,19 +1,18 @@
 import DragSelect from '../DragSelect'
 import PubSub from './PubSub'
-import { DSBoundingRect, DSElement, DSEvent } from '../types'
+import { DSBoundingRect, DSEvent, DSInputElement } from '../types'
 import { DSSettings } from '../stores/SettingsStore'
-import { InteractionEvent } from './Interaction'
 import { handleSelection } from '../methods/handleSelection'
 import { handleUnSelection } from '../methods/handleUnSelection'
 import { isCollision } from '../methods/isCollision'
 
-export default class Selection {
-  private _prevSelectedSet: Set<DSElement> = new Set()
-  private DS: DragSelect
-  private PS: PubSub
-  private Settings: DSSettings
+export default class Selection<E extends DSInputElement> {
+  private _prevSelectedSet: Set<E> = new Set()
+  private DS: DragSelect<E>
+  private PS: PubSub<E>
+  private Settings: DSSettings<E>
 
-  constructor({ DS, PS }: { DS: DragSelect; PS: PubSub }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>; PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s
@@ -56,8 +55,8 @@ export default class Selection {
     const elRects = SelectableSet.rects
     const selectorRect = Selector.rect
 
-    const select: Map<DSElement,DSBoundingRect> = new Map()
-    const unselect: Map<DSElement,DSBoundingRect> = new Map()
+    const select: Map<E,DSBoundingRect> = new Map()
+    const unselect: Map<E,DSBoundingRect> = new Map()
 
     for (const [element, elementRect] of elRects) {
       if (!SelectorArea.isInside(element, elementRect)) continue
@@ -98,8 +97,8 @@ export default class Selection {
    * Is expected to return the select / unselect maps in the same shape as passed in
    */
   public filterSelected = ({ select, unselect, selectorRect }: {
-    select: Map<DSElement,DSBoundingRect>; 
-    unselect: Map<DSElement,DSBoundingRect>;
+    select: Map<E,DSBoundingRect>; 
+    unselect: Map<E,DSBoundingRect>;
     selectorRect: DSBoundingRect
   }) => ({ select, unselect })
 }

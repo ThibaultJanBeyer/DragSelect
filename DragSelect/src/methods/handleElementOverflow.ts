@@ -1,8 +1,8 @@
-import { DSBoundingRect, DSEdges, DSElement, Vect2 } from "../types"
+import { DSBoundingRect, DSEdges, DSInputElement, Vect2 } from "../types"
 import { setStylePosition } from "./setStylePosition"
 
-type Props = {
-  element: DSElement
+type Props<E extends DSInputElement> = {
+  element: E
   edges: DSEdges
   elementRect: DSBoundingRect
   containerRect: DSBoundingRect
@@ -14,14 +14,14 @@ type Props = {
  * pushes element back the overflow amount
  * (top - top gives overflow, then new position pushed back by overflow)
  */
-export const handleElementOverflow = ({
+export const handleElementOverflow = <E extends DSInputElement>({
   element,
   edges,
   elementRect,
   containerRect,
   elementPos,
   useTransform,
-}: Props) => {
+}: Props<E>) => {
   if (edges.includes('top')) {
     setStylePosition(
       element,

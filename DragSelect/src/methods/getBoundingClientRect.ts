@@ -1,9 +1,9 @@
 import SelectableSet from '../modules/SelectableSet'
-import { DSElement, DSBoundingRect } from '../types'
-import { toArray } from './toArray'
+import { DSBoundingRect, DSInputElement } from '../types'
+import { ensureArray } from './ensureArray'
 
 /** Returns the compound bounding rect of multiple elements */
-export const getBoundingClientRect = (elements: DSElement[], SelectableSet: SelectableSet): DSBoundingRect => {
+export const getBoundingClientRect = <E extends DSInputElement>(elements: E[], SelectableSet: SelectableSet<E>): DSBoundingRect => {
   const rect = {
     top: Number.POSITIVE_INFINITY,
     left: Number.POSITIVE_INFINITY,
@@ -13,7 +13,7 @@ export const getBoundingClientRect = (elements: DSElement[], SelectableSet: Sele
     height: Number.NEGATIVE_INFINITY,
   }
 
-  toArray(elements).forEach((element) => {
+  ensureArray(elements).forEach((element) => {
     const elementRect = SelectableSet.getRect(element)
     rect.top = Math.min(rect.top, elementRect?.top || rect.top)
     rect.left = Math.min(rect.left, elementRect?.left || rect.left)

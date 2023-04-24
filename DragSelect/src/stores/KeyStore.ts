@@ -1,6 +1,6 @@
 import DragSelect from '../DragSelect'
 import PubSub from '../modules/PubSub'
-import { Settings } from '../types'
+import { DSInputElement, Settings } from '../types'
 
 export type DSKeyStorePublishEventNames = "KeyStore:down:pre"|"KeyStore:down"|"KeyStore:up:pre"|"KeyStore:up"
 
@@ -16,23 +16,23 @@ export type DSKeyStorePublish = {
 
 type KeyMapping = { [key in 'control'|'shift'|'meta']: 'ctrlKey'|'shiftKey'|'metaKey' }
 
-export default class KeyStore {
+export default class KeyStore<E extends DSInputElement> {
   private _currentValues = new Set<string>()
   private _keyMapping: KeyMapping = {
     control: 'ctrlKey',
     shift: 'shiftKey',
     meta: 'metaKey',
   }
-  private DS: DragSelect
-  private PS: PubSub
-  private settings: Required<Settings>
+  private DS: DragSelect<E>
+  private PS: PubSub<E>
+  private settings: Required<Settings<E>>
 
   /**
    * @class KeyStore
    * @constructor KeyStore
    * @ignore
    */
-  constructor({ DS, PS }: { DS: DragSelect, PS: PubSub }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>, PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.settings = this.DS.stores.SettingsStore.s

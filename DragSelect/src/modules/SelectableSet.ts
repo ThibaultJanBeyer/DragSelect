@@ -1,39 +1,39 @@
 import DragSelect from "../DragSelect"
 import PubSub from "./PubSub"
-import { DSBoundingRect, DSElement } from "../types"
+import { DSBoundingRect, DSInputElement } from "../types"
 import { DSSettings } from "../stores/SettingsStore"
 import { InteractionEvent } from "./Interaction"
 import { handleElementPositionAttribute } from "../methods/handleElementPositionAttribute"
-import { toArray } from "../methods/toArray"
+import { ensureArray } from "../methods/ensureArray"
 
 export type DSSelectablePublishEventNames = "Selectable:added:pre"|"Selectable:added"|"Selectable:removed"|"Selectable:removed:pre"|"Selectable:click:pre"|"Selectable:click"|"Selectable:pointer:pre"|"Selectable:pointer"
 
-export type DSSelectablePublishEventData = {
+export type DSSelectablePublishEventData<E extends DSInputElement> = {
   /** The items currently selected */
-  items: DSElement[],
+  items: E[],
   /** The item currently selected */
-  item: DSElement,
+  item: E,
 };
 
-export type DSSelectablePublish = {
-  "Selectable:added:pre": DSSelectablePublishEventData
-  "Selectable:added": DSSelectablePublishEventData
-  "Selectable:removed:pre": DSSelectablePublishEventData
-  "Selectable:removed": DSSelectablePublishEventData
+export type DSSelectablePublish<E extends DSInputElement> = {
+  "Selectable:added:pre": DSSelectablePublishEventData<E>
+  "Selectable:added": DSSelectablePublishEventData<E>
+  "Selectable:removed:pre": DSSelectablePublishEventData<E>
+  "Selectable:removed": DSSelectablePublishEventData<E>
   "Selectable:click:pre": { event: MouseEvent }
   "Selectable:click": { event: MouseEvent }
   "Selectable:pointer:pre": { event: InteractionEvent }
   "Selectable:pointer": { event: InteractionEvent }
 }
 
-export default class SelectableSet extends Set<DSElement> {
-  private _rects?: Map<DSElement,DSBoundingRect>
+export default class SelectableSet<E extends DSInputElement> extends Set<E> {
+  private _rects?: Map<E, DSBoundingRect>
   private _timeout?: NodeJS.Timeout
-  private DS: DragSelect
-  private PS: PubSub
-  private Settings: DSSettings
+  private DS: DragSelect<E>
+  private PS: PubSub<E>
+  private Settings: DSSettings<E>
 
-  constructor({ DS, PS }: { DS: DragSelect, PS: PubSub }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>, PS: PubSub<E> }) {
     super()
     this.DS = DS
     this.PS = PS
@@ -51,9 +51,9 @@ export default class SelectableSet extends Set<DSElement> {
     })
   }
 
-  private init = () => toArray(this.Settings.selectables).forEach((el) => this.add(el))
+  private init = () => ensureArray(this.Settings.selectables).forEach((el) => this.add(el))
 
-  public add(element: DSElement) {
+  public add(element: E) {
     if (super.has(element)) return this
     const publishData = {
       items: this.elements,
@@ -79,7 +79,7 @@ export default class SelectableSet extends Set<DSElement> {
     return super.add(element)
   }
 
-  public delete(element: DSElement) {
+  public delete(element: E) {
     if (!super.has(element)) return true
     const publishData = {
       items: this.elements,
@@ -113,11 +113,11 @@ export default class SelectableSet extends Set<DSElement> {
   private _onPointer = (event: Event) => // we know it’s only an InteractionEvent
     this.PS.publish(['Selectable:pointer:pre', 'Selectable:pointer'], { event: event as InteractionEvent })
 
-  public addAll = (elements: DSElement[]) => elements.forEach((el) => this.add(el))
+  public addAll = (elements: E[]) => elements.forEach((el) => this.add(el))
 
-  public deleteAll = (elements: DSElement[]) => elements.forEach((el) => this.delete(el))
+  public deleteAll = (elements: E[]) => elements.forEach((el) => this.delete(el))
 
-  public getRect = (element: DSElement) => this._rects ? this.rects.get(element) : element.getBoundingClientRect()
+  public getRect = (element: E) => this._rects ? this.rects.get(element) : element.getBoundingClientRect()
 
   get elements() {
     return Array.from(this.values())
@@ -137,6 +137,6 @@ export default class SelectableSet extends Set<DSElement> {
       this.Settings.refreshMemoryRate
     )
 
-    return this._rects as Map<DSElement,DSBoundingRect>
+    return this._rects
   }
 }
