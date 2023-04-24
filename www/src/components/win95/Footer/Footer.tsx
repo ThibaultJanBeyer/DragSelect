@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import styles from './Footer.module.scss'
 import { useDragSelect } from '../../DragSelectContext'
+import { DSPubCallback } from 'dragselect'
 
 type Props = {}
 
@@ -12,7 +13,7 @@ export const Footer: React.FC<Props> = ({}) => {
   useEffect(() => {
     if (!ds) return
 
-    const cb = ({ items = [] }) => {
+    const cb: DSPubCallback<"DS:end"> = ({ items = [] }) => {
       console.log('CALLBACK', items)
       setSelectedAmount(items.length)
     }

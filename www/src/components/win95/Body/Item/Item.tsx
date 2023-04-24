@@ -5,6 +5,7 @@ import styles from './Item.module.scss'
 import { FileIcon } from './FileIcon'
 import { getRandomFileName } from './fileNames'
 import { useDragSelect } from '../../../DragSelectContext'
+import { DSPubCallback } from 'dragselect'
 
 const explode = async (element: HTMLElement, isAppearing?: boolean) => {
   const BE = BubbleExplosion({
@@ -28,9 +29,9 @@ const _Item: React.FC = () => {
     const element = inputEl.current as unknown as HTMLElement
     if (!element || !ds || !available) return
 
-    const cb = async ({ item }: { item: any }) => {
+    const cb: DSPubCallback<"DS:removed"> = async ({ item }) => {
       if (item !== element) return
-      ds.unsubscribe('Selectable:removed', cb)
+      ds.unsubscribe('DS:removed', cb)
       await explode(element)
       setAvailable(false)
     }
@@ -38,14 +39,14 @@ const _Item: React.FC = () => {
     const firstEffect = async () => {
       await explode(element, true)
       ds.addSelectables(element)
-      ds?.subscribe('Selectable:removed', cb)
+      ds?.subscribe('DS:removed', cb)
     }
 
     if (!ds.SelectableSet.has(element)) firstEffect()
 
     return () => {
       if (!element || !ds) return
-      ds.unsubscribe('Selectable:removed', cb)
+      ds.unsubscribe('DS:removed', cb)
     }
   }, [ds, inputEl, available])
 

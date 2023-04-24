@@ -22,6 +22,8 @@ ds.subscribe('<event_name>', (callback_object) => {})
 |`DS:scroll` |{ items, isDragging, scroll_directions, scroll_multiplier, … } |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
 |`DS:select` |{ items, item, isDragging, …} |Fired when an element is added to the selection.
 |`DS:unselect` |{ items, item, isDragging, … } |Fired when an element is removed from the selection.
+|`DS:added` |{ items, item, isDragging, … } |Fired when an element is added from the list of selectable elements.
+|`DS:removed` |{ items, item, isDragging, … } |Fired when an element is removed from the list of selectable elements.
 
 > Note: all your callbacks subscribers will run after the internal code ran. If you want to run something before everything else, use the `:pre` postfix. I.e. `DS:start:pre` is an event that runs before any internal start logic.
 

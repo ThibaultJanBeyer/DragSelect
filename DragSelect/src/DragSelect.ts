@@ -1,3 +1,5 @@
+// @TODO: add a way to tell typescript what elements are inside based on the input elements!! (instead of DSElement) Is that even possible???
+
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -60,6 +62,8 @@ import { IsCollision, isCollision } from './methods/isCollision'
 import { DSPublicPublish, deprecatedNamesMap, subscriberAliases } from './methods/subscriberAliases'
 import { toArray } from './methods/toArray'
 import { DSDropZone } from './modules/DropZone'
+
+export type DSPubCallback<T extends keyof DSPublicPublish> = DSCallback<DSPublishMappings[T]>
 
 // Setup
 /// ///////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +157,10 @@ class DragSelect {
    * @param withCallback if elements should also be added/removed to the selection.
    */
   public stop(remove: boolean = true, fromSelection: boolean = true, withCallback: boolean = false) {
-    if (withCallback) this.publish('DS:end', {})
+    if (withCallback) this.publish('DS:end', {
+      items: this.SelectedSet.elements,
+      isDragging: this.Interaction.isDragging,
+    })
 
     this.Interaction.stop()
     this.Area.stop()
@@ -199,7 +206,10 @@ class DragSelect {
     this.SelectedSet.addAll(toArray(elements))
     if (!dontAddToSelectables) this.addSelectables(elements, false, false)
     if (triggerCallback)
-      this.PubSub.publish('DS:end', {})
+      this.PubSub.publish('DS:end', {
+        items: this.SelectedSet.elements,
+        isDragging: this.Interaction.isDragging,
+      })
     return this.getSelection()
   }
 
@@ -219,7 +229,10 @@ class DragSelect {
     this.SelectedSet.deleteAll(toArray(elements))
     if (removeFromSelectables) this.removeSelectables(elements, false, false)
     if (triggerCallback)
-      this.PubSub.publish('DS:end', {})
+      this.PubSub.publish('DS:end', {
+        items: this.SelectedSet.elements,
+        isDragging: this.Interaction.isDragging,
+      })
     return this.getSelection()
   }
 
@@ -243,7 +256,10 @@ class DragSelect {
         : this.addSelection(elements, triggerCallback, removeFromSelectables)
     )
     if (triggerCallback)
-      this.PubSub.publish('DS:end', {})
+      this.PubSub.publish('DS:end', {
+        items: this.SelectedSet.elements,
+        isDragging: this.Interaction.isDragging,
+      })
     return this.getSelection()
   }
 
@@ -272,7 +288,10 @@ class DragSelect {
   public clearSelection(triggerCallback: boolean = false): DSElement[] {
     this.SelectedSet.clear()
     if (triggerCallback)
-      this.PubSub.publish('DS:end', {})
+      this.PubSub.publish('DS:end', {
+        items: this.SelectedSet.elements,
+        isDragging: this.Interaction.isDragging,
+      })
     return this.getSelection()
   }
 
@@ -288,7 +307,10 @@ class DragSelect {
     this.SelectableSet.addAll(els)
     if (addToSelection) this.SelectedSet.addAll(els)
     if (triggerCallback)
-      this.PubSub.publish('DS:end', {})
+      this.PubSub.publish('DS:end', {
+        items: this.SelectedSet.elements,
+        isDragging: this.Interaction.isDragging,
+      })
     return elements
   }
 
@@ -306,7 +328,10 @@ class DragSelect {
     this.SelectableSet.deleteAll(toArray(elements))
     if (removeFromSelection) this.removeSelection(elements)
     if (triggerCallback)
-      this.PubSub.publish('DS:end', {})
+      this.PubSub.publish('DS:end', {
+        items: this.SelectedSet.elements,
+        isDragging: this.Interaction.isDragging,
+      })
     return elements
   }
 

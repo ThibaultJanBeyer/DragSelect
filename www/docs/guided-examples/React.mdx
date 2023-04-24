@@ -146,3 +146,15 @@ const SomeOtherComponentsThatNeedsDragSelect = () => {
   )
 }
 ```
+
+DragSelect also exports some helper types for type safety, i.e. `DSPubCallback` which you can pass in the subscriber for the callback type safety:
+
+```tsx
+import { DSPubCallback } from 'dragselect'
+const cb: DSPubCallback<"DS:end"> = ({ items = [] }) => {
+  console.log('CALLBACK', items)
+  setSelectedAmount(items.length)
+}
+```
+
+You can see this example in use within this docusaurus project. I.e. [the context provider here](https://github.com/ThibaultJanBeyer/DragSelect/blob/00d2e4ec4eb6b10bb7017022093ba403c4ebb208/www/src/components/DragSelectContext.tsx#L13) and a random [useage example here](https://github.com/ThibaultJanBeyer/DragSelect/blob/1e63a9215bf8e38bcedef8105f439d38be00ee14/www/src/components/win95/Footer/Footer.tsx#L16)

@@ -11,6 +11,10 @@ export type DSPublicPublishEventNames = keyof DSPublicPublish
 export type DSPublicPublishAdditionalEventData = {
   /** The dropZone element that the element was dropped into (or the mouse is currently hovering over) */
   dropTarget?: DSDropZone
+  /** Selected Elements */
+  items: DSElement[]
+  /** Whether the user is dragging or selecting */
+  isDragging: boolean
 }
 
 type SelectionCB = DSSelectedPublishEventData & {
@@ -44,16 +48,20 @@ export const deprecatedNamesMap = {
 }
 
 export type DSPublicPublish = {
-  // Select Events
+  // Selection Events
   "preelementselect": SelectionCB
   "elementselect": SelectionCB
-  "DS:select": SelectionCB
   "DS:select:pre": SelectionCB
-  // Unselect Events
+  "DS:select": SelectionCB
   "preelementunselect": SelectionCB
   "elementunselect": SelectionCB
-  "DS:unselect": SelectionCB
   "DS:unselect:pre": SelectionCB
+  "DS:unselect": SelectionCB
+  // Selectables Events
+  "DS:added:pre": SelectionCB
+  "DS:added": SelectionCB
+  "DS:removed:pre": SelectionCB
+  "DS:removed": SelectionCB
   // Scroll Events
   "preautoscroll": ScrollCB
   "autoscroll": ScrollCB
@@ -79,6 +87,8 @@ export type DSPublicPublish = {
 type UsedPublishNames =
   | 'Selected:added'
   | 'Selected:removed'
+  | 'Selectable:added'
+  | 'Selectable:removed'
   | 'Area:scroll'
   | 'Interaction:start'
   | 'Interaction:update'
@@ -110,6 +120,14 @@ const mapping: DSMappings = {
     { name: 'elementunselect' },
     { name: 'DS:unselect:pre' },
     { name: 'DS:unselect' },
+  ],
+  'Selectable:added': [
+    { name: 'DS:added:pre' },
+    { name: 'DS:added' },
+  ],
+  'Selectable:removed': [
+    { name: 'DS:removed:pre' },
+    { name: 'DS:removed' },
   ],
   'Area:scroll': [
     { name: 'preautoscroll' },
