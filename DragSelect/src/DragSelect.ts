@@ -60,7 +60,7 @@ import SettingsStore from './stores/SettingsStore'
 import { DSCallbackName, DSElement, DSInputElements, Settings, Vect2 } from './types'
 import { IsCollision, isCollision } from './methods/isCollision'
 import { DSPublicPublish, deprecatedNamesMap, subscriberAliases } from './methods/subscriberAliases'
-import { toArray } from './methods/toArray'
+import { ensureArray } from './methods/ensureArray'
 import { DSDropZone } from './modules/DropZone'
 
 export type DSPubCallback<T extends keyof DSPublicPublish> = DSCallback<DSPublishMappings[T]>
@@ -203,7 +203,8 @@ class DragSelect {
     triggerCallback: boolean = false,
     dontAddToSelectables: boolean = false
   ): DSElement[] {
-    this.SelectedSet.addAll(toArray(elements))
+    const els = ensureArray(elements)
+    this.SelectedSet.addAll(els)
     if (!dontAddToSelectables) this.addSelectables(elements, false, false)
     if (triggerCallback)
       this.PubSub.publish('DS:end', {
@@ -226,7 +227,8 @@ class DragSelect {
     triggerCallback: boolean = false,
     removeFromSelectables: boolean = false
   ): DSElement[] {
-    this.SelectedSet.deleteAll(toArray(elements))
+    const els = ensureArray(elements)
+    this.SelectedSet.deleteAll(els)
     if (removeFromSelectables) this.removeSelectables(elements, false, false)
     if (triggerCallback)
       this.PubSub.publish('DS:end', {
@@ -250,7 +252,8 @@ class DragSelect {
     triggerCallback: boolean = false,
     removeFromSelectables: boolean = false
   ): DSElement[] {
-    toArray(elements).forEach((el: DSElement) =>
+    const els = ensureArray(elements)
+    els.forEach((el: DSElement) =>
       this.SelectedSet.has(el)
         ? this.removeSelection(elements, triggerCallback, removeFromSelectables)
         : this.addSelection(elements, triggerCallback, removeFromSelectables)
@@ -303,7 +306,7 @@ class DragSelect {
    * @return the added element(s)
    */
   public addSelectables(elements: DSInputElements, addToSelection?: boolean, triggerCallback?: boolean): DSInputElements {
-    const els = toArray(elements)
+    const els = ensureArray(elements)
     this.SelectableSet.addAll(els)
     if (addToSelection) this.SelectedSet.addAll(els)
     if (triggerCallback)
@@ -311,7 +314,7 @@ class DragSelect {
         items: this.SelectedSet.elements,
         isDragging: this.Interaction.isDragging,
       })
-    return elements
+    return els
   }
 
   /** Gets all nodes that can potentially be selected */
@@ -325,14 +328,15 @@ class DragSelect {
    * @return the removed element(s)
    */
   public removeSelectables(elements: DSInputElements, removeFromSelection?: boolean, triggerCallback?: boolean): DSInputElements {
-    this.SelectableSet.deleteAll(toArray(elements))
+    const els = ensureArray(elements)
+    this.SelectableSet.deleteAll(els)
     if (removeFromSelection) this.removeSelection(elements)
     if (triggerCallback)
       this.PubSub.publish('DS:end', {
         items: this.SelectedSet.elements,
         isDragging: this.Interaction.isDragging,
       })
-    return elements
+    return els
   }
 
   /** The starting/initial position of the cursor/selector */

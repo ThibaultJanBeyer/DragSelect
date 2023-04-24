@@ -4,7 +4,7 @@ import { DSBoundingRect, DSElement } from "../types"
 import { DSSettings } from "../stores/SettingsStore"
 import { InteractionEvent } from "./Interaction"
 import { handleElementPositionAttribute } from "../methods/handleElementPositionAttribute"
-import { toArray } from "../methods/toArray"
+import { ensureArray } from "../methods/ensureArray"
 
 export type DSSelectablePublishEventNames = "Selectable:added:pre"|"Selectable:added"|"Selectable:removed"|"Selectable:removed:pre"|"Selectable:click:pre"|"Selectable:click"|"Selectable:pointer:pre"|"Selectable:pointer"
 
@@ -51,7 +51,7 @@ export default class SelectableSet extends Set<DSElement> {
     })
   }
 
-  private init = () => toArray(this.Settings.selectables).forEach((el) => this.add(el))
+  private init = () => ensureArray(this.Settings.selectables).forEach((el) => this.add(el))
 
   public add(element: DSElement) {
     if (super.has(element)) return this

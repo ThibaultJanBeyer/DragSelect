@@ -6,7 +6,7 @@ import { addModificationObservers } from '../methods/addModificationObservers'
 import { debounce } from '../methods/debounce'
 import { getAllParentNodes } from '../methods/getAllParentNodes'
 import { isCollision } from '../methods/isCollision'
-import { toArray } from '../methods/toArray'
+import { ensureArray } from '../methods/ensureArray'
 
 type Props = { DS: DragSelect, PS: PubSub, id: string, element: DSElement, droppables?: DSInputElements }
 
@@ -41,7 +41,7 @@ export default class DropZone {
     this.Settings = this.DS.stores.SettingsStore.s
     this.id = id
     this.element = element
-    if (droppables) this.droppables = toArray(droppables)
+    if (droppables) this.droppables = ensureArray(droppables)
     this.element.classList.add(`${this.Settings.dropZoneClass}`)
 
     this.PS.subscribe('Settings:updated:dropZoneClass', ({ settings }) => {
