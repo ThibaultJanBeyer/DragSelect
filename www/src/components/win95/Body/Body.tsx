@@ -46,13 +46,13 @@ export const Body: React.FC<Props> = ({}) => {
       if (!isDragging || !dropTarget || !items) return
       if (dropTarget?.id === 'approve') {
         handleApproveReject({
-          items,
+          items: items as HTMLElement[],
           content: '"✅"',
         })
         setTimeout(() => ds.removeSelectables(items, true, true))
       } else if (dropTarget?.id === 'reject') {
         handleApproveReject({
-          items,
+          items: items as HTMLElement[],
           content: '"❌"',
         })
         setTimeout(() => ds.removeSelectables(items, true, true))
