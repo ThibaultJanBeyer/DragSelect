@@ -53,8 +53,8 @@ export default class SelectableSet extends Set<DSElement> {
 
   private init = () => ensureArray(this.Settings.selectables).forEach((el) => this.add(el))
 
-  public add(element: DSElement) {
-    if (super.has(element)) return this
+  public add(element?: DSElement) {
+    if (!element || super.has(element)) return this
     const publishData = {
       items: this.elements,
       item: element,
@@ -79,8 +79,8 @@ export default class SelectableSet extends Set<DSElement> {
     return super.add(element)
   }
 
-  public delete(element: DSElement) {
-    if (!super.has(element)) return true
+  public delete(element?: DSElement) {
+    if (!element || !super.has(element)) return true
     const publishData = {
       items: this.elements,
       item: element,

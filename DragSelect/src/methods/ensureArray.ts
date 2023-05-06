@@ -8,6 +8,6 @@ type EnsureArray = {
 
 export const ensureArray: EnsureArray = items => {
   if (!items) return []
-  if (!Array.isArray(items)) return [items]
-  return [...new Set([...items])]
+  if (!Array.isArray(items) && typeof (items as any)[Symbol.iterator] !== 'function') return [items]
+  return [...new Set([...(items as any[])])]
 }
