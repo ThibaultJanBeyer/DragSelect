@@ -44,7 +44,7 @@ const config = {
   ],
   themes: ['@docusaurus/theme-live-codeblock'],
   stylesheets: [
-    'https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;900&display=swap',
+    'https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;500;800&display=swap',
   ],
 
   presets: [

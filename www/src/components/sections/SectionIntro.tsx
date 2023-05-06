@@ -4,7 +4,7 @@ import sectionStyles from './Sections.module.scss'
 import { Logo } from '../Logo'
 import { BeautyButton } from '../BeautyButton'
 import { FooterLinks } from './FooterLinks'
-import { baseDocsUrl } from '../../constants'
+import { baseDocsUrl, basePricingUrl } from '../../constants'
 
 export const SectionIntro: React.FC<{}> = () => (
   <div className={`${sectionStyles.container} text-center`}>
@@ -19,9 +19,9 @@ export const SectionIntro: React.FC<{}> = () => (
       <div className="inline-block mr-5">
         <BeautyButton href={baseDocsUrl}>Getting Started</BeautyButton>
       </div>
-      {/* <div className="inline-block mr-5">
-        <BeautyButton isPrimary={false}>Pricing</BeautyButton>
-      </div> */}
+      | <div className="inline-block mr-5">
+        <BeautyButton href={basePricingUrl} isPrimary={false}>Pricing</BeautyButton>
+      </div>
       <div className="m-5">
         <FooterLinks />
       </div>
