@@ -1,22 +1,22 @@
 import SelectedSet from "../modules/SelectedSet"
-import { DSElement } from "../types"
+import { DSInputElement } from "../types"
 
-type Props = {
-  element: DSElement
+type Props<E extends DSInputElement> = {
+  element: E
   force?: boolean
   multiSelectionToggle: boolean
-  SelectedSet: SelectedSet
+  SelectedSet: SelectedSet<E>
   hoverClassName: string
 }
 
 /** Logic when an element is selected */
-export const handleSelection = ({
+export const handleSelection = <E extends DSInputElement>({
   element,
   force,
   multiSelectionToggle,
   SelectedSet,
   hoverClassName,
-}: Props) => {
+}: Props<E>) => {
   if (element.classList.contains(hoverClassName) && !force) return
 
   if (!SelectedSet.has(element)) SelectedSet.add(element)

@@ -1,9 +1,9 @@
 import SelectableSet from '../modules/SelectableSet'
-import { DSElement, DSBoundingRect } from '../types'
+import { DSBoundingRect, DSInputElement } from '../types'
 import { ensureArray } from './ensureArray'
 
 /** Returns the compound bounding rect of multiple elements */
-export const getBoundingClientRect = (elements: DSElement[], SelectableSet: SelectableSet): DSBoundingRect => {
+export const getBoundingClientRect = <E extends DSInputElement>(elements: E[], SelectableSet: SelectableSet<E>): DSBoundingRect => {
   const rect = {
     top: Number.POSITIVE_INFINITY,
     left: Number.POSITIVE_INFINITY,

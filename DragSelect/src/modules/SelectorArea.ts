@@ -4,21 +4,21 @@ import { getOverflowEdges } from "../methods/getOverflowEdges"
 import { isCollision } from "../methods/isCollision"
 import { vect2rect } from "../methods/vect2"
 import { DSSettings } from "../stores/SettingsStore"
-import { DSBoundingRect, DSEdges, DSElement, DSEvent } from "../types"
+import { DSBoundingRect, DSEdges, DSEvent, DSInputElement } from "../types"
 import PubSub from "./PubSub"
 
 type AppendRemove = 'append' | 'remove'
 
-export default class SelectorArea {
+export default class SelectorArea<E extends DSInputElement> {
   private _scrollInterval?: NodeJS.Timer
   private _rect?: DSBoundingRect
   private currentEdges: DSEdges = []
-  private DS: DragSelect
-  private PS: PubSub
-  private Settings: DSSettings
+  private DS: DragSelect<E>
+  private PS: PubSub<E>
+  private Settings: DSSettings<E>
   public HTMLNode: HTMLElement
 
-  constructor({ DS, PS }: { DS: DragSelect; PS: PubSub }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>; PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s
@@ -112,7 +112,7 @@ export default class SelectorArea {
    * Checks if the element is either inside the Selector Area (as a reachable child or touching the area)
    * @param elementRect - slight performance improvements when passed
    */
-  public isInside = (element: DSElement, elementRect?: DSBoundingRect) => {
+  public isInside = (element: E, elementRect?: DSBoundingRect) => {
     if (
       this.DS.Area.HTMLNode.contains(element) &&
       this.DS.stores.ScrollStore.canScroll

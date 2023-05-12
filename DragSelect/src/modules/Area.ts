@@ -1,6 +1,6 @@
 import DragSelect from '../DragSelect'
 import PubSub from './PubSub'
-import { DSArea, DSBoundingRect, DSEdges, DSEdgesObj } from '../types'
+import { DSArea, DSBoundingRect, DSEdges, DSEdgesObj, DSInputElement } from '../types'
 import { DSSettings } from '../stores/SettingsStore'
 import { MutationCallbackEvent, addModificationObservers } from '../methods/addModificationObservers'
 import { debounce } from '../methods/debounce'
@@ -11,26 +11,26 @@ import { scrollElement } from '../methods/scrollElement'
 
 export type DSAreaPublishEventNames = "Area:modified:pre"|"Area:modified"|"Area:scroll"|"Area:scroll:pre"
 
-export type DSAreaPublishEventData = {
+export type DSAreaPublishEventData<E extends DSInputElement> = {
   /** The single item currently interacted with */
-  item: Area;
+  item: DSArea;
   /** The respective event object */
   event?: MutationCallbackEvent;
   scroll_directions: DSEdges,
   scroll_multiplier: number,
 };
 
-export type DSAreaPublish = {
-  "Area:modified:pre": Pick<DSAreaPublishEventData, 'event' | 'item'>
-  "Area:modified": Pick<DSAreaPublishEventData, 'event' | 'item'>
-  "Area:scroll:pre": Pick<DSAreaPublishEventData, 'scroll_directions' | 'scroll_multiplier'>
-  "Area:scroll": Pick<DSAreaPublishEventData, 'scroll_directions' | 'scroll_multiplier'>
+export type DSAreaPublish<E extends DSInputElement> = {
+  "Area:modified:pre": Pick<DSAreaPublishEventData<E>, 'event' | 'item'>
+  "Area:modified": Pick<DSAreaPublishEventData<E>, 'event' | 'item'>
+  "Area:scroll:pre": Pick<DSAreaPublishEventData<E>, 'scroll_directions' | 'scroll_multiplier'>
+  "Area:scroll": Pick<DSAreaPublishEventData<E>, 'scroll_directions' | 'scroll_multiplier'>
 }
 
-export default class Area {
-  private DS: DragSelect
-  private PS: PubSub
-  private Settings: DSSettings
+export default class Area<E extends DSInputElement> {
+  private DS: DragSelect<E>
+  private PS: PubSub<E>
+  private Settings: DSSettings<E>
   private _observers?: {cleanup:() => void}
   private _node: DSArea
   private _parentNodes?: Node[]
@@ -38,7 +38,7 @@ export default class Area {
   private _computedBorder?: DSEdgesObj
   private _rect?: DSBoundingRect
 
-  constructor({ DS, PS }: { DS: DragSelect; PS: PubSub }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>; PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s
@@ -62,9 +62,9 @@ export default class Area {
 
     // first immediate debounce to update values after dom-update
     setTimeout(() => {
-      this.PS.publish('Area:modified:pre', { item: this })
+      this.PS.publish('Area:modified:pre', { item: this.HTMLNode })
       this.reset()
-      this.PS.publish('Area:modified', { item: this })
+      this.PS.publish('Area:modified', { item: this.HTMLNode })
     })
   }
 
@@ -72,9 +72,9 @@ export default class Area {
     this._observers = addModificationObservers(
       this.parentNodes,
       debounce((event: MutationCallbackEvent) => {
-        this.PS.publish('Area:modified:pre', { event, item: this })
+        this.PS.publish('Area:modified:pre', { event, item: this.HTMLNode })
         this.reset()
-        this.PS.publish('Area:modified', { event, item: this })
+        this.PS.publish('Area:modified', { event, item: this.HTMLNode })
       }, 60)
     )
   }

@@ -1,6 +1,6 @@
 import DragSelect from '../DragSelect'
 import PubSub from './PubSub'
-import { DSElement, DSInputElements } from '../types'
+import { DSInputElement } from '../types'
 import { DSSettings } from '../stores/SettingsStore'
 import { addModificationObservers } from '../methods/addModificationObservers'
 import { debounce } from '../methods/debounce'
@@ -8,34 +8,32 @@ import { getAllParentNodes } from '../methods/getAllParentNodes'
 import { isCollision } from '../methods/isCollision'
 import { ensureArray } from '../methods/ensureArray'
 
-type Props = { DS: DragSelect, PS: PubSub, id: string, element: DSElement, droppables?: DSInputElements }
-
-export type DSDropZone = {
+export type DSDropZone<E extends DSInputElement> = {
   id: string
-  element: DSElement
-  droppables: DSElement[]
+  element: E
+  droppables: E[]
   /** items related to the target zone */
-  itemsDropped?: DSElement[]
+  itemsDropped?: E[]
   /** items that are within the targets bounds */
-  itemsInside?: DSElement[]
+  itemsInside?: E[]
 }
 
-export default class DropZone {
+export default class DropZone<E extends DSInputElement> {
   public id: string
-  public element: DSElement
-  private _droppables?: DSElement[]
+  public element: E
+  private _droppables?: E[]
   private _rect?: DOMRect
   private _observers?: {cleanup:() => void}
   private _timeout?: NodeJS.Timeout
-  private _itemsDropped: DSElement[] = []
-  private _itemsInside?: DSElement[]
-  private DS: DragSelect
-  private PS: PubSub
-  private Settings: DSSettings
+  private _itemsDropped: E[] = []
+  private _itemsInside?: E[]
+  private DS: DragSelect<E>
+  private PS: PubSub<E>
+  private Settings: DSSettings<E>
   private isDestroyed: boolean = false
   private _parentNodes?: Node[]
 
-  constructor({ DS, PS, id, element, droppables }: Props) {
+  constructor({ DS, PS, id, element, droppables }: { DS: DragSelect<E>, PS: PubSub<E>, id: string, element: E, droppables?: E[] }) {
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s
@@ -154,7 +152,7 @@ export default class DropZone {
     this.isDestroyed = true
   }
 
-  public toObject = (): DSDropZone => ({
+  public toObject = (): DSDropZone<E> => ({
     id: this.id,
     element: this.element,
     droppables: this.droppables,

@@ -4,7 +4,7 @@ import styles from './Body.module.scss'
 import { Item } from './Item/Item'
 import { useDragSelect } from '../../DragSelectContext'
 import { Icon } from '../Icon/Icon'
-import { handleApproveReject } from './approveReject'
+import { handleApproveReject } from './approveReject.js'
 import { DSPubCallback } from 'dragselect'
 
 type Props = {}
