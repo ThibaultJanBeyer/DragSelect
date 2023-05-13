@@ -3,9 +3,9 @@ import PubSub from './PubSub'
 import { DSBoundingRect, DSDragKeys, DSInputElement, Vect2 } from '../types'
 import { DSSettings } from '../stores/SettingsStore'
 import { calcVect, num2vect, vect2rect } from '../methods/vect2'
-import { getBoundingClientRect } from '../methods/getBoundingClientRect'
 import { handleKeyboardDragPosDifference } from '../methods/handleKeyboardDragPosDifference'
 import { moveElement } from '../methods/moveElement'
+import { limitDirection } from '../methods/limitDirection'
 
 export default class Drag<E extends DSInputElement> {
   private _prevCursorPos?: Vect2
@@ -68,8 +68,7 @@ export default class Drag<E extends DSInputElement> {
     this.PS.publish(['Interaction:start:pre', 'Interaction:start'], publishData)
 
     this._elements = this.DS.getSelection()
-    if (this.Settings.dragAsBlock)
-      this._selectionRect = getBoundingClientRect(this._elements, this.DS.SelectableSet)
+    this._selectionRect = this.DS.Selection.boundingRect
     this.handleZIndex(true)
 
     let posDirection = handleKeyboardDragPosDifference({
@@ -77,14 +76,16 @@ export default class Drag<E extends DSInputElement> {
       keyboardDragSpeed: this.Settings.keyboardDragSpeed,
       zoom: this.Settings.zoom,
       key: _key,
-      scrollCallback: this.DS.Area.scroll,
       scrollDiff: this._scrollDiff,
-      canScroll: this.DS.stores.ScrollStore.canScroll,
       dragKeys: this._dragKeys,
     })
 
-    if (this.Settings.dragAsBlock)
-      posDirection = this.limitDirection(posDirection)
+    posDirection = limitDirection({
+      direction: posDirection,
+      containerRect: this.DS.SelectorArea.rect,
+      scrollAmount: this.DS.stores.ScrollStore.scrollAmount,
+      selectionRect: this._selectionRect
+    })
 
     this._elements.forEach((element) =>
       moveElement({
@@ -124,8 +125,7 @@ export default class Drag<E extends DSInputElement> {
     this._prevCursorPos = undefined
     this._prevScrollPos = undefined
     this._elements = this.DS.getSelection()
-    if (this.Settings.dragAsBlock)
-      this._selectionRect = getBoundingClientRect(this._elements, this.DS.SelectableSet)
+    this._selectionRect = this.DS.Selection.boundingRect
     this.handleZIndex(true)
   }
 
@@ -146,8 +146,12 @@ export default class Drag<E extends DSInputElement> {
       return
 
     let posDirection = calcVect(this._cursorDiff, '+', this._scrollDiff)
-    if (this.Settings.dragAsBlock)
-      posDirection = this.limitDirection(posDirection)
+    posDirection = limitDirection({
+      direction: posDirection,
+      containerRect: this.DS.SelectorArea.rect,
+      scrollAmount: this.DS.stores.ScrollStore.scrollAmount,
+      selectionRect: this._selectionRect
+    })
 
     this._elements.forEach((element) =>
       moveElement({
@@ -157,35 +161,6 @@ export default class Drag<E extends DSInputElement> {
         useTransform: this.Settings.useTransform,
       })
     )
-  }
-
-  /**
-   * Modify direction value so that the rect of draggable elements
-   * does not exceed the boundaries of container rect
-   */
-  private limitDirection = (direction: Vect2) => {
-    const containerRect = this.DS.SelectorArea.rect;
-    const scrollAmount = this.DS.stores.ScrollStore.scrollAmount;
-
-    const delta = {
-      top: containerRect.top - this._selectionRect.top + scrollAmount.y,
-      left: containerRect.left - this._selectionRect.left + scrollAmount.x,
-      bottom: containerRect.bottom - this._selectionRect.bottom + scrollAmount.y,
-      right: containerRect.right - this._selectionRect.right + scrollAmount.x,
-    }
-    
-    if(direction.x === 0 && direction.y === 0) return direction
-    if (direction.y < 0) direction.y = Math.max(direction.y, delta.top)
-    if (direction.x < 0) direction.x = Math.max(direction.x, delta.left)
-    if (direction.y > 0) direction.y = Math.min(direction.y, delta.bottom)
-    if (direction.x > 0) direction.x = Math.min(direction.x, delta.right)
-    
-    this._selectionRect.top += direction.y;
-    this._selectionRect.bottom += direction.y;
-    this._selectionRect.left += direction.x;
-    this._selectionRect.right += direction.x;
-
-    return direction
   }
 
   private handleZIndex = (add: boolean) => {

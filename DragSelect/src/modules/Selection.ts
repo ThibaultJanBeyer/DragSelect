@@ -5,9 +5,12 @@ import { DSSettings } from '../stores/SettingsStore'
 import { handleSelection } from '../methods/handleSelection'
 import { handleUnSelection } from '../methods/handleUnSelection'
 import { isCollision } from '../methods/isCollision'
+import { getSelectionRect } from '../methods/getSelectionRect'
 
 export default class Selection<E extends DSInputElement> {
   private _prevSelectedSet: Set<E> = new Set()
+  private _boundingRect?: DSBoundingRect
+  private _timeout?: NodeJS.Timeout
   private DS: DragSelect<E>
   private PS: PubSub<E>
   private Settings: DSSettings<E>
@@ -90,6 +93,21 @@ export default class Selection<E extends DSInputElement> {
     )
   }
 
+  get boundingRect() {
+    if (this._boundingRect) return this._boundingRect
+    this._boundingRect = getSelectionRect(this.DS.SelectedSet)
+
+    // since elements can be moved, we need to update the rects every X ms
+    if (this._timeout) clearTimeout(this._timeout)
+    this._timeout = setTimeout(
+      () => (this._boundingRect = undefined),
+      this.Settings.refreshMemoryRate
+    )
+
+    return this._boundingRect
+  }
+
+  ////
   // [PUBLICLY EXPOSED METHODS]
 
   /**

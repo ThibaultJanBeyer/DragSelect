@@ -1,3 +1,7 @@
+# 3.0.0
+
+- Previous setting `dragAsBlock` is the default behavior.
+
 # 2.7.4
 
 - Fix typing issues [#175](https://github.com/ThibaultJanBeyer/DragSelect/issues/175) thanks [@Ruslan207](https://github.com/Ruslan207)

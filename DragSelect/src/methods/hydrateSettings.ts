@@ -242,5 +242,4 @@ export const hydrateSettings = <E extends DSInputElement>(settings: Settings<E>,
     withFallback,
     'ds-dropzone-inside'
   ),
-  ...hydrateHelper('dragAsBlock', settings.dragAsBlock, withFallback, false),
   } as Required<Settings<E>>)

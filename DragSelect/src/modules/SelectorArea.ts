@@ -33,7 +33,7 @@ export default class SelectorArea<E extends DSInputElement> {
     this.PS.subscribe('Area:modified', this.updatePos)
     this.PS.subscribe('Area:modified', this.updatePos)
     this.PS.subscribe('Interaction:init', this.start)
-    this.PS.subscribe('Interaction:start', this.startAutoScroll)
+    this.PS.subscribe('Interaction:start', ({ isDraggingKeyboard }) => this.startAutoScroll({ isDraggingKeyboard }))
     this.PS.subscribe('Interaction:end', () => {
       this.updatePos()
       this.stopAutoScroll()
@@ -77,7 +77,8 @@ export default class SelectorArea<E extends DSInputElement> {
   //////////////////////////////////////////////////////////////////////////////////////
   // AutoScroll
 
-  private startAutoScroll = () => {
+  private startAutoScroll = ({ isDraggingKeyboard }: { isDraggingKeyboard?: boolean }) => {
+    if(isDraggingKeyboard) return
     this.currentEdges = []
     this._scrollInterval = setInterval(() => this.handleAutoScroll(), 16)
   }
