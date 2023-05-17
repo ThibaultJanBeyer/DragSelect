@@ -23,10 +23,10 @@ export default function License(): JSX.Element {
         </div>
         <div className={styles.heroBanner}>
           <h1>
-            Pricing – Free
+            Pricing: Free
           </h1>
           <p>
-            DragSelect is, and will forever be, a free and open-source tool. However, this is a lot of work and good work should be appreciated, so if you are using DragSelect for business and/or commercial sites, projects, and applications you’ll have to get the commercial license to keep your source proprietary and the project driven by a solo developer and all contributors alive.
+            DragSelect is, and will forever be, a free and open-source tool. <strong>Free for any non-commercial project</strong>. However, this is a lot of work and hard work should be rewarded, so if you are using DragSelect for business and/or commercial sites, projects, and applications you’ll have to get the commercial license to keep your source proprietary and the project alive.
           </p>
         </div>
       </header>
