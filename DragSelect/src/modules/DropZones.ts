@@ -1,24 +1,24 @@
 import DragSelect from "../DragSelect"
 import DropZone from "./DropZone"
 import PubSub from "./PubSub"
-import { DSElement, DSInputDropZone, Vect2 } from "../types"
+import { DSInputDropZone, DSInputElement, Vect2 } from "../types"
 import { DSSettings } from "../stores/SettingsStore"
 import { isCollision } from "../methods/isCollision"
 
-export default class DropZones {
+export default class DropZones<E extends DSInputElement> {
   /** Get the drop zone by the zone element */
-  private _zoneByElement: Map<Element, DropZone> = new Map() 
+  private _zoneByElement: Map<Element, DropZone<E>> = new Map() 
   /** Get the drop zone by the zone id */
-  private _zoneById: Map<string, DropZone> = new Map()
+  private _zoneById: Map<string, DropZone<E>> = new Map()
   /** Get the drop zones by one zone item */
-  private _zonesByDroppable: Map<DSElement,DropZone[]> = new Map()
+  private _zonesByDroppable: Map<E, DropZone<E>[]> = new Map()
   /** Get the drop zones by one zone item */
-  private _zones?: DropZone[]
-  private DS: DragSelect
-  private PS: PubSub
-  private Settings: DSSettings
+  private _zones?: DropZone<E>[]
+  private DS: DragSelect<E>
+  private PS: PubSub<E>
+  private Settings: DSSettings<E>
 
-  constructor({ DS, PS }: { DS: DragSelect; PS: PubSub }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>; PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s
@@ -29,7 +29,7 @@ export default class DropZones {
     this.PS.subscribe('Interaction:end', this.stop)
   }
 
-  private setDropZones = ({ dropZones }: { dropZones: DSInputDropZone[] }) => {
+  private setDropZones = ({ dropZones }: { dropZones: DSInputDropZone<E>[] }) => {
     if (!dropZones) return
     if (this._zones) this._zones.forEach((zone) => zone.destroy())
 
@@ -45,7 +45,7 @@ export default class DropZones {
     })
   }
 
-  private _handleDrop = (target?: DropZone) => {
+  private _handleDrop = (target?: DropZone<E>) => {
     this._zones?.forEach((zone) => zone === target && zone.handleNoDrop())
     if (!target) return
     target.handleDrop()

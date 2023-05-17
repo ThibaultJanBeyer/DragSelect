@@ -1,6 +1,6 @@
 import DragSelect from "../DragSelect"
 import PubSub from "../modules/PubSub"
-import { DSEvent, Settings, Vect2 } from "../types"
+import { DSEvent, DSInputElement, Settings, Vect2 } from "../types"
 import { getPointerPos } from "../methods/getPointerPos"
 import { rect2vect, calcVect } from "../methods/vect2"
 import { InteractionEvent } from "../modules/Interaction"
@@ -15,7 +15,7 @@ export type DSPointerStorePublish = {
   [K in DSPointerStorePublishEventNames]: DSPointerStorePublishEventData
 }
 
-export default class PointerStore {
+export default class PointerStore<E extends DSInputElement> {
   private _isMouseInteraction = false
   // Position relative to area
   private _initialValArea: Vect2 = { x: 0, y: 0 }
@@ -27,11 +27,11 @@ export default class PointerStore {
   private _lastVal: Vect2 = { x: 0, y: 0 }
   private _lastTouch?: TouchEvent
 
-  private DS: DragSelect
-  private PS: PubSub
-  private settings: Required<Settings>
+  private DS: DragSelect<E>
+  private PS: PubSub<E>
+  private settings: Required<Settings<E>>
 
-  constructor({ DS, PS }: { DS: DragSelect, PS: PubSub }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>, PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.settings = this.DS.stores.SettingsStore.s

@@ -1,5 +1,3 @@
-// @TODO: add a way to tell typescript what elements are inside based on the input elements!! (instead of DSElement) Is that even possible???
-
 /* 
     ____                   _____      __          __ 
    / __ \_________ _____ _/ ___/___  / /__  _____/ /_
@@ -57,50 +55,50 @@ import Selector from './modules/Selector'
 import Selection from './modules/Selection'
 import SelectorArea from './modules/SelectorArea'
 import SettingsStore from './stores/SettingsStore'
-import { DSCallbackName, DSElement, DSInputElements, Settings, Vect2 } from './types'
+import { DSCallbackName, DSInputElement, Settings, Vect2 } from './types'
 import { IsCollision, isCollision } from './methods/isCollision'
 import { DSPublicPublish, deprecatedNamesMap, subscriberAliases } from './methods/subscriberAliases'
 import { ensureArray } from './methods/ensureArray'
 import { DSDropZone } from './modules/DropZone'
 
-export type DSPubCallback<T extends keyof DSPublicPublish> = DSCallback<DSPublishMappings[T]>
+export type DSPubCallback<T extends keyof DSPublicPublish<E>, E extends DSInputElement> = DSCallback<DSPublishMappings<E>[T]>
 
 // Setup
 /// ///////////////////////////////////////////////////////////////////////////////////
 
-class DragSelect {
+class DragSelect<E extends DSInputElement> {
   /** used to skip all current Selection and dragNdrop functionality */
   public continue: boolean = false
-  private PubSub: PubSub
+  private PubSub: PubSub<E>
   public stores: {
-    SettingsStore:SettingsStore
-    PointerStore:PointerStore
-    ScrollStore:ScrollStore
-    KeyStore:KeyStore
+    SettingsStore:SettingsStore<E>
+    PointerStore:PointerStore<E>
+    ScrollStore:ScrollStore<E>
+    KeyStore:KeyStore<E>
   }
-  public Area: Area
-  public Selector: Selector
-  public SelectorArea: SelectorArea
-  public SelectableSet: SelectableSet
-  public SelectedSet: SelectedSet
-  private Selection: Selection
-  private Drag: Drag
-  public DropZones: DropZones
-  public Interaction: Interaction
+  public Area: Area<E>
+  public Selector: Selector<E>
+  public SelectorArea: SelectorArea<E>
+  public SelectableSet: SelectableSet<E>
+  public SelectedSet: SelectedSet<E>
+  private Selection: Selection<E>
+  private Drag: Drag<E>
+  public DropZones: DropZones<E>
+  public Interaction: Interaction<E>
   public stopped: boolean
 
-  constructor(settings: Settings) {
+  constructor(settings: Settings<E>) {
     this.stopped = false;
 
     this.PubSub = new PubSub({ DS: this })
 
     this.stores = {} as {
-      SettingsStore: SettingsStore
-      PointerStore: PointerStore
-      ScrollStore: ScrollStore
-      KeyStore: KeyStore
+      SettingsStore: SettingsStore<E>
+      PointerStore: PointerStore<E>
+      ScrollStore: ScrollStore<E>
+      KeyStore: KeyStore<E>
     }
-    this.stores.SettingsStore = new SettingsStore({ DS: this, settings, PS: this.PubSub }),
+    this.stores.SettingsStore = new SettingsStore({ settings, PS: this.PubSub }),
     this.stores.PointerStore = new PointerStore({ DS: this, PS: this.PubSub }),
     this.stores.ScrollStore = new ScrollStore({ DS: this, PS: this.PubSub }),
     this.stores.KeyStore = new KeyStore({ DS: this, PS: this.PubSub }),
@@ -120,6 +118,7 @@ class DragSelect {
     subscriberAliases({ DS: this, PS: this.PubSub })
 
     this.PubSub.subscribe('Interaction:end', () => (this.continue = false))
+    this.PubSub.subscribe('DS:end', ({ items }) => (this.continue = false))
 
     this.start()
   }
@@ -131,7 +130,7 @@ class DragSelect {
   
   // any input data from the user is valid in this public PubSub but the exposed values are recommended
   /** Subscribe to events */
-  public subscribe = <T extends keyof DSPublicPublish>(eventName: T, callback: DSCallback<DSPublishMappings[T]>) => {
+  public subscribe = <T extends keyof DSPublicPublish<E>>(eventName: T, callback: DSCallback<DSPublishMappings<E>[T]>) => {
     // Deprecation warnings
     if(deprecatedNamesMap[eventName as keyof typeof deprecatedNamesMap])
       console.warn(`[DragSelect]: The event name "${eventName}" is deprecated and will be removed in a future version. Please use the new event name "${deprecatedNamesMap[eventName as keyof typeof deprecatedNamesMap]}" instead.`)
@@ -139,9 +138,9 @@ class DragSelect {
     this.PubSub.subscribe(eventName, callback)
   }
   /** Un-Subscribe from events */
-  public unsubscribe = <T extends keyof DSPublicPublish>(eventName: T, callback?: DSCallback<DSPublishMappings[T]>, id?: number) => this.PubSub.unsubscribe(eventName, callback, id)
+  public unsubscribe = <T extends keyof DSPublicPublish<E>>(eventName: T, callback?: DSCallback<DSPublishMappings<E>[T]>, id?: number) => this.PubSub.unsubscribe(eventName, callback, id)
   /** Publish events */
-  public publish = <T extends DSCallbackName>(eventName: T|T[], data: DSPublishMappings[T]) => this.PubSub.publish(eventName, data)
+  public publish = <T extends DSCallbackName<E>>(eventName: T|T[], data: DSPublishMappings<E>[T]) => this.PubSub.publish(eventName, data)
 
   /** Initializes the functionality. Automatically triggered when created. Also, reset the functionality after a teardown */
   public start = () => {
@@ -185,10 +184,10 @@ class DragSelect {
   public break = () => (this.continue = true)
 
   /** Update any setting dynamically */
-  public setSettings = (settings: Settings) => this.stores.SettingsStore.update({ settings })
+  public setSettings = (settings: Settings<E>) => this.stores.SettingsStore.update({ settings })
 
   /** Returns the current selected nodes */
-  public getSelection = (): DSElement[] => this.SelectedSet.elements
+  public getSelection = () => this.SelectedSet.elements
 
   /**
    * Adds several elements to the selection list also adds the specific classes and take into account all calculations.
@@ -199,10 +198,10 @@ class DragSelect {
    * @return all selected elements
    */
   public addSelection(
-    elements: DSInputElements,
+    elements: E | E[],
     triggerCallback: boolean = false,
     dontAddToSelectables: boolean = false
-  ): DSElement[] {
+  ) {
     const els = ensureArray(elements)
     this.SelectedSet.addAll(els)
     if (!dontAddToSelectables) this.addSelectables(elements, false, false)
@@ -223,10 +222,10 @@ class DragSelect {
    * @return all selected elements
    */
   public removeSelection(
-    elements: DSInputElements,
+    elements: E | E[],
     triggerCallback: boolean = false,
     removeFromSelectables: boolean = false
-  ): DSElement[] {
+  ) {
     const els = ensureArray(elements)
     this.SelectedSet.deleteAll(els)
     if (removeFromSelectables) this.removeSelectables(elements, false, false)
@@ -248,12 +247,12 @@ class DragSelect {
    * @return all selected elements
    */
   public toggleSelection(
-    elements: DSInputElements,
+    elements: E | E[],
     triggerCallback: boolean = false,
     removeFromSelectables: boolean = false
-  ): DSElement[] {
+  ) {
     const els = ensureArray(elements)
-    els.forEach((el: DSElement) =>
+    els.forEach((el: E) =>
       this.SelectedSet.has(el)
         ? this.removeSelection(elements, triggerCallback, removeFromSelectables)
         : this.addSelection(elements, triggerCallback, removeFromSelectables)
@@ -274,10 +273,10 @@ class DragSelect {
    * @param dontAddToSelectables if element should not be added to the list of selectable elements
    */
   public setSelection(
-    elements: DSInputElements,
+    elements: E | E[],
     triggerCallback: boolean = false,
     dontAddToSelectables: boolean = false
-  ): DSElement[] {
+  ) {
     this.clearSelection()
     this.addSelection(elements, triggerCallback, dontAddToSelectables)
     return this.getSelection()
@@ -288,7 +287,7 @@ class DragSelect {
    * @param triggerCallback if callback should be called
    * @return this.selected, should be empty
    */
-  public clearSelection(triggerCallback: boolean = false): DSElement[] {
+  public clearSelection(triggerCallback: boolean = false) {
     this.SelectedSet.clear()
     if (triggerCallback)
       this.PubSub.publish('DS:end', {
@@ -305,7 +304,7 @@ class DragSelect {
    * @param triggerCallback if callback should be called
    * @return the added element(s)
    */
-  public addSelectables(elements: DSInputElements, addToSelection?: boolean, triggerCallback?: boolean): DSInputElements {
+  public addSelectables(elements: E | E[], addToSelection?: boolean, triggerCallback?: boolean) {
     const els = ensureArray(elements)
     this.SelectableSet.addAll(els)
     if (addToSelection) this.SelectedSet.addAll(els)
@@ -318,7 +317,7 @@ class DragSelect {
   }
 
   /** Gets all nodes that can potentially be selected */
-  public getSelectables = (): DSElement[] => this.SelectableSet.elements
+  public getSelectables = () => this.SelectableSet.elements
 
   /**
    * Remove elements from the elements that can be selected.
@@ -327,7 +326,7 @@ class DragSelect {
    * @param triggerCallback if callback should be called
    * @return the removed element(s)
    */
-  public removeSelectables(elements: DSInputElements, removeFromSelection?: boolean, triggerCallback?: boolean): DSInputElements {
+  public removeSelectables(elements: E | E[], removeFromSelection?: boolean, triggerCallback?: boolean) {
     const els = ensureArray(elements)
     this.SelectableSet.deleteAll(els)
     if (removeFromSelection) this.removeSelection(elements)
@@ -365,18 +364,18 @@ class DragSelect {
   public isDragging = (): boolean => this.Interaction.isDragging
 
   /** Returns first DropsZone under coordinates, if no coordinated provided current pointer coordinates are used */
-  public getZoneByCoordinates = (coordinates?: Vect2): DSDropZone | undefined =>
+  public getZoneByCoordinates = (coordinates?: Vect2): DSDropZone<E> | undefined =>
     this.DropZones.getTarget(coordinates)?.toObject()
 
   /** Returns itemsDropped into zone by zone id */
-  public getItemsDroppedByZoneId = (zoneId: string): DSElement[] | void =>
+  public getItemsDroppedByZoneId = (zoneId: string) =>
     this.DropZones.getItemsDroppedById(zoneId)
 
   /**
    * Returns itemsInside by zone id
    * @param addClasses whether or not to add/remove the "inside" classes to the items
    */
-  public getItemsInsideByZoneId = (zoneId: string, addClasses?: boolean): DSElement[] | void =>
+  public getItemsInsideByZoneId = (zoneId: string, addClasses?: boolean) =>
     this.DropZones.getItemsInsideById(zoneId, addClasses)
 }
 

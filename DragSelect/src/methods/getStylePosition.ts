@@ -1,6 +1,6 @@
-import { DSElement, Vect2 } from "../types"
+import { DSInputElement, Vect2 } from "../types"
 
-const getComputedTranslatePositions = (element: DSElement) => {
+const getComputedTranslatePositions = <E extends DSInputElement>(element: E) => {
   const position = {
     x: 0,
     y: 0,
@@ -27,7 +27,7 @@ const getComputedTranslatePositions = (element: DSElement) => {
   return position
 }
 
-const getTranslatedPositions = (element: DSElement) => {
+const getTranslatedPositions = <E extends DSInputElement>(element: E) => {
   const { transform } = element.style
 
   if (!transform || transform.indexOf('translate') < 0)
@@ -53,7 +53,7 @@ const getTranslatedPositions = (element: DSElement) => {
   return position
 }
 
-const getTopLeftPosition = (element: DSElement) => {
+const getTopLeftPosition = <E extends DSInputElement>(element: E) => {
   const { style } = element
 
   const position = {
@@ -77,7 +77,7 @@ const getTopLeftPosition = (element: DSElement) => {
  * Returns the X and Y coordinates based on styles
  * Can handle translate and top/left
  */
-export const getStylePosition = (element: DSElement, useTranslate?: boolean): Vect2 => {
+export const getStylePosition = <E extends DSInputElement>(element: E, useTranslate?: boolean): Vect2 => {
   if (useTranslate) return getTranslatedPositions(element)
   return getTopLeftPosition(element)
 }

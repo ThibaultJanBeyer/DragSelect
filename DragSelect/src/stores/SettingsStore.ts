@@ -1,4 +1,4 @@
-import { Settings } from '../types'
+import { DSInputElement, Settings } from '../types'
 import DragSelect from '../DragSelect'
 
 import { hydrateSettings } from '../methods/hydrateSettings'
@@ -8,25 +8,25 @@ type WithPostfix<T, Postfix extends string> = {
   [K in keyof T as K | `${string & K}${Postfix}`]: T[K];
 }
 
-export type DSSettings = WithPostfix<Required<Settings>, ':pre'>
+export type DSSettings<E extends DSInputElement> = WithPostfix<Required<Settings<E>>, ':pre'>
 
 export type DSSettingsPublishEventNames = "Settings:updated:pre"|"Settings:updated"|`Settings:updated:${string}:pre`|`Settings:updated:${string}`
 
-export type DSSettingsPublishEventData = { 
+export type DSSettingsPublishEventData<E extends DSInputElement> = { 
   /** whether this is the initial settings call */
   'settings:init': boolean;
   /** the settings being updates/manipulated/passed, holds all settings including the previous value. i.e. updating selectorClass will publish { settings: { ...settings, selectorClass: 'newVal', 'selectorClass:pre': 'oldVal' } } this is a deep cloned copy so manipulating it will have no effect */
-  settings: DSSettings; 
+  settings: DSSettings<E>; 
   /** the new settings that are passed, not available on the initial settings call */
-  'settings:new'?: Settings
+  'settings:new'?: Settings<E>;
 };
 
-export type DSSettingsPublish = {
-  [K in DSSettingsPublishEventNames]: DSSettingsPublishEventData
+export type DSSettingsPublish<E extends DSInputElement> = {
+  [K in DSSettingsPublishEventNames]: DSSettingsPublishEventData<E>;
 }
 
-export default class SettingsStore {
-  private _settings: DSSettings = {} as DSSettings
+export default class SettingsStore<E extends DSInputElement> {
+  private _settings: DSSettings<E> = {} as DSSettings<E>
   /**
    * Holds the settings and their previous value `:pre`
    * @example {
@@ -34,9 +34,8 @@ export default class SettingsStore {
    *    'autoScrollSpeed:pre': 5
    * }
    **/
-  s: DSSettings = {} as DSSettings
-  private DS: DragSelect
-  private PS: PubSub
+  s: DSSettings<E> = {} as DSSettings<E>
+  private PS: PubSub<E>
 
   /**
    * @class ScrollStore
@@ -45,16 +44,14 @@ export default class SettingsStore {
    * @ignore
    */
   constructor({
-    DS,
     PS,
     settings
-  }: { DS: DragSelect, PS: PubSub, settings: Settings }) {
-    this.DS = DS
+  }: { PS: PubSub<E>, settings: Settings<E> }) {
     this.PS = PS
     this.update({ settings, init: true })
   }
 
-  update = ({ settings, init }: { settings: Settings, init?: boolean }) => {
+  update = ({ settings, init }: { settings: Settings<E>, init?: boolean }) => {
     this.PS.publish('Settings:updated:pre', {
       settings: this._settings,
       'settings:init': Boolean(init),
@@ -63,11 +60,11 @@ export default class SettingsStore {
     this._update({ settings, init })
   }
 
-  private _update = ({ settings = {}, init = false }: { settings?: Settings, init?: boolean }) => {
+  private _update = ({ settings = {}, init = false }: { settings?: Settings<E>, init?: boolean }) => {
     const _settings = hydrateSettings(settings, init)
 
-    for (const [key, value] of Object.entries(_settings) as [keyof Settings, DSSettings[keyof Settings]][]) {
-      (<K extends keyof Settings>(key: K, value: DSSettings[K]) => {
+    for (const [key, value] of Object.entries(_settings) as [keyof Settings<E>, DSSettings<E>[keyof Settings<E>]][]) {
+      (<K extends keyof Settings<E>>(key: K, value: DSSettings<E>[K]) => {
         if (!(key in this._settings)) {
           Object.defineProperty(this.s, key, {
             get: () => this._settings[key],

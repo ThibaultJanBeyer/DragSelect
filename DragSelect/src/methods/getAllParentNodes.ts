@@ -1,6 +1,6 @@
-import { DSArea, DSElement } from "../types"
+import { DSArea, DSInputElement } from "../types"
 
-export const getAllParentNodes = (node: DSElement|DSArea) => {
+export const getAllParentNodes = <E extends DSInputElement>(node: E|DSArea) => {
   const traverse = (toWatch: ParentNode[], index = 0): ParentNode[] => {
     const parent = toWatch[index]?.parentNode
     if (parent) {

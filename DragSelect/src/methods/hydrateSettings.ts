@@ -1,4 +1,4 @@
-import { Settings } from "../types"
+import { DSInputElement, Settings } from "../types"
 
 const wrongTypeWarn = (key: string, type: string) =>
   console.warn(
@@ -93,7 +93,7 @@ const hydrateHelper = <K extends string, V>(key: K, value: V, withFallback?: boo
  * - - if not provided from the settings object (or wrong type), the fallback will be used
  * (the fallback value for each setting is the last prop of the hydrateHelper)
  */
-export const hydrateSettings = (settings: Settings, withFallback: boolean): Required<Settings> => ({
+export const hydrateSettings = <E extends DSInputElement>(settings: Settings<E>, withFallback: boolean): Required<Settings<E>> => ({
   ...hydrateHelper('area', settings.area, withFallback, document),
   ...hydrateHelper('selectables', settings.selectables, withFallback, null),
   ...hydrateHelper(
@@ -243,4 +243,4 @@ export const hydrateSettings = (settings: Settings, withFallback: boolean): Requ
     'ds-dropzone-inside'
   ),
   ...hydrateHelper('dragAsBlock', settings.dragAsBlock, withFallback, false),
-  } as Required<Settings>)
+  } as Required<Settings<E>>)

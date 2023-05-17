@@ -1,3 +1,29 @@
+# 3.0.0
+
+- Typescript rewrite. The JavaScript world has shifted towards typescript. This will improve the quality of life for users of this library.
+- Callbacks refactor: 
+```
+"elementselect" => "DS:select",
+"elementunselect" => "DS:unselect",
+"autoscroll" => "DS:scroll",
+"dragstart" => "DS:start",
+"dragmove" => "DS:update",
+"callback" => "DS:end",
+"preelementselect" => "DS:select:pre",
+"preelementunselect" => "DS:unselect:pre",
+"preautoscroll" => "DS:scroll:pre",
+"predragstart" => "DS:start:pre",
+"predragmove" => "DS:update:pre",
+"precallback" => "DS:end:pre",
+```
+- New callbacks:
+```
+"DS:added:pre"
+"DS:added"
+"DS:removed:pre"
+"DS:removed"
+```
+
 # 2.7.4
 
 - Fix typing issues [#175](https://github.com/ThibaultJanBeyer/DragSelect/issues/175) thanks [@Ruslan207](https://github.com/Ruslan207)
