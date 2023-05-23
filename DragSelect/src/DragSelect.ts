@@ -61,8 +61,6 @@ import { DSPublicPublish, deprecatedNamesMap, subscriberAliases } from './method
 import { ensureArray } from './methods/ensureArray'
 import { DSDropZone } from './modules/DropZone'
 
-export type DSPubCallback<T extends keyof DSPublicPublish<E>, E extends DSInputElement> = DSCallback<DSPublishMappings<E>[T]>
-
 // Setup
 /// ///////////////////////////////////////////////////////////////////////////////////
 
@@ -382,3 +380,5 @@ class DragSelect<E extends DSInputElement> {
 DragSelect.isCollision = isCollision
 
 export default DragSelect
+export type DSPubCallback<T extends keyof DSPublicPublish<E>, E extends DSInputElement> = DSCallback<DSPublishMappings<E>[T]>
+export * from './types'

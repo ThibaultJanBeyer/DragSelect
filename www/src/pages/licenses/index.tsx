@@ -14,6 +14,7 @@ export default function License(): JSX.Element {
       <Head>
         <html className={styles.head} />
         <body className={styles.body} />
+        <script src="https://assets.lemonsqueezy.com/lemon.js" defer></script>
       </Head>
       <header className={styles.header}>
         <div className={styles.logo}>

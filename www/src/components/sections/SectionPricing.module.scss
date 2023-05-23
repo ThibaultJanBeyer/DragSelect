@@ -55,6 +55,11 @@
   justify-content: center;
 }
 
+.box:hover,
+.boxAlt:hover {
+  text-decoration: none;
+}
+
 .box:hover .purchase,
 .boxAlt:hover .purchase {
   text-decoration: underline;

@@ -4,8 +4,7 @@ import { BubbleExplosion } from 'beautiful-web-animations'
 import styles from './Item.module.scss'
 import { FileIcon } from './FileIcon'
 import { getRandomFileName } from './fileNames'
-import { useDragSelect } from '../../../DragSelectContext'
-import { DSPubCallback } from 'dragselect'
+import { DSPubCallback, DSInputElement, useDragSelect } from '../../../DragSelectContext'
 
 const explode = async (element: HTMLElement, isAppearing?: boolean) => {
   const BE = BubbleExplosion({
@@ -29,7 +28,7 @@ const _Item: React.FC = () => {
     const element = inputEl.current as unknown as HTMLElement
     if (!element || !ds || !available) return
 
-    const cb: DSPubCallback<"DS:removed"> = async ({ item }) => {
+    const cb: DSPubCallback<"DS:removed", DSInputElement> = async ({ item }) => {
       if (item !== element) return
       ds.unsubscribe('DS:removed', cb)
       await explode(element)

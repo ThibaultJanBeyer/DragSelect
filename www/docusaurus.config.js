@@ -13,6 +13,9 @@ const config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
+  scripts: [
+    'https://assets.lemonsqueezy.com/lemon.js'
+  ],
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -99,10 +102,15 @@ const config = {
         },
         items: [
           {
+            href: '/licenses',
+            position: 'left',
+            label: 'Pricing',
+          },
+          {
             type: 'doc',
             docId: 'intro',
             position: 'left',
-            label: 'Docs',
+            label: 'Getting Started',
           },
           {
             href: 'https://github.com/ThibaultJanBeyer/DragSelect',

@@ -2,10 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import styles from './Body.module.scss'
 import { Item } from './Item/Item'
-import { useDragSelect } from '../../DragSelectContext'
+import { DSPubCallback, DSInputElement, useDragSelect } from '../../DragSelectContext'
 import { Icon } from '../Icon/Icon'
-import { handleApproveReject } from './approveReject.js'
-import { DSPubCallback } from 'dragselect'
+import { handleApproveReject } from './approveReject'
 
 type Props = {}
 
@@ -38,7 +37,7 @@ export const Body: React.FC<Props> = ({}) => {
       ],
     })
 
-    const dsCallback: DSPubCallback<"DS:end"> = async ({
+    const dsCallback: DSPubCallback<"DS:end", DSInputElement> = async ({
       items,
       isDragging,
       dropTarget,
