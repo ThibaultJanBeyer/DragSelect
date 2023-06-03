@@ -5,7 +5,7 @@ import { Icon } from '@iconify/react';
 export const SectionPricing: React.FC<{}> = () => (
   <>
     <div className={styles.container}>
-      <a href="https://tjb.lemonsqueezy.com/checkout/buy/b0d95d57-384f-4e41-8d2e-5318e0d9c7c4?embed=1" className={`${styles.boxAlt} lemonsqueezy-button`}>
+      <a href="https://tjb.lemonsqueezy.com/checkout/buy/b0d95d57-384f-4e41-8d2e-5318e0d9c7c4?embed=1" className={`lemonsqueezy-button ${styles.boxAlt}`}>
         <div className={`${styles.boxInner}`}>
           <h3 className={styles.title}>Startup</h3>
           <div>
@@ -39,7 +39,7 @@ export const SectionPricing: React.FC<{}> = () => (
           </div>
         </div>
       </a>
-      <a href="https://tjb.lemonsqueezy.com/checkout/buy/9f10f1b1-c11a-468b-9c51-f76ddc8784e7?embed=1" className={`${styles.box} lemonsqueezy-button`}>
+      <a href="https://tjb.lemonsqueezy.com/checkout/buy/9f10f1b1-c11a-468b-9c51-f76ddc8784e7?embed=1" className={`lemonsqueezy-button ${styles.box}`}>
         <div className={`${styles.boxInner}`}>
           <h3 className={styles.title}>Enterprise</h3>
           <div>
