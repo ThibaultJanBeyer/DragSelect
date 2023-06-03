@@ -23,6 +23,7 @@
 "DS:removed:pre"
 "DS:removed"
 ```
+- Fix key stroke bug [#181](https://github.com/ThibaultJanBeyer/DragSelect/issues/181)
 
 # 2.7.4
 
