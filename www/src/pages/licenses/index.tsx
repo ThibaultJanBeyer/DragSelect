@@ -52,7 +52,7 @@ export default function License(): JSX.Element {
           Earning Distribution
         </h2>
         <p>
-          All earnings over 100$ are distributed on a yearly basis to all contributors of DragSelect according to their overall percentual contribution
+          All earnings from enterprise licenses are distributed on a yearly basis to all contributors of DragSelect according to their overall percentual contribution
         </p>
         <h2 className={styles.section__title}>
           Key Points
