@@ -3729,10 +3729,8 @@ dot-prop@^5.2.0:
   dependencies:
     is-obj "^2.0.0"
 
-dragselect@*:
+"dragselect@file:../DragSelect":
   version "2.7.4"
-  resolved "https://registry.yarnpkg.com/dragselect/-/dragselect-2.7.4.tgz#54838390212d2d954909bf42aa2213df29317b4a"
-  integrity sha512-j0qFl4xvsyImlSTn9erDCCT4SSPUMssgKAYuKqhsPr8WPphLghHfjDd4WR2jLjL91fTQQlbbIJ/7T2qwD2hghQ==
 
 duplexer3@^0.1.4:
   version "0.1.5"
