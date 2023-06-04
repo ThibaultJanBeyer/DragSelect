@@ -3,7 +3,5 @@
   "extends": "@tsconfig/docusaurus/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "moduleResolution": "bundler",
-    "module": "ESNext"
   }
 }
