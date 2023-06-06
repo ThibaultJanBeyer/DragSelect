@@ -16,13 +16,13 @@ If tests were successful, the next step is to publish the new version on `npm`:
 - `cd DragSelect/` if not already
 
 ```
-yarn build
+pnpm build
 ```
 - Build is necessary for npm packages (since `dist` will be deployed to npm but is ignored in repo)
 
 ```
 npm version patch
-yarn build
+pnpm build
 ```
 - versions are either `patch` wich changes 0.0.x, `minor` wich changes 0.x.0 or `major` for x.0.0.  
   See [npm docs](https://docs.npmjs.com/getting-started/publishing-npm-packages)  
