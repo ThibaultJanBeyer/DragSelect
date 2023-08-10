@@ -37,6 +37,7 @@ export default class KeyStore {
 
   /** @param {KeyboardEvent} event */
   keydown = (event) => {
+    if(!event.key) return
     const key = event.key.toLowerCase()
     this.DS.publish('KeyStore:down:pre', { event, key })
     this._currentValues.add(key)
@@ -45,6 +46,7 @@ export default class KeyStore {
 
   /** @param {KeyboardEvent} event */
   keyup = (event) => {
+    if(!event.key) return
     const key = event.key.toLowerCase()
     this.DS.publish('KeyStore:up:pre', { event, key })
     this._currentValues.delete(key)
