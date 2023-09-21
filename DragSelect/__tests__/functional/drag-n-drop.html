@@ -10,6 +10,7 @@
     window.selected = [];
     window.dragged = [];
     window.dragStart = [],
+    window.selectMove = [],
     window.dragMove = [],
 
     window.getItemVect = (id) => {
@@ -30,6 +31,7 @@
     })
     ds.subscribe('DS:update', ({ isDragging, items }) => {
         if(isDragging) window.dragMove.push(items.map(item => item.id))
+        else window.selectMove.push(items.map(item => item.id))
     })
 </script>
 </body>
