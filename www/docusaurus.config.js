@@ -1,65 +1,62 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github')
-const darkCodeTheme = require('prism-react-renderer/themes/dracula')
-
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'DragSelect',
-  tagline: 'Easy javascript Drag-Select & Drop functionality done right.',
-  url: 'https://DragSelect.com/',
-  baseUrl: '/',
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
+  title: "DragSelect",
+  tagline: "Easy javascript Drag-Select & Drop functionality done right.",
+  url: "https://DragSelect.com/",
+  baseUrl: "/",
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "warn",
+  favicon: "img/favicon.ico",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'thibaultjanbeyer', // Usually your GitHub org/user name.
-  projectName: 'dragselect', // Usually your repo name.
+  organizationName: "thibaultjanbeyer", // Usually your GitHub org/user name.
+  projectName: "dragselect", // Usually your repo name.
   trailingSlash: false,
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
   // to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: "en",
+    locales: ["en"],
   },
 
   plugins: [
-    'docusaurus-plugin-sass',
+    "docusaurus-plugin-sass",
     async function tailwind(context, options) {
       return {
-        name: 'docusaurus-tailwindcss',
+        name: "docusaurus-tailwindcss",
         configurePostCss(postcssOptions) {
           // Appends TailwindCSS and AutoPrefixer.
-          postcssOptions.plugins.push(require('tailwindcss'))
-          postcssOptions.plugins.push(require('autoprefixer'))
-          return postcssOptions
+          postcssOptions.plugins.push(require("tailwindcss"));
+          postcssOptions.plugins.push(require("autoprefixer"));
+          return postcssOptions;
         },
-      }
+      };
     },
   ],
-  themes: ['@docusaurus/theme-live-codeblock'],
+  themes: ["@docusaurus/theme-live-codeblock"],
   stylesheets: [
-    'https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;900&display=swap',
+    "https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;900&display=swap",
   ],
 
   presets: [
     [
-      'classic',
+      "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/ThibaultJanBeyer/DragSelect',
+          editUrl: "https://github.com/ThibaultJanBeyer/DragSelect",
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve("./src/css/custom.css"),
         },
       }),
     ],
@@ -69,59 +66,55 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       algolia: {
-        appId: 'TJ22T26SP7',
-        apiKey: 'f72a0eb90358d7a0644c0157d20833bf',
-        indexName: 'dragselect',
+        appId: "TJ22T26SP7",
+        apiKey: "f72a0eb90358d7a0644c0157d20833bf",
+        indexName: "dragselect",
       },
       metadata: [
         {
-          name: 'keywords',
+          name: "keywords",
           content:
-            'javascript, npm, drag-and-drop, drag, selection, dragselect, drag-n-drop, drag-selection, drag-select, drag-selection library, open source, free',
+            "javascript, npm, drag-and-drop, drag, selection, dragselect, drag-n-drop, drag-selection, drag-select, drag-selection library, open source, free",
         },
-        { name: 'author', content: 'Thibault Jan Beyer' },
+        { name: "author", content: "Thibault Jan Beyer" },
         {
-          name: 'description',
+          name: "description",
           content:
-            'A JavaScript library for selecting and moving elements in the browser.',
+            "A JavaScript library for selecting and moving elements in the browser.",
         },
       ],
       colorMode: {
-        defaultMode: 'dark',
+        defaultMode: "dark",
         respectPrefersColorScheme: true,
       },
-      image: 'img/dragselect-logo-bg.png',
+      image: "img/dragselect-logo-bg.png",
       navbar: {
-        title: 'DragSelect',
+        title: "DragSelect",
         logo: {
-          alt: 'DragSelect Logo',
-          src: 'img/favicon.ico',
+          alt: "DragSelect Logo",
+          src: "img/favicon.ico",
         },
         items: [
           {
-            type: 'doc',
-            docId: 'intro',
-            position: 'left',
-            label: 'Docs',
+            type: "doc",
+            docId: "intro",
+            position: "left",
+            label: "Docs",
           },
           {
-            href: 'https://github.com/ThibaultJanBeyer/DragSelect',
-            label: 'GitHub',
-            position: 'right',
+            href: "https://github.com/ThibaultJanBeyer/DragSelect",
+            label: "GitHub",
+            position: "right",
           },
         ],
       },
       footer: {
-        style: 'dark',
+        style: "dark",
         copyright: `
         Designed & Build with love in Bonn, Germany by <a href="https://thibaultjanbeyer.com">Tibo</a> and the <a href="https://github.com/ThibaultJanBeyer/DragSelect">open source</a> community. <a href="/docs/info">Read more about it here</a>.
         `,
       },
-      prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
-      },
     }),
-}
+};
 
-module.exports = config
+module.exports = config;
