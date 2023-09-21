@@ -3,5 +3,7 @@
   "extends": "@tsconfig/docusaurus/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "moduleResolution": "Node",
+    "module": "ESNext"
   }
 }

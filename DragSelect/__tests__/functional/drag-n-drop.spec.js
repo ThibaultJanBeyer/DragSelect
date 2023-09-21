@@ -2,6 +2,7 @@ const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 describe('Drag N Drop', () => {
   const itemId = '2'
+  const steps = 10
 
   it('The items should be immediately draggable', async () => {
     await page.goto(`${baseUrl}/drag-n-drop.html`)
@@ -15,9 +16,7 @@ describe('Drag N Drop', () => {
     const mouse = page.mouse
     await mouse.move(itemVect.x, itemVect.y)
     await mouse.down()
-    await mouse.move(itemVect.x + 100, itemVect.y + 100, {
-      steps: 10,
-    })
+    await mouse.move(itemVect.x + 100, itemVect.y + 100, { steps })
     await mouse.up()
 
     const { dragged, itemVect2, dragStart, dragMove } = await page.evaluate(
@@ -45,9 +44,7 @@ describe('Drag N Drop', () => {
     const mouse = page.mouse
     await mouse.move(1, 1)
     await mouse.down()
-    await mouse.move(500, 500, {
-      steps: 10,
-    })
+    await mouse.move(500, 500, { steps })
     await mouse.up()
 
     const {
@@ -57,6 +54,7 @@ describe('Drag N Drop', () => {
       itemVect3,
       itemVect4,
       dragged0,
+      selectMove,
     } = await page.evaluate(() => ({
       selected0: window.selected,
       itemVect1: window.getItemVect(1),
@@ -64,16 +62,16 @@ describe('Drag N Drop', () => {
       itemVect3: window.getItemVect(3),
       itemVect4: window.getItemVect(4),
       dragged0: window.dragged,
+      selectMove: window.selectMove,
     }))
 
     expect(selected0.length).toEqual(4)
     expect(dragged0.length).toEqual(0)
+    expect(selectMove.length).toEqual(steps)
 
     await mouse.move(itemVect3.x, itemVect3.y)
     await mouse.down()
-    await mouse.move(itemVect3.x + 100, itemVect3.y + 100, {
-      steps: 10,
-    })
+    await mouse.move(itemVect3.x + 100, itemVect3.y + 100, { steps })
     await mouse.up()
 
     const {
@@ -85,6 +83,7 @@ describe('Drag N Drop', () => {
       dragged02,
       dragStart,
       dragMove,
+      selectMove2,
     } = await page.evaluate(() => ({
       selected02: window.selected,
       itemVect12: window.getItemVect(1),
@@ -94,12 +93,14 @@ describe('Drag N Drop', () => {
       dragged02: window.dragged,
       dragStart: window.dragStart,
       dragMove: window.dragMove,
+      selectMove2: window.selectMove,
     }))
 
     expect(selected02.length).toEqual(0)
     expect(dragged02.length).toEqual(4)
     expect(dragStart.length).toEqual(1)
-    expect(dragMove.length).toEqual(5)
+    expect(selectMove2.length).toEqual(steps)
+    expect(dragMove.length).toEqual(steps)
 
     expect(itemVect12).not.toMatchObject(itemVect1)
     expect(itemVect22).not.toMatchObject(itemVect2)

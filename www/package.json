@@ -15,34 +15,30 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@docusaurus/core": "2.4.1",
-    "@docusaurus/plugin-content-docs": "^2.4.1",
-    "@docusaurus/preset-classic": "2.4.1",
-    "@docusaurus/theme-classic": "^2.4.1",
-    "@docusaurus/theme-common": "^2.4.1",
-    "@docusaurus/theme-live-codeblock": "^2.4.1",
-    "@docusaurus/types": "2.4.1",
+    "@docusaurus/core": "2.4.3",
+    "@docusaurus/preset-classic": "2.4.3",
+    "@docusaurus/theme-live-codeblock": "^2.4.3",
     "@mdx-js/react": "^1.6.22",
-    "@react-spring/web": "^9.7.2",
-    "autoprefixer": "^10.4.14",
+    "@react-spring/web": "^9.7.3",
+    "autoprefixer": "^10.4.16",
     "beautiful-web-animations": "^0.1.37",
-    "clsx": "^1.2.1",
-    "docusaurus-plugin-sass": "^0.2.3",
+    "clsx": "^2.0.0",
+    "docusaurus-plugin-sass": "^0.2.5",
     "dragselect": "workspace:*",
-    "prism-react-renderer": "^1.3.5",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "postcss": "^8.4.30",
+    "prism-react-renderer": "^2.0.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-github-btn": "^1.4.0",
     "react-waypoint": "^10.3.0",
-    "sass-loader": "^13.3.1",
-    "tailwindcss": "^3.3.2",
-    "typewriter-effect": "^2.20.1"
+    "sass": "^1.68.0",
+    "tailwindcss": "^3.3.3",
+    "typewriter-effect": "^2.21.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "2.4.1",
-    "@tsconfig/docusaurus": "^1.0.5",
-    "@types/node": "^20.2.5",
-    "typescript": "^4.7.4"
+    "@docusaurus/module-type-aliases": "2.4.3",
+    "@tsconfig/docusaurus": "^2.0.1",
+    "typescript": "^5.2.2"
   },
   "browserslist": {
     "production": [
