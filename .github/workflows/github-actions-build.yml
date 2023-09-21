@@ -15,20 +15,7 @@ jobs:
           node-version: 20
           cache: yarn
 
-      - name: Build Dragselect
-        run: yarn build:dragselect
-
-      - name: Test
-        run: yarn test
-
-      - name: List
-        run: cd DragSelect && ls -la
-
-      - name: Build Docs
-        run: yarn build:docs
-
-      - name: Build Files
-        run: node ./build.js
+      - run: yarn build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
