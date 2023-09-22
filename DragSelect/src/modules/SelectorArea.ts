@@ -1,16 +1,16 @@
-import DragSelect from "../DragSelect"
-import { createSelectorAreaElement } from "../methods/createSelectorAreaElement"
-import { getOverflowEdges } from "../methods/getOverflowEdges"
-import { isCollision } from "../methods/isCollision"
-import { vect2rect } from "../methods/vect2"
-import { DSSettings } from "../stores/SettingsStore"
-import { DSBoundingRect, DSEdges, DSEvent, DSInputElement } from "../types"
-import PubSub from "./PubSub"
+import DragSelect from '../DragSelect'
+import { createSelectorAreaElement } from '../methods/createSelectorAreaElement'
+import { getOverflowEdges } from '../methods/getOverflowEdges'
+import { isCollision } from '../methods/isCollision'
+import { vect2rect } from '../methods/vect2'
+import { DSSettings } from '../stores/SettingsStore'
+import { DSBoundingRect, DSEdges, DSEvent, DSInputElement } from '../types'
+import PubSub from './PubSub'
 
 type AppendRemove = 'append' | 'remove'
 
 export default class SelectorArea<E extends DSInputElement> {
-  private _scrollInterval?: NodeJS.Timeout
+  private _scrollInterval?: number
   private _rect?: DSBoundingRect
   private currentEdges: DSEdges = []
   private DS: DragSelect<E>
@@ -46,7 +46,9 @@ export default class SelectorArea<E extends DSInputElement> {
   }
 
   /** Adding / Removing elements to document */
-  private applyElements = <K extends keyof AppendRemove>(method: AppendRemove[K]) => {
+  private applyElements = <K extends keyof AppendRemove>(
+    method: AppendRemove[K]
+  ) => {
     const docEl = document.body ? 'body' : 'documentElement'
     const methodName = `${method}Child` as `${AppendRemove}Child`
     this.HTMLNode[methodName](this.DS.Selector.HTMLNode)
@@ -79,7 +81,7 @@ export default class SelectorArea<E extends DSInputElement> {
 
   private startAutoScroll = () => {
     this.currentEdges = []
-    this._scrollInterval = setInterval(() => this.handleAutoScroll(), 16)
+    this._scrollInterval = window.setInterval(() => this.handleAutoScroll(), 16)
   }
 
   /** Creates an interval that auto-scrolls while the cursor is near the edge */

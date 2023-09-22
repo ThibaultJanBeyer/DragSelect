@@ -1,11 +1,11 @@
 {
   "name": "dragselect",
   "description": "Easy JavaScript library for selecting and moving elements. With no dependencies. Drag-Select & Drag-And-Drop.",
-  "type": "module",
   "scripts": {
     "clean": "turbo clean",
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "ci": "turbo run test && turbo run build && node ./build.js",
     "test": "turbo run test"
   },
   "repository": {

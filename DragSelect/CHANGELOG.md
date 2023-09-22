@@ -1,7 +1,9 @@
 # 3.0.0
 
 - Typescript rewrite. The JavaScript world has shifted towards typescript. This will improve the quality of life for users of this library.
-- Callbacks refactor: 
+- Use monorepo tooling in order to dog-food an thus improve the quality of the product (this will allow us to more easily deploy separate packages)
+- Callbacks refactor:
+
 ```
 "elementselect" => "DS:select",
 "elementunselect" => "DS:unselect",
@@ -16,13 +18,16 @@
 "predragmove" => "DS:update:pre",
 "precallback" => "DS:end:pre",
 ```
+
 - New callbacks:
+
 ```
 "DS:added:pre"
 "DS:added"
 "DS:removed:pre"
 "DS:removed"
 ```
+
 - Fix key stroke bug [#181](https://github.com/ThibaultJanBeyer/DragSelect/issues/181)
 
 # 2.7.4
@@ -36,9 +41,9 @@
 
 # 2.7.0
 
-- Introduce blog-drag as alpha. It is supposed to fix dragging of multiple elements: dragging them as one block keeping aspect ratio positions on drag-scroll. Instead of moving elements individually. This was considered a bug. However as it is not fully tested it comes under a flag, please turn it on by setting `dragAsBlock: true`  and [report any issue you find here](https://github.com/ThibaultJanBeyer/DragSelect/issues). Thanks to [@rendertom](https://github.com/rendertom) for the addition [#162](https://github.com/ThibaultJanBeyer/DragSelect/pull/162).
+- Introduce blog-drag as alpha. It is supposed to fix dragging of multiple elements: dragging them as one block keeping aspect ratio positions on drag-scroll. Instead of moving elements individually. This was considered a bug. However as it is not fully tested it comes under a flag, please turn it on by setting `dragAsBlock: true` and [report any issue you find here](https://github.com/ThibaultJanBeyer/DragSelect/issues). Thanks to [@rendertom](https://github.com/rendertom) for the addition [#162](https://github.com/ThibaultJanBeyer/DragSelect/pull/162).
 
-*Note: this feature will be turned on by default in a future release once proper testing and all bugs are fixed*
+_Note: this feature will be turned on by default in a future release once proper testing and all bugs are fixed_
 
 # 2.6.1
 
@@ -48,7 +53,7 @@
 
 - Introducing Overrides as a new concept to help advanced modification use-cases like [#150](https://github.com/ThibaultJanBeyer/DragSelect/issues/150) in collaboration with [@HollowMan6](https://github.com/HollowMan6)
 - - See [Example use-case](https://dragselect.com/docs/guided-examples/Custom-Selection-Filter-Override) & [API for overrides](https://dragselect.com/docs/API/Overrides)
-- Expose `filterSelected` in  `Selection` module
+- Expose `filterSelected` in `Selection` module
 - Expose `isCollision` helper method
 
 # 2.5.6
@@ -96,7 +101,7 @@
 
 # 2.4.0-1
 
-- Change all Properties dynamically *anytime*. Solves #111 and #95. Very helpful for async libraries like react. You can do so using the `setSettings` method, you can pass any settings in the object and they will be updated. Example: update the drag area at any time by running: `ds.setSettings({ area: document.getElementById("new-area") })`.
+- Change all Properties dynamically _anytime_. Solves #111 and #95. Very helpful for async libraries like react. You can do so using the `setSettings` method, you can pass any settings in the object and they will be updated. Example: update the drag area at any time by running: `ds.setSettings({ area: document.getElementById("new-area") })`.
 - Remove deprecated keys `ctrlKey`, `shiftKey` and `metaKey`. Use `Control`, `Shift` and `Meta` respectively instead.
 - Remove deprecated method `getCursorPositionDifference`. Calculate the difference on your own instead.
 - Remove deprecated setting property callbacks. Use `DragSelect.subscribe("callback", (callbackObject) => {})` instead.
@@ -111,7 +116,7 @@
 - Fix bug with `pre` events not working properly.
 - **Caution**:
 - - This upgrade changes the order in which the callbacks are fired. The normal callbacks are fired in a FIFO order, first in, first out. The `pre` callbacks are fired in a LIFO order, last in first out.
-- - Pre Events are now really triggered *before* the whole action.
+- - Pre Events are now really triggered _before_ the whole action.
 - Fixes issue [#110](https://github.com/ThibaultJanBeyer/DragSelect/issues/110) where teardown did not work properly
 
 # 2.2.2
@@ -137,7 +142,7 @@ All these changes solve [#80](https://github.com/ThibaultJanBeyer/DragSelect/iss
 # 2.1.2
 
 - Fixes build error bug introduced by typings. Solves [#100](https://github.com/ThibaultJanBeyer/DragSelect/issues/100)
-Issue: the JS-Docs files types.js was not included in d.ts files. Now rollup builds are force-including it.
+  Issue: the JS-Docs files types.js was not included in d.ts files. Now rollup builds are force-including it.
 
 # 2.1.0-1
 
@@ -200,26 +205,38 @@ Changed the callbacks to follow a pub/sub pattern. They're not events you can su
 Here is an example on what you'll have to change:
 
 ### Before
+
 ```javascript
 const ds = new DragSelect({
-  callback: (items, event) => console.log("my callback", items, event),
-  onDragMove: (event) => console.log("my callback", event),
-  onDragStartBegin: (event) => console.log("my callback", event),
-  onDragStart: (event) => console.log("my callback", event),
-  onElementSelect: (item) => console.log("my callback", item),
-  onElementUnselect:  (item) => console.log("my callback", item),
+  callback: (items, event) => console.log('my callback', items, event),
+  onDragMove: (event) => console.log('my callback', event),
+  onDragStartBegin: (event) => console.log('my callback', event),
+  onDragStart: (event) => console.log('my callback', event),
+  onElementSelect: (item) => console.log('my callback', item),
+  onElementUnselect: (item) => console.log('my callback', item),
 })
 ```
 
 ### Now
+
 ```javascript
 const ds = new DragSelect({})
-ds.subscribe('callback', ({ items, item, event }) => console.log("my callback", items, event))
-ds.subscribe('dragmove', ({ items, item, event }) => console.log("my callback", event))
+ds.subscribe('callback', ({ items, item, event }) =>
+  console.log('my callback', items, event)
+)
+ds.subscribe('dragmove', ({ items, item, event }) =>
+  console.log('my callback', event)
+)
 // dragstartbegin was removed use dragstart instead
-ds.subscribe('dragstart', ({ items, item, event }) => console.log("my callback", event))
-ds.subscribe('elementselect', ({ items, item, event }) => console.log("my callback", item))
-ds.subscribe('elementunselect', ({ items, item, event }) => console.log("my callback", item))
+ds.subscribe('dragstart', ({ items, item, event }) =>
+  console.log('my callback', event)
+)
+ds.subscribe('elementselect', ({ items, item, event }) =>
+  console.log('my callback', item)
+)
+ds.subscribe('elementunselect', ({ items, item, event }) =>
+  console.log('my callback', item)
+)
 ```
 
 ## Removed private and public methods (Breaking Change)
@@ -252,7 +269,7 @@ However, that means that the key names have changes. Following keys should be re
 ## Dropped IE Support
 
 - Internet explorer is no longer supported. Following other big libraries. Dropping IE Support drastically reduces bundle size and improves maintainability of the project. Also following Microsoft itself, which [stopped support for IE all together](https://www.independent.co.uk/life-style/gadgets-and-tech/news/microsoft-internet-explorer-out-use-11-edge-a9676176.html). If you need IE support, please use a build tool that gives you IE Support with necessary polyfills for now and write support request stating your use-case. You can also consider using any versions prior 2.
-We do support Edge and all other major browsers.
+  We do support Edge and all other major browsers.
 
 ## Impressive performance improvements
 
@@ -265,14 +282,16 @@ We compared the accumulated average execution times before and after the changes
 - 11.36% faster by using an interaction pub/sub mechanism
 - 15.86% faster by caching element positions (each update) & using more performant css class manipulations
 - 28.36% faster by caching by bundling reflows and repaints
+
 ---
+
 = 59,67% performance increase
 
 # 1.15.1
 
 - This is a preparation to some code-refactoring and bigger changes aimed for v2
 - Preparation to deprecate `getScroll` and `getAreaRect`. They will both become internal methods. Unless you've valid reasons to keep exposing them.
-- We will soon also prevent you from using most internal methods (those marked with `_` at the start). You'll not be able to extend them, nor override, nor use directly. Also here, unless you've valid reasons to keep them exposed. 
+- We will soon also prevent you from using most internal methods (those marked with `_` at the start). You'll not be able to extend them, nor override, nor use directly. Also here, unless you've valid reasons to keep them exposed.
 
 # 1.15.0
 
@@ -333,6 +352,7 @@ We compared the accumulated average execution times before and after the changes
 # 1.11.1
 
 - Add em6 moduled files that have native `module export DragSelect` that can be used in for example:
+
 ```html
 <script type="module">
   import DragSelect from "path/to/DragSelect.es6m.js"
@@ -343,16 +363,16 @@ We compared the accumulated average execution times before and after the changes
 # 1.11.0
 
 - Moved the files from the `dist` folder to the `docs` folder to adhere to github pages standart
-- Improve code stability by enforcing typechecks via JS-Docs, inspired by [truckjs](https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76)  
+- Improve code stability by enforcing typechecks via JS-Docs, inspired by [truckjs](https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76)
 - Partial rewrite using native ES6 classes transpiling down to ES5 using babel.  
-  *Note: first I refactored the code to TypeScript but then rolled back because it might limit the ability of external people to contribute due to the new language*
+  _Note: first I refactored the code to TypeScript but then rolled back because it might limit the ability of external people to contribute due to the new language_
 - Improve documentation by autogenerating it with JS-Docs
 
 # 1.10.0
 
 - Add touch device support (i.e. Mobile Phones)
 - Preparations for modern code. I.e. ES6:  
-Usind Babel to transpile downwards to ES5. This should not result in any changes on your side.
+  Usind Babel to transpile downwards to ES5. This should not result in any changes on your side.
 
 # 1.9.1
 
