@@ -2,6 +2,11 @@
   "name": "dragselect",
   "description": "Easy JavaScript library for selecting and moving elements. With no dependencies. Drag-Select & Drag-And-Drop.",
   "type": "module",
+  "private": true,
+  "workspaces": [
+    "DragSelect",
+    "www"
+  ],
   "scripts": {
     "initial": "cd ./DragSelect && yarn && cd ../www && yarn && cd ..",
     "initial:ci": "cd ./DragSelect && yarn install --frozen-lockfile && cd ../www && yarn install --frozen-lockfile && cd ..",
