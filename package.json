@@ -27,6 +27,6 @@
   },
   "homepage": "https://DragSelect.com/",
   "dependencies": {
-    "turbo": "^1.10.1"
+    "turbo": "^1.10.14"
   }
 }
