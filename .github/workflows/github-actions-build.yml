@@ -14,6 +14,7 @@ jobs:
         with:
           version: 8
 
+      - run: pnpm install
       - run: pnpm run ci
 
       - name: Deploy
