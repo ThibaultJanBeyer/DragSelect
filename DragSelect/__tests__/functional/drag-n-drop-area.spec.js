@@ -1,4 +1,4 @@
-import { moveSelect } from '../helpers/manipulation'
+import { moveSelect } from '../helpers/manipulations'
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 describe('Drag N Drop - Area', () => {
