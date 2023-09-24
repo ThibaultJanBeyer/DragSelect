@@ -12,12 +12,12 @@ export const moveSelect = async (page, x, y, distance = 200, steps = 10) => {
   await wait(100)
 }
 
-export const moveSelectTo = async (page, x, y, dX, dY) => {
+export const moveSelectTo = async (page, x, y, dX, dY, steps = 10) => {
   await page.mouse.move(x, y)
   await wait(100)
   await page.mouse.down()
   await wait(100)
-  await page.mouse.move(dX, dY, { steps: 10 })
+  await page.mouse.move(dX, dY, { steps })
   await wait(100)
   await page.mouse.up()
   await wait(100)
