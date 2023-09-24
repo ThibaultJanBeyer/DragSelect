@@ -1,5 +1,4 @@
-import wait from '../helpers/wait'
-import { moveSelect } from '../helpers/manipulations'
+import { moveSelectTo } from '../helpers/manipulations'
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 describe('Drag N Drop - Scroll', () => {
@@ -37,13 +36,6 @@ describe('Drag N Drop - Scroll', () => {
     }))
 
     await moveSelectTo(page, v4.x + 5, v4.y + 5, v4.x + 10, v4.y - 15, 10)
-    const mouse = page.mouse
-    await mouse.move(v4.x + 5, v4.y + 5)
-    await mouse.down()
-    await mouse.move(v4.x + 10, v4.y - 15, {
-      steps: 10,
-    })
-    await mouse.up()
 
     const { v42 } = await page.evaluate(() => ({
       v42: window.getItemVect(4),
