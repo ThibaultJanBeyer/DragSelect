@@ -1,3 +1,4 @@
+import { moveSelect } from '../helpers/manipulations'
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 describe('Drag N Drop', () => {
@@ -13,11 +14,7 @@ describe('Drag N Drop', () => {
       itemId
     )
 
-    const mouse = page.mouse
-    await mouse.move(itemVect.x, itemVect.y)
-    await mouse.down()
-    await mouse.move(itemVect.x + 100, itemVect.y + 100, { steps })
-    await mouse.up()
+    await moveSelect(page, itemVect.x, itemVect.y, steps)
 
     const { dragged, itemVect2, dragStart, dragMove } = await page.evaluate(
       (itemId) => ({
@@ -41,11 +38,7 @@ describe('Drag N Drop', () => {
   it('The items should be draggable after selection', async () => {
     await page.goto(`${baseUrl}/drag-n-drop.html`)
 
-    const mouse = page.mouse
-    await mouse.move(1, 1)
-    await mouse.down()
-    await mouse.move(500, 500, { steps })
-    await mouse.up()
+    await moveSelect(page, 1, 1, 500, steps)
 
     const {
       selected0,
@@ -69,10 +62,7 @@ describe('Drag N Drop', () => {
     expect(dragged0.length).toEqual(0)
     expect(selectMove.length).toEqual(steps)
 
-    await mouse.move(itemVect3.x, itemVect3.y)
-    await mouse.down()
-    await mouse.move(itemVect3.x + 100, itemVect3.y + 100, { steps })
-    await mouse.up()
+    await moveSelect(page, itemVect3.x, itemVect3.y, 100, steps)
 
     const {
       selected02,

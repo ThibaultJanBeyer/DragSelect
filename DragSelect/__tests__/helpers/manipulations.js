@@ -1,12 +1,12 @@
 import wait from './wait'
 
-export const moveSelect = async (page, x, y, distance = 200) => {
+export const moveSelect = async (page, x, y, distance = 200, steps = 10) => {
   const mouse = page.mouse
   await mouse.move(x, y)
   await wait(100)
   await mouse.down()
   await wait(100)
-  await mouse.move(x + distance, y + distance, { steps: 10 })
+  await mouse.move(x + distance, y + distance, { steps })
   await wait(100)
   await mouse.up()
   await wait(100)
