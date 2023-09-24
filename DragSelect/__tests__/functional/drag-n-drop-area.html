@@ -1,13 +1,16 @@
-<link rel="stylesheet" href="basics.css">
+<link rel="stylesheet" href="basics.css" />
 <style>
-#area {
+  #area {
     background: grey;
     height: 100px;
     left: 0;
     position: absolute;
     top: 0;
     width: 100px;
-}
+  }
+  p {
+    user-select: none;
+  }
 </style>
 <script src="../../dist/DragSelect.js"></script>
 <p>Draggable</p>
@@ -17,21 +20,21 @@
 <button id="item-3" class="item three">3</button>
 <button id="item-4" class="item four">4</button>
 <script>
-    window.selected = [];
-    window.dragged = [];
+  window.selected = []
+  window.dragged = []
 
-    window.getItemVect = (id) => {
-        const rect = document.querySelector(`#item-${id}`).getBoundingClientRect()
-        return { y: rect.top + (rect.height / 2), x: rect.left + (rect.width / 2) }
-    }
+  window.getItemVect = (id) => {
+    const rect = document.querySelector(`#item-${id}`).getBoundingClientRect()
+    return { y: rect.top + rect.height / 2, x: rect.left + rect.width / 2 }
+  }
 
-    const ds = new DragSelect({
-        selectables: document.querySelectorAll('.item'),
-        area: document.querySelector('#area')
-    });
-    ds.subscribe('DS:end', ({ isDragging, items }) => {
-        window.dragged = []
-        window.selected = []
-        window[isDragging ? 'dragged' : 'selected'] = items.map(item => item.id)
-    })
+  const ds = new DragSelect({
+    selectables: document.querySelectorAll('.item'),
+    area: document.querySelector('#area'),
+  })
+  ds.subscribe('DS:end', ({ isDragging, items }) => {
+    window.dragged = []
+    window.selected = []
+    window[isDragging ? 'dragged' : 'selected'] = items.map((item) => item.id)
+  })
 </script>
