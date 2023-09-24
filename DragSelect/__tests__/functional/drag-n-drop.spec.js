@@ -29,10 +29,10 @@ describe('Drag N Drop', () => {
     expect(dragged).toEqual([`item-${itemId}`])
     expect(dragStart).toEqual([[`item-${itemId}`]])
     expect(dragMove.length).toEqual(10)
+    // check if object was moved
     expect(itemVect).not.toMatchObject(itemVect2)
-    expect(itemVect2.x - itemVect.x + itemVect2.y - itemVect.y).toBeGreaterThan(
-      50
-    )
+    expect(itemVect2.x - itemVect.x).toBeGreaterThan(10)
+    expect(itemVect2.y - itemVect.y).toBeGreaterThan(10)
   })
 
   it('The items should be draggable after selection', async () => {
