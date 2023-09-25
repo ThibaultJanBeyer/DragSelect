@@ -1,6 +1,6 @@
 {
   "name": "dragselect",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Easy JavaScript library for selecting and moving elements. With no dependencies. Drag-Select & Drag-And-Drop.",
   "main": "./dist/DragSelect.js",
   "types": "./dist/DragSelect.d.ts",
@@ -68,6 +68,14 @@
     "js",
     "javascript",
     "vanillajs"
+  ],
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "package.json"
   ],
   "author": "Thibault Jan Beyer",
   "license": "GPLv3",
