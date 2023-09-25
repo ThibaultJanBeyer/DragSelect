@@ -1,13 +1,14 @@
-import DragSelect from "../DragSelect"
-import DropZone from "./DropZone"
-import PubSub from "./PubSub"
-import { DSInputDropZone, DSInputElement, Vect2 } from "../types"
-import { DSSettings } from "../stores/SettingsStore"
-import { isCollision } from "../methods/isCollision"
+import DragSelect from '../DragSelect'
+import DropZone from './DropZone'
+import PubSub, { DSCallback } from './PubSub'
+import { DSInputDropZone, DSInputElement, Vect2 } from '../types'
+import { DSSettings } from '../stores/SettingsStore'
+import { isCollision } from '../methods/isCollision'
+import { DSInteractionPublishEventData } from './Interaction'
 
 export default class DropZones<E extends DSInputElement> {
   /** Get the drop zone by the zone element */
-  private _zoneByElement: Map<Element, DropZone<E>> = new Map() 
+  private _zoneByElement: Map<Element, DropZone<E>> = new Map()
   /** Get the drop zone by the zone id */
   private _zoneById: Map<string, DropZone<E>> = new Map()
   /** Get the drop zones by one zone item */
@@ -23,17 +24,24 @@ export default class DropZones<E extends DSInputElement> {
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s
 
-    this.PS.subscribe('Settings:updated:dropZones', 
-      ({ settings }) => this.setDropZones(settings))
+    this.PS.subscribe('Settings:updated:dropZones', ({ settings }) =>
+      this.setDropZones(settings)
+    )
     this.setDropZones({ dropZones: this.Settings.dropZones })
     this.PS.subscribe('Interaction:end', this.stop)
   }
 
-  private setDropZones = ({ dropZones }: { dropZones: DSInputDropZone<E>[] }) => {
+  private setDropZones = ({
+    dropZones,
+  }: {
+    dropZones: DSInputDropZone<E>[]
+  }) => {
     if (!dropZones) return
     if (this._zones) this._zones.forEach((zone) => zone.destroy())
 
-    this._zones = dropZones.map((zone) => new DropZone({ DS: this.DS, PS: this.PS, ...zone }))
+    this._zones = dropZones.map(
+      (zone) => new DropZone({ DS: this.DS, PS: this.PS, ...zone })
+    )
     this._zones.forEach((zone) => {
       this._zoneByElement.set(zone.element, zone)
       this._zoneById.set(zone.id, zone)
@@ -45,13 +53,18 @@ export default class DropZones<E extends DSInputElement> {
     })
   }
 
-  private _handleDrop = (target?: DropZone<E>) => {
-    this._zones?.forEach((zone) => zone === target && zone.handleNoDrop())
+  private _handleDrops = (target?: DropZone<E>) => {
+    this._zones?.forEach((zone) => {
+      if (zone !== target) zone.handleNoDrop()
+    })
     if (!target) return
     target.handleDrop()
   }
 
-  private _getZoneByElementsFromPoint = (elements: Element[], { x, y }: Vect2) => {
+  private _getZoneByElementsFromPoint = (
+    elements: Element[],
+    { x, y }: Vect2
+  ) => {
     for (let i = 0, il = elements.length; i < il; i++) {
       const zone = this._zoneByElement.get(elements[i])
       if (
@@ -60,14 +73,29 @@ export default class DropZones<E extends DSInputElement> {
           { left: x, right: x, top: y, bottom: y },
           Math.min(this.Settings.dropTargetThreshold, 0.5)
         )
-      ) return zone
+      )
+        return zone
     }
   }
 
-  private stop = ({ isDragging }: { isDragging: boolean }) => {
+  private stop: DSCallback<DSInteractionPublishEventData> = ({
+    isDragging,
+    isDraggingKeyboard,
+    event,
+  }) => {
     if (!isDragging) return
-    const target = this.getTarget()
-    this._handleDrop(target)
+
+    let coordinates: Vect2 | undefined = undefined
+    if (isDraggingKeyboard) {
+      const rect = (event.target as DSInputElement)?.getBoundingClientRect()
+      // center of rect
+      const x = rect.left + rect.width / 2
+      const y = rect.top + rect.height / 2
+      coordinates = { x, y }
+    }
+
+    const target = this.getTarget(coordinates)
+    this._handleDrops(target)
   }
 
   /// ///////////////////////////////////////////////////////////////////////////////////
