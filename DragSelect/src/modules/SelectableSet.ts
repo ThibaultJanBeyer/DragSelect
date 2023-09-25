@@ -117,7 +117,11 @@ export default class SelectableSet<E extends DSInputElement> extends Set<E> {
 
   public deleteAll = (elements: E[]) => elements.forEach((el) => this.delete(el))
 
-  public getRect = (element: E) => this._rects ? this.rects.get(element) : element.getBoundingClientRect()
+  /**
+   * Gets the bounding rect from private memory if available. If not gets it from the DOM.
+   * => Does not force rect calculation on all elements
+   */
+  public getElementRect = (element: E) => this._rects ? this._rects.get(element) : element.getBoundingClientRect()
 
   get elements() {
     return Array.from(this.values())

@@ -73,7 +73,7 @@ class DragSelect<E extends DSInputElement> {
   public SelectorArea: SelectorArea<E>
   public SelectableSet: SelectableSet<E>
   public SelectedSet: SelectedSet<E>
-  private Selection: Selection<E>
+  public Selection: Selection<E>
   private Drag: Drag<E>
   public DropZones: DropZones<E>
   public Interaction: Interaction<E>

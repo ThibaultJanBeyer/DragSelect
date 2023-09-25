@@ -1,5 +1,6 @@
 # 3.0.0
 
+- Previous setting `dragAsBlock` is the default behavior.
 - Licensing: GPLv3 => free for use on any non-commercial project
 - Typescript rewrite. The JavaScript world has shifted towards typescript. This will improve the quality of life for users of this library.
 - Callbacks refactor:

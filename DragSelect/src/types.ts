@@ -81,8 +81,6 @@ export type Settings<E extends DSInputElement> = {
   dropZoneTargetClass?: string
   /** [=ds-dropzone-inside] on dropZone that has elements inside after any drop */
   dropZoneInsideClass?: string
-  /** [=false] whether to drag multiple elements as a single block or as individual items */
-  dragAsBlock?: boolean
 }
 
 export type DSCallbackObject<E extends DSInputElement> = 

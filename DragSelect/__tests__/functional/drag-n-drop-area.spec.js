@@ -36,7 +36,7 @@ describe('Drag N Drop - Area', () => {
     expect(s2.length).toEqual(0)
     expect(v12.x).not.toEqual(v1.x)
     expect(v22.y).not.toEqual(v2.y)
-    expect(v12).toMatchObject(v22)
+    expect(v12.y).toEqual(v22.y)
 
     expect(v32.x).toEqual(v3.x)
     expect(v42.y).toEqual(v4.y)

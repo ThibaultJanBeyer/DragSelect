@@ -1,7 +1,7 @@
 import DragSelect from "../DragSelect"
 import PubSub from "./PubSub"
 import { DSSettings } from "../stores/SettingsStore"
-import { DSInputElement } from "../types";
+import { DSBoundingRect, DSInputElement } from "../types";
 
 export type DSSelectedPublishEventNames = "Selected:added:pre"|"Selected:added"|"Selected:removed"|"Selected:removed:pre"
 
@@ -15,6 +15,8 @@ export type DSSelectedPublish<E extends DSInputElement> = {
 }
 
 export default class SelectedSet<E extends DSInputElement> extends Set<E> {
+  private _rects?: Map<E, DSBoundingRect>
+  private _timeout?: NodeJS.Timeout
   private DS: DragSelect<E>
   private PS: PubSub<E>
   private Settings: DSSettings<E>
@@ -69,5 +71,22 @@ export default class SelectedSet<E extends DSInputElement> extends Set<E> {
 
   get elements() {
     return Array.from(this.values())
+  }
+
+  get rects() {
+    if (this._rects) return this._rects
+    this._rects = new Map()
+    this.forEach((element) =>
+      this._rects?.set(element, element.getBoundingClientRect())
+    )
+
+    // since elements can be moved, we need to update the rects every X ms
+    if (this._timeout) clearTimeout(this._timeout)
+    this._timeout = setTimeout(
+      () => (this._rects = undefined),
+      this.Settings.refreshMemoryRate
+    )
+
+    return this._rects
   }
 }
