@@ -13,12 +13,12 @@
     "pretest": "yarn build",
     "test": "yarn jest",
     "test:debug": "DEBUG=true yarn jest",
-    "test:watch": "yarn jest -- --watch",
+    "test:watch": "yarn jest --watch",
     "\n# BUILDING:": "",
     "prebuild": "yarn install",
     "build": "yarn rollup",
     "rollup": "rollup -c",
-    "rollup:watch": "yarn rollup -- -w"
+    "rollup:watch": "yarn rollup -w"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

@@ -2,120 +2,124 @@
 sidebar_position: 8
 description: DragSelect can be used with React, Angular, Vue, Svelte, and any library of your choice. This guide will show you how to use DragSelect with React.
 ---
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # React
 
-DragSelect works well with *any* library out of the box.
+DragSelect works well with _any_ library out of the box.
 But for your convenience we created this example page to see how we use it in the "react way"!
 
 > PS: We are looking into creating custom wrappers for libraries. We will update this guide as soon as available.
 
 ## 1. Create a context
+
 Feel free to copy+paste the code:
 
 <Tabs>
   <TabItem value="ts" label="TypeScript" default>
 
 ```tsx DragSelectContext.tsx
-import React, { createContext, useState, useEffect, useContext } from 'react'
-import DragSelect from 'dragselect'
+import React, { createContext, useState, useEffect, useContext } from "react";
+import DragSelect from "dragselect";
 
 type ProviderProps = {
-  children: React.ReactNode
-  settings?: ConstructorParameters<typeof DragSelect>[0]
-}
+  children: React.ReactNode;
+  settings?: ConstructorParameters<typeof DragSelect>[0];
+};
 
-const Context = createContext<DragSelect | undefined>(undefined)
+const Context = createContext<DragSelect | undefined>(undefined);
 
 function DragSelectProvider({ children, settings = {} }: ProviderProps) {
-  const [ds, setDS] = useState<DragSelect>()
+  const [ds, setDS] = useState<DragSelect>();
 
   useEffect(() => {
     setDS((prevState) => {
-      if (prevState) return prevState
-      return new DragSelect({})
-    })
+      if (prevState) return prevState;
+      return new DragSelect({});
+    });
     return () => {
       if (ds) {
-        ds.stop()
-        setDS(undefined)
+        ds.stop();
+        setDS(undefined);
       }
-    }
-  }, [ds])
+    };
+  }, [ds]);
 
   useEffect(() => {
-    ds?.setSettings(settings)
-  }, [ds, settings])
+    ds?.setSettings(settings);
+  }, [ds, settings]);
 
-  return <Context.Provider value={ds}>{children}</Context.Provider>
+  return <Context.Provider value={ds}>{children}</Context.Provider>;
 }
 
 function useDragSelect() {
-  return useContext(Context)
+  return useContext(Context);
 }
 
-export { DragSelectProvider, useDragSelect }
+export { DragSelectProvider, useDragSelect };
 ```
 
   </TabItem>
   <TabItem value="js" label="JavaScript" default>
 
 ```jsx DragSelectContext.jsx
-import React, { createContext, useState, useEffect, useContext } from 'react'
-import DragSelect from 'dragselect'
+import React, { createContext, useState, useEffect, useContext } from "react";
+import DragSelect from "dragselect";
 
-const Context = createContext(undefined)
+const Context = createContext(undefined);
 
 function DragSelectProvider({ children, settings = {} }) {
-  const [ds, setDS] = useState()
+  const [ds, setDS] = useState();
 
   useEffect(() => {
     setDS((prevState) => {
-      if (prevState) return prevState
-      return new DragSelect({})
-    })
+      if (prevState) return prevState;
+      return new DragSelect({});
+    });
     return () => {
       if (ds) {
-        ds.stop()
-        setDS(undefined)
+        ds.stop();
+        setDS(undefined);
       }
-    }
-  }, [ds])
+    };
+  }, [ds]);
 
   useEffect(() => {
-    ds?.setSettings(settings)
-  }, [ds, settings])
+    ds?.setSettings(settings);
+  }, [ds, settings]);
 
-  return <Context.Provider value={ds}>{children}</Context.Provider>
+  return <Context.Provider value={ds}>{children}</Context.Provider>;
 }
 
 function useDragSelect() {
-  return useContext(Context)
+  return useContext(Context);
 }
 
-export { DragSelectProvider, useDragSelect }
+export { DragSelectProvider, useDragSelect };
 ```
 
   </TabItem>
 </Tabs>
 
 ## 2. Wrap it
-```jsx MyComponent.tsx
-import React from 'react'
 
-import { DragSelectProvider } from '../DragSelectContext'
+```jsx MyComponent.tsx
+import React from "react";
+
+import { DragSelectProvider } from "../DragSelectContext";
 
 export const MyComponent = () => (
   // you can add initial settings by passing a settings object
   <DragSelectProvider settings={{ selectorClass: styles.selector }}>
     <SomeOtherComponentsThatNeedsDragSelect />
   </DragSelectProvider>
-)
+);
 ```
 
 ## 3. Use it
+
 ```jsx SomeOtherComponentsThatNeedsDragSelect.tsx
 import React, { useEffect, useRef } from 'react'
 import { useDragSelect } from '../../../DragSelectContext'
@@ -150,11 +154,11 @@ const SomeOtherComponentsThatNeedsDragSelect = () => {
 DragSelect also exports some helper types for type safety, i.e. `DSPubCallback` which you can pass in the subscriber for the callback type safety:
 
 ```tsx
-import { DSPubCallback } from 'dragselect'
+import { DSPubCallback } from "dragselect";
 const cb: DSPubCallback<"DS:end"> = ({ items = [] }) => {
-  console.log('CALLBACK', items)
-  setSelectedAmount(items.length)
-}
+  console.log("CALLBACK", items);
+  setSelectedAmount(items.length);
+};
 ```
 
 You can see this example in use within this docusaurus project. I.e. [the context provider here](https://github.com/ThibaultJanBeyer/DragSelect/blob/00d2e4ec4eb6b10bb7017022093ba403c4ebb208/www/src/components/DragSelectContext.tsx#L13) and a random [useage example here](https://github.com/ThibaultJanBeyer/DragSelect/blob/1e63a9215bf8e38bcedef8105f439d38be00ee14/www/src/components/win95/Footer/Footer.tsx#L16)
