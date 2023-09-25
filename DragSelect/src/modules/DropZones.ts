@@ -4,7 +4,7 @@ import PubSub, { DSCallback } from './PubSub'
 import { DSInputDropZone, DSInputElement, Vect2 } from '../types'
 import { DSSettings } from '../stores/SettingsStore'
 import { isCollision } from '../methods/isCollision'
-import { DSInteractionPublishEventData } from './Interaction'
+import { DSInteractionPublishEventData, InteractionEvent } from './Interaction'
 
 export default class DropZones<E extends DSInputElement> {
   /** Get the drop zone by the zone element */
@@ -84,17 +84,7 @@ export default class DropZones<E extends DSInputElement> {
     event,
   }) => {
     if (!isDragging) return
-
-    let coordinates: Vect2 | undefined = undefined
-    if (isDraggingKeyboard) {
-      const rect = (event.target as DSInputElement)?.getBoundingClientRect()
-      // center of rect
-      const x = rect.left + rect.width / 2
-      const y = rect.top + rect.height / 2
-      coordinates = { x, y }
-    }
-
-    const target = this.getTarget(coordinates)
+    const target = this.getTarget({ isDraggingKeyboard, event })
     this._handleDrops(target)
   }
 
@@ -114,12 +104,46 @@ export default class DropZones<E extends DSInputElement> {
     return zone.itemsInside
   }
 
+  private getKeyboardItemCenter = (
+    isDraggingKeyboard?: boolean,
+    event?: InteractionEvent | KeyboardEvent
+  ) => {
+    if (!isDraggingKeyboard || !event) return
+    const rect = (event.target as DSInputElement)?.getBoundingClientRect()
+    // center of rect
+    const x = rect.left + rect.width / 2
+    const y = rect.top + rect.height / 2
+    return { x, y }
+  }
+
   /** Returns first DropsZone under current pointer or coordinates if passed */
-  public getTarget = (coordinates?: Vect2) => {
+  public getTarget = ({
+    coordinates,
+    isDraggingKeyboard,
+    event,
+  }: {
+    coordinates?: Vect2
+    isDraggingKeyboard?: boolean
+    event?: InteractionEvent | KeyboardEvent
+  }) => {
     if (!this._zones?.length) return
 
-    const x = coordinates?.x || this.DS.stores.PointerStore.currentVal.x
-    const y = coordinates?.y || this.DS.stores.PointerStore.currentVal.y
+    let keyboardCoordinates: Vect2 | undefined
+    if (!coordinates && isDraggingKeyboard && event) {
+      keyboardCoordinates = this.getKeyboardItemCenter(
+        isDraggingKeyboard,
+        event
+      )
+    }
+
+    const x =
+      coordinates?.x ||
+      keyboardCoordinates?.x ||
+      this.DS.stores.PointerStore.currentVal.x
+    const y =
+      coordinates?.y ||
+      keyboardCoordinates?.y ||
+      this.DS.stores.PointerStore.currentVal.y
 
     const elements = document.elementsFromPoint(x, y)
     return this._getZoneByElementsFromPoint(elements, { x, y })

@@ -23,7 +23,7 @@ export default class DropZone<E extends DSInputElement> {
   public element: E
   private _droppables?: E[]
   private _rect?: DOMRect
-  private _observers?: {cleanup:() => void}
+  private _observers?: { cleanup: () => void }
   private _timeout?: NodeJS.Timeout
   private _itemsDropped: E[] = []
   private _itemsInside?: E[]
@@ -33,7 +33,19 @@ export default class DropZone<E extends DSInputElement> {
   private isDestroyed: boolean = false
   private _parentNodes?: Node[]
 
-  constructor({ DS, PS, id, element, droppables }: { DS: DragSelect<E>, PS: PubSub<E>, id: string, element: E, droppables?: E[] }) {
+  constructor({
+    DS,
+    PS,
+    id,
+    element,
+    droppables,
+  }: {
+    DS: DragSelect<E>
+    PS: PubSub<E>
+    id: string
+    element: E
+    droppables?: E[]
+  }) {
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s
@@ -57,7 +69,7 @@ export default class DropZone<E extends DSInputElement> {
     this.PS.subscribe('Interaction:end', this.stop)
   }
 
-  private setReadyClasses = (action: 'add'|'remove') => {
+  private setReadyClasses = (action: 'add' | 'remove') => {
     if (this.isDestroyed) return
     const selectedEls = this.droppables.filter((el) =>
       this.DS.SelectedSet.has(el)
@@ -179,11 +191,7 @@ export default class DropZone<E extends DSInputElement> {
       const itemRect = this.DS.SelectableSet.rects.get(item)
       if (
         this.rect &&
-        isCollision(
-          itemRect,
-          this.rect,
-          this.Settings.dropInsideThreshold
-        )
+        isCollision(itemRect, this.rect, this.Settings.dropInsideThreshold)
       )
         return [item]
       return []

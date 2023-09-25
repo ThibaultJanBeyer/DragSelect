@@ -402,7 +402,7 @@ class DragSelect<E extends DSInputElement> {
   public getZoneByCoordinates = (
     coordinates?: Vect2
   ): DSDropZone<E> | undefined =>
-    this.DropZones.getTarget(coordinates)?.toObject()
+    this.DropZones.getTarget({ coordinates })?.toObject()
 
   /** Returns itemsDropped into zone by zone id */
   public getItemsDroppedByZoneId = (zoneId: string) =>

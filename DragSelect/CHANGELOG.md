@@ -1,5 +1,6 @@
 # 3.0.0
 
+- Add keyboard drop-zoning solving [149](https://github.com/ThibaultJanBeyer/DragSelect/issues/149)
 - Fix persistance of `removeSelectables` as of [148](https://github.com/ThibaultJanBeyer/DragSelect/issues/148) note however, that the items are still in the settings, thus will be re-added when manually running `.start()`
 - Add an over-writeable method to filter the elements that are supposed to be dragged `.filterDragElements` [Override](https://www.DragSelect.com/docs/API/Overrides) inspired by [#158](https://github.com/ThibaultJanBeyer/DragSelect/pull/158)
 - Previous setting `dragAsBlock` is the default behavior.
