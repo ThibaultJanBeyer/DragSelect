@@ -93,7 +93,7 @@ export default class PubSub<E extends DSInputElement> {
   ) => {
     for (let i = 0, il = subscribers.length; i < il; i++) {
       if (this.DS.stopped) return
-      subscribers[i](data)
+      subscribers[i]?.(data)
     }
   }
 
@@ -105,7 +105,7 @@ export default class PubSub<E extends DSInputElement> {
     let i = subscribers.length
     while (i--) {
       if (this.DS.stopped) return
-      subscribers[i](data)
+      subscribers[i]?.(data)
     }
   }
 }
