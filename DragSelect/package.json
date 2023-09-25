@@ -70,7 +70,7 @@
     "vanillajs"
   ],
   "author": "Thibault Jan Beyer",
-  "license": "MIT",
+  "license": "GPLv3",
   "bugs": {
     "url": "https://github.com/ThibaultJanBeyer/DragSelect/issues"
   },

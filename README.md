@@ -12,6 +12,7 @@
   <a href="https://dragselect.com/docs/intro">Documentation</a> |
   <a href="https://github.com/ThibaultJanBeyer/DragSelect/">Github</a> | 
   <a href="https://www.npmjs.com/package/dragselect">NPM</a> | 
+  <a href="https://dragselect.com/licenses">Licenses</a>
 </p>
 <p align="center" style="text-align: center; margin-bottom: 50px;">
 <a href="https://github.com/ThibaultJanBeyer/DragSelect/actions"><img alt="Build Status" src="https://github.com/ThibaultJanBeyer/DragSelect/actions/workflows/github-actions-build.yml/badge.svg"></a>

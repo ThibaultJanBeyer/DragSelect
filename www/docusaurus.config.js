@@ -3,13 +3,16 @@
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "DragSelect",
-  tagline: "Easy javascript Drag-Select & Drop functionality done right.",
-  url: "https://DragSelect.com/",
-  baseUrl: "/",
-  onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
-  favicon: "img/favicon.ico",
+  title: 'DragSelect',
+  tagline: 'Easy javascript Drag-Select & Drop functionality done right.',
+  url: 'https://DragSelect.com/',
+  baseUrl: '/',
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
+  favicon: 'img/favicon.ico',
+  scripts: [
+    'https://assets.lemonsqueezy.com/lemon.js'
+  ],
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -41,7 +44,7 @@ const config = {
   ],
   themes: ["@docusaurus/theme-live-codeblock"],
   stylesheets: [
-    "https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;900&display=swap",
+    'https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;500;900&display=swap',
   ],
 
   presets: [
@@ -96,10 +99,15 @@ const config = {
         },
         items: [
           {
-            type: "doc",
-            docId: "intro",
-            position: "left",
-            label: "Docs",
+            href: '/licenses',
+            position: 'left',
+            label: 'Pricing',
+          },
+          {
+            type: 'doc',
+            docId: 'intro',
+            position: 'left',
+            label: 'Getting Started',
           },
           {
             href: "https://github.com/ThibaultJanBeyer/DragSelect",

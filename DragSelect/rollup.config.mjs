@@ -1,7 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
-import typescript from '@rollup/plugin-typescript';
-import dts from 'rollup-plugin-dts';
+import typescript from '@rollup/plugin-typescript'
+import dts from 'rollup-plugin-dts'
 
 const banner = `/***
 
@@ -18,21 +18,21 @@ const banner = `/***
 
  ******************************************
  
- {*} {*} STAR THIS PLUGIN ON GITHUB {*} {*}
+ {*} {*} STAR THIS PROJECT ON GITHUB {*} {*}
 
  https://github.com/ThibaultJanBeyer/DragSelect
  Please give it a like, this is what makes me happy :-)
  Thank You
 
- {*} {*} STAR THIS PLUGIN ON GITHUB {*} {*}
-
- ******************************************
- ********* The MIT License (MIT) **********
- ******************************************
+ {*} {*} STAR THIS PROJECT ON GITHUB {*} {*}
+ 
+ ***************************************
+ ********* GPLv3 / Commercial **********
+ ***************************************
  Created 2017 by ThibaultJanBeyer
- web: http://www.DragSelect.com/
- github: https://github.com/ThibaultJanBeyer/DragSelect
-
+ Web: http://www.DragSelect.com/
+ GitHub: https://github.com/ThibaultJanBeyer/DragSelect
+ ***************************************
 */`
 
 /**
@@ -69,10 +69,7 @@ export default [
         plugins: [terser()],
       },
     ],
-    plugins: [
-      typescript(),
-      resolve(),
-    ],
+    plugins: [typescript(), resolve()],
   },
   {
     input: `src/DragSelect.ts`,
@@ -81,5 +78,5 @@ export default [
       file: `dist/DragSelect.d.ts`,
       format: 'es',
     },
-  }
+  },
 ]
