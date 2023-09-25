@@ -16,11 +16,11 @@ Here is an Example on how you would use it:
 ```js
 const ds = new DragSelect({…})
 // Subscribe to an event
-const subscriptionId = ds.subscribe('callback', (callback_object) => { /* do something */ })
+const subscriptionId = ds.subscribe('DS:end', (callback_object) => { /* do something */ })
 // If you stored the ID of that handler you can just unsubscribe by passing the ID
-ds.unsubscribe('callback', null, subscriptionId)
+ds.unsubscribe('DS:end', null, subscriptionId)
 // If you want to publish some event yourself, you can totally do that aswell
-ds.publish('callback', { foo: 'bar' })
+ds.publish('DS:end', { foo: 'bar' })
 ```
 
 Let’s say you can’t store the subsciptionId, then you can also pass in the handler like so:
@@ -28,8 +28,8 @@ Let’s say you can’t store the subsciptionId, then you can also pass in the h
 ```js
 const ds = new DragSelect({…})
 const callbackHandler = (callback_object) => { /* do something */ }
-ds.subscribe('callback', callbackHandler) // starts listening to the events
-ds.unsubscribe('callback', callbackHandler) // stops listening to the events
+ds.subscribe('DS:end', callbackHandler) // starts listening to the events
+ds.unsubscribe('DS:end', callbackHandler) // stops listening to the events
 ```
 
 So to unsubscribe you have to either pass in the exact same method or the ID that the subscriber returns. Protip: passing the ID is more performant!

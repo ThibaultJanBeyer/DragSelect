@@ -1,10 +1,14 @@
 import React from 'react'
 import GitHubButton from 'react-github-btn'
 
-import { baseDocsUrl } from '../../constants'
+import { baseDocsUrl, basePricingUrl } from '../../constants'
 
 export const FooterLinks: React.FC<{}> = () => (
   <>
+    <a href={basePricingUrl} className="metalink">
+      Licensing
+    </a>{' '}
+    |{' '}
     <a
       href="https://github.com/ThibaultJanBeyer/DragSelect"
       className="metalink"

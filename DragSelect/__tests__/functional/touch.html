@@ -19,11 +19,9 @@
     const ds = new DragSelect({
         selectables: document.querySelectorAll('.item')
     });
-    ds.subscribe('callback', ({ isDragging, items }) => {
+    ds.subscribe('DS:end', ({ isDragging, items }) => {
         window.dragged = []
         window.selected = []
-
-        console.log('CB', isDragging, items, items[0]?.id)
         window[isDragging ? 'dragged' : 'selected'] = items.map(item => item.id)
     })
 </script>

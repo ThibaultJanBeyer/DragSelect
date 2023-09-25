@@ -19,11 +19,17 @@ export const SectionExample: React.FC<{}> = () => {
         }px`
     }
 
-    if (inView) document.addEventListener('scroll', handleScroll, {passive: true})
-    else document.removeEventListener('scroll', handleScroll, {passive: true})
+    if (inView) document.addEventListener('scroll', handleScroll, { passive: true })
+    else document.removeEventListener('scroll', handleScroll, {
+      // @ts-ignore
+      passive: true
+    })
 
     return () => {
-      document.removeEventListener('scroll', handleScroll, {passive: true})
+      document.removeEventListener('scroll', handleScroll, {
+        // @ts-ignore
+        passive: true
+      })
     }
   }, [bgRef, inView])
 
