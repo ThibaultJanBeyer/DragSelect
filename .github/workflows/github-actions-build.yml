@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [master, main]
+    branches: [main]
   pull_request:
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/master' }} # only on master
+        if: ${{ github.ref == 'refs/heads/main' }} # only on main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }} # Set in the settings page of your repository, as a secure variable
           publish_dir: ./docs
