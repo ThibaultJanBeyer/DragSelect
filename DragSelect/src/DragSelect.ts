@@ -47,7 +47,10 @@ import DropZones from './modules/DropZones'
 import Interaction from './modules/Interaction'
 import KeyStore from './stores/KeyStore'
 import PointerStore from './stores/PointerStore'
-import PubSub, { DSCallback, DSPublishMappings } from './modules/PubSub'
+import PubSub, {
+  type DSCallback,
+  type DSPublishMappings,
+} from './modules/PubSub'
 import ScrollStore from './stores/ScrollStore'
 import SelectableSet from './modules/SelectableSet'
 import SelectedSet from './modules/SelectedSet'
@@ -55,9 +58,18 @@ import Selector from './modules/Selector'
 import Selection from './modules/Selection'
 import SelectorArea from './modules/SelectorArea'
 import SettingsStore from './stores/SettingsStore'
-import { DSCallbackName, DSInputElement, Settings, Vect2 } from './types'
+import {
+  type DSCallbackName,
+  type DSInputElement,
+  type Settings,
+  type Vect2,
+} from './types'
 import { IsCollision, isCollision } from './methods/isCollision'
-import { DSPublicPublish, deprecatedNamesMap, subscriberAliases } from './methods/subscriberAliases'
+import {
+  type DSPublicPublish,
+  deprecatedNamesMap,
+  subscriberAliases,
+} from './methods/subscriberAliases'
 import { ensureArray } from './methods/ensureArray'
 import { DSDropZone } from './modules/DropZone'
 
@@ -69,10 +81,10 @@ class DragSelect<E extends DSInputElement> {
   public continue: boolean = false
   private PubSub: PubSub<E>
   public stores: {
-    SettingsStore:SettingsStore<E>
-    PointerStore:PointerStore<E>
-    ScrollStore:ScrollStore<E>
-    KeyStore:KeyStore<E>
+    SettingsStore: SettingsStore<E>
+    PointerStore: PointerStore<E>
+    ScrollStore: ScrollStore<E>
+    KeyStore: KeyStore<E>
   }
   public Area: Area<E>
   public Selector: Selector<E>
@@ -86,7 +98,7 @@ class DragSelect<E extends DSInputElement> {
   public stopped: boolean
 
   constructor(settings: Settings<E>) {
-    this.stopped = false;
+    this.stopped = false
 
     this.PubSub = new PubSub({ DS: this })
 
@@ -96,12 +108,20 @@ class DragSelect<E extends DSInputElement> {
       ScrollStore: ScrollStore<E>
       KeyStore: KeyStore<E>
     }
-    this.stores.SettingsStore = new SettingsStore({ settings, PS: this.PubSub }),
-    this.stores.PointerStore = new PointerStore({ DS: this, PS: this.PubSub }),
-    this.stores.ScrollStore = new ScrollStore({ DS: this, PS: this.PubSub }),
-    this.stores.KeyStore = new KeyStore({ DS: this, PS: this.PubSub }),
-
-    this.Area = new Area({ DS: this, PS: this.PubSub })
+    ;(this.stores.SettingsStore = new SettingsStore({
+      settings,
+      PS: this.PubSub,
+    })),
+      (this.stores.PointerStore = new PointerStore({
+        DS: this,
+        PS: this.PubSub,
+      })),
+      (this.stores.ScrollStore = new ScrollStore({
+        DS: this,
+        PS: this.PubSub,
+      })),
+      (this.stores.KeyStore = new KeyStore({ DS: this, PS: this.PubSub })),
+      (this.Area = new Area({ DS: this, PS: this.PubSub }))
     this.Selector = new Selector({ DS: this, PS: this.PubSub })
     this.SelectorArea = new SelectorArea({ DS: this, PS: this.PubSub })
 
@@ -125,20 +145,34 @@ class DragSelect<E extends DSInputElement> {
   //////////////////////////////////////////////////////////////////////////////////////
 
   public static isCollision: IsCollision
-  
+
   // any input data from the user is valid in this public PubSub but the exposed values are recommended
   /** Subscribe to events */
-  public subscribe = <T extends keyof DSPublicPublish<E>>(eventName: T, callback: DSCallback<DSPublishMappings<E>[T]>) => {
+  public subscribe = <T extends keyof DSPublicPublish<E>>(
+    eventName: T,
+    callback: DSCallback<DSPublishMappings<E>[T]>
+  ) => {
     // Deprecation warnings
-    if(deprecatedNamesMap[eventName as keyof typeof deprecatedNamesMap])
-      console.warn(`[DragSelect]: The event name "${eventName}" is deprecated and will be removed in a future version. Please use the new event name "${deprecatedNamesMap[eventName as keyof typeof deprecatedNamesMap]}" instead.`)
+    if (deprecatedNamesMap[eventName as keyof typeof deprecatedNamesMap])
+      console.warn(
+        `[DragSelect]: The event name "${eventName}" is deprecated and was/will be removed in a future version. Please use the new event name "${
+          deprecatedNamesMap[eventName as keyof typeof deprecatedNamesMap]
+        }" instead.`
+      )
 
     this.PubSub.subscribe(eventName, callback)
   }
   /** Un-Subscribe from events */
-  public unsubscribe = <T extends keyof DSPublicPublish<E>>(eventName: T, callback?: DSCallback<DSPublishMappings<E>[T]>, id?: number) => this.PubSub.unsubscribe(eventName, callback, id)
+  public unsubscribe = <T extends keyof DSPublicPublish<E>>(
+    eventName: T,
+    callback?: DSCallback<DSPublishMappings<E>[T]>,
+    id?: number
+  ) => this.PubSub.unsubscribe(eventName, callback, id)
   /** Publish events */
-  public publish = <T extends DSCallbackName<E>>(eventName: T|T[], data: DSPublishMappings<E>[T]) => this.PubSub.publish(eventName, data)
+  public publish = <T extends DSCallbackName<E>>(
+    eventName: T | T[],
+    data: DSPublishMappings<E>[T]
+  ) => this.PubSub.publish(eventName, data)
 
   /** Initializes the functionality. Automatically triggered when created. Also, reset the functionality after a teardown */
   public start = () => {
@@ -153,11 +187,16 @@ class DragSelect<E extends DSInputElement> {
    * @param fromSelection if elements should also be added/removed to the selection.
    * @param withCallback if elements should also be added/removed to the selection.
    */
-  public stop(remove: boolean = true, fromSelection: boolean = true, withCallback: boolean = false) {
-    if (withCallback) this.publish('DS:end', {
-      items: this.SelectedSet.elements,
-      isDragging: this.Interaction.isDragging,
-    })
+  public stop(
+    remove: boolean = true,
+    fromSelection: boolean = true,
+    withCallback: boolean = false
+  ) {
+    if (withCallback)
+      this.publish('DS:end', {
+        items: this.SelectedSet.elements,
+        isDragging: this.Interaction.isDragging,
+      })
 
     this.Interaction.stop()
     this.Area.stop()
@@ -182,7 +221,8 @@ class DragSelect<E extends DSInputElement> {
   public break = () => (this.continue = true)
 
   /** Update any setting dynamically */
-  public setSettings = (settings: Settings<E>) => this.stores.SettingsStore.update({ settings })
+  public setSettings = (settings: Settings<E>) =>
+    this.stores.SettingsStore.update({ settings })
 
   /** Returns the current selected nodes */
   public getSelection = () => this.SelectedSet.elements
@@ -302,7 +342,11 @@ class DragSelect<E extends DSInputElement> {
    * @param triggerCallback if callback should be called
    * @return the added element(s)
    */
-  public addSelectables(elements: E | E[], addToSelection?: boolean, triggerCallback?: boolean) {
+  public addSelectables(
+    elements: E | E[],
+    addToSelection?: boolean,
+    triggerCallback?: boolean
+  ) {
     const els = ensureArray(elements)
     this.SelectableSet.addAll(els)
     if (addToSelection) this.SelectedSet.addAll(els)
@@ -324,7 +368,11 @@ class DragSelect<E extends DSInputElement> {
    * @param triggerCallback if callback should be called
    * @return the removed element(s)
    */
-  public removeSelectables(elements: E | E[], removeFromSelection?: boolean, triggerCallback?: boolean) {
+  public removeSelectables(
+    elements: E | E[],
+    removeFromSelection?: boolean,
+    triggerCallback?: boolean
+  ) {
     const els = ensureArray(elements)
     this.SelectableSet.deleteAll(els)
     if (removeFromSelection) this.removeSelection(elements)
@@ -337,32 +385,41 @@ class DragSelect<E extends DSInputElement> {
   }
 
   /** The starting/initial position of the cursor/selector */
-  public getInitialCursorPosition = (): Vect2 => this.stores.PointerStore.initialVal
+  public getInitialCursorPosition = (): Vect2 =>
+    this.stores.PointerStore.initialVal
 
   /** The last seen position of the cursor/selector */
-  public getCurrentCursorPosition = (): Vect2 => this.stores.PointerStore.currentVal
+  public getCurrentCursorPosition = (): Vect2 =>
+    this.stores.PointerStore.currentVal
 
   /** The previous position of the cursor/selector */
-  public getPreviousCursorPosition = (): Vect2 => this.stores.PointerStore.lastVal
+  public getPreviousCursorPosition = (): Vect2 =>
+    this.stores.PointerStore.lastVal
 
   /** The starting/initial position of the cursor/selector */
-  public getInitialCursorPositionArea = (): Vect2 => this.stores.PointerStore.initialValArea
+  public getInitialCursorPositionArea = (): Vect2 =>
+    this.stores.PointerStore.initialValArea
 
   /** The last seen position of the cursor/selector */
-  public getCurrentCursorPositionArea = (): Vect2 => this.stores.PointerStore.currentValArea
+  public getCurrentCursorPositionArea = (): Vect2 =>
+    this.stores.PointerStore.currentValArea
 
   /** The previous position of the cursor/selector */
-  public getPreviousCursorPositionArea = (): Vect2 => this.stores.PointerStore.lastValArea
+  public getPreviousCursorPositionArea = (): Vect2 =>
+    this.stores.PointerStore.lastValArea
 
   /** Whether the multi-selection key was pressed */
-  public isMultiSelect = (event: MouseEvent|TouchEvent|PointerEvent|KeyboardEvent): boolean => 
-    this.stores.KeyStore.isMultiSelectKeyPressed(event)
+  public isMultiSelect = (
+    event: MouseEvent | TouchEvent | PointerEvent | KeyboardEvent
+  ): boolean => this.stores.KeyStore.isMultiSelectKeyPressed(event)
 
   /** Whether the user is currently drag n dropping elements (instead of selection) */
   public isDragging = (): boolean => this.Interaction.isDragging
 
   /** Returns first DropsZone under coordinates, if no coordinated provided current pointer coordinates are used */
-  public getZoneByCoordinates = (coordinates?: Vect2): DSDropZone<E> | undefined =>
+  public getZoneByCoordinates = (
+    coordinates?: Vect2
+  ): DSDropZone<E> | undefined =>
     this.DropZones.getTarget(coordinates)?.toObject()
 
   /** Returns itemsDropped into zone by zone id */
@@ -378,7 +435,9 @@ class DragSelect<E extends DSInputElement> {
 }
 
 DragSelect.isCollision = isCollision
-
 export default DragSelect
-export type DSPubCallback<T extends keyof DSPublicPublish<E>, E extends DSInputElement> = DSCallback<DSPublishMappings<E>[T]>
 export * from './types'
+export type DSPubCallback<
+  T extends keyof DSPublicPublish<E>,
+  E extends DSInputElement = DSInputElement,
+> = DSCallback<DSPublishMappings<E>[T]>

@@ -17,8 +17,8 @@ const test = async () => {
   const dragNode = await page.$('.ds-selector')
   await page.waitForSelector('.ds-selector-area')
   const dragNodeArea = await page.$('.ds-selector-area')
-  expect(dragNode).not.toBeNull()
-  expect(dragNodeArea).not.toBeNull()
+  expect(dragNode !== null).toBe(true)
+  expect(dragNodeArea !== null).toBe(true)
 }
 
 const teardown = async () => {

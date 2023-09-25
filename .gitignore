@@ -1,5 +1,4 @@
 .idea
-.vscode
 node_modules
 tests/DragSelect.js
 .DS_Store
