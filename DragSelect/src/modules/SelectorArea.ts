@@ -1,11 +1,11 @@
-import DragSelect from "../DragSelect"
-import { createSelectorAreaElement } from "../methods/createSelectorAreaElement"
-import { getOverflowEdges } from "../methods/getOverflowEdges"
-import { isCollision } from "../methods/isCollision"
-import { vect2rect } from "../methods/vect2"
-import { DSSettings } from "../stores/SettingsStore"
-import { DSBoundingRect, DSEdges, DSEvent, DSInputElement } from "../types"
-import PubSub from "./PubSub"
+import DragSelect from '../DragSelect'
+import { createSelectorAreaElement } from '../methods/createSelectorAreaElement'
+import { getOverflowEdges } from '../methods/getOverflowEdges'
+import { isCollision } from '../methods/isCollision'
+import { vect2rect } from '../methods/vect2'
+import { DSSettings } from '../stores/SettingsStore'
+import { DSBoundingRect, DSEdges, DSEvent, DSInputElement } from '../types'
+import PubSub from './PubSub'
 
 type AppendRemove = 'append' | 'remove'
 
@@ -33,7 +33,9 @@ export default class SelectorArea<E extends DSInputElement> {
     this.PS.subscribe('Area:modified', this.updatePos)
     this.PS.subscribe('Area:modified', this.updatePos)
     this.PS.subscribe('Interaction:init', this.start)
-    this.PS.subscribe('Interaction:start', ({ isDraggingKeyboard }) => this.startAutoScroll({ isDraggingKeyboard }))
+    this.PS.subscribe('Interaction:start', ({ isDraggingKeyboard }) =>
+      this.startAutoScroll({ isDraggingKeyboard })
+    )
     this.PS.subscribe('Interaction:end', () => {
       this.updatePos()
       this.stopAutoScroll()
@@ -46,7 +48,9 @@ export default class SelectorArea<E extends DSInputElement> {
   }
 
   /** Adding / Removing elements to document */
-  private applyElements = <K extends keyof AppendRemove>(method: AppendRemove[K]) => {
+  private applyElements = <K extends keyof AppendRemove>(
+    method: AppendRemove[K]
+  ) => {
     const docEl = document.body ? 'body' : 'documentElement'
     const methodName = `${method}Child` as `${AppendRemove}Child`
     this.HTMLNode[methodName](this.DS.Selector.HTMLNode)
@@ -77,8 +81,12 @@ export default class SelectorArea<E extends DSInputElement> {
   //////////////////////////////////////////////////////////////////////////////////////
   // AutoScroll
 
-  private startAutoScroll = ({ isDraggingKeyboard }: { isDraggingKeyboard?: boolean }) => {
-    if(isDraggingKeyboard) return
+  private startAutoScroll = ({
+    isDraggingKeyboard,
+  }: {
+    isDraggingKeyboard?: boolean
+  }) => {
+    if (isDraggingKeyboard) return
     this.currentEdges = []
     this._scrollInterval = setInterval(() => this.handleAutoScroll(), 16)
   }

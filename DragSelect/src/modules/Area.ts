@@ -1,37 +1,56 @@
 import DragSelect from '../DragSelect'
 import PubSub from './PubSub'
-import { DSArea, DSBoundingRect, DSEdges, DSEdgesObj, DSInputElement } from '../types'
+import {
+  DSArea,
+  DSBoundingRect,
+  DSEdges,
+  DSEdgesObj,
+  DSInputElement,
+} from '../types'
 import { DSSettings } from '../stores/SettingsStore'
-import { MutationCallbackEvent, addModificationObservers } from '../methods/addModificationObservers'
+import {
+  MutationCallbackEvent,
+  addModificationObservers,
+} from '../methods/addModificationObservers'
 import { debounce } from '../methods/debounce'
 import { getAllParentNodes } from '../methods/getAllParentNodes'
 import { getAreaRect } from '../methods/getAreaRect'
 import { handleElementPositionAttribute } from '../methods/handleElementPositionAttribute'
 import { scrollElement } from '../methods/scrollElement'
 
-export type DSAreaPublishEventNames = "Area:modified:pre"|"Area:modified"|"Area:scroll"|"Area:scroll:pre"
+export type DSAreaPublishEventNames =
+  | 'Area:modified:pre'
+  | 'Area:modified'
+  | 'Area:scroll'
+  | 'Area:scroll:pre'
 
 export type DSAreaPublishEventData<E extends DSInputElement> = {
   /** The single item currently interacted with */
-  item: DSArea;
+  item: DSArea
   /** The respective event object */
-  event?: MutationCallbackEvent;
-  scroll_directions: DSEdges,
-  scroll_multiplier: number,
-};
+  event?: MutationCallbackEvent
+  scroll_directions: DSEdges
+  scroll_multiplier: number
+}
 
 export type DSAreaPublish<E extends DSInputElement> = {
-  "Area:modified:pre": Pick<DSAreaPublishEventData<E>, 'event' | 'item'>
-  "Area:modified": Pick<DSAreaPublishEventData<E>, 'event' | 'item'>
-  "Area:scroll:pre": Pick<DSAreaPublishEventData<E>, 'scroll_directions' | 'scroll_multiplier'>
-  "Area:scroll": Pick<DSAreaPublishEventData<E>, 'scroll_directions' | 'scroll_multiplier'>
+  'Area:modified:pre': Pick<DSAreaPublishEventData<E>, 'event' | 'item'>
+  'Area:modified': Pick<DSAreaPublishEventData<E>, 'event' | 'item'>
+  'Area:scroll:pre': Pick<
+    DSAreaPublishEventData<E>,
+    'scroll_directions' | 'scroll_multiplier'
+  >
+  'Area:scroll': Pick<
+    DSAreaPublishEventData<E>,
+    'scroll_directions' | 'scroll_multiplier'
+  >
 }
 
 export default class Area<E extends DSInputElement> {
   private DS: DragSelect<E>
   private PS: PubSub<E>
   private Settings: DSSettings<E>
-  private _observers?: {cleanup:() => void}
+  private _observers?: { cleanup: () => void }
   private _node: DSArea
   private _parentNodes?: Node[]
   private _computedStyle?: CSSStyleDeclaration
@@ -45,8 +64,9 @@ export default class Area<E extends DSInputElement> {
 
     this._node = this.Settings.area
     this.setArea(this.Settings.area)
-    this.PS.subscribe('Settings:updated:area', 
-      ({ settings: { area } }) => this.setArea(area))
+    this.PS.subscribe('Settings:updated:area', ({ settings: { area } }) =>
+      this.setArea(area)
+    )
 
     this.PS.subscribe('Interaction:init', this.start)
     this.PS.subscribe('Interaction:end', this.reset)
