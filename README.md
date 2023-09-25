@@ -46,7 +46,7 @@ The documentation is being migrated to [https://dragselect.com/](https://dragsel
 # Project Page: Demo & Info
 
 - 🧑‍💻 Project Page: [https://dragselect.com/](https://dragselect.com/)
-- 📘 Docs Page: [https://dragselect.com/](https://dragselect.com/)
+- 📘 Docs Page: [https://dragselect.com/docs/intro](https://dragselect.com/docs/intro)
 
 # Key-Features
 
