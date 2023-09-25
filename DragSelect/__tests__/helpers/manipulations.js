@@ -34,8 +34,8 @@ export const moveSelectTo = async (
       await page.mouse.move(x + jumpsX * i, y + jumpsY * i)
       await wait(100)
     }
-  }
-  await page.mouse.move(dX, dY)
+    await page.mouse.move(dX, dY)
+  } else await page.mouse.move(dX, dY, { steps })
   await wait(100)
   await page.mouse.up()
   await wait(100)
