@@ -37,3 +37,4 @@ describe('Scroll', () => {
     expect(duration).toBeLessThan(process?.env?.CI ? 5000 : 3000)
   })
 })
+ 

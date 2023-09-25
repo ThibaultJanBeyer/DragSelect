@@ -2,7 +2,7 @@ import wait from '../helpers/wait'
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
 describe('Callbacks', () => {
-  it('should trigger callbacks with the correct elements when elements are selected', async () => {
+  it('should trigger DS:ends with the correct elements when elements are selected', async () => {
     await page.goto(`${baseUrl}/callbacks.html`)
 
     const mouse = page.mouse

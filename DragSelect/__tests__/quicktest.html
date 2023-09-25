@@ -1,174 +1,174 @@
 <!-- USE THIS FILE to quickly test things, you can modify it as much as you want -->
 <!-- when you feel that your testcase should always be tested, feel free to create a test#.html file -->
 <!-- where # is the next available number -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Quick ’n Dirty Test</title>
-  <style>
-    * {
-      -webkit-user-select: none;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Quick ’n Dirty Test</title>
+    <style>
+      * {
+        -webkit-user-select: none;
         -moz-user-select: none;
-          -ms-user-select: none;
-              user-select: none;
-    }
+        -ms-user-select: none;
+        user-select: none;
+      }
 
-    #lel {
-      background: yellow;
-      width: 200px;
-      height: 1200px;
-      position: relative;
-    }
+      #lel {
+        background: yellow;
+        width: 200px;
+        height: 1200px;
+        position: relative;
+      }
 
-    #container {
-      width: 300px;
-      height: 300px;
-      background: rgba(0, 0, 0, 0.05);
-      border: 5px solid red;
-      position: absolute;
-      overflow: auto;
-      top: 2.5%;
-      left: 5%;
-    }
+      #container {
+        width: 300px;
+        height: 300px;
+        background: rgba(0, 0, 0, 0.05);
+        border: 5px solid red;
+        position: absolute;
+        overflow: auto;
+        top: 2.5%;
+        left: 5%;
+      }
 
-    #container.oi {
-      overflow: inherit;
-    }
+      #container.oi {
+        overflow: inherit;
+      }
 
-    html, body {
-      padding: 0;
-      margin: 0;
-    }
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+      }
 
-    .item {
-      width: 50px;
-      height: 50px;
-      position: relative;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-pack: center;
-          -ms-flex-pack: center;
-              justify-content: center;
-      -webkit-box-align: center;
-          -ms-flex-align: center;
-              align-items: center;
-      color: white;
-      border: 0;
-    }
-
-    .item:focus {
-      border: 1px solid blue;
-    }
-
-    .item:nth-child(1),
-    .item.one {
-      background: #f25d0d;
-      top: 4%;
-      left: 6%;
-    }
-
-    .item:nth-child(2),
-    .item.two {
-      background: #0df20d;
-      top: 31%;
-      left: 28%;
-    }
-
-    .item:nth-child(3),
-    .item.three {
-      background: #f20d11;
-      top: 45%;
-      left: 9%;
-    }
-
-    .item:nth-child(4),
-    .item.four {
-      background: #f2700d;
-      top: 23%;
-      left: 4%;
-    }
-
-    .item:nth-child(5),
-    .item.five {
-      background: #f20dbd;
-      top: 44%;
-      left: 19%;
-    }
-
-    .item:nth-child(6),
-    .item.six {
-      background: #e30df2;
-      top: 139%;
-      left: 130%;
-    }
-
-    .item.outside {
-      background: #ccf20d;
-      top: 122%;
-      left: 159%;
-    }
-
-    .item.full {
-      background: #0dd0f2;
-      top: 100%;
-      left: 100%;
-    }
-
-    .item.ds-selected,
-    .generated-item.ds-selected {
-      outline: 3px solid black;
-      outline-offset: 3px;
-      color: black;
-      font-weight: bold;
-    }
-
-    .generated-item {
-      width: 50px;
-      height: 50px;
-      display: inline-block;
-      background: #0dd0f2;
-      -webkit-box-pack: center;
+      .item {
+        width: 50px;
+        height: 50px;
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: center;
         -ms-flex-pack: center;
-      justify-content: center;
-      -webkit-box-align: center;
+        justify-content: center;
+        -webkit-box-align: center;
         -ms-flex-align: center;
-            align-items: center;
-      border: 0;
-      outline: 3px solid transparent;
-      outline-offset: 3px;
-      color: white;
-      margin: 6px;
-    }
+        align-items: center;
+        color: white;
+        border: 0;
+      }
 
-    .generated-item:focus {
-      border: 1px solid blue;
-    }
+      .item:focus {
+        border: 1px solid blue;
+      }
 
-  </style>
-</head>
-<body>
-  <div id="container">
-  <button id="1" type="button" class="item one">1</button>
-  <button id="2" type="button" class="item two">2</button>
-  <button id="3" type="button" class="item three">3</button>
-  <button id="4" type="button" class="item four">4</button>
-  <button id="5" type="button" class="item five">5</button>
-  <button id="6" type="button" class="item six">6</button>
-  </div>
+      .item:nth-child(1),
+      .item.one {
+        background: #f25d0d;
+        top: 4%;
+        left: 6%;
+      }
 
-  <script src="../dist/DragSelect.js"></script>
-  <!-- <script type="module">
-    import DragSelect from "../dist/ds.es6m.min.js"; -->
-  <script>
-    const ds = new DragSelect({
-      selectables: document.getElementsByClassName('item'),
-      area: document.getElementById('container'),
-    });
-    ds.subscribe('callback', (data) => console.log("callback", data))
-  </script>
-</body>
+      .item:nth-child(2),
+      .item.two {
+        background: #0df20d;
+        top: 31%;
+        left: 28%;
+      }
+
+      .item:nth-child(3),
+      .item.three {
+        background: #f20d11;
+        top: 45%;
+        left: 9%;
+      }
+
+      .item:nth-child(4),
+      .item.four {
+        background: #f2700d;
+        top: 23%;
+        left: 4%;
+      }
+
+      .item:nth-child(5),
+      .item.five {
+        background: #f20dbd;
+        top: 44%;
+        left: 19%;
+      }
+
+      .item:nth-child(6),
+      .item.six {
+        background: #e30df2;
+        top: 139%;
+        left: 130%;
+      }
+
+      .item.outside {
+        background: #ccf20d;
+        top: 122%;
+        left: 159%;
+      }
+
+      .item.full {
+        background: #0dd0f2;
+        top: 100%;
+        left: 100%;
+      }
+
+      .item.ds-selected,
+      .generated-item.ds-selected {
+        outline: 3px solid black;
+        outline-offset: 3px;
+        color: black;
+        font-weight: bold;
+      }
+
+      .generated-item {
+        width: 50px;
+        height: 50px;
+        display: inline-block;
+        background: #0dd0f2;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        border: 0;
+        outline: 3px solid transparent;
+        outline-offset: 3px;
+        color: white;
+        margin: 6px;
+      }
+
+      .generated-item:focus {
+        border: 1px solid blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <button id="1" type="button" class="item one">1</button>
+      <button id="2" type="button" class="item two">2</button>
+      <button id="3" type="button" class="item three">3</button>
+      <button id="4" type="button" class="item four">4</button>
+      <button id="5" type="button" class="item five">5</button>
+      <button id="6" type="button" class="item six">6</button>
+    </div>
+
+    <script src="../dist/DragSelect.js"></script>
+    <!-- <script type="module">
+    import DragSelect from "../dist/ds.esm.min.js"; -->
+    <script>
+      const ds = new DragSelect({
+        selectables: document.getElementsByClassName('item'),
+        area: document.getElementById('container'),
+      })
+      // ds.subscribe('DS:end', (data) => console.log("DS:end", data))
+    </script>
+  </body>
 </html>
