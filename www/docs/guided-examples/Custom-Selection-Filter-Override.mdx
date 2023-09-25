@@ -3,14 +3,16 @@ sidebar_position: 11
 description: DragSelect is very customizable. You can even hook into the selection logic and change it to your likings
 ---
 
-# Custom Selection Filter (Advanced Override)
+# Advanced Overrides (Custom Selection Filter)
 
-> Disclaimer: By hooking into the selection you’re modifying internal behavior. Don’t expect support for any misbehaving caused by hooking in. We will try our best to not introduce breaking changes the overrideable methods but if you use them, it’s best if you double check each time before updating the library even on minor changes.
+DragSelect is very extensible, you can even override some publicly exposed methods to alter internal behavior like i.e. dragging or selecting. In this example we are going to look at selecting specifically. You can find all possible overrides under [Overrides](/docs/API/Overrides).
+
+> Disclaimer: By hooking into the selection you’re modifying internal behavior. Don’t expect support for any misbehaving caused by hooking in. We will try our best to not introduce breaking changes the over-rideable methods but if you use them, it’s best if you double check each time before updating the library even on minor changes.
 
 The logic for actually selecting elements is straight forward, it all happens [in the Selection module](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/DragSelect/src/modules/Selection.js).
 
-You can change the selectioning during the selection process (not before, not after) by overwriting the `filterSelected` method.
-But why? Well, you might want to change the selection logic to your likings. 
+You can change the selection-process during the selection process (not before, not after) by overwriting the `filterSelected` method.
+But why? Well, you might want to change the selection logic to your likings.
 One use-case we had for example is to filter out the parent elements of the selected elements to prevent multiple elements laying on top of each other to be all selected/deselected together. Overwriting is perfect for this use-case since the recommended [Methods](/docs/API/Methods) or [Events](/docs/API/Events) are not applicable here.
 
 We’ll take an easier example to show how you can overwrite certain methods:
@@ -21,12 +23,16 @@ The method is called after the elements that are going to be selected/unselected
 Just before the actual selection happens.
 It gets called with the following arguments:
 
-```ts 
-Selection.filterSelected = ({ select, unselect, selectorRect }: {
-  select:Map<DSElement,DSBoundingRect>, // the elements and their bounds that are supposed to be selected
-  unselect:Map<DSElement,DSBoundingRect>, // the elements and their bounds that are supposed to be de-selected (or un-selected)
-  selectorRect:DSBoundingRect // the bounds of the selector element
-}) => ({ select, unselect }) // it expects you to return an object that holds the select and unselect keys of same type as the arguments
+```ts
+Selection.filterSelected = ({
+  select,
+  unselect,
+  selectorRect,
+}: {
+  select: Map<DSElement, DSBoundingRect>; // the elements and their bounds that are supposed to be selected
+  unselect: Map<DSElement, DSBoundingRect>; // the elements and their bounds that are supposed to be de-selected (or un-selected)
+  selectorRect: DSBoundingRect; // the bounds of the selector element
+}) => ({ select, unselect }); // it expects you to return an object that holds the select and unselect keys of same type as the arguments
 ```
 
 ## Use the `.filterSelected()`

@@ -62,5 +62,5 @@
         selectables: document.querySelectorAll('.item'),
         area: document.querySelector('.area'),
     });
-    ds.subscribe('callback', ({ items }) => window.callbackIds = items.map(n => n.id), window.itemIds)
+    ds.subscribe('DS:end', ({ items }) => window.callbackIds = items.map(n => n.id), window.itemIds)
 </script>

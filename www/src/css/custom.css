@@ -3,7 +3,7 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --color-base: rgb(0, 135, 255);
+  --color-base: rgb(0, 125, 255);
   --color-highlight: rgb(0, 255, 255);
   --ifm-color-primary: var(--color-base);
   --ifm-color-primary-dark: rgb(0, 115, 255);
@@ -59,6 +59,10 @@ html, body {
   .huge-text {
     font-size: 4rem;
   }
+}
+
+strong {
+  font-weight: 500;
 }
 
 .visuallyhidden {

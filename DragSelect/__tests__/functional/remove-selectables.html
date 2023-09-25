@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="basics.css" />
+
+<button type="button" id="1" class="item one">1</button>
+
+<script src="../../dist/DragSelect.js"></script>
+<script>
+  window.selected = []
+
+  const ds = new DragSelect({
+    selectables: document.querySelectorAll('.item'),
+    draggability: false,
+  })
+
+  ds.subscribe('DS:start', ({ items }) => {
+    console.log(ds.getSelectables())
+  })
+
+  ds.subscribe('DS:end', ({ items }) => {
+    window.selected = items.map((item) => item.id) || []
+    items.forEach((item) => ds.removeSelectables(item, true))
+  })
+</script>

@@ -1,24 +1,24 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from "react";
 
-import styles from './Body.module.scss'
-import { Item } from './Item/Item'
-import { useDragSelect, CallbackObject } from '../../DragSelectContext'
-import { Icon } from '../Icon/Icon'
-import { handleApproveReject } from './approveReject'
+import styles from "./Body.module.scss";
+import { Item } from "./Item/Item";
+import { DSPubCallback, useDragSelect } from "../../DragSelectContext";
+import { Icon } from "../Icon/Icon";
+import { handleApproveReject } from "./approveReject";
 
-type Props = {}
+type Props = {};
 
 export const Body: React.FC<Props> = ({}) => {
-  const [itemCount, setItemCount] = useState(5)
+  const [itemCount, setItemCount] = useState(5);
 
-  const inputEl = useRef(null)
-  const approveEl = useRef(null)
-  const rejectEl = useRef(null)
-  const ds = useDragSelect()
+  const inputEl = useRef(null);
+  const approveEl = useRef(null);
+  const rejectEl = useRef(null);
+  const ds = useDragSelect();
 
   useEffect(() => {
     if (!inputEl.current || !ds || !approveEl.current || !rejectEl.current)
-      return
+      return;
 
     ds.setSettings({
       area: inputEl.current,
@@ -28,47 +28,47 @@ export const Body: React.FC<Props> = ({}) => {
       dropZones: [
         {
           element: approveEl.current,
-          id: 'approve',
+          id: "approve",
         },
         {
           element: rejectEl.current,
-          id: 'reject',
+          id: "reject",
         },
       ],
-    })
+    });
 
-    const dsCallback = async ({
+    const dsCallback: DSPubCallback<"DS:end"> = async ({
       items,
       isDragging,
       dropTarget,
-    }: CallbackObject) => {
-      if (!isDragging || !dropTarget || !items) return
-      if (dropTarget?.id === 'approve') {
+    }) => {
+      if (!isDragging || !dropTarget || !items) return;
+      if (dropTarget?.id === "approve") {
         handleApproveReject({
-          items,
+          items: items as HTMLElement[],
           content: '"✅"',
-        })
-        setTimeout(() => ds.removeSelectables(items, true, true))
-      } else if (dropTarget?.id === 'reject') {
+        });
+        setTimeout(() => ds.removeSelectables(items, true, true));
+      } else if (dropTarget?.id === "reject") {
         handleApproveReject({
-          items,
+          items: items as HTMLElement[],
           content: '"❌"',
-        })
-        setTimeout(() => ds.removeSelectables(items, true, true))
+        });
+        setTimeout(() => ds.removeSelectables(items, true, true));
       }
-    }
-    ds.subscribe('callback', dsCallback)
+    };
+    ds.subscribe("DS:end", dsCallback);
 
-    const add = ({ value = 1 }) => setItemCount((count) => count + value)
+    const add = ({ value = 1 }) => setItemCount((count) => count + value);
     // @ts-ignore
-    ds.subscribe('__add', add)
+    ds.subscribe("__add", add);
 
     return () => {
-      ds.unsubscribe('callback', dsCallback)
+      ds.unsubscribe("DS:end", dsCallback);
       // @ts-ignore
-      ds.unsubscribe('__add', add)
-    }
-  }, [inputEl, ds, approveEl, rejectEl])
+      ds.unsubscribe("__add", add);
+    };
+  }, [inputEl, ds, approveEl, rejectEl]);
 
   return (
     <div className={styles.root} ref={inputEl}>
@@ -92,5 +92,5 @@ export const Body: React.FC<Props> = ({}) => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};

@@ -17,8 +17,8 @@ const test = async () => {
   const dragNode = await page.$('.ds-selector')
   await page.waitForSelector('.ds-selector-area')
   const dragNodeArea = await page.$('.ds-selector-area')
-  expect(dragNode).not.toBeNull()
-  expect(dragNodeArea).not.toBeNull()
+  expect(dragNode !== null).toBe(true)
+  expect(dragNodeArea !== null).toBe(true)
 }
 
 const teardown = async () => {
@@ -75,7 +75,7 @@ describe('Imports', () => {
           selectables: document.querySelectorAll('.item'),
         })
         window.ds.subscribe(
-          'callback',
+          'DS:end',
           ({ items }) => (window.callback = items.map((item) => item.id))
         )
       })
@@ -131,7 +131,7 @@ describe('Imports', () => {
           });
           require(['DragSelect'], function (DragSelect) {
             window.ds = new DragSelect({ selectables: document.querySelectorAll('.item') });
-            window.ds.subscribe('callback', ({ items }) => (window.callback = items.map((item) => item.id)))
+            window.ds.subscribe('DS:end', ({ items }) => (window.callback = items.map((item) => item.id)))
           });
         `
         document.body.appendChild(window.dsScript)
@@ -155,7 +155,7 @@ describe('Imports', () => {
   })
 
   describe('ESM Module', () => {
-    const setup = async (uri = '../../dist/DragSelect.es6m.js') => {
+    const setup = async (uri = '../../dist/DragSelect.esm.js') => {
       await wait(500)
       await page.evaluate((uri) => {
         window.dsScript = document.createElement('script')
@@ -163,7 +163,7 @@ describe('Imports', () => {
         window.dsScript.innerHTML = /*javascript*/ `
           import DragSelect from "${uri}";
           window.ds = new DragSelect({ selectables: document.querySelectorAll('.item') });
-          window.ds.subscribe('callback', ({ items }) => (window.callback = items.map((item) => item.id)))
+          window.ds.subscribe('DS:end', ({ items }) => (window.callback = items.map((item) => item.id)))
           `
         document.body.appendChild(window.dsScript)
         setTimeout(() => {
@@ -187,7 +187,7 @@ describe('Imports', () => {
       await goToPage(
         `http://localhost:${port}/__tests__/functional/imports.html`
       )
-      await setup('../../dist/ds.es6m.min.js')
+      await setup('../../dist/ds.esm.min.js')
       await test()
       await teardown()
     })
