@@ -1688,11 +1688,10 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-<<<<<<< HEAD
-"@iconify/react@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@iconify/react/-/react-4.1.0.tgz#5ea86acae6e209a2f5b1b52922ab85d0d22f9b45"
-  integrity sha512-Mf72i3TNNKpKCKxmo7kzqyrUdCgaoljpqtWmtqpqwyxoV4ukhnDsSRNLhf2yBnqGr3cVZsdj/i0FMpXIY0Qk0g==
+"@iconify/react@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@iconify/react/-/react-4.1.1.tgz#da1bf03cdca9427f07cf22cf5b63fa8f02db4722"
+  integrity sha512-jed14EjvKjee8mc0eoscGxlg7mSQRkwQG3iX3cPBCO7UlOjz0DtlvTqxqEcHUJGh+z1VJ31Yhu5B9PxfO0zbdg==
   dependencies:
     "@iconify/types" "^2.0.0"
 
@@ -1701,16 +1700,10 @@
   resolved "https://registry.yarnpkg.com/@iconify/types/-/types-2.0.0.tgz#ab0e9ea681d6c8a1214f30cd741fe3a20cc57f57"
   integrity sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==
 
-"@jest/schemas@^29.0.0":
-  version "29.0.0"
-  resolved "https://registry.yarnpkg.com/@jest/schemas/-/schemas-29.0.0.tgz#5f47f5994dd4ef067fb7b4188ceac45f77fe952a"
-  integrity sha512-3Ab5HgYIIAnS0HjqJHQYZS+zXc4tUmTmBH3z83ajI6afXp8X3ZtdLX+nXx+I7LNkJD7uN9LAVhgnjDgZa2z0kA==
-=======
 "@jest/schemas@^29.6.3":
   version "29.6.3"
   resolved "https://registry.yarnpkg.com/@jest/schemas/-/schemas-29.6.3.tgz#430b5ce8a4e0044a7e3819663305a7b3091c8e03"
   integrity sha512-mo5j5X+jIZmJQveBKeS/clAueipV7KgiX1vMgCxam1RNYiqE1w62n0/tJJnHtjW8ZHcQco5gY85jA3mi0L+nSA==
->>>>>>> release/3.0
   dependencies:
     "@sinclair/typebox" "^0.27.8"
 
@@ -3774,8 +3767,10 @@ dot-prop@^5.2.0:
   dependencies:
     is-obj "^2.0.0"
 
-"dragselect@file:../DragSelect":
-  version "3.0.0"
+dragselect@3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/dragselect/-/dragselect-3.0.2.tgz#ab65c453d7de0f7bf788a6c3ff17aff1c1e003a3"
+  integrity sha512-2nz58BCGFLIlIP/Hi5MHKDpJXB0LJOZBdB7NmY3lBtcyiKaLbJlJ50FIYQCBh5x6L4XRb3EGGtUCyg9FZxsGAQ==
 
 duplexer3@^0.1.4:
   version "0.1.5"

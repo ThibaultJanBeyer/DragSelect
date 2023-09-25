@@ -155,7 +155,7 @@ describe('Imports', () => {
   })
 
   describe('ESM Module', () => {
-    const setup = async (uri = '../../dist/DragSelect.es6m.js') => {
+    const setup = async (uri = '../../dist/DragSelect.esm.js') => {
       await wait(500)
       await page.evaluate((uri) => {
         window.dsScript = document.createElement('script')
@@ -187,7 +187,7 @@ describe('Imports', () => {
       await goToPage(
         `http://localhost:${port}/__tests__/functional/imports.html`
       )
-      await setup('../../dist/ds.es6m.min.js')
+      await setup('../../dist/ds.esm.min.js')
       await test()
       await teardown()
     })

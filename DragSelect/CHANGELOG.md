@@ -1,4 +1,4 @@
-# 3.0.0
+# 3.0.0-3
 
 ## Breaking Updates
 
@@ -40,6 +40,10 @@
 "DS:removed:pre"
 "DS:removed"
 ```
+
+### Renaming of module files
+
+- From `.es6m.` to `.esm.` because that makes more sense
 
 ### Box-Dragging as new default
 

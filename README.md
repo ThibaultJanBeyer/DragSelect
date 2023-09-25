@@ -124,7 +124,7 @@ You can still [download the file](https://dragselect.com/DragSelect.js) ([minifi
 <script src="https://unpkg.com/dragselect@latest/dist/ds.min.js"></script>
 ```
 
-> Note: if you are using `<script type=module` you can use the `DragSelect.es6m.js` or `ds.es6m.min.js` files as they include `export default DragSelect`
+> Note: if you are using `<script type=module` you can use the `DragSelect.esm.js` or `ds.esm.min.js` files as they include `export default DragSelect`
 
 > We don’t recommend the direct linking for production set-up. Please use `npm` if you can.
 
@@ -132,7 +132,7 @@ You can still [download the file](https://dragselect.com/DragSelect.js) ([minifi
 
 Of course you can also just include the code within your code and bundle it to save a request.
 
-DragSelect supports `module.exports`, `AMD Modules` with `define`, `es6 modules` with `.es6m` versions and has a fallback to global namespace for maximum out of the box support.
+DragSelect supports `module.exports`, `AMD Modules` with `define`, `es6 modules` with `.esm` versions and has a fallback to global namespace for maximum out of the box support.
 
 # Usage
 

@@ -43,7 +43,7 @@ export default [
     input: 'src/DragSelect.ts',
     output: [
       {
-        file: 'dist/DragSelect.es6m.js',
+        file: 'dist/DragSelect.esm.js',
         format: 'es',
         name: 'DragSelect',
         banner,
@@ -55,7 +55,7 @@ export default [
         banner,
       },
       {
-        file: 'dist/ds.es6m.min.js',
+        file: 'dist/ds.esm.min.js',
         format: 'es',
         name: 'DragSelect',
         compact: true,
