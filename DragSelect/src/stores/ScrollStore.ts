@@ -1,7 +1,7 @@
 import DragSelect from '../DragSelect'
 import PubSub from '../modules/PubSub'
 import { DSInputElement, Settings, Vect2 } from '../types'
-import { calcVect, num2vect } from "../methods/vect2"
+import { calcVect, num2vect } from '../methods/vect2'
 import { canScroll } from '../methods/canScroll'
 import { getCurrentScroll } from '../methods/getCurrentScroll'
 
@@ -13,43 +13,48 @@ export default class ScrollStore<E extends DSInputElement> {
   private PS: PubSub<E>
   private Settings: Required<Settings<E>>
 
-  constructor({ DS, PS }: { DS: DragSelect<E>, PS: PubSub<E> }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>; PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s
+    this.PS.subscribe('Area:modified', () => {
+      this.stop()
+      this.init()
+    })
     this.PS.subscribe('Interaction:init', this.init)
     this.PS.subscribe('Interaction:start', () => this.start())
     this.PS.subscribe('Interaction:end', () => this.reset())
   }
 
-  private init = () =>
-    this.Settings.area.addEventListener('scroll', this.update)
+  private init = () => this.addListeners()
+
+  private addListeners = () =>
+    this.DS.Area.HTMLNode.addEventListener('scroll', this.update)
+  private removeListeners = () =>
+    this.DS.Area.HTMLNode.removeEventListener('scroll', this.update)
 
   private start = () => {
-    this._currentVal = this._initialVal = getCurrentScroll(this.Settings.area)
-    this.Settings.area.addEventListener('scroll', this.update)
+    this._currentVal = this._initialVal = getCurrentScroll(
+      this.DS.Area.HTMLNode
+    )
   }
 
   private update = () =>
-    (this._currentVal = getCurrentScroll(this.Settings.area))
+    (this._currentVal = getCurrentScroll(this.DS.Area.HTMLNode))
 
   public stop = () => {
-    this.Settings.area.removeEventListener(
-      'scroll',
-      this.update
-    )
+    this.reset()
+    this.removeListeners()
+  }
+
+  private reset = () => {
     this._initialVal = { x: 0, y: 0 }
     this._canScroll = undefined
   }
 
-  private reset = () => {
-    this.stop()
-    this.start()
-  }
-
   public get canScroll() {
     if (typeof this._canScroll === 'boolean') return this._canScroll
-    return (this._canScroll = canScroll(this.Settings.area))
+    return (this._canScroll = canScroll(this.DS.Area.HTMLNode))
   }
 
   public get scrollAmount() {
@@ -76,7 +81,7 @@ export default class ScrollStore<E extends DSInputElement> {
 
   public get currentVal() {
     if (!this._currentVal)
-      this._currentVal = getCurrentScroll(this.Settings.area)
+      this._currentVal = getCurrentScroll(this.DS.Area.HTMLNode)
     return this._currentVal
   }
 }

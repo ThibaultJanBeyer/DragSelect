@@ -68,7 +68,7 @@ export default class Area<E extends DSInputElement> {
       this.setArea(area)
     )
 
-    this.PS.subscribe('Interaction:init', this.start)
+    this.PS.subscribe('Interaction:init', this.init)
     this.PS.subscribe('Interaction:end', this.reset)
   }
 
@@ -88,7 +88,7 @@ export default class Area<E extends DSInputElement> {
     })
   }
 
-  private start = () => {
+  private init = () => {
     this._observers = addModificationObservers(
       this.parentNodes,
       debounce((event: MutationCallbackEvent) => {

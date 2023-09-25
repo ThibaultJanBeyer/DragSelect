@@ -32,7 +32,7 @@ export default class SelectorArea<E extends DSInputElement> {
 
     this.PS.subscribe('Area:modified', this.updatePos)
     this.PS.subscribe('Area:modified', this.updatePos)
-    this.PS.subscribe('Interaction:init', this.start)
+    this.PS.subscribe('Interaction:init', this.init)
     this.PS.subscribe('Interaction:start', ({ isDraggingKeyboard }) =>
       this.startAutoScroll({ isDraggingKeyboard })
     )
@@ -42,7 +42,7 @@ export default class SelectorArea<E extends DSInputElement> {
     })
   }
 
-  private start = () => {
+  private init = () => {
     this.applyElements('append')
     this.updatePos()
   }

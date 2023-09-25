@@ -53,6 +53,9 @@ export const moveKey = async (page, keyboard, x, y, key) => {
 export const click = async (page, x, y) => {
   const mouse = page.mouse
   await mouse.move(x, y)
+  await wait(100)
   await mouse.down()
+  await wait(100)
   await mouse.up()
+  await wait(100)
 }

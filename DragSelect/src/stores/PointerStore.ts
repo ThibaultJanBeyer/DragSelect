@@ -1,15 +1,17 @@
-import DragSelect from "../DragSelect"
-import PubSub from "../modules/PubSub"
-import { DSEvent, DSInputElement, Settings, Vect2 } from "../types"
-import { getPointerPos } from "../methods/getPointerPos"
-import { rect2vect, calcVect } from "../methods/vect2"
-import { InteractionEvent } from "../modules/Interaction"
+import DragSelect from '../DragSelect'
+import PubSub from '../modules/PubSub'
+import { DSEvent, DSInputElement, Settings, Vect2 } from '../types'
+import { getPointerPos } from '../methods/getPointerPos'
+import { rect2vect, calcVect } from '../methods/vect2'
+import { InteractionEvent } from '../modules/Interaction'
 
-export type DSPointerStorePublishEventNames = "PointerStore:updated:pre"|"PointerStore:updated"
+export type DSPointerStorePublishEventNames =
+  | 'PointerStore:updated:pre'
+  | 'PointerStore:updated'
 
 export type DSPointerStorePublishEventData = {
-  event: PointerEvent|MouseEvent|TouchEvent;
-};
+  event: PointerEvent | MouseEvent | TouchEvent
+}
 
 export type DSPointerStorePublish = {
   [K in DSPointerStorePublishEventNames]: DSPointerStorePublishEventData
@@ -31,7 +33,7 @@ export default class PointerStore<E extends DSInputElement> {
   private PS: PubSub<E>
   private settings: Required<Settings<E>>
 
-  constructor({ DS, PS }: { DS: DragSelect<E>, PS: PubSub<E> }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>; PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.settings = this.DS.stores.SettingsStore.s
@@ -54,17 +56,22 @@ export default class PointerStore<E extends DSInputElement> {
     this.currentVal = this.initialVal = this.getPointerPosition(event)
   }
 
-  public getPointerPosition = (event: DSEvent) => 
+  public getPointerPosition = (event?: DSEvent) =>
     getPointerPos({
       event: this._normalizedEvent(event),
     })
 
-  private update = (event: Event) => { // type Event to satisfy event listeners, but we know type is : event as InteractionEvent
+  private update = (event: Event) => {
+    // type Event to satisfy event listeners, but we know type is : event as InteractionEvent
     if (!event) return
-    this.PS.publish('PointerStore:updated:pre', { event: event as InteractionEvent })
+    this.PS.publish('PointerStore:updated:pre', {
+      event: event as InteractionEvent,
+    })
     this.currentVal = this.getPointerPosition(event as InteractionEvent)
     if (!this._isMouseInteraction) return
-    this.PS.publish('PointerStore:updated', { event: event as InteractionEvent })
+    this.PS.publish('PointerStore:updated', {
+      event: event as InteractionEvent,
+    })
   }
 
   public stop = () => {
@@ -81,25 +88,22 @@ export default class PointerStore<E extends DSInputElement> {
       passive: false,
     })
 
+    this.reset()
+  }
+
+  private reset = (event?: DSEvent) => {
+    this.currentVal = this.lastVal = this.getPointerPosition(event)
     // debounce in order "onClick" to work
     setTimeout(() => (this._isMouseInteraction = false), 100)
   }
 
-  private reset = (event?: DSEvent) => {
-    if (!event) return
-
-    this.currentVal = this.lastVal = this.getPointerPosition(event)
-
-    this.stop()
-    this.init()
-  }
-
-  private _normalizedEvent(event: DSEvent): MouseEvent|PointerEvent|Touch {
+  private _normalizedEvent(event?: DSEvent): MouseEvent | PointerEvent | Touch {
     // null KeyboardEvents
-    if(event instanceof KeyboardEvent) return { clientX: 0, clientY: 0 } as MouseEvent
+    if (!event || event instanceof KeyboardEvent)
+      return { clientX: 0, clientY: 0 } as MouseEvent
     // touchend has not touches. so we take the last touch if a touchevent, we need to store the positions
     if ('touches' in event) {
-      if(event.type !== 'touchend') this._lastTouch = event
+      if (event.type !== 'touchend') this._lastTouch = event
       // if a touchevent, return the last touch rather than the regular event
       // as we need .touches[0] from that event
       return this._lastTouch?.touches[0] || event.touches[0]
