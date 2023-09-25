@@ -78,7 +78,7 @@
     "package.json"
   ],
   "author": "Thibault Jan Beyer",
-  "license": "GPLv3",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/ThibaultJanBeyer/DragSelect/issues"
   },

@@ -2,6 +2,10 @@
   text-align: center;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  width: calc(100% + 40px);
+  overflow: auto;
+  margin-left: -20px;
+  padding: 10px 0;
 }
 
 .title {
@@ -27,7 +31,8 @@
   list-style-type: none;
 }
 
-.iconReg, .icon {
+.iconReg,
+.icon {
   vertical-align: middle;
   margin-top: -2px;
   margin-left: -1.1em;
@@ -67,10 +72,10 @@
 }
 
 .note {
-  margin: 20px 30px;
+  margin: 20px 0;
 }
 
-.box, 
+.box,
 .boxAlt {
   cursor: pointer;
   background: linear-gradient(to bottom right, lightgrey 0%, darkgray 100%);
@@ -80,12 +85,17 @@
   padding: 1px 1px 50px;
   margin: 0 30px;
   position: relative;
-  transition: box-shadow 200ms ease-in-out,
-              transform 200ms ease-in-out;
+  transition:
+    box-shadow 200ms ease-in-out,
+    transform 200ms ease-in-out;
 }
 
 .box {
-  background: linear-gradient(to bottom right, var(--color-highlight) 0%, var(--color-base) 100%);
+  background: linear-gradient(
+    to bottom right,
+    var(--color-highlight) 0%,
+    var(--color-base) 100%
+  );
   padding: 2px 2px 50px;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.18);
 }
@@ -112,11 +122,19 @@
 }
 
 @keyframes loading {
-  0%   { background-position: 0 100% }
-  100% { background-position: 300% 100% }
+  0% {
+    background-position: 0 100%;
+  }
+  100% {
+    background-position: 300% 100%;
+  }
 }
 
 @keyframes rotateLoader {
-  0%   { transform: rotate(0deg) }
-  100% { transform: rotate(360deg) }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

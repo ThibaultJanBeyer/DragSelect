@@ -1,8 +1,9 @@
-.head, .body {
+.head,
+.body {
   background: #f6f6f6;
   overflow-x: hidden;
   color: #333;
-  font-family: 'Fira Sans', sans-serif;
+  font-family: "Fira Sans", sans-serif;
   font-weight: 300;
   font-size: 10px;
   height: auto;
@@ -33,7 +34,7 @@
 
 @media screen and (max-width: 996px) {
   .heroBanner {
-    padding: 2rem;
+    padding: 2rem 0;
   }
 }
 
