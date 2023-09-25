@@ -17,8 +17,8 @@ const test = async () => {
   const dragNode = await page.$('.ds-selector')
   await page.waitForSelector('.ds-selector-area')
   const dragNodeArea = await page.$('.ds-selector-area')
-  expect(dragNode).not.toBeNull()
-  expect(dragNodeArea).not.toBeNull()
+  expect(dragNode !== null).toBe(true)
+  expect(dragNodeArea !== null).toBe(true)
 }
 
 const teardown = async () => {
@@ -75,7 +75,7 @@ describe('Imports', () => {
           selectables: document.querySelectorAll('.item'),
         })
         window.ds.subscribe(
-          'callback',
+          'DS:end',
           ({ items }) => (window.callback = items.map((item) => item.id))
         )
       })
@@ -131,7 +131,7 @@ describe('Imports', () => {
           });
           require(['DragSelect'], function (DragSelect) {
             window.ds = new DragSelect({ selectables: document.querySelectorAll('.item') });
-            window.ds.subscribe('callback', ({ items }) => (window.callback = items.map((item) => item.id)))
+            window.ds.subscribe('DS:end', ({ items }) => (window.callback = items.map((item) => item.id)))
           });
         `
         document.body.appendChild(window.dsScript)
@@ -163,7 +163,7 @@ describe('Imports', () => {
         window.dsScript.innerHTML = /*javascript*/ `
           import DragSelect from "${uri}";
           window.ds = new DragSelect({ selectables: document.querySelectorAll('.item') });
-          window.ds.subscribe('callback', ({ items }) => (window.callback = items.map((item) => item.id)))
+          window.ds.subscribe('DS:end', ({ items }) => (window.callback = items.map((item) => item.id)))
           `
         document.body.appendChild(window.dsScript)
         setTimeout(() => {

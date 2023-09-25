@@ -16,14 +16,16 @@ ds.subscribe('<event_name>', (callback_object) => {})
 
 |event_name |callback_object |description |
 |--- |--- |---
-|`callback` |{ items, event, isDragging, dropTarget, … } |Fired after the selection (i.e. on mouse-up). 
-|`dragstart` |{ items, event, isDragging, isDraggingKeyboard, … } |Fired when the selection starts (i.e. on mouse-down). 
-|`dragmove` |{ items, event, isDragging, isDraggingKeyboard, … } |Fired when the mouse moves while dragging (i.e. on mouse-move).
-|`autoscroll` |{ items, isDragging, scroll_directions, scroll_multiplier, … } |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
-|`elementselect` |{ items, item, … } |Fired when an element is added to the selection.
-|`elementunselect` |{ items, item, … } |Fired when an element is removed from the selection.
+|`DS:end` |{ items, event, isDragging, isDraggingKeyboard, dropTarget, … } |Fired after the selection (i.e. on mouse-up). 
+|`DS:start` |{ items, event, isDragging, isDraggingKeyboard, … } |Fired when the selection starts (i.e. on mouse-down). 
+|`DS:update` |{ items, event, isDragging, isDraggingKeyboard, … } |Fired when the mouse moves while dragging (i.e. on mouse-move).
+|`DS:scroll` |{ items, isDragging, scroll_directions, scroll_multiplier, … } |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
+|`DS:select` |{ items, item, isDragging, …} |Fired when an element is added to the selection.
+|`DS:unselect` |{ items, item, isDragging, … } |Fired when an element is removed from the selection.
+|`DS:added` |{ items, item, isDragging, … } |Fired when an element is added from the list of selectable elements.
+|`DS:removed` |{ items, item, isDragging, … } |Fired when an element is removed from the list of selectable elements.
 
-> Note: all your callbacks subscribers will run after the internal code ran. If you want to run something before everything else, use the `pre` prefix. I.e. `predragstart` is an event that runs before any internal start logic.
+> Note: all your callbacks subscribers will run after the internal code ran. If you want to run something before everything else, use the `:pre` postfix. I.e. `DS:start:pre` is an event that runs before any internal start logic.
 
 > Note: there are way more so called "internal events" but hooking to those is not recommended since they might change in future and break your implementation.
 
@@ -33,7 +35,7 @@ The callback object is made up of different parts depending of the event. All pr
 
 ```js
 const ds = new DragSelect({});
-ds.subscribe('callback', (callback_object) => {
+ds.subscribe('DS:end', (callback_object) => {
   if(callback_object.items) {
     // do something with the items
   }

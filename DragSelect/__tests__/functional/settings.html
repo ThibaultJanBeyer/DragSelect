@@ -35,8 +35,5 @@
         area: document.getElementsByClassName('container')[0],
     });
 
-    window.ds.subscribe('callback', ({items}) => {
-        console.log(items)
-        window.callback = items.map(item => item.id)
-    })
+    window.ds.subscribe('DS:end', ({items}) => window.callback = items.map(item => item.id))
 </script>

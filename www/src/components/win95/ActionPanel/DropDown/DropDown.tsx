@@ -1,13 +1,11 @@
 import React from 'react'
-import { StaticImageData } from 'next/image'
-
 import styles from './DropDown.module.scss'
 import { IconButton } from '../../IconButton/IconButton'
 import { Icon } from '../../Icon/Icon'
 
 type Props = {
   title: string
-  icon: StaticImageData
+  icon: string
 }
 
 export const DropDown: React.FC<Props> = ({ title, icon }) => (

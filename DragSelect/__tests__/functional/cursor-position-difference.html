@@ -33,16 +33,14 @@
 
     const ds = new DragSelect({});
 
-    ds.subscribe('dragstart', ({ event }) => {
+    ds.subscribe('DS:start', ({ event }) => {
       const diff = customPosDiffCalc(true, false, ds);
-      console.log("onStart ::: getCursorPositionDifference(true)", diff, ds.getCurrentCursorPosition(), ds.getCurrentCursorPositionArea());
       cursorStartDiff.push(diff);
       cursorPosStart.push({ x: event.clientX, y: event.clientY });
     })
 
-    ds.subscribe('dragmove', ({ event }) => {
+    ds.subscribe('DS:update', ({ event }) => {
       const diff = customPosDiffCalc(false, false, ds);
-      console.log("onMove ::: getCursorPositionDifference()", diff);
       cursorMoveDiff.push(diff);
       cursorPosMove.push({ x: event.clientX, y: event.clientY });
     })
