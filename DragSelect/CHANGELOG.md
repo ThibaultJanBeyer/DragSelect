@@ -1,12 +1,21 @@
 # 3.0.0
 
-- Add keyboard drop-zoning solving [149](https://github.com/ThibaultJanBeyer/DragSelect/issues/149)
-- Fix persistance of `removeSelectables` as of [148](https://github.com/ThibaultJanBeyer/DragSelect/issues/148) note however, that the items are still in the settings, thus will be re-added when manually running `.start()`
-- Add an over-writeable method to filter the elements that are supposed to be dragged `.filterDragElements` [Override](https://www.DragSelect.com/docs/API/Overrides) inspired by [#158](https://github.com/ThibaultJanBeyer/DragSelect/pull/158)
-- Previous setting `dragAsBlock` is the default behavior.
-- Licensing: GPLv3 => free for use on any non-commercial project
-- Typescript rewrite. The JavaScript world has shifted towards typescript. This will improve the quality of life for users of this library.
-- Callbacks refactor:
+## Breaking Updates
+
+### Moving the project to typescript
+
+- Enable complex typings
+- Removes typing issues from the past
+
+### New license model
+
+- Free to everything for non-commercial, paid for commercial projects
+- Fees will be split with contributors
+- Enables faster development cycles
+- Keeps the lights on
+- Attract talent to collaborate
+
+### Callbacks Refactor
 
 ```
 "elementselect" => "DS:select",
@@ -32,8 +41,21 @@
 "DS:removed"
 ```
 
+### Box-Dragging as new default
+
+- This is the default expected behaviour, hence if should be the default
+
+### Removing self-hosted versions
+
+- This was just bad practice from ancient times
+
+## Extras (non-breaking)
+
+- Previous setting `dragAsBlock` is the default behavior.
+- Add an over-writeable method to filter the elements that are supposed to be dragged `.filterDragElements` [Override](https://www.DragSelect.com/docs/API/Overrides) inspired by [#158](https://github.com/ThibaultJanBeyer/DragSelect/pull/158)
+- Fix persistance of `removeSelectables` as of [148](https://github.com/ThibaultJanBeyer/DragSelect/issues/148) note however, that the items are still in the settings, thus will be re-added when manually running `.start()`
+- Add keyboard drop-zoning solving [149](https://github.com/ThibaultJanBeyer/DragSelect/issues/149)
 - Fix key stroke bug [#181](https://github.com/ThibaultJanBeyer/DragSelect/issues/181)
-- Removed self-hosted versions. This is just bad practice… If you want to use hosted versions either you go with always the latest or you use something like `unpkg` for example `import DragSelect from "https://unpkg.com/dragselect@latest/dist/ds.es6m.min.js";`
 
 # 2.7.4
 
