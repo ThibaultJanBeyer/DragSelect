@@ -7,10 +7,7 @@ describe('Stop', () => {
       window.ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
       })
-      window.ds.subscribe('callback', ({ items }) => {
-        console.log('highlevel callback fired')
-        window.callback = items
-      })
+      window.ds.subscribe('DS:end', ({ items }) => window.callback = items)
     })
 
     const mouse = page.mouse
@@ -38,14 +35,13 @@ describe('Stop', () => {
     expect(areaNode).toBeNull()
   })
 
-  it('should stop the functionality in a callback', async () => {
+  it('should stop the functionality in a DS:end', async () => {
     await page.goto(`${baseUrl}/stop.html`)
     await page.evaluate(() => {
       window.ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
       })
-      window.ds.subscribe('callback', ({ items }) => {
-        console.log('highlevel callback fired', items)
+      window.ds.subscribe('DS:end', ({ items }) => {
         window.callback = items
         ds.stop()
       })
@@ -86,7 +82,7 @@ describe('Stop', () => {
       window.ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
       })
-      window.ds.subscribe('callback', ({ items }) => (window.callback = items))
+      window.ds.subscribe('DS:end', ({ items }) => (window.callback = items))
     })
 
     const mouse = page.mouse

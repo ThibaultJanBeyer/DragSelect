@@ -8,3 +8,5 @@ package-lock.json
 npm-debug.log
 original
 dist
+src/**/*.js
+yarn-error.log

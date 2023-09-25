@@ -32,11 +32,9 @@
         selectables: document.querySelectorAll('.item'),
         area: document.querySelector('#area')
     });
-    ds.subscribe('callback', ({ isDragging, items }) => {
+    ds.subscribe('DS:end', ({ isDragging, items }) => {
         window.dragged = []
         window.selected = []
-
-        console.log('CB', isDragging, items)
         window[isDragging ? 'dragged' : 'selected'] = items.map(item => item.id)
     })
 </script>

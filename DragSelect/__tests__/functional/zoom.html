@@ -20,16 +20,13 @@
   var ds;
 
   var initDS = function () {
-    if (ds) {
-      ds.stop();
-    }
+    if (ds) ds.stop();
 
     ds = new DragSelect({
       selectables: document.getElementsByClassName('item'),
       area: document.getElementById('container'),
       zoom: zoom
     });
-    ds.subscribe('callback', ({items}) => console.log("selected", items))
     document.getElementById('container').style = "transform: scale(" + zoom + ")";
     document.getElementById('zoomer').innerHTML = zoom*100;
   }
