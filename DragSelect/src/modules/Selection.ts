@@ -35,7 +35,13 @@ export default class Selection<E extends DSInputElement> {
     else this._prevSelectedSet = new Set()
   }
 
-  private start = ({ event, isDragging }: { event: DSEvent; isDragging: boolean }) => {
+  private start = ({
+    event,
+    isDragging,
+  }: {
+    event: DSEvent
+    isDragging: boolean
+  }) => {
     if (isDragging) return
     this._storePrevious(event)
     this._handleInsideSelection(true, event)
@@ -58,8 +64,8 @@ export default class Selection<E extends DSInputElement> {
     const elRects = SelectableSet.rects
     const selectorRect = Selector.rect
 
-    const select: Map<E,DSBoundingRect> = new Map()
-    const unselect: Map<E,DSBoundingRect> = new Map()
+    const select: Map<E, DSBoundingRect> = new Map()
+    const unselect: Map<E, DSBoundingRect> = new Map()
 
     for (const [element, elementRect] of elRects) {
       if (!SelectorArea.isInside(element, elementRect)) continue
@@ -70,6 +76,7 @@ export default class Selection<E extends DSInputElement> {
 
     if (this.DS.continue) return
 
+    // [PUBLICLY EXPOSED METHOD]
     const { select: filteredSelect, unselect: filteredUnselect } =
       this.filterSelected({ select, unselect, selectorRect })
 
@@ -114,9 +121,13 @@ export default class Selection<E extends DSInputElement> {
    * Can be overridden to apply further filtering logic after the items to select are identified but before they actually get selected
    * Is expected to return the select / unselect maps in the same shape as passed in
    */
-  public filterSelected = ({ select, unselect, selectorRect }: {
-    select: Map<E,DSBoundingRect>; 
-    unselect: Map<E,DSBoundingRect>;
+  public filterSelected = ({
+    select,
+    unselect,
+    selectorRect,
+  }: {
+    select: Map<E, DSBoundingRect>
+    unselect: Map<E, DSBoundingRect>
     selectorRect: DSBoundingRect
   }) => ({ select, unselect })
 }

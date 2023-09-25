@@ -1,5 +1,6 @@
 # 3.0.0
 
+- Add an over-writeable method to filter the elements that are supposed to be dragged `.filterDragElements` [Override](https://www.DragSelect.com/docs/API/Overrides) inspired by [#158](https://github.com/ThibaultJanBeyer/DragSelect/pull/158)
 - Previous setting `dragAsBlock` is the default behavior.
 - Licensing: GPLv3 => free for use on any non-commercial project
 - Typescript rewrite. The JavaScript world has shifted towards typescript. This will improve the quality of life for users of this library.

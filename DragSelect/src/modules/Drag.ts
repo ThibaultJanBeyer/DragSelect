@@ -18,13 +18,13 @@ export default class Drag<E extends DSInputElement> {
   PS: PubSub<E>
   Settings: DSSettings<E>
 
-  constructor({ DS, PS }: { DS: DragSelect<E>, PS: PubSub<E> }) {
+  constructor({ DS, PS }: { DS: DragSelect<E>; PS: PubSub<E> }) {
     this.DS = DS
     this.PS = PS
     this.Settings = this.DS.stores.SettingsStore.s
 
-    this.PS.subscribe('Settings:updated:dragKeys', this.assignDragkeys)
-    this.assignDragkeys()
+    this.PS.subscribe('Settings:updated:dragKeys', this.assignDragKeys)
+    this.assignDragKeys()
 
     this.PS.subscribe('Interaction:start', this.start)
     this.PS.subscribe('Interaction:end', this.stop)
@@ -33,7 +33,7 @@ export default class Drag<E extends DSInputElement> {
     this.PS.subscribe('KeyStore:up', this.keyboardEnd)
   }
 
-  private assignDragkeys = () => {
+  private assignDragKeys = () => {
     this._dragKeys = {
       up: this.Settings.dragKeys.up.map((k) => k.toLowerCase()),
       down: this.Settings.dragKeys.down.map((k) => k.toLowerCase()),
@@ -48,7 +48,13 @@ export default class Drag<E extends DSInputElement> {
     ]
   }
 
-  private keyboardDrag = ({ event, key }: { event: KeyboardEvent; key: string }) => {
+  private keyboardDrag = ({
+    event,
+    key,
+  }: {
+    event: KeyboardEvent
+    key: string
+  }) => {
     const _key = key.toLowerCase()
     if (
       !this.Settings.keyboardDrag ||
@@ -84,17 +90,10 @@ export default class Drag<E extends DSInputElement> {
       direction: posDirection,
       containerRect: this.DS.SelectorArea.rect,
       scrollAmount: this.DS.stores.ScrollStore.scrollAmount,
-      selectionRect: this._selectionRect
+      selectionRect: this._selectionRect,
     })
 
-    this._elements.forEach((element) =>
-      moveElement({
-        element,
-        posDirection,
-        containerRect: this.DS.SelectorArea.rect,
-        useTransform: this.Settings.useTransform,
-      })
-    )
+    this.moveElements(posDirection)
 
     this.PS.publish(
       ['Interaction:update:pre', 'Interaction:update'],
@@ -102,7 +101,13 @@ export default class Drag<E extends DSInputElement> {
     )
   }
 
-  private keyboardEnd = ({ event, key }: { event: KeyboardEvent; key: string }) => {
+  private keyboardEnd = ({
+    event,
+    key,
+  }: {
+    event: KeyboardEvent
+    key: string
+  }) => {
     const _key = key.toLowerCase()
     if (
       !this.Settings.keyboardDrag ||
@@ -120,7 +125,13 @@ export default class Drag<E extends DSInputElement> {
     this.PS.publish(['Interaction:end:pre', 'Interaction:end'], publishData)
   }
 
-  private start = ({ isDragging, isDraggingKeyboard }: { isDragging?: boolean, isDraggingKeyboard?: boolean }) => {
+  private start = ({
+    isDragging,
+    isDraggingKeyboard,
+  }: {
+    isDragging?: boolean
+    isDraggingKeyboard?: boolean
+  }) => {
     if (!isDragging || isDraggingKeyboard) return
     this._prevCursorPos = undefined
     this._prevScrollPos = undefined
@@ -136,7 +147,13 @@ export default class Drag<E extends DSInputElement> {
     this._elements = []
   }
 
-  private update = ({ isDragging, isDraggingKeyboard }: { isDragging?: boolean; isDraggingKeyboard?: boolean }) => {
+  private update = ({
+    isDragging,
+    isDraggingKeyboard,
+  }: {
+    isDragging?: boolean
+    isDraggingKeyboard?: boolean
+  }) => {
     if (
       !isDragging ||
       !this._elements.length ||
@@ -150,17 +167,10 @@ export default class Drag<E extends DSInputElement> {
       direction: posDirection,
       containerRect: this.DS.SelectorArea.rect,
       scrollAmount: this.DS.stores.ScrollStore.scrollAmount,
-      selectionRect: this._selectionRect
+      selectionRect: this._selectionRect,
     })
 
-    this._elements.forEach((element) =>
-      moveElement({
-        element,
-        posDirection,
-        containerRect: this.DS.SelectorArea.rect,
-        useTransform: this.Settings.useTransform,
-      })
-    )
+    this.moveElements(posDirection)
   }
 
   private handleZIndex = (add: boolean) => {
@@ -170,6 +180,22 @@ export default class Drag<E extends DSInputElement> {
           (parseInt(element.style.zIndex) || 0) + (add ? 9999 : -9998)
         }`)
     )
+  }
+
+  private moveElements = (posDirection: Vect2) => {
+    // [PUBLICLY EXPOSED METHOD]
+    const { elements, direction } = this.filterDragElements({
+      elements: this._elements,
+      direction: posDirection,
+    })
+    elements.forEach((element) => {
+      moveElement({
+        element,
+        posDirection: direction,
+        containerRect: this.DS.SelectorArea.rect,
+        useTransform: this.Settings.useTransform,
+      })
+    })
   }
 
   private get _cursorDiff() {
@@ -189,4 +215,22 @@ export default class Drag<E extends DSInputElement> {
     this._prevScrollPos = currentScrollVal
     return scrollDiff
   }
+
+  ////
+  // [PUBLICLY EXPOSED METHODS]
+
+  /**
+   * Can be overridden to apply further filtering logic after the items to move are identified but before they actually get moved
+   * Is expected to return the elements in the same shape as passed in
+   */
+  public filterDragElements = ({
+    elements,
+    direction,
+  }: {
+    elements: E[]
+    direction: Vect2
+  }) => ({
+    elements,
+    direction,
+  })
 }
