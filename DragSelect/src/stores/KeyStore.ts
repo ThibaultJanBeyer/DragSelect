@@ -46,6 +46,7 @@ export default class KeyStore<E extends DSInputElement> {
   }
 
   private keydown = (event: KeyboardEvent) => {
+    if(!event.key?.toLocaleLowerCase) return
     const key = event.key.toLowerCase()
     this.PS.publish('KeyStore:down:pre', { event, key })
     this._currentValues.add(key)
@@ -53,6 +54,7 @@ export default class KeyStore<E extends DSInputElement> {
   }
 
   private keyup = (event: KeyboardEvent) => {
+    if(!event.key?.toLocaleLowerCase) return
     const key = event.key.toLowerCase()
     this.PS.publish('KeyStore:up:pre', { event, key })
     this._currentValues.delete(key)

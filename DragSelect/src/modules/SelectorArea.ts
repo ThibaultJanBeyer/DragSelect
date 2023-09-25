@@ -10,7 +10,7 @@ import PubSub from "./PubSub"
 type AppendRemove = 'append' | 'remove'
 
 export default class SelectorArea<E extends DSInputElement> {
-  private _scrollInterval?: NodeJS.Timer
+  private _scrollInterval?: NodeJS.Timeout
   private _rect?: DSBoundingRect
   private currentEdges: DSEdges = []
   private DS: DragSelect<E>

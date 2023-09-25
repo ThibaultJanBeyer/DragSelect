@@ -1,5 +1,4 @@
 .idea
-.vscode
 node_modules
 tests/DragSelect.js
 .DS_Store
@@ -8,3 +7,4 @@ package-lock.json
 npm-debug.log
 original
 dist
+yarn-error.log

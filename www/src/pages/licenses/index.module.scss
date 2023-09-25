@@ -1,0 +1,50 @@
+.head, .body {
+  background: #f6f6f6;
+  overflow-x: hidden;
+  color: #333;
+  font-family: 'Fira Sans', sans-serif;
+  font-weight: 300;
+  font-size: 10px;
+  height: auto;
+}
+
+.body {
+  font-size: 2rem;
+  overflow-y: hidden;
+  max-width: 700px;
+  margin: auto;
+}
+
+.header {
+  margin-top: 60px;
+}
+
+.logo {
+  width: 250px;
+  margin: auto;
+}
+
+.heroBanner {
+  padding: 4rem 0 0 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 2rem;
+  }
+}
+
+.section__title {
+  font-size: 3rem;
+  font-weight: 300;
+  margin-top: 5rem;
+  margin-bottom: 3rem;
+}
+
+.section__subTitle {
+  font-size: 1.5rem;
+  margin-top: 3rem;
+}

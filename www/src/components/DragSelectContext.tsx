@@ -1,6 +1,7 @@
 // heavily inspired by https://kentcdodds.com/blog/how-to-use-react-context-effectively
 import React, { createContext, useState, useEffect, useContext } from 'react'
-import DragSelect from 'dragselect'
+import DragSelect, { DSInputElement } from 'dragselect'
+export * from 'dragselect'
 
 // export type dropZones = ConstructorParameters<typeof DragSelect>[0]['dropZones']
 type ProviderProps = {
@@ -8,10 +9,10 @@ type ProviderProps = {
   settings?: ConstructorParameters<typeof DragSelect>[0]
 }
 
-const Context = createContext<DragSelect | undefined>(undefined)
+const Context = createContext<DragSelect<DSInputElement> | undefined>(undefined)
 
 function DragSelectProvider({ children, settings = {} }: ProviderProps) {
-  const [ds, setDS] = useState<DragSelect>()
+  const [ds, setDS] = useState<DragSelect<DSInputElement>>()
 
   useEffect(() => {
     setDS((prevState) => {

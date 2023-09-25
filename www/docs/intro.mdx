@@ -1,14 +1,15 @@
 ---
 sidebar_position: 2
-description: DragSelect is an awesome JavaScript library for selecting multiple elements on the web. This tutorial will show you how to use it.
+description: DragSelect is an awesome JavaScript library for selecting and dragging multiple elements on the web. This tutorial will show you how to use it.
 ---
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import GitHubButton from 'react-github-btn'
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import GitHubButton from "react-github-btn";
 
 # Getting Started
 
-DragSelect is a small but professional, cross platform library with no dependencies that adds a selection mechanism similar to your operating system to the browser. It allows you to select multiple elements and drag and drop them around.  
+DragSelect is a small but professional, cross platform library with no dependencies that adds a selection mechanism similar to your operating system to the browser. It allows you to select multiple elements and drag and drop them around.
 
 Let's discover how to use **DragSelect in less than 2 minutes**. You don’t believe me? It’s very easy, you’ll see!
 
@@ -35,14 +36,15 @@ yarn add dragselect
   </TabItem>
   <TabItem value="download" label="Download">
 
-  - [DragSelect](https://dragselect.com/v2/DragSelect.js) ([minified](https://dragselect.com/v2/ds.min.js))
-  - [DragSelect ES6 Module](https://dragselect.com/v2/DragSelect.es6m.js) ([minified](https://dragselect.com/v2/ds.es6m.min.js))
-  - From our website:
+- [DragSelect](https://dragselect.com/DragSelect.js) ([minified](https://dragselect.com/ds.min.js))
+- [DragSelect ES6 Module](https://dragselect.com/DragSelect.es6m.js) ([minified](https://dragselect.com/ds.es6m.min.js))
+- From our website:
 
 ```html
-<script src="https://dragselect.com/v2/ds.min.js"></script>
+<script src="https://dragselect.com/ds.min.js"></script>
 ```
-  > We don't recommend the direct linking for production set-up since you'll not benefit from versioning. Please use `npm` if you can.
+
+> We don't recommend the direct linking for production set-up. Please use `npm` if you can.
 
   </TabItem>
   <TabItem value="cdn" label="CDN">
@@ -50,11 +52,19 @@ yarn add dragselect
   <TabItem value="modules" label="Modules" default>
 
 ```html
-<script type=module src="https://unpkg.com/dragselect@latest/dist/DragSelect.es6m.js"></script>
+<script
+  type="module"
+  src="https://unpkg.com/dragselect@latest/dist/DragSelect.es6m.js"
+></script>
 ```
+
 Or Minified:
+
 ```html
-<script type=module src="https://unpkg.com/dragselect@latest/dist/ds.es6m.min.js"></script>
+<script
+  type="module"
+  src="https://unpkg.com/dragselect@latest/dist/ds.es6m.min.js"
+></script>
 ```
 
   </TabItem>
@@ -63,7 +73,9 @@ Or Minified:
 ```html
 <script src="https://unpkg.com/dragselect@latest/dist/DragSelect.js"></script>
 ```
+
 Or Minified:
+
 ```html
 <script src="https://unpkg.com/dragselect@latest/dist/ds.min.js"></script>
 ```
@@ -71,18 +83,9 @@ Or Minified:
   </TabItem>
     </Tabs>
   </TabItem>
-  <TabItem value="bower" label="Bower (deprecated)" default>
-
-```console
-bower install --save dragselect
-```
-
-  > Note: the Bower project is deprecated. Please use npm instead. If you have to use bower, you'll have to build the project after installing it via `npm run rollup`
-
-  </TabItem>
 </Tabs>
 
-## 🎸 That's it, you're ready to rock! (Use it)  
+## 🎸 That's it, you're ready to rock! (Use it)
 
 DragSelect supports `module.exports`, `AMD Modules` with `define`, `es6 modules` with `.es6m` versions and has a fallback to global namespace for maximum out of the box support:
 
@@ -90,13 +93,13 @@ DragSelect supports `module.exports`, `AMD Modules` with `define`, `es6 modules`
   <TabItem value="es6" label="ES6" default>
 
 ```js
-import DragSelect from 'dragselect';
+import DragSelect from "dragselect";
 
 const ds = new DragSelect({
-  selectables: document.querySelectorAll('.selectable'),
+  selectables: document.querySelectorAll(".selectable"),
 });
 
-ds.subscribe('DS:end', (e) => {
+ds.subscribe("DS:end", (e) => {
   console.log(e);
 });
 ```
@@ -105,13 +108,13 @@ ds.subscribe('DS:end', (e) => {
   <TabItem value="commonjs" label="CommonJS">
 
 ```js
-const DragSelect = require('dragselect');
+const DragSelect = require("dragselect");
 
 const ds = new DragSelect({
-  selectables: document.querySelectorAll('.selectable'),
+  selectables: document.querySelectorAll(".selectable"),
 });
 
-ds.subscribe('DS:end', (e) => {
+ds.subscribe("DS:end", (e) => {
   console.log(e);
 });
 ```
@@ -120,12 +123,12 @@ ds.subscribe('DS:end', (e) => {
   <TabItem value="amd" label="AMD">
 
 ```js
-require(['dragselect'], function (DragSelect) {
+require(["dragselect"], function (DragSelect) {
   const ds = new DragSelect({
-    selectables: document.querySelectorAll('.selectable'),
+    selectables: document.querySelectorAll(".selectable"),
   });
 
-  ds.subscribe('DS:end', (e) => {
+  ds.subscribe("DS:end", (e) => {
     console.log(e);
   });
 });
@@ -136,10 +139,10 @@ require(['dragselect'], function (DragSelect) {
 
 ```js
 const ds = new DragSelect({
-  selectables: document.querySelectorAll('.selectable'),
+  selectables: document.querySelectorAll(".selectable"),
 });
 
-ds.subscribe('DS:end', (e) => {
+ds.subscribe("DS:end", (e) => {
   console.log(e);
 });
 ```
@@ -148,14 +151,14 @@ ds.subscribe('DS:end', (e) => {
   <TabItem value="cdn" label="From CDN">
 
 ```js
-import DragSelect from 'https://unpkg.com/dragselect@latest/dist/ds.es6m.min.js'
+import DragSelect from "https://unpkg.com/dragselect@latest/dist/ds.es6m.min.js";
 
 const ds = new DragSelect({
-  selectables: document.querySelectorAll('.selectable'),
+  selectables: document.querySelectorAll(".selectable"),
 });
 
-ds.subscribe('DS:end', (e) => {
-  console.log(e)
+ds.subscribe("DS:end", (e) => {
+  console.log(e);
 });
 ```
 
@@ -164,22 +167,64 @@ ds.subscribe('DS:end', (e) => {
 
 ## 🎬 Aaaand action! (See it)
 
-<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect" src="https://codepen.io/ThibaultJanBeyer/embed/prpwYG?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen>
-  See <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG">this Pen about DragSelect</a> on CodePen.
+<iframe
+  height="400"
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="DragSelect"
+  src="https://codepen.io/ThibaultJanBeyer/embed/prpwYG?default-tab=result&editable=true&theme-id=dark"
+  frameBorder="no"
+  loading="lazy"
+  allowtransparency="true"
+  allowFullScreen
+>
+  See{" "}
+  <a href="https://codepen.io/ThibaultJanBeyer/pen/prpwYG">
+    this Pen about DragSelect
+  </a>{" "}
+  on CodePen.
 </iframe>
 
-*Pssst: try using your keyboard only or selecting multiple elements with Shift. It just works ;-)*
+_Pssst: try using your keyboard only or selecting multiple elements with Shift. It just works ;-)_
 
 ### Within a scroll-able Area
 
-<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/Nvobgq?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen>
-  See <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq">this Pen about DragSelect</a> on CodePen.
+<iframe
+  height="400"
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="DragSelect with Scrollable AREA"
+  src="https://codepen.io/ThibaultJanBeyer/embed/Nvobgq?default-tab=result&editable=true&theme-id=dark"
+  frameBorder="no"
+  loading="lazy"
+  allowtransparency="true"
+  allowFullScreen
+>
+  See{" "}
+  <a href="https://codepen.io/ThibaultJanBeyer/pen/Nvobgq">
+    this Pen about DragSelect
+  </a>{" "}
+  on CodePen.
 </iframe>
 
 ### With DropZones
 
-<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/bGKgVxp?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen>
-  See <a href="https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp">this Pen about DragSelect</a> on CodePen.
+<iframe
+  height="400"
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="DragSelect with Scrollable AREA"
+  src="https://codepen.io/ThibaultJanBeyer/embed/bGKgVxp?default-tab=result&editable=true&theme-id=dark"
+  frameBorder="no"
+  loading="lazy"
+  allowtransparency="true"
+  allowFullScreen
+>
+  See{" "}
+  <a href="https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp">
+    this Pen about DragSelect
+  </a>{" "}
+  on CodePen.
 </iframe>
 
 ## 📚 What next?
@@ -187,31 +232,46 @@ ds.subscribe('DS:end', (e) => {
 Most importantly:
 
 <ul>
-<li>If you like what you see, make sure to {' '}
-<GitHubButton
-  href="https://github.com/ThibaultJanBeyer/DragSelect"
-  data-icon="octicon-star"
-  data-show-count="true"
-  aria-label="Star ThibaultJanBeyer/DragSelect on GitHub"
->
-  Star
-</GitHubButton> DragSelect</li>
-<li>Tell all your friends/colleagues.</li>
-<li>If you think it is worth continuing developing & maintaining DragSelect, please{' '}
-<GitHubButton
-  href="https://github.com/sponsors/ThibaultJanBeyer"
-  data-icon="octicon-heart"
-  aria-label="Sponsor @ThibaultJanBeyer on GitHub"
->
-  Sponsor
-</GitHubButton> or <a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md">contribute</a>!
-</li>
+  <li>
+    If you like what you see, make sure to{" "}
+    <GitHubButton
+      href="https://github.com/ThibaultJanBeyer/DragSelect"
+      data-icon="octicon-star"
+      data-show-count="true"
+      aria-label="Star ThibaultJanBeyer/DragSelect on GitHub"
+    >
+      Star
+    </GitHubButton>{" "}
+    DragSelect
+  </li>
+  <li>Tell all your friends/colleagues.</li>
+  <li>
+    If you think it is worth continuing developing & maintaining DragSelect,
+    please{" "}
+    <GitHubButton
+      href="https://github.com/sponsors/ThibaultJanBeyer"
+      data-icon="octicon-heart"
+      aria-label="Sponsor @ThibaultJanBeyer on GitHub"
+    >
+      Sponsor
+    </GitHubButton>{" "}
+    or{" "}
+    <a href="https://github.com/ThibaultJanBeyer/DragSelect/blob/master/CONTRIBUTING.md">
+      contribute
+    </a>
+    !
+  </li>
+  <li>
+    If your project makes money:{" "}
+    <a href="/licenses">Purchase a commercial license</a>.
+  </li>
 </ul>
 
 > Creating and maintaining useful tools is a lot of work. Thank you :-)
 
 ### Learn
-This page is just a very brief introduction showcasing a limited set of the many features. 
+
+This page is just a very brief introduction showcasing a limited set of the many features.
 DragSelect is ultra extensible and feature rich!
 Make sure to read the guides and the documentation. If you’re stuck feel free to [reach out on Github](https://github.com/ThibaultJanBeyer/DragSelect).
 
