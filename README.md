@@ -35,23 +35,9 @@ The documentation is being migrated to [https://dragselect.com/](https://dragsel
 - [Key-Features](#key-features)
 - [Why?](#why)
 - [Supporters](#supporters)
-  - [Thanks To:](#thanks-to)
 - [Installation](#installation)
-  - [NPM](#npm)
-  - [Yarn](#yarn)
-  - [Global](#global)
-  - [That's it, you're ready to rock!](#thats-it-youre-ready-to-rock)
 - [Usage](#usage)
-  - [Simple](#simple)
-  - [Within a Scroll-Able Area](#within-a-scroll-able-area)
-  - [With DropZones](#with-dropzones)
-  - [Extended](#extended)
-  - [React](#react)
-  - [Mobile/Touch usage](#mobiletouch-usage)
-  - [Accessibility (a11y)](#accessibility-a11y)
-  - [Use Your Own Drag \& Drop](#use-your-own-drag--drop)
 - [Constructor Properties (Settings)](#constructor-properties-settings)
-  - [Post-Initialization Setting-Updates](#post-initialization-setting-updates)
 - [Event Callbacks](#event-callbacks)
 - [Methods](#methods)
 - [CSS Classes](#css-classes)
@@ -59,7 +45,8 @@ The documentation is being migrated to [https://dragselect.com/](https://dragsel
 
 # Project Page: Demo & Info
 
-[https://dragselect.com/](https://dragselect.com/)
+- 🧑‍💻 Project Page: [https://dragselect.com/](https://dragselect.com/)
+- 📘 Docs Page: [https://dragselect.com/](https://dragselect.com/)
 
 # Key-Features
 
@@ -78,7 +65,7 @@ The documentation is being migrated to [https://dragselect.com/](https://dragsel
 - Free & open source
 - Easy to use
 
-![demo-gif](https://dragselect.com/img/dragselect.gif)
+[![demo-gif](https://dragselect.com/img/dragselect.gif)](https://dragselect.com/)
 
 # Why?
 
