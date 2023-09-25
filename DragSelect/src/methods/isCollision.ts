@@ -1,5 +1,5 @@
 // @ts-check
-import { DSBoundingRectBase } from '../types'
+import { type DSBoundingRectBase } from '../types'
 
 // [PUBLICLY EXPOSED METHOD]
 
@@ -31,12 +31,15 @@ export type IsCollision = {
    *  0.2 = the element has to be 20% inside the other element
    *  0 = the element only has to touch the other element
    */
-  (el1?: DSBoundingRectBase, el2?: DSBoundingRectBase, percent?: number): boolean
+  (
+    el1?: DSBoundingRectBase,
+    el2?: DSBoundingRectBase,
+    percent?: number
+  ): boolean
 }
 
-
 export const isCollision: IsCollision = (el1, el2, percent = 0) => {
-  if(!el1 || !el2) return false
+  if (!el1 || !el2) return false
 
   let element1 = el1
 

@@ -1,21 +1,32 @@
 <body>
-<link rel="stylesheet" href="basics.css">
-<script src="../../dist/DragSelect.js"></script>
-<script>
-    window.selected = [];
+  <link rel="stylesheet" href="basics.css" />
+  <style>
+    body,
+    html {
+      width: 205px;
+      height: 205px;
+    }
+  </style>
+  <script src="../../dist/DragSelect.js"></script>
+  <script>
+    window.selected = []
 
-    for (var i = 0; i < 500; i++) {
-        var child = document.createElement("button");
-        child.appendChild(document.createTextNode(i));
-        child.classList.add("generated-item", "item");
-        child.id = `item-${i}`;
-        document.body.appendChild(child);
+    for (var i = 0; i < 150; i++) {
+      var child = document.createElement('button')
+      child.appendChild(document.createTextNode(i))
+      child.classList.add('generated-item', 'item')
+      child.id = `item-${i}`
+      document.body.appendChild(child)
     }
 
     const ds = new DragSelect({
-        selectables: document.querySelectorAll('.generated-item'),
-        immediateDrag: false,
-    });
-    ds.subscribe('DS:end', ({ items }) => window.selected = items.map(item => item.id))
-</script>
+      selectables: document.querySelectorAll('.generated-item'),
+      immediateDrag: false,
+      autoScrollSpeed: 10,
+    })
+    ds.subscribe(
+      'DS:end',
+      ({ items }) => (window.selected = items.map((item) => item.id))
+    )
+  </script>
 </body>

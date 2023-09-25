@@ -12,6 +12,7 @@
     "initial:ci": "cd ./DragSelect && yarn install --frozen-lockfile && cd ../www && yarn install --frozen-lockfile && cd ..",
     "start": "cd ./DragSelect && yarn start",
     "test": "cd ./DragSelect && yarn test",
+    "test:debug": "cd ./DragSelect && yarn test:debug",
     "start:docs": "cd ./www && yarn start",
     "build:docs": "cd www && yarn && yarn build && cd ..",
     "build:dragselect": "cd ./DragSelect && yarn build -- --ci && cd ..",

@@ -13,6 +13,7 @@
     "pretest": "yarn build",
     "jest": "jest --detectOpenHandles",
     "test": "yarn jest",
+    "test:debug": "DEBUG=true yarn jest",
     "test:watch": "yarn jest -- --watch",
     "\n# BUILDING:": "",
     "prebuild": "yarn install",
