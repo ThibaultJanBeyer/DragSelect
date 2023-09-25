@@ -7,3 +7,4 @@ package-lock.json
 npm-debug.log
 original
 dist
+yarn-error.log
