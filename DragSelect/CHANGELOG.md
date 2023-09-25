@@ -1,5 +1,6 @@
 # 3.0.0
 
+- Licensing: GPLv3 => free for use on any non-commercial project
 - Typescript rewrite. The JavaScript world has shifted towards typescript. This will improve the quality of life for users of this library.
 - Callbacks refactor:
 
@@ -28,7 +29,7 @@
 ```
 
 - Fix key stroke bug [#181](https://github.com/ThibaultJanBeyer/DragSelect/issues/181)
-- Getting rid of self-hosted versions. This is just bad practice… If you want to use hosted versions either you go with always the latest or you use something like `unpkg` for example `import DragSelect from "https://unpkg.com/dragselect@latest/dist/ds.es6m.min.js";`
+- Removed self-hosted versions. This is just bad practice… If you want to use hosted versions either you go with always the latest or you use something like `unpkg` for example `import DragSelect from "https://unpkg.com/dragselect@latest/dist/ds.es6m.min.js";`
 
 # 2.7.4
 
