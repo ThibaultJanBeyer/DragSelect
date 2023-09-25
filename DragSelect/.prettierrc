@@ -5,6 +5,5 @@
   "singleQuote": true,
   "trailingComma": "es5",
   "jsxBracketSameLine": false,
-  "parser": "babel",
   "semi": false
 }

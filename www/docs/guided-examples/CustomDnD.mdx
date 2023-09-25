@@ -24,7 +24,7 @@ const ds = new DragSelect({
 const myCustomDrag = new MyCustomDrag({/* …your settings… */})
 
 // 3. Stop DragSelect dragging
-ds.subscribe('predragstart', ({ items, isDragging, isDraggingKeyboard }) => {
+ds.subscribe('DS:start:pre', ({ items, isDragging, isDraggingKeyboard }) => {
   if(isDragging) {
     ds.stop(false, false)
     // if anything is necessary in MyCustomDrag, here is the place
@@ -39,7 +39,7 @@ myCustomDrag.subscribe('finished', () => ds.start())
 If your library has no callback you could try to disable, then re-enable directly:
 
 ```js
-ds.subscribe('predragstart', ({ isDragging, isDraggingKeyboard }) => {
+ds.subscribe('DS:start:pre', ({ isDragging, isDraggingKeyboard }) => {
    if(isDragging) {
      ds.stop(false, false)
      setTimeout(ds.start)
@@ -58,7 +58,7 @@ In case you want to build something completely custom on top of DragSelect, we g
 This utility to override DragSelects internal functionality allowing you to write it all yourself: You can write your own drag and drop, if you want, you can even write your own selection:  
 
 ```js
-ds.subscribe('predragmove', ({ isDragging, isDraggingKeyboard }) => {
+ds.subscribe('DS:update:pre', ({ isDragging, isDraggingKeyboard }) => {
   if(isDragging || isDraggingKeyboard) {
     ds.break()
     /* your custom logic for drag handling here. */

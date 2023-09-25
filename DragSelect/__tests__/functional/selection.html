@@ -9,6 +9,6 @@
 </div>
 <script>
     window.ds = new DragSelect({ selectables: document.querySelector('#item-1') })
-    ds.subscribe('callback', ({ isDragging, items }) => window.items = items.map(item => item.id))
+    ds.subscribe('DS:end', ({ isDragging, items }) => window.items = items.map(item => item.id))
 </script>
 </body>

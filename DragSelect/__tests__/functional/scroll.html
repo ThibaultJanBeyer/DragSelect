@@ -31,5 +31,5 @@
         selectorClass: 'selectorrr',
         area: document.getElementById('lel'),
     });
-    window.ds.subscribe('callback', ({items}) => window.callback = items.map(item => item.id))
+    window.ds.subscribe('DS:end', ({items}) => window.callback = items.map(item => item.id))
 </script>

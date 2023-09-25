@@ -13,5 +13,5 @@
     const ds = new DragSelect({
         selectables: document.querySelectorAll('.item'),
     });
-    ds.subscribe('callback', ({items}) => { console.log(items); window.selected = items.map(item => item.id) })
+    ds.subscribe('DS:end', ({items}) => window.selected = items.map(item => item.id))
 </script>
