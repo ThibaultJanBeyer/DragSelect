@@ -27,7 +27,7 @@
     "clsx": "^2.0.0",
     "docusaurus-plugin-sass": "^0.2.5",
     "dragselect": "3.0.2",
-    "postcss": "^8.4.30",
+    "postcss": "^8.4.31",
     "prism-react-renderer": "^2.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
