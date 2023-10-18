@@ -8,22 +8,18 @@ describe('removeSelectables', () => {
 
     await click(page, 10, 10)
     let selected = await page.evaluate(() => window.selected)
-    console.log(selected)
     expect(selected.length).toBe(1)
 
     await click(page, 10, 10)
     selected = await page.evaluate(() => window.selected)
-    console.log(selected)
     expect(selected.length).toBe(0)
 
     await click(page, 80, 80)
     selected = await page.evaluate(() => window.selected)
-    console.log(selected)
     expect(selected.length).toBe(0)
 
     await click(page, 10, 10)
     selected = await page.evaluate(() => window.selected)
-    console.log(selected)
     expect(selected.length).toBe(0)
   })
 })
