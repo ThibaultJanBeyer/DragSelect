@@ -86,4 +86,37 @@ describe('Scroll', () => {
     selection = await page.evaluate(() => ds.getSelection())
     expect(selection.length).toBe(1)
   })
+
+  it('clicking in scrollable area should not cause scroll to occur', async () => {
+    await page.goto(`${baseUrl}/scroll.html`)
+
+    const areaHandle = await page.$('#lel')
+
+    const { areaTop, areaLeft, areaWidth, areaHeight, areaScrollTop } = await page.evaluate(area => {
+      return {
+        areaTop: area.offsetTop,
+        areaLeft: area.offsetLeft,
+        areaWidth: area.offsetWidth,
+        areaHeight: area.offsetHeight,
+        areaScrollTop: area.scrollTop
+      }
+    }, areaHandle)
+
+    expect(areaScrollTop).toBe(0)
+
+    // Calculate middle of scrollable area and click
+    const areaMidX = (areaWidth / 2) + areaLeft
+    const areaMidY = (areaHeight / 2) + areaTop
+
+    const mouse = page.mouse
+    await mouse.move(areaMidX, areaMidY)
+    await mouse.down()
+    await mouse.up()
+
+    const updatedAreaScrollTop = await page.evaluate(area => area.scrollTop, areaHandle)
+
+    expect(updatedAreaScrollTop).toBe(0)
+
+    await areaHandle.dispose()
+  })
 })
