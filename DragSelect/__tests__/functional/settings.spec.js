@@ -1,21 +1,18 @@
 import wait from '../helpers/wait'
-import { moveSelect, moveKey, click } from '../helpers/manipulations'
+import {
+  moveSelect,
+  moveSelectTo,
+  moveKey,
+  click,
+} from '../helpers/manipulations'
 
 const baseUrl = `file://${process.cwd()}/__tests__/functional`
 
-const selectItems = async (mouse, x, y) => {
+const selectItems = async (x, y) => {
+  await moveSelectTo(page, x, y, 5, 5, 1)
+  const cb = await page.evaluate(() => window.callback)
   await wait(100)
-  await mouse.move(x, y)
-  await wait(100)
-  await mouse.down()
-  await wait(100)
-  await mouse.move(5, 5)
-  await wait(100)
-  await mouse.up()
-  await wait(100)
-  const retr = await page.evaluate(() => window.callback)
-  await wait(100)
-  return retr
+  return cb
 }
 
 describe('Settings', () => {
@@ -24,12 +21,12 @@ describe('Settings', () => {
     let cb
 
     // can click elements in the container 1
-    cb = await selectItems(page.mouse, 180, 120)
+    cb = await selectItems(180, 120)
     expect(cb?.sort()).toMatchObject(['one', 'two'])
     await click(page, 180, 120)
 
     // can NOT click elements in the container 2
-    cb = await selectItems(page.mouse, 180, 480)
+    cb = await selectItems(180, 480)
     expect(cb).toMatchObject([])
 
     // swap swop
@@ -41,11 +38,11 @@ describe('Settings', () => {
     )
 
     // can NOT click elements in the container 1
-    cb = await selectItems(page.mouse, 180, 120)
+    cb = await selectItems(180, 120)
     expect(cb).toMatchObject([])
 
     // can click elements in the container 2
-    cb = await selectItems(page.mouse, 180, 480)
+    cb = await selectItems(180, 480)
     expect(cb).toMatchObject(['four'])
     await click(page, 180, 120)
   })
@@ -74,7 +71,7 @@ describe('Settings', () => {
       )
     ).toBeTruthy()
 
-    await selectItems(page.mouse, 180, 120)
+    await selectItems(180, 120)
 
     expect(
       await page.evaluate(
@@ -113,17 +110,17 @@ describe('Settings', () => {
   it('draggability swapping should work', async () => {
     await page.goto(`${baseUrl}/settings.html`)
     let cb
-    cb = await selectItems(page.mouse, 180, 120)
+    cb = await selectItems(180, 120)
     expect(cb?.sort()).toMatchObject(['one', 'two'])
     await page.evaluate(() => ds.setSettings({ draggability: false }))
     // move with draggability OFF
     await moveSelect(page, 140, 85)
-    cb = await selectItems(page.mouse, 180, 120)
+    cb = await selectItems(180, 120)
     expect(cb?.sort()).toMatchObject(['one', 'two'])
     // move with draggability ON
     await page.evaluate(() => ds.setSettings({ draggability: true }))
     await moveSelect(page, 140, 85)
-    cb = await selectItems(page.mouse, 180, 120)
+    cb = await selectItems(180, 120)
     expect(cb?.sort()).toMatchObject([])
   })
 
@@ -133,14 +130,14 @@ describe('Settings', () => {
     await page.evaluate(() => ds.setSettings({ draggability: true }))
     await moveSelect(page, 140, 85)
     await click(page, 180, 120)
-    cb = await selectItems(page.mouse, 140, 85)
+    cb = await selectItems(140, 85)
     expect(cb?.sort()).toMatchObject(['one', 'two'])
     await click(page, 180, 120)
 
     await page.evaluate(() => ds.setSettings({ immediateDrag: true }))
     await moveSelect(page, 140, 85)
     await click(page, 180, 85)
-    cb = await selectItems(page.mouse, 140, 85)
+    cb = await selectItems(140, 85)
     expect(cb).toMatchObject(['one'])
   })
 
@@ -172,14 +169,20 @@ describe('Settings', () => {
     )
 
     let cb = []
-    cb = await selectItems(page.mouse, 140, 85)
+    const prevY = await page.evaluate(
+      () => document.querySelector('#two').getBoundingClientRect().y
+    )
+    cb = await selectItems(140, 85)
     expect(cb?.sort()).toMatchObject(['one', 'two'])
     await click(page, 180, 120)
     await moveKey(page, page.keyboard, 140, 85, 's')
-    expect(await page.evaluate(() => ds.Area.HTMLNode.scrollTop)).not.toBe(0)
+    const newY = await page.evaluate(
+      () => document.querySelector('#two').getBoundingClientRect().y
+    )
+    expect(newY).toBeGreaterThan(prevY)
     await page.evaluate(() => (ds.Area.HTMLNode.scrollTop = 0))
     await click(page, 180, 120)
-    cb = await selectItems(page.mouse, 140, 85)
+    cb = await selectItems(140, 85)
     expect(cb).toMatchObject(['one'])
   })
 
@@ -254,10 +257,10 @@ describe('Settings', () => {
   it('multiSelectToggling swapping should work', async () => {
     await page.goto(`${baseUrl}/settings.html`)
     let cb = []
-    cb = await selectItems(page.mouse, 180, 120)
+    cb = await selectItems(180, 120)
     expect(cb?.sort()).toMatchObject(['one', 'two'])
     await page.keyboard.down('Shift')
-    cb = await selectItems(page.mouse, 180, 120)
+    cb = await selectItems(180, 120)
     expect(cb?.sort()).toMatchObject([])
 
     await page.evaluate(() =>
@@ -266,10 +269,10 @@ describe('Settings', () => {
       })
     )
 
-    cb = await selectItems(page.mouse, 180, 120)
+    cb = await selectItems(180, 120)
     expect(cb?.sort()).toMatchObject(['one', 'two'])
     await page.keyboard.down('Shift')
-    cb = await selectItems(page.mouse, 180, 120)
+    cb = await selectItems(180, 120)
     expect(cb?.sort()).toMatchObject(['one', 'two'])
   })
 })
