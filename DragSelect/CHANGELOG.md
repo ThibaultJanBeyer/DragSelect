@@ -1,3 +1,7 @@
+# 3.0.5
+
+- Fix type issue during build bug [#212](https://github.com/ThibaultJanBeyer/DragSelect/issues/212)
+
 # 3.0.4
 
 - Fix scrolling bug ([#208](https://github.com/ThibaultJanBeyer/DragSelect/issues/208)) thanks to [@dbougan](https://github.com/dbougan)

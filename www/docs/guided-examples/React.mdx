@@ -22,17 +22,19 @@ Feel free to copy+paste the code:
 
 ```tsx DragSelectContext.tsx
 import React, { createContext, useState, useEffect, useContext } from "react";
-import DragSelect from "dragselect";
+import DragSelect, { DSInputElement } from "dragselect";
 
 type ProviderProps = {
   children: React.ReactNode;
-  settings?: ConstructorParameters<typeof DragSelect>[0];
+  settings?: ConstructorParameters<typeof DragSelect<DSInputElement>>[0];
 };
 
-const Context = createContext<DragSelect | undefined>(undefined);
+const Context = createContext<DragSelect<DSInputElement> | undefined>(
+  undefined
+);
 
 function DragSelectProvider({ children, settings = {} }: ProviderProps) {
-  const [ds, setDS] = useState<DragSelect>();
+  const [ds, setDS] = useState<DragSelect<DSInputElement>>();
 
   useEffect(() => {
     setDS((prevState) => {
@@ -108,7 +110,7 @@ export { DragSelectProvider, useDragSelect };
 ```jsx MyComponent.tsx
 import React from "react";
 
-import { DragSelectProvider } from "../DragSelectContext";
+import { DragSelectProvider } from "./DragSelectContext";
 
 export const MyComponent = () => (
   // you can add initial settings by passing a settings object
@@ -121,34 +123,38 @@ export const MyComponent = () => (
 ## 3. Use it
 
 ```jsx SomeOtherComponentsThatNeedsDragSelect.tsx
-import React, { useEffect, useRef } from 'react'
-import { useDragSelect } from '../../../DragSelectContext'
+import React, { useEffect, useRef } from "react";
+import { useDragSelect } from "./DragSelectContext";
 
-const SomeOtherComponentsThatNeedsDragSelect = () => {
-  const ds = useDragSelect()
-  const inputEl = useRef(null)
+export const SomeOtherComponentsThatNeedsDragSelect = () => {
+  const ds = useDragSelect();
+  const inputEl = useRef(null);
 
   // adding a selectable element
   useEffect(() => {
-    const element = inputEl.current as unknown as HTMLElement
-    if (!element || !ds) return
-    ds.addSelectables(element)
-  }, [ds, inputEl])
+    const element = inputEl.current as unknown as HTMLElement;
+    if (!element || !ds) return;
+    ds.addSelectables(element);
+  }, [ds, inputEl]);
 
   // subscribing to a callback
   useEffect(() => {
-    const id = ds.subscribe('DS:end', (e) => {
+    if (!ds) return;
+    const id = ds.subscribe("DS:end", (e) => {
       // do something
-      console.log(e)
-    })
+      console.log(e);
+    });
 
-    return () => ds.unsubscribe('DS:end', null, id)
-  }, [])
+    return () => ds.unsubscribe("DS:end", null, id!);
+  }, [ds]);
 
   return (
-    <button ref={inputEl} aria-labelledby="Selectable">Selectable</button>
-  )
-}
+    <button ref={inputEl} aria-labelledby="Selectable">
+      Selectable
+    </button>
+  );
+};
+
 ```
 
 DragSelect also exports some helper types for type safety, i.e. `DSPubCallback` which you can pass in the subscriber for the callback type safety:

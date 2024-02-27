@@ -6,9 +6,6 @@ import { DSInteractionPublishEventData } from '../modules/Interaction'
 import { DSSelectedPublishEventData } from '../modules/SelectedSet'
 import { DSInputElement } from '../types'
 
-export type DSPublicPublishEventNames<E extends DSInputElement> =
-  keyof DSPublicPublish<E>
-
 export type DSPublicPublishAdditionalEventData<E extends DSInputElement> = {
   /** The dropZone element that the element was dropped into (or the mouse is currently hovering over) */
   dropTarget?: DSDropZone<E>
@@ -113,7 +110,7 @@ type MappingObj<
   E extends DSInputElement,
   K extends keyof UsedPublishMappings<E>,
 > = {
-  name: DSPublicPublishEventNames<E>
+  name: keyof DSPublicPublish<E>
   condition?: Condition<UsedPublishMappings<E>[K], E>
   extraData?: Condition<UsedPublishMappings<E>[K], E>
 }
