@@ -103,7 +103,6 @@ declare class Interaction<E extends DSInputElement> {
     private removeDocEventListeners;
 }
 
-type DSPublicPublishEventNames<E extends DSInputElement> = keyof DSPublicPublish<E>;
 type DSPublicPublishAdditionalEventData<E extends DSInputElement> = {
     /** The dropZone element that the element was dropped into (or the mouse is currently hovering over) */
     dropTarget?: DSDropZone<E>;
@@ -440,7 +439,6 @@ type DSInputElement = HTMLElement | SVGElement;
 type DSMultiSelectKeys = Array<'Shift' | 'Control' | 'Meta' | string>;
 type DSEvent = KeyboardEvent | MouseEvent | PointerEvent | TouchEvent;
 type DSInternalEventName = DSSettingsPublishEventNames | DSAreaPublishEventNames | DSKeyStorePublishEventNames | DSPointerStorePublishEventNames | DSInteractionPublishEventNames | DSSelectablePublishEventNames | DSSelectedPublishEventNames;
-type DSCallbackName<E extends DSInputElement> = DSPublicPublishEventNames<E> | DSInternalEventName;
 type DSBoundingRectBase = {
     top: number;
     left: number;
@@ -507,7 +505,7 @@ declare class PubSub<E extends DSInputElement> {
      * @param callback the callback method signature, has to be exactly the same as when subscribing. Consider using "id" instead.
      * @param id event id returned when subscribed (more performant than callback search)
      */
-    unsubscribe: <K extends DSSettingsPublishEventNames | DSKeyStorePublishEventNames | DSPointerStorePublishEventNames | DSSelectedPublishEventNames | keyof DSAreaPublish<E> | keyof DSInteractionPublish | keyof DSSelectablePublish<E> | keyof DSPublicPublish<E>>(eventName: K, callback?: DSCallback<DSPublishMappings<E>[K]> | undefined, id?: number) => void;
+    unsubscribe: <K extends DSSettingsPublishEventNames | DSKeyStorePublishEventNames | DSPointerStorePublishEventNames | DSSelectedPublishEventNames | keyof DSAreaPublish<E> | keyof DSInteractionPublish | keyof DSSelectablePublish<E> | keyof DSPublicPublish<E>>(eventName: K, callback?: DSCallback<DSPublishMappings<E>[K]> | null | undefined, id?: number) => void;
     /**
      * Publishes an event to all subscribers
      * @param eventName
@@ -737,7 +735,7 @@ type IsCollision = {
     (el1?: DSBoundingRectBase, el2?: DSBoundingRectBase, percent?: number): boolean;
 };
 
-declare class DragSelect<E extends DSInputElement> {
+declare class DragSelect<E extends DSInputElement = DSInputElement> {
     /** used to skip all current Selection and dragNdrop functionality */
     continue: boolean;
     private PubSub;
@@ -764,7 +762,7 @@ declare class DragSelect<E extends DSInputElement> {
     /** Un-Subscribe from events */
     unsubscribe: <T extends keyof DSPublicPublish<E>>(eventName: T, callback?: DSCallback<DSPublishMappings<E>[T]> | undefined, id?: number) => void;
     /** Publish events */
-    publish: <T extends DSCallbackName<E_1>>(eventName: T | T[], data: DSPublishMappings<E>[T]) => void;
+    publish: <T extends keyof DSPublicPublish<E> | DSInternalEventName>(eventName: T | T[], data: DSPublishMappings<E>[T]) => void;
     /** Initializes the functionality. Automatically triggered when created. Also, reset the functionality after a teardown */
     start: () => void;
     /**
@@ -874,4 +872,4 @@ declare class DragSelect<E extends DSInputElement> {
 
 type DSPubCallback<T extends keyof DSPublicPublish<E>, E extends DSInputElement = DSInputElement> = DSCallback<DSPublishMappings<E>[T]>;
 
-export { type DSArea, type DSBoundingRect, type DSBoundingRectBase, type DSCallbackName, type DSCallbackObject, type DSDragKeys, type DSEdges, type DSEdgesObj, type DSElementPos, type DSEvent, type DSInputDropZone, type DSInputElement, type DSInternalEventName, type DSMultiSelectKeys, type DSPubCallback, type DSSelectorArea, type Settings, type Vect2, DragSelect as default };
+export { type DSArea, type DSBoundingRect, type DSBoundingRectBase, type DSCallbackObject, type DSDragKeys, type DSEdges, type DSEdgesObj, type DSElementPos, type DSEvent, type DSInputDropZone, type DSInputElement, type DSInternalEventName, type DSMultiSelectKeys, type DSPubCallback, type DSSelectorArea, type Settings, type Vect2, DragSelect as default };
