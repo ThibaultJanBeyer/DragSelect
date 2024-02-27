@@ -54,7 +54,7 @@ export default class PubSub<E extends DSInputElement> {
    */
   unsubscribe = <K extends keyof DSPublishMappings<E>>(
     eventName: K,
-    callback?: DSCallback<DSPublishMappings<E>[K]>,
+    callback?: DSCallback<DSPublishMappings<E>[K]> | null,
     id?: number
   ) => {
     const index =

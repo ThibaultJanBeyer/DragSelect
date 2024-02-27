@@ -41,7 +41,7 @@ import Selection from './modules/Selection'
 import SelectorArea from './modules/SelectorArea'
 import SettingsStore from './stores/SettingsStore'
 import {
-  type DSCallbackName,
+  type DSInternalEventName,
   type DSInputElement,
   type Settings,
   type Vect2,
@@ -58,7 +58,7 @@ import { DSDropZone } from './modules/DropZone'
 // Setup
 /// ///////////////////////////////////////////////////////////////////////////////////
 
-class DragSelect<E extends DSInputElement> {
+class DragSelect<E extends DSInputElement = DSInputElement> {
   /** used to skip all current Selection and dragNdrop functionality */
   public continue: boolean = false
   private PubSub: PubSub<E>
@@ -151,7 +151,7 @@ class DragSelect<E extends DSInputElement> {
     id?: number
   ) => this.PubSub.unsubscribe(eventName, callback, id)
   /** Publish events */
-  public publish = <T extends DSCallbackName<E>>(
+  public publish = <T extends keyof DSPublicPublish<E> | DSInternalEventName>(
     eventName: T | T[],
     data: DSPublishMappings<E>[T]
   ) => this.PubSub.publish(eventName, data)

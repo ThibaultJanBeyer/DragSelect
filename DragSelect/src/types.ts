@@ -1,14 +1,35 @@
-import { DSPublicPublishAdditionalEventData, DSPublicPublishEventNames } from "./methods/subscriberAliases"
-import { DSAreaPublishEventData, DSAreaPublishEventNames } from "./modules/Area"
-import { DSInteractionPublishEventData, DSInteractionPublishEventNames } from "./modules/Interaction"
-import { DSSelectablePublishEventData, DSSelectablePublishEventNames } from "./modules/SelectableSet"
-import { DSSelectedPublishEventData, DSSelectedPublishEventNames } from "./modules/SelectedSet"
-import { DSKeyStorePublishEventData, DSKeyStorePublishEventNames } from "./stores/KeyStore"
-import { DSPointerStorePublishEventData, DSPointerStorePublishEventNames } from "./stores/PointerStore"
-import { DSSettingsPublishEventData, DSSettingsPublishEventNames } from "./stores/SettingsStore"
+import {
+  type DSPublicPublishAdditionalEventData,
+  type DSPublicPublish,
+} from './methods/subscriberAliases'
+import { DSAreaPublishEventData, DSAreaPublishEventNames } from './modules/Area'
+import {
+  DSInteractionPublishEventData,
+  DSInteractionPublishEventNames,
+} from './modules/Interaction'
+import {
+  DSSelectablePublishEventData,
+  DSSelectablePublishEventNames,
+} from './modules/SelectableSet'
+import {
+  DSSelectedPublishEventData,
+  DSSelectedPublishEventNames,
+} from './modules/SelectedSet'
+import {
+  DSKeyStorePublishEventData,
+  DSKeyStorePublishEventNames,
+} from './stores/KeyStore'
+import {
+  DSPointerStorePublishEventData,
+  DSPointerStorePublishEventNames,
+} from './stores/PointerStore'
+import {
+  DSSettingsPublishEventData,
+  DSSettingsPublishEventNames,
+} from './stores/SettingsStore'
 
 export type Vect2 = {
-  x: number,
+  x: number
   y: number
 }
 
@@ -53,7 +74,7 @@ export type Settings<E extends DSInputElement> = {
   dropZones?: DSInputDropZone<E>[]
   /** [=1] how much % of the item has to be inside the dropzone to be considered inside (0 = barely touching, 1 = completely inside) */
   dropInsideThreshold?: number
-  /** [=0] how much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone) */ 
+  /** [=0] how much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone) */
   dropTargetThreshold?: number
   /** [=false] Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly. */
   usePointerEvents?: boolean
@@ -83,19 +104,18 @@ export type Settings<E extends DSInputElement> = {
   dropZoneInsideClass?: string
 }
 
-export type DSCallbackObject<E extends DSInputElement> = 
-  Readonly<
-    Partial<
-      & DSSettingsPublishEventData<E>
-      & DSAreaPublishEventData<E>
-      & DSKeyStorePublishEventData
-      & DSPointerStorePublishEventData
-      & DSInteractionPublishEventData
-      & DSSelectablePublishEventData<E>
-      & DSSelectedPublishEventData<E>
-      & DSPublicPublishAdditionalEventData<E>
-    >
+export type DSCallbackObject<E extends DSInputElement> = Readonly<
+  Partial<
+    DSSettingsPublishEventData<E> &
+      DSAreaPublishEventData<E> &
+      DSKeyStorePublishEventData &
+      DSPointerStorePublishEventData &
+      DSInteractionPublishEventData &
+      DSSelectablePublishEventData<E> &
+      DSSelectedPublishEventData<E> &
+      DSPublicPublishAdditionalEventData<E>
   >
+>
 
 export type DSInputDropZone<E extends DSInputElement> = {
   /** can be any unique identifier of type string */
@@ -107,19 +127,24 @@ export type DSInputDropZone<E extends DSInputElement> = {
 }
 
 export type DSElementPos = {
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  r: number,
+  x: number
+  y: number
+  w: number
+  h: number
+  r: number
   b: number
 }
 
-export type DSEdges = Array<'top'|'bottom'|'left'|'right'|undefined>
-export type DSEdgesObj = {top:number,bottom:number,left:number,right:number}
+export type DSEdges = Array<'top' | 'bottom' | 'left' | 'right' | undefined>
+export type DSEdgesObj = {
+  top: number
+  bottom: number
+  left: number
+  right: number
+}
 
 /** area within which you can drag */
-export type DSArea = HTMLElement|SVGElement|Document
+export type DSArea = HTMLElement | SVGElement | Document
 
 /** area in which you can drag */
 export type DSSelectorArea = HTMLElement
@@ -131,28 +156,34 @@ export type DSInputElement = HTMLElement | SVGElement
 // export type DSElement = HTMLElement|SVGElement
 
 /** An array of keys that allows switching to the multi-select mode */
-export type DSMultiSelectKeys = Array<'Shift'|'Control'|'Meta'|string>
+export type DSMultiSelectKeys = Array<'Shift' | 'Control' | 'Meta' | string>
 
-export type DSEvent = KeyboardEvent|MouseEvent|PointerEvent|TouchEvent
+export type DSEvent = KeyboardEvent | MouseEvent | PointerEvent | TouchEvent
 
-export type DSInternalEventName = DSSettingsPublishEventNames|DSAreaPublishEventNames|DSKeyStorePublishEventNames|DSPointerStorePublishEventNames|DSInteractionPublishEventNames|DSSelectablePublishEventNames|DSSelectedPublishEventNames
-export type DSCallbackName<E extends DSInputElement> = DSPublicPublishEventNames<E>|DSInternalEventName
+export type DSInternalEventName =
+  | DSSettingsPublishEventNames
+  | DSAreaPublishEventNames
+  | DSKeyStorePublishEventNames
+  | DSPointerStorePublishEventNames
+  | DSInteractionPublishEventNames
+  | DSSelectablePublishEventNames
+  | DSSelectedPublishEventNames
 
 export type DSBoundingRectBase = {
-  top: number,
-  left: number,
-  bottom: number,
-  right: number,
+  top: number
+  left: number
+  bottom: number
+  right: number
 }
 
 export interface DSBoundingRect extends DSBoundingRectBase {
-  width: number,
+  width: number
   height: number
 }
 
 export type DSDragKeys = {
-  up: Array<string>,
-  down: Array<string>,
-  left: Array<string>,
+  up: Array<string>
+  down: Array<string>
+  left: Array<string>
   right: Array<string>
 }

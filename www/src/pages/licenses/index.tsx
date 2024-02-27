@@ -78,10 +78,14 @@ export default function License(): JSX.Element {
         </p>
         <h3 className={styles.section__subTitle}>Team member</h3>
         <p>
-          Commercial licenses are priced per team member. A team member is an
-          individual person permitted to make modifications for your
-          applications that uses DragSelect, whether such person is your
-          employee or a consultant or contractor providing services to you.
+          The Commercial license "Startup" is priced per team member. A team
+          member is an individual person permitted to make modifications for
+          your applications that uses DragSelect, whether such person is your
+          employee or a consultant or contractor providing services to you. One
+          startup license includes 5 team members: this means you buy one
+          startup license per 5 team members. The enterprise license however has
+          no limits: this means you only buy the enterprise license once no
+          matter how big your company is.
         </p>
         <h3 className={styles.section__subTitle}>Free updates</h3>
         <p>
