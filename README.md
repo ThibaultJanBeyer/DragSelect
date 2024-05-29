@@ -83,7 +83,7 @@ If you're too poor or broke you can still support us with your time instead by [
 
 ### LambdaTest
 
-<p style="background:white"><a href="https://www.lambdatest.com/"><img src="https://www.lambdatest.com/support/img/logo.svg" alt="LambdaTest" width="147" /></a></p>
+<p background="white"><a href="https://www.lambdatest.com/"><img src="https://www.lambdatest.com/support/img/logo.svg" alt="LambdaTest" width="147" /></a></p>
 
 [LambdaTest](https://www.lambdatest.com/) is a Next-Generation Mobile App and Cross Browser Testing Cloud. They support this open source projects by providing us with a free account and with a generous donation!
 
