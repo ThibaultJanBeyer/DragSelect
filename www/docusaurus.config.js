@@ -117,7 +117,7 @@ const config = {
       footer: {
         style: "dark",
         copyright: `
-        Designed & Build with love in Bonn, Germany by <a href="https://thibaultjanbeyer.com">Tibo</a> and the <a href="https://github.com/ThibaultJanBeyer/DragSelect">open source</a> community. <a href="/docs/info">Read more about it here</a>. <p style="font-size:21px; color:black; ">Browser testing via <a href="https://www.lambdatest.com/" target="_blank"><img src="https://www.lambdatest.com/support/img/logo.svg" style="vertical-align: middle;margin-left:5px" width="147" height="26" /></a></p>
+        Designed & Build with love in Bonn, Germany by <a href="https://thibaultjanbeyer.com">Tibo</a> and the <a href="https://github.com/ThibaultJanBeyer/DragSelect">open source</a> community. <a href="/docs/info">Read more about it here</a>. <p>Browser testing via <a href="https://www.lambdatest.com/" target="_blank"><img src="https://www.lambdatest.com/support/img/logo.svg" style="filter:brightness(0) invert(1); vertical-align: middle;margin-left:5px" width="147" /></a></p>
         `,
       },
     }),
