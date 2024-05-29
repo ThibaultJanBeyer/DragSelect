@@ -83,15 +83,7 @@ If you're too poor or broke you can still support us with your time instead by [
 
 ### LambdaTest
 
-<p align="center" style="text-align: center" >
-  <a href="https://www.lambdatest.com/" target="_blank">
-    <picture>
-      <source media="(prefers-color-scheme: light)" srcset="https://www.lambdatest.com/support/img/logo.svg">
-      <source media="(prefers-color-scheme: dark)" style="filter:brightness(0) invert(1);" srcset="https://www.lambdatest.com/support/img/logo.svg">
-      <img alt="The DragSelect logo: a selection symbol, a hand, a drop symbol and a mouse within a selection square." width="300" src="https://www.lambdatest.com/support/img/logo.svg">
-    </picture>
-  </a>
-</p>
+<p style="background:white"><a href="https://www.lambdatest.com/"><img src="https://www.lambdatest.com/support/img/logo.svg" alt="LambdaTest" width="147" /></a></p>
 
 [LambdaTest](https://www.lambdatest.com/) is a Next-Generation Mobile App and Cross Browser Testing Cloud. They support this open source projects by providing us with a free account and with a generous donation!
 
