@@ -1,3 +1,7 @@
+# 3.0.7
+
+- Fix an issue with scrolling bottom if there is no area defined and the document.element is used
+
 # 3.0.6
 
 - Expose the Drag class publicly, solves [#224](https://github.com/ThibaultJanBeyer/DragSelect/issues/224)
