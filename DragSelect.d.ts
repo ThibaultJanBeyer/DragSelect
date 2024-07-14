@@ -564,6 +564,43 @@ declare class Area<E extends DSInputElement> {
     private get parentNodes();
 }
 
+declare class Drag<E extends DSInputElement> {
+    private _prevCursorPos?;
+    private _prevScrollPos?;
+    private _elements;
+    private _dragKeys?;
+    private _dragKeysFlat;
+    private _selectionRect;
+    DS: DragSelect<E>;
+    PS: PubSub<E>;
+    Settings: DSSettings<E>;
+    constructor({ DS, PS }: {
+        DS: DragSelect<E>;
+        PS: PubSub<E>;
+    });
+    private assignDragKeys;
+    private keyboardDrag;
+    private keyboardEnd;
+    private start;
+    stop: () => void;
+    private update;
+    private handleZIndex;
+    private moveElements;
+    private get _cursorDiff();
+    private get _scrollDiff();
+    /**
+     * Can be overridden to apply further filtering logic after the items to move are identified but before they actually get moved
+     * Is expected to return the elements in the same shape as passed in
+     */
+    filterDragElements: ({ elements, direction, }: {
+        elements: E[];
+        direction: Vect2;
+    }) => {
+        elements: E[];
+        direction: Vect2;
+    };
+}
+
 declare class DropZones<E extends DSInputElement> {
     /** Get the drop zone by the zone element */
     private _zoneByElement;
@@ -751,7 +788,7 @@ declare class DragSelect<E extends DSInputElement = DSInputElement> {
     SelectableSet: SelectableSet<E>;
     SelectedSet: SelectedSet<E>;
     Selection: Selection<E>;
-    private Drag;
+    Drag: Drag<E>;
     DropZones: DropZones<E>;
     Interaction: Interaction<E>;
     stopped: boolean;
