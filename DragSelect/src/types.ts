@@ -1,6 +1,5 @@
 import {
   type DSPublicPublishAdditionalEventData,
-  type DSPublicPublish,
 } from './methods/subscriberAliases'
 import { DSAreaPublishEventData, DSAreaPublishEventNames } from './modules/Area'
 import {

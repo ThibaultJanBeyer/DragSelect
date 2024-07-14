@@ -1,25 +1,25 @@
-import React from 'react'
-import GitHubButton from 'react-github-btn'
+import React from "react";
+import GitHubButton from "react-github-btn";
 
-import { baseDocsUrl, basePricingUrl } from '../../constants'
+import { baseDocsUrl, basePricingUrl } from "../../constants";
 
 export const FooterLinks: React.FC<{}> = () => (
   <>
     <a href={basePricingUrl} className="metalink">
       Licensing
-    </a>{' '}
-    |{' '}
+    </a>{" "}
+    |{" "}
     <a
       href="https://github.com/ThibaultJanBeyer/DragSelect"
       className="metalink"
     >
       Github
-    </a>{' '}
-    |{' '}
+    </a>{" "}
+    |{" "}
     <a href="https://www.npmjs.com/package/dragselect" className="metalink">
       NPM
-    </a>{' '}
-    |{' '}
+    </a>{" "}
+    |{" "}
     <a href={baseDocsUrl} className="metalink">
       Docs
     </a>
@@ -52,4 +52,4 @@ export const FooterLinks: React.FC<{}> = () => (
       </div>
     </div>
   </>
-)
+);

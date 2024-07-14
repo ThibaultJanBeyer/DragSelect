@@ -3,16 +3,14 @@
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'DragSelect',
-  tagline: 'Easy javascript Drag-Select & Drop functionality done right.',
-  url: 'https://DragSelect.com/',
-  baseUrl: '/',
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
-  scripts: [
-    'https://assets.lemonsqueezy.com/lemon.js'
-  ],
+  title: "DragSelect",
+  tagline: "Easy javascript Drag-Select & Drop functionality done right.",
+  url: "https://DragSelect.com/",
+  baseUrl: "/",
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "warn",
+  favicon: "img/favicon.ico",
+  scripts: ["https://assets.lemonsqueezy.com/lemon.js"],
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -44,7 +42,7 @@ const config = {
   ],
   themes: ["@docusaurus/theme-live-codeblock"],
   stylesheets: [
-    'https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;500;900&display=swap',
+    "https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;500;900&display=swap",
   ],
 
   presets: [
@@ -99,15 +97,15 @@ const config = {
         },
         items: [
           {
-            href: '/licenses',
-            position: 'left',
-            label: 'Pricing',
+            href: "/licenses",
+            position: "left",
+            label: "Pricing",
           },
           {
-            type: 'doc',
-            docId: 'intro',
-            position: 'left',
-            label: 'Getting Started',
+            type: "doc",
+            docId: "intro",
+            position: "left",
+            label: "Getting Started",
           },
           {
             href: "https://github.com/ThibaultJanBeyer/DragSelect",
@@ -119,7 +117,7 @@ const config = {
       footer: {
         style: "dark",
         copyright: `
-        Designed & Build with love in Bonn, Germany by <a href="https://thibaultjanbeyer.com">Tibo</a> and the <a href="https://github.com/ThibaultJanBeyer/DragSelect">open source</a> community. <a href="/docs/info">Read more about it here</a>.
+        Designed & Build with love in Bonn, Germany by <a href="https://thibaultjanbeyer.com">Tibo</a> and the <a href="https://github.com/ThibaultJanBeyer/DragSelect">open source</a> community. <a href="/docs/info">Read more about it here</a>. <p>Browser testing via <a href="https://www.lambdatest.com/" target="_blank"><img src="https://www.lambdatest.com/support/img/logo.svg" style="filter:brightness(0) invert(1); vertical-align: middle;margin-left:5px" width="147" /></a></p>
         `,
       },
     }),
