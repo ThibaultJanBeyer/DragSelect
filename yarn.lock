@@ -5151,11 +5151,6 @@ dot-prop@^5.2.0:
   dependencies:
     is-obj "^2.0.0"
 
-dragselect@3.0.5:
-  version "3.0.5"
-  resolved "https://registry.npmjs.org/dragselect/-/dragselect-3.0.5.tgz"
-  integrity sha512-+6MTHhXDjf7qmrcEpOVkkWG6x0Kr73wlTrCeuOL73FmLXCpeJykYTebhZatD/3G4c/Byh/JMoRKhR+BkMCaoQA==
-
 duplexer3@^0.1.4:
   version "0.1.5"
   resolved "https://registry.npmjs.org/duplexer3/-/duplexer3-0.1.5.tgz"
