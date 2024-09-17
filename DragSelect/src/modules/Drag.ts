@@ -174,12 +174,14 @@ export default class Drag<E extends DSInputElement> {
   }
 
   private handleZIndex = (add: boolean) => {
-    this._elements.forEach(
-      (element) =>
-        (element.style.zIndex = `${
-          (parseInt(element.style.zIndex) || 0) + (add ? 9999 : -9998)
-        }`)
-    )
+    if (this.Settings.useLayers) {
+      this._elements.forEach(
+        (element) =>
+          (element.style.zIndex = `${
+            (parseInt(element.style.zIndex) || 0) + (add ? 9999 : -9998)
+          }`)
+      )
+    }
   }
 
   private moveElements = (posDirection: Vect2) => {
