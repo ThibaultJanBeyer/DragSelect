@@ -560,7 +560,9 @@
             this.moveElements(posDirection);
         };
         handleZIndex = (add) => {
-            this._elements.forEach((element) => (element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) + (add ? 9999 : -9998)}`));
+            if (this.Settings.useLayers) {
+                this._elements.forEach((element) => (element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) + (add ? 9999 : -9998)}`));
+            }
         };
         moveElements = (posDirection) => {
             // [PUBLICLY EXPOSED METHOD]
@@ -1584,7 +1586,8 @@
             this.PS.publish('Selected:added:pre', publishData);
             super.add(element);
             element.classList.add(this.Settings.selectedClass);
-            element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) + 1}`;
+            if (this.Settings.useLayers)
+                element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) + 1}`;
             this.PS.publish('Selected:added', publishData);
             return this;
         }
@@ -1598,7 +1601,8 @@
             this.PS.publish('Selected:removed:pre', publishData);
             const deleted = super.delete(element);
             element.classList.remove(this.Settings.selectedClass);
-            element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) - 1}`;
+            if (this.Settings.useLayers)
+                element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) - 1}`;
             this.PS.publish('Selected:removed', publishData);
             return deleted;
         }
@@ -2193,6 +2197,7 @@
         ...hydrateHelper('dropZoneReadyClass', settings.dropZoneReadyClass, withFallback, 'ds-dropzone-ready'),
         ...hydrateHelper('dropZoneTargetClass', settings.dropZoneTargetClass, withFallback, 'ds-dropzone-target'),
         ...hydrateHelper('dropZoneInsideClass', settings.dropZoneInsideClass, withFallback, 'ds-dropzone-inside'),
+        ...hydrateHelper('useLayers', settings.useLayers, withFallback, true),
     });
 
     class SettingsStore {

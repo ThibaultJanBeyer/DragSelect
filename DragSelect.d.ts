@@ -403,6 +403,8 @@ type Settings<E extends DSInputElement> = {
     dropZoneTargetClass?: string;
     /** [=ds-dropzone-inside] on dropZone that has elements inside after any drop */
     dropZoneInsideClass?: string;
+    /** [=true] Whether to use z-index when selecting and dragging an item */
+    useLayers?: boolean;
 };
 type DSCallbackObject<E extends DSInputElement> = Readonly<Partial<DSSettingsPublishEventData<E> & DSAreaPublishEventData<E> & DSKeyStorePublishEventData & DSPointerStorePublishEventData & DSInteractionPublishEventData & DSSelectablePublishEventData<E> & DSSelectedPublishEventData<E> & DSPublicPublishAdditionalEventData<E>>>;
 type DSInputDropZone<E extends DSInputElement> = {
