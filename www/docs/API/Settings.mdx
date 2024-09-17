@@ -41,6 +41,7 @@ const ds = new DragSelect({
 | `keyboardDrag` | boolean | true    |Whether or not the user can drag with the keyboard (Accessibility).
 | `dragKeys` | { up:string[], down:string[], left:string[], right:string[] } | { up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'] } |The keys available to drag element using the keyboard. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)).
 | `keyboardDragSpeed` | number | 10  | The speed at which elements are dragged using the keyboard. In pixels per keyDown.
+| `useLayers` | boolean | true    | Whether to apply z-index when dragging and once dragged.
 
 ## Dropping
 | property       | type    | default | description
@@ -113,5 +114,6 @@ new DragSelect({
   refreshMemoryRate: 80,
   usePointerEvents: false,
   zoom: 1,
+  useLayers: true,
 });
 ```
