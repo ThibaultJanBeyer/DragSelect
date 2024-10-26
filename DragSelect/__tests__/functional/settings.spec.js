@@ -275,4 +275,19 @@ describe('Settings', () => {
     cb = await selectItems(180, 120)
     expect(cb?.sort()).toMatchObject(['one', 'two'])
   })
+
+  it('useLayers swapping should work', async () => {
+    await page.goto(`${baseUrl}/settings.html`)
+    await page.evaluate(() =>
+      ds.setSettings({
+        draggability: true,
+        immediateDrag: true,
+        useLayers: false,
+      })
+    )
+    await moveSelect(page, 140, 85)
+    expect(
+      await page.evaluate(() => document.querySelector('#two').style.zIndex)
+    ).toBe('')
+  })
 })

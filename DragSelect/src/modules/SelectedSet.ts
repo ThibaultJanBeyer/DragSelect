@@ -37,7 +37,7 @@ export default class SelectedSet<E extends DSInputElement> extends Set<E> {
     this.PS.publish('Selected:added:pre', publishData)
     super.add(element)
     element.classList.add(this.Settings.selectedClass)
-    element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) + 1}`
+    if (this.Settings.useLayers) element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) + 1}`
     this.PS.publish('Selected:added', publishData)
     return this
   }
@@ -51,7 +51,7 @@ export default class SelectedSet<E extends DSInputElement> extends Set<E> {
     this.PS.publish('Selected:removed:pre', publishData)
     const deleted = super.delete(element)
     element.classList.remove(this.Settings.selectedClass)
-    element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) - 1}`
+    if (this.Settings.useLayers) element.style.zIndex = `${(parseInt(element.style.zIndex) || 0) - 1}`
     this.PS.publish('Selected:removed', publishData)
     return deleted
   }
