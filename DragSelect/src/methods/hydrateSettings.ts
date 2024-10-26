@@ -242,4 +242,5 @@ export const hydrateSettings = <E extends DSInputElement>(settings: Settings<E>,
     withFallback,
     'ds-dropzone-inside'
   ),
+  ...hydrateHelper('useLayers', settings.useLayers, withFallback, true),
   } as Required<Settings<E>>)

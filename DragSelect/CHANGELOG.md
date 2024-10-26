@@ -1,3 +1,7 @@
+# 3.1.0
+
+- Add `useLayers` option to enable/disable the `z-index` manipulation on drag/select of nodes. Thanks to [@digitalclubb](https://github.com/digitalclubb) for the contributing PR [#234](https://github.com/ThibaultJanBeyer/DragSelect/pull/234)
+
 # 3.0.7
 
 - Fix an issue with scrolling bottom if there is no area defined and the document.element is used
