@@ -1,12 +1,15 @@
-import { DSArea } from "../types"
+import { DSArea } from '../types'
 
 type Props = {
-  computedStyle: CSSStyleDeclaration
+  computedStyle: { position: CSSStyleDeclaration['position'] }
   node: DSArea
 }
 
 /** Fix: some elements have to have a special position attribute for calculations */
-export const handleElementPositionAttribute = ({ computedStyle, node }: Props) => {
+export const handleElementPositionAttribute = ({
+  computedStyle,
+  node,
+}: Props) => {
   const { position } = computedStyle
   const isPositioned =
     position === 'absolute' || position === 'relative' || position === 'fixed'

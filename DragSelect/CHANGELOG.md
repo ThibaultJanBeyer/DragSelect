@@ -1,3 +1,7 @@
+# 3.1.1
+
+- Fix for [#231](https://github.com/ThibaultJanBeyer/DragSelect/issues/231) where the Area would alert everyone on any update, but we actually only care about certain position values
+
 # 3.1.0
 
 - Add `useLayers` option to enable/disable the `z-index` manipulation on drag/select of nodes. Thanks to [@digitalclubb](https://github.com/digitalclubb) for the contributing PR [#234](https://github.com/ThibaultJanBeyer/DragSelect/pull/234)

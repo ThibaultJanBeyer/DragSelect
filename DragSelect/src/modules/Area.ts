@@ -53,7 +53,13 @@ export default class Area<E extends DSInputElement> {
   private _observers?: { cleanup: () => void }
   private _node: DSArea
   private _parentNodes?: Node[]
-  private _computedStyle?: CSSStyleDeclaration
+  private _computedStyle?: {
+    borderTopWidth: CSSStyleDeclaration['borderTopWidth']
+    borderBottomWidth: CSSStyleDeclaration['borderBottomWidth']
+    borderLeftWidth: CSSStyleDeclaration['borderLeftWidth']
+    borderRightWidth: CSSStyleDeclaration['borderRightWidth']
+    position: CSSStyleDeclaration['position']
+  }
   private _computedBorder?: DSEdgesObj
   private _rect?: DSBoundingRect
 
@@ -92,11 +98,36 @@ export default class Area<E extends DSInputElement> {
     this._observers = addModificationObservers(
       this.parentNodes,
       debounce((event: MutationCallbackEvent) => {
+        if (!this.hasRelevantBeenModified()) return
         this.PS.publish('Area:modified:pre', { event, item: this.HTMLNode })
         this.reset()
         this.PS.publish('Area:modified', { event, item: this.HTMLNode })
       }, 60)
     )
+  }
+
+  // Check whether the for us relevant values have been changed before making a fuzz
+  private hasRelevantBeenModified = () => {
+    const prevComputedStyle = this.computedStyle
+    const prevRect = this.rect
+    const prevComputedBorder = this.computedBorder
+    const prevParentNodes = this.parentNodes
+    this.reset()
+    if (
+      JSON.stringify(prevComputedStyle) !== JSON.stringify(this.computedStyle)
+    )
+      return true
+    if (JSON.stringify(prevRect) !== JSON.stringify(this.rect)) return true
+    if (
+      JSON.stringify(prevComputedBorder) !== JSON.stringify(this.computedBorder)
+    )
+      return true
+    if (
+      prevParentNodes.length !== this.parentNodes.length &&
+      prevParentNodes.some((el) => !this.parentNodes.includes(el))
+    )
+      return true
+    return false
   }
 
   private reset = () => {
@@ -146,11 +177,19 @@ export default class Area<E extends DSInputElement> {
   /** The computed styles from the element (caches result) */
   private get computedStyle() {
     if (this._computedStyle) return this._computedStyle
+    let tempStyles
     if (this.HTMLNode instanceof Document)
-      return (this._computedStyle = window.getComputedStyle(
+      tempStyles = window.getComputedStyle(
         this.HTMLNode.body || this.HTMLNode.documentElement
-      ))
-    return (this._computedStyle = window.getComputedStyle(this.HTMLNode!))
+      )
+    else tempStyles = window.getComputedStyle(this.HTMLNode!)
+    return (this._computedStyle = {
+      borderTopWidth: tempStyles.borderTopWidth,
+      borderBottomWidth: tempStyles.borderBottomWidth,
+      borderLeftWidth: tempStyles.borderLeftWidth,
+      borderRightWidth: tempStyles.borderRightWidth,
+      position: tempStyles.position,
+    })
   }
 
   /** The element rect (caches result) (without scrollbar or borders) */
