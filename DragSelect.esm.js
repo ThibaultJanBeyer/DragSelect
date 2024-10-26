@@ -1,6 +1,6 @@
 /***
 
- ~~~ Version 3.1.0 ~~~
+ ~~~ Version 3.1.1 ~~~
 
  ******************************************
 
@@ -124,7 +124,7 @@ const getAreaRect = (area, zoom) => {
 };
 
 /** Fix: some elements have to have a special position attribute for calculations */
-const handleElementPositionAttribute = ({ computedStyle, node }) => {
+const handleElementPositionAttribute = ({ computedStyle, node, }) => {
     const { position } = computedStyle;
     const isPositioned = position === 'absolute' || position === 'relative' || position === 'fixed';
     if (!(node instanceof Document) && !isPositioned)
@@ -205,10 +205,30 @@ class Area {
     };
     init = () => {
         this._observers = addModificationObservers(this.parentNodes, debounce((event) => {
+            if (!this.hasRelevantBeenModified())
+                return;
             this.PS.publish('Area:modified:pre', { event, item: this.HTMLNode });
             this.reset();
             this.PS.publish('Area:modified', { event, item: this.HTMLNode });
         }, 60));
+    };
+    // Check whether the for us relevant values have been changed before making a fuzz
+    hasRelevantBeenModified = () => {
+        const prevComputedStyle = this.computedStyle;
+        const prevRect = this.rect;
+        const prevComputedBorder = this.computedBorder;
+        const prevParentNodes = this.parentNodes;
+        this.reset();
+        if (JSON.stringify(prevComputedStyle) !== JSON.stringify(this.computedStyle))
+            return true;
+        if (JSON.stringify(prevRect) !== JSON.stringify(this.rect))
+            return true;
+        if (JSON.stringify(prevComputedBorder) !== JSON.stringify(this.computedBorder))
+            return true;
+        if (prevParentNodes.length !== this.parentNodes.length &&
+            prevParentNodes.some((el) => !this.parentNodes.includes(el)))
+            return true;
+        return false;
     };
     reset = () => {
         this._computedStyle = undefined;
@@ -252,9 +272,18 @@ class Area {
     get computedStyle() {
         if (this._computedStyle)
             return this._computedStyle;
+        let tempStyles;
         if (this.HTMLNode instanceof Document)
-            return (this._computedStyle = window.getComputedStyle(this.HTMLNode.body || this.HTMLNode.documentElement));
-        return (this._computedStyle = window.getComputedStyle(this.HTMLNode));
+            tempStyles = window.getComputedStyle(this.HTMLNode.body || this.HTMLNode.documentElement);
+        else
+            tempStyles = window.getComputedStyle(this.HTMLNode);
+        return (this._computedStyle = {
+            borderTopWidth: tempStyles.borderTopWidth,
+            borderBottomWidth: tempStyles.borderBottomWidth,
+            borderLeftWidth: tempStyles.borderLeftWidth,
+            borderRightWidth: tempStyles.borderRightWidth,
+            position: tempStyles.position,
+        });
     }
     /** The element rect (caches result) (without scrollbar or borders) */
     get rect() {

@@ -552,6 +552,7 @@ declare class Area<E extends DSInputElement> {
     });
     private setArea;
     private init;
+    private hasRelevantBeenModified;
     private reset;
     stop: () => void;
     /** Scroll the area in the specified direction */
