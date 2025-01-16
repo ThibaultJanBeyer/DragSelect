@@ -43,26 +43,26 @@ export default [
     input: 'src/DragSelect.ts',
     output: [
       {
-        file: 'dist/DragSelect.esm.js',
+        file: '../dist/DragSelect.esm.js',
         format: 'es',
         name: 'DragSelect',
         banner,
       },
       {
-        file: 'dist/DragSelect.js',
+        file: '../dist/DragSelect.js',
         format: 'umd',
         name: 'DragSelect',
         banner,
       },
       {
-        file: 'dist/ds.esm.min.js',
+        file: '../dist/ds.esm.min.js',
         format: 'es',
         name: 'DragSelect',
         compact: true,
         plugins: [terser()],
       },
       {
-        file: 'dist/ds.min.js',
+        file: '../dist/ds.min.js',
         format: 'umd',
         name: 'DragSelect',
         compact: true,
@@ -75,7 +75,7 @@ export default [
     input: `src/DragSelect.ts`,
     plugins: [dts()],
     output: {
-      file: `dist/DragSelect.d.ts`,
+      file: `../dist/DragSelect.d.ts`,
       format: 'es',
     },
   },

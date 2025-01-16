@@ -3,6 +3,9 @@
   "description": "Easy JavaScript library for selecting and moving elements. With no dependencies. Drag-Select & Drag-And-Drop.",
   "type": "module",
   "private": true,
+  "main": "./dist/DragSelect.js",
+  "module": "./dist/DragSelect.esm.js",
+  "types": "./dist/DragSelect.d.ts",
   "workspaces": [
     "DragSelect",
     "www"

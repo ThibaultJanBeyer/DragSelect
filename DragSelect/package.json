@@ -2,9 +2,9 @@
   "name": "dragselect",
   "version": "3.1.1",
   "description": "Easy JavaScript library for selecting and moving elements. With no dependencies. Drag-Select & Drag-And-Drop.",
-  "main": "./dist/DragSelect.js",
-  "module": "./dist/DragSelect.esm.js",
-  "types": "./dist/DragSelect.d.ts",
+  "main": "../dist/DragSelect.js",
+  "module": "../dist/DragSelect.esm.js",
+  "types": "../dist/DragSelect.d.ts",
   "scripts": {
     "open": "open __tests__/quicktest.html -a 'Google Chrome'",
     "prestart": "yarn",
