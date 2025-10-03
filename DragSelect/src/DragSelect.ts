@@ -142,7 +142,7 @@ class DragSelect<E extends DSInputElement = DSInputElement> {
         }" instead.`
       )
 
-    this.PubSub.subscribe(eventName, callback)
+    return this.PubSub.subscribe(eventName, callback)
   }
   /** Un-Subscribe from events */
   public unsubscribe = <T extends keyof DSPublicPublish<E>>(
