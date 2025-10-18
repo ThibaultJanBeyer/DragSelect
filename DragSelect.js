@@ -2453,7 +2453,7 @@
             // Deprecation warnings
             if (deprecatedNamesMap[eventName])
                 console.warn(`[DragSelect]: The event name "${eventName}" is deprecated and was/will be removed in a future version. Please use the new event name "${deprecatedNamesMap[eventName]}" instead.`);
-            this.PubSub.subscribe(eventName, callback);
+            return this.PubSub.subscribe(eventName, callback);
         };
         /** Un-Subscribe from events */
         unsubscribe = (eventName, callback, id) => this.PubSub.unsubscribe(eventName, callback, id);

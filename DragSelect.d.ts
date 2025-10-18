@@ -798,7 +798,7 @@ declare class DragSelect<E extends DSInputElement = DSInputElement> {
     constructor(settings: Settings<E>);
     static isCollision: IsCollision;
     /** Subscribe to events */
-    subscribe: <T extends keyof DSPublicPublish<E>>(eventName: T, callback: DSCallback<DSPublishMappings<E>[T]>) => void;
+    subscribe: <T extends keyof DSPublicPublish<E>>(eventName: T, callback: DSCallback<DSPublishMappings<E>[T]>) => number;
     /** Un-Subscribe from events */
     unsubscribe: <T extends keyof DSPublicPublish<E>>(eventName: T, callback?: DSCallback<DSPublishMappings<E>[T]> | undefined, id?: number) => void;
     /** Publish events */
