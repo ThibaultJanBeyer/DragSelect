@@ -1,3 +1,7 @@
+# 3.1.2
+
+- Fix missed return [#175](https://github.com/ThibaultJanBeyer/DragSelect/issues/253) thanks [@Ruslan207](https://github.com/Ruslan207)
+
 # 3.1.1
 
 - Fix for [#231](https://github.com/ThibaultJanBeyer/DragSelect/issues/231) where the Area would alert everyone on any update, but we actually only care about certain position values
