@@ -1772,9 +1772,9 @@
     "@hapi/hoek" "^9.0.0"
 
 "@hono/node-server@^1.19.9":
-  version "1.19.9"
-  resolved "https://registry.yarnpkg.com/@hono/node-server/-/node-server-1.19.9.tgz#8f37119b1acf283fd3f6035f3d1356fdb97a09ac"
-  integrity sha512-vHL6w3ecZsky+8P5MD+eFfaGTyCeOHUIFYMGpQGbrBTSmNNoxv0if69rEZ5giu36weC5saFuznL411gRX7bJDw==
+  version "1.19.14"
+  resolved "https://registry.yarnpkg.com/@hono/node-server/-/node-server-1.19.14.tgz#e30f844bc77e3ce7be442aac3b1f73ad8b58d181"
+  integrity sha512-GwtvgtXxnWsucXvbQXkRgqksiH2Qed37H9xHZocE5sA3N8O8O8/8FA3uclQXxXVzc9XBZuEOMK7+r02FmSpHtw==
 
 "@humanfs/core@^0.19.1":
   version "0.19.1"
