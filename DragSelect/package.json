@@ -33,7 +33,7 @@
     "@typescript-eslint/parser": "^6.7.2",
     "better-docs": "^2.7.2",
     "concurrently": "^8.2.1",
-    "eslint": "^8.49.0",
+    "eslint": "^9.26.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-standard": "^17.1.0",
