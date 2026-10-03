@@ -28,7 +28,7 @@ export type DSSelectablePublish<E extends DSInputElement> = {
 
 export default class SelectableSet<E extends DSInputElement> extends Set<E> {
   private _rects?: Map<E, DSBoundingRect>
-  private _timeout?: NodeJS.Timeout
+  private _timeout?: ReturnType<typeof setTimeout>
   private DS: DragSelect<E>
   private PS: PubSub<E>
   private Settings: DSSettings<E>

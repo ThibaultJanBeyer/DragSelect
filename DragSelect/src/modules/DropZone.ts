@@ -24,7 +24,7 @@ export default class DropZone<E extends DSInputElement> {
   private _droppables?: E[]
   private _rect?: DOMRect
   private _observers?: { cleanup: () => void }
-  private _timeout?: NodeJS.Timeout
+  private _timeout?: ReturnType<typeof setTimeout>
   private _itemsDropped: E[] = []
   private _itemsInside?: E[]
   private DS: DragSelect<E>
