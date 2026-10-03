@@ -91,7 +91,7 @@ If you're too poor or broke you can still support us with your time instead by [
     />
     <source
       media="(prefers-color-scheme: dark)"
-      srcset="https://www.lambdatest.com/resources/images/logo-white.svg"
+      srcset="www/static/img/testmu-logo-white.svg"
     />
     <img
       alt="TestMu AI (LambdaTest)"
