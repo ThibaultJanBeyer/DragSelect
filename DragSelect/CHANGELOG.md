@@ -1,3 +1,7 @@
+# NEXT
+
+- Fix renderings inside dialogs [#302](https://github.com/ThibaultJanBeyer/DragSelect/issues/302) thanks [@imagoiq](https://github.com/imagoiq)
+
 # 3.1.2
 
 - Fix missed return [#175](https://github.com/ThibaultJanBeyer/DragSelect/issues/253) thanks [@Ruslan207](https://github.com/Ruslan207)
