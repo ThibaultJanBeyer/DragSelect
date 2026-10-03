@@ -87,13 +87,21 @@ export type DSPublicPublish<E extends DSInputElement> = {
 }
 
 type UsedPublishNames =
+  | 'Selected:added:pre'
   | 'Selected:added'
+  | 'Selected:removed:pre'
   | 'Selected:removed'
+  | 'Selectable:added:pre'
   | 'Selectable:added'
+  | 'Selectable:removed:pre'
   | 'Selectable:removed'
+  | 'Area:scroll:pre'
   | 'Area:scroll'
+  | 'Interaction:start:pre'
   | 'Interaction:start'
+  | 'Interaction:update:pre'
   | 'Interaction:update'
+  | 'Interaction:end:pre'
   | 'Interaction:end'
 
 type UsedPublishMappings<E extends DSInputElement> = Pick<
@@ -139,45 +147,44 @@ export const subscriberAliases = <E extends DSInputElement>({
   DS: DragSelect<E>
 }) => {
   const mapping: DSMappings<E> = {
-    'Selected:added': [
+    'Selected:added:pre': [
       { name: 'preelementselect' },
-      { name: 'elementselect' },
       { name: 'DS:select:pre' },
-      { name: 'DS:select' },
     ],
-    'Selected:removed': [
+    'Selected:added': [{ name: 'elementselect' }, { name: 'DS:select' }],
+    'Selected:removed:pre': [
       { name: 'preelementunselect' },
-      { name: 'elementunselect' },
       { name: 'DS:unselect:pre' },
-      { name: 'DS:unselect' },
     ],
-    'Selectable:added': [{ name: 'DS:added:pre' }, { name: 'DS:added' }],
-    'Selectable:removed': [{ name: 'DS:removed:pre' }, { name: 'DS:removed' }],
-    'Area:scroll': [
-      { name: 'preautoscroll' },
-      { name: 'autoscroll' },
-      { name: 'DS:scroll:pre' },
-      { name: 'DS:scroll' },
-    ],
-    'Interaction:start': [
+    'Selected:removed': [{ name: 'elementunselect' }, { name: 'DS:unselect' }],
+    'Selectable:added:pre': [{ name: 'DS:added:pre' }],
+    'Selectable:added': [{ name: 'DS:added' }],
+    'Selectable:removed:pre': [{ name: 'DS:removed:pre' }],
+    'Selectable:removed': [{ name: 'DS:removed' }],
+    'Area:scroll:pre': [{ name: 'preautoscroll' }, { name: 'DS:scroll:pre' }],
+    'Area:scroll': [{ name: 'autoscroll' }, { name: 'DS:scroll' }],
+    'Interaction:start:pre': [
       { name: 'predragstart' },
-      { name: 'dragstart' },
       { name: 'DS:start:pre' },
-      { name: 'DS:start' },
     ],
-    'Interaction:update': [
+    'Interaction:start': [{ name: 'dragstart' }, { name: 'DS:start' }],
+    'Interaction:update:pre': [
       { name: 'predragmove', condition: (data) => (data.event ? data : null) },
-      { name: 'dragmove', condition: (data) => (data.event ? data : null) },
       {
         name: 'DS:update:pre',
         condition: (data) => (data.event ? data : null),
       },
+    ],
+    'Interaction:update': [
+      { name: 'dragmove', condition: (data) => (data.event ? data : null) },
       { name: 'DS:update', condition: (data) => (data.event ? data : null) },
     ],
-    'Interaction:end': [
+    'Interaction:end:pre': [
       { name: 'precallback', extraData: (data, DS) => endExtraData(data, DS) },
-      { name: 'callback', extraData: (data, DS) => endExtraData(data, DS) },
       { name: 'DS:end:pre', extraData: (data, DS) => endExtraData(data, DS) },
+    ],
+    'Interaction:end': [
+      { name: 'callback', extraData: (data, DS) => endExtraData(data, DS) },
       { name: 'DS:end', extraData: (data, DS) => endExtraData(data, DS) },
     ],
   }
