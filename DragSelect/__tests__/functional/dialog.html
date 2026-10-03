@@ -1,0 +1,76 @@
+<link rel="stylesheet" href="basics.css">
+<style>
+dialog {
+  width: 400px;
+  height: 400px;
+  padding: 0;
+  margin: 0;
+  inset: 50px auto auto 50px;
+  border: 0;
+}
+
+.item {
+  position: absolute;
+}
+
+.item.one {
+  background: #f25d0d;
+  top: 10px;
+  left: 10px;
+}
+
+.item.two {
+  background: #0df20d;
+  top: 10px;
+  left: 100px;
+}
+
+.item.three {
+  background: #f20d11;
+  top: 100px;
+  left: 10px;
+}
+
+.item.four {
+  background: #f2700d;
+  top: 100px;
+  left: 100px;
+}
+
+.item.five {
+  background: #f20dbd;
+  top: 200px;
+  left: 200px;
+}
+
+.item.six {
+  background: #e30df2;
+  top: 230px;
+  left: 230px;
+}
+</style>
+
+<dialog id="dialog">
+  <div class="container" style="top: 20px; left: 20px;">
+    <button type="button" id="one" class="item one">1</button>
+    <button type="button" id="two" class="item two">2</button>
+    <button type="button" id="three" class="item three">3</button>
+    <button type="button" id="four" class="item four">4</button>
+    <button type="button" id="five" class="item five">5</button>
+    <button type="button" id="six" class="item six">6</button>
+  </div>
+</dialog>
+
+<script src="../../dist/DragSelect.js"></script>
+<script>
+    window.callbackIds = [];
+
+    const ds = new DragSelect({
+        selectables: document.querySelectorAll('.item'),
+        area: document.querySelector('.container'),
+    });
+    ds.subscribe('DS:end', ({ items }) => window.callbackIds = items.map(n => n.id))
+
+    // opened after DragSelect is initialized, like a user would do
+    document.getElementById('dialog').showModal()
+</script>
