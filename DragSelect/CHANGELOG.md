@@ -1,4 +1,4 @@
-# NEXT
+# 3.1.3
 
 - Fix renderings inside dialogs [#302](https://github.com/ThibaultJanBeyer/DragSelect/issues/302) thanks [@imagoiq](https://github.com/imagoiq)
 
