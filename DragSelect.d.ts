@@ -725,10 +725,20 @@ declare class SelectorArea<E extends DSInputElement> {
         PS: PubSub<E>;
     });
     private init;
+    /**
+     * Where the selector area gets appended to.
+     * Modal dialogs and popovers render in the browser's top layer, above anything else in the document regardless of z-index.
+     * So if the area lives inside one, the selector area has to live there too, otherwise it is drawn underneath.
+     * See [#302](https://github.com/ThibaultJanBeyer/DragSelect/issues/302)
+     */
+    private get parentNode();
     /** Adding / Removing elements to document */
     private applyElements;
+    /** Moves the selector area to the right parent if the area changed */
+    private updateParent;
     /** Updates the selectorAreas positions to match the areas */
     private updatePos;
+    private setPos;
     stop: (remove: boolean) => void;
     private startAutoScroll;
     /** Creates an interval that auto-scrolls while the cursor is near the edge */

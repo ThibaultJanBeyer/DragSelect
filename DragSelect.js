@@ -2004,7 +2004,7 @@
                 this.HTMLNode.classList.add(settings['selectorAreaClass']);
             });
             this.HTMLNode.classList.add(this.Settings.selectorAreaClass);
-            this.PS.subscribe('Area:modified', this.updatePos);
+            this.PS.subscribe('Area:modified', this.updateParent);
             this.PS.subscribe('Area:modified', this.updatePos);
             this.PS.subscribe('Interaction:init', this.init);
             this.PS.subscribe('Interaction:start', ({ isDraggingKeyboard }) => this.startAutoScroll({ isDraggingKeyboard }));
@@ -2017,31 +2017,72 @@
             this.applyElements('append');
             this.updatePos();
         };
+        /**
+         * Where the selector area gets appended to.
+         * Modal dialogs and popovers render in the browser's top layer, above anything else in the document regardless of z-index.
+         * So if the area lives inside one, the selector area has to live there too, otherwise it is drawn underneath.
+         * See [#302](https://github.com/ThibaultJanBeyer/DragSelect/issues/302)
+         */
+        get parentNode() {
+            const area = this.DS.Area.HTMLNode;
+            const topLayer = area instanceof Element
+                ? area.closest('dialog, [popover]')
+                : null;
+            return topLayer || document.body || document.documentElement;
+        }
         /** Adding / Removing elements to document */
         applyElements = (method) => {
-            const docEl = document.body ? 'body' : 'documentElement';
-            const methodName = `${method}Child`;
-            this.HTMLNode[methodName](this.DS.Selector.HTMLNode);
-            document[docEl][methodName](this.HTMLNode);
+            if (method === 'append') {
+                this.HTMLNode.appendChild(this.DS.Selector.HTMLNode);
+                this.parentNode.appendChild(this.HTMLNode);
+            }
+            else {
+                this.DS.Selector.HTMLNode.remove();
+                this.HTMLNode.remove();
+            }
+        };
+        /** Moves the selector area to the right parent if the area changed */
+        updateParent = () => {
+            if (!this.HTMLNode.isConnected)
+                return;
+            const parent = this.parentNode;
+            if (this.HTMLNode.parentNode !== parent)
+                parent.appendChild(this.HTMLNode);
         };
         /** Updates the selectorAreas positions to match the areas */
         updatePos = () => {
             this._rect = undefined;
             const rect = this.DS.Area.rect;
             const border = this.DS.Area.computedBorder;
+            const top = rect.top + border.top;
+            const left = rect.left + border.left;
+            this.setPos(top, left, rect.width, rect.height);
+            // Fixed elements are positioned relative to the viewport,
+            // unless an ancestor (i.e. a dialog) has a transform, filter, etc. which makes it the containing block.
+            // In that case we compensate for the offset of that containing block.
+            if (!this.HTMLNode.getClientRects().length)
+                return;
+            const actual = this.HTMLNode.getBoundingClientRect();
+            const offsetTop = actual.top - top;
+            const offsetLeft = actual.left - left;
+            if (Math.abs(offsetTop) > 0.01 || Math.abs(offsetLeft) > 0.01)
+                this.setPos(top - offsetTop, left - offsetLeft, rect.width, rect.height);
+            this._rect = undefined;
+        };
+        setPos = (top, left, width, height) => {
             const { style } = this.HTMLNode;
-            const top = `${rect.top + border.top}px`;
-            const left = `${rect.left + border.left}px`;
-            const width = `${rect.width}px`;
-            const height = `${rect.height}px`;
-            if (style.top !== top)
-                style.top = top;
-            if (style.left !== left)
-                style.left = left;
-            if (style.width !== width)
-                style.width = width;
-            if (style.height !== height)
-                style.height = height;
+            const _top = `${top}px`;
+            const _left = `${left}px`;
+            const _width = `${width}px`;
+            const _height = `${height}px`;
+            if (style.top !== _top)
+                style.top = _top;
+            if (style.left !== _left)
+                style.left = _left;
+            if (style.width !== _width)
+                style.width = _width;
+            if (style.height !== _height)
+                style.height = _height;
         };
         stop = (remove) => {
             this.stopAutoScroll();
