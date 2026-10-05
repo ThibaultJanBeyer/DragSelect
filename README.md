@@ -81,39 +81,33 @@ If you're too poor or broke you can still support us with your time instead by [
 
 ## Thanks To:
 
-### LambdaTest
+#### TestMu AI (LambdaTest)
 
 <a href="https://www.lambdatest.com/" target="_blank">
   <picture>
     <source
       media="(prefers-color-scheme: light)"
-      srcset="https://www.lambdatest.com/support/img/logo.svg"
+      srcset="https://www.testmuai.com/support/img/logo.svg"
     />
     <source
       media="(prefers-color-scheme: dark)"
-      srcset="https://www.lambdatest.com/resources/images/logo-white.svg"
+      srcset="www/static/img/testmu-logo-white.svg"
     />
     <img
-      alt="LambdaTest"
+      alt="TestMu AI (LambdaTest)"
       width="147"
-      src="https://www.lambdatest.com/support/img/logo.svg"
+      src="https://www.testmuai.com/support/img/logo.svg"
     />
   </picture>
 </a>
 
-[LambdaTest](https://www.lambdatest.com/) is a Next-Generation Mobile App and Cross Browser Testing Cloud. They support this open source projects by providing us with a free account and with a generous donation!
+[TestMu AI (LambdaTest)](https://www.testmuai.com/) is a Next-Generation Mobile App and Cross Browser Testing Cloud. They support this open source projects by providing us with a free account and with a generous donation!
 
 ### BrowserStack
 
 <a href="https://www.browserstack.com/"><img src="https://cdn.worldvectorlogo.com/logos/browserstack.svg" alt="Browserstack" width="100px" /></a>
 
 [BrowserStack](https://www.browserstack.com/) is a service for cross-browser testing. They support this open source projects by providing us with a [free account](https://www.browserstack.com/open-source)!
-
-### DigitalOcean
-
-<a href="https://www.digitalocean.com/"><img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_vertical_blue.svg" alt="DigitalOcean" width="150px" /></a>
-
-[DigitalOcean](https://www.digitalocean.com/) is a cloud hosting service. They support this open source projects by providing us with [free credits](https://www.digitalocean.com/open-source/credits-for-projects)!
 
 ### You?
 
