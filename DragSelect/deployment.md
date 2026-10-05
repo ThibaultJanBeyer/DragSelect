@@ -2,7 +2,7 @@
 # Don‘t do this if you are not project owner!
 
 This information is just for reference for the project owner,
-if you are a regular contributor, see [contibuting](../CONTRIBUTING.md) and make a pull request instead.
+if you are a regular contributor, see [contributing](../CONTRIBUTING.md) and make a pull request instead.
 
 -
 -
@@ -24,7 +24,7 @@ yarn build
 npm version patch
 yarn build
 ```
-- versions are either `patch` wich changes 0.0.x, `minor` wich changes 0.x.0 or `major` for x.0.0.  
+- versions are either `patch` which changes 0.0.x, `minor` which changes 0.x.0 or `major` for x.0.0.  
   See [npm docs](https://docs.npmjs.com/getting-started/publishing-npm-packages)  
 
 - After that push again, just to make sure and then publish:

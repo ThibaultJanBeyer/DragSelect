@@ -1,6 +1,7 @@
-# 3.1.3
+# 3.1.3-4
 
 - Fix renderings inside dialogs [#302](https://github.com/ThibaultJanBeyer/DragSelect/issues/302) thanks [@imagoiq](https://github.com/imagoiq)
+- Update timeout types from `NodeJS.Timeout` to `ReturnType<typeof setTimeout>` and `ReturnType<typeof setInterval>` respectively
 
 # 3.1.2
 

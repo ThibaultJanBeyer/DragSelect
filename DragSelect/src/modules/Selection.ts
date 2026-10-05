@@ -10,7 +10,7 @@ import { getSelectionRect } from '../methods/getSelectionRect'
 export default class Selection<E extends DSInputElement> {
   private _prevSelectedSet: Set<E> = new Set()
   private _boundingRect?: DSBoundingRect
-  private _timeout?: NodeJS.Timeout
+  private _timeout?: ReturnType<typeof setTimeout>
   private DS: DragSelect<E>
   private PS: PubSub<E>
   private Settings: DSSettings<E>
