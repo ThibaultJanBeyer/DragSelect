@@ -493,19 +493,22 @@ declare class PubSub<E extends DSInputElement> {
     subscribers: {
         [K in keyof DSPublishMappings<E>]?: DSCallback<DSPublishMappings<E>[K]>[];
     };
+    /** subscription ids, at the same index as their callback in `subscribers` */
+    private _ids;
+    private _nextId;
     DS: DragSelect<E>;
     constructor({ DS }: {
         DS: DragSelect<E>;
     });
     /**
      * Subscribe to an event
-     * @returns event id, can be used to unsubscribe more efficiently
+     * @returns subscription id, unique per instance, can be passed to unsubscribe
      */
     subscribe: <K extends DSSettingsPublishEventNames | DSKeyStorePublishEventNames | DSPointerStorePublishEventNames | DSSelectedPublishEventNames | keyof DSAreaPublish<E> | keyof DSInteractionPublish | keyof DSSelectablePublish<E> | keyof DSPublicPublish<E>>(eventName: K, callback: DSCallback<DSPublishMappings<E>[K]>) => number;
     /**
-     * Removes event subscription
-     * @param callback the callback method signature, has to be exactly the same as when subscribing. Consider using "id" instead.
-     * @param id event id returned when subscribed (more performant than callback search)
+     * Removes event subscription. Does nothing if the subscription is not found.
+     * @param callback the callback method signature, has to be exactly the same as when subscribing
+     * @param id subscription id returned by subscribe
      */
     unsubscribe: <K extends DSSettingsPublishEventNames | DSKeyStorePublishEventNames | DSPointerStorePublishEventNames | DSSelectedPublishEventNames | keyof DSAreaPublish<E> | keyof DSInteractionPublish | keyof DSSelectablePublish<E> | keyof DSPublicPublish<E>>(eventName: K, callback?: DSCallback<DSPublishMappings<E>[K]> | null | undefined, id?: number) => void;
     /**

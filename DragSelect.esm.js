@@ -1332,29 +1332,44 @@ class PointerStore {
 
 class PubSub {
     subscribers = {};
+    /** subscription ids, at the same index as their callback in `subscribers` */
+    _ids = {};
+    _nextId = 0;
     DS;
     constructor({ DS }) {
         this.DS = DS;
     }
     /**
      * Subscribe to an event
-     * @returns event id, can be used to unsubscribe more efficiently
+     * @returns subscription id, unique per instance, can be passed to unsubscribe
      */
     subscribe = (eventName, callback) => {
-        if (!Array.isArray(this.subscribers[eventName]))
+        if (!this.subscribers[eventName])
             this.subscribers[eventName] = [];
+        if (!this._ids[eventName])
+            this._ids[eventName] = [];
         const subscribers = this.subscribers[eventName];
+        const ids = this._ids[eventName];
+        const id = this._nextId++;
         subscribers.push(callback);
-        return subscribers.length - 1;
+        ids.push(id);
+        return id;
     };
     /**
-     * Removes event subscription
-     * @param callback the callback method signature, has to be exactly the same as when subscribing. Consider using "id" instead.
-     * @param id event id returned when subscribed (more performant than callback search)
+     * Removes event subscription. Does nothing if the subscription is not found.
+     * @param callback the callback method signature, has to be exactly the same as when subscribing
+     * @param id subscription id returned by subscribe
      */
     unsubscribe = (eventName, callback, id) => {
-        const index = id ?? this.subscribers[eventName]?.findIndex((cb) => cb === callback);
-        this.subscribers[eventName]?.splice(Number(index), 1);
+        const subscribers = this.subscribers[eventName];
+        const ids = this._ids[eventName];
+        if (!subscribers || !ids)
+            return;
+        const index = id != null ? ids.indexOf(id) : callback ? subscribers.indexOf(callback) : -1;
+        if (index === -1)
+            return;
+        subscribers.splice(index, 1);
+        ids.splice(index, 1);
     };
     /**
      * Publishes an event to all subscribers
@@ -1368,7 +1383,10 @@ class PubSub {
             this._publish(eventName, data);
     };
     _publish = (eventName, data) => {
-        const subscribers = this.subscribers[eventName] ?? [];
+        // copy, so subscribers that unsubscribe while being called don't make others get skipped
+        const subscribers = [
+            ...(this.subscribers[eventName] ?? []),
+        ];
         if (eventName.includes(`:pre`))
             this._handlePrePublish(subscribers, data);
         else
