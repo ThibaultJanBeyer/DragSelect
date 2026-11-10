@@ -17,6 +17,7 @@ If tests were successful, the next step is to publish the new version on `npm`:
 
 ```
 yarn build
+yarn test
 ```
 - Build is necessary for npm packages (since `dist` will be deployed to npm but is ignored in repo)
 
@@ -41,12 +42,13 @@ The React package lives in [`../DragSelect-react`](../DragSelect-react) and is p
 
 ```
 cd DragSelect-react/
-npm version $(node -p "require('../DragSelect/package.json').version")
+yarn build
+npm version $(node -p "require('../DragSelect/package.json').version") --no-workspaces-update
 yarn typecheck
 yarn test
 yarn build
 ```
-- `npm version` here sets the same version as `DragSelect/package.json`. Run from this subfolder it only bumps `package.json`: no commit or tag, since `.git` is at the repo root.
+- `npm version` here sets the same version as `DragSelect/package.json`.
 - Update `"@dragselect/react"` in `www/package.json` to the same version. The docs site links the local workspace package only while the versions match; otherwise Yarn fetches it from npm.
 - Run `yarn` at the repo root so `yarn.lock` is up to date, commit, push, then publish:
 ```
@@ -54,3 +56,7 @@ npm publish
 ```
 - `publishConfig.access` is already `public`, which scoped packages need.
 - First release only: the `@dragselect` scope has to exist as an npm organization owned by you (https://www.npmjs.com/org/create).
+
+## www
+
+Make sure that www pins the latest react version.

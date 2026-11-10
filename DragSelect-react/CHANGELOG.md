@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.6
+
+- No API changes. Requires `dragselect@^3.1.6` (scroll detection fixes, see the DragSelect changelog).
+
 ## 3.1.5
 
 First release. Versions follow `dragselect`: `@dragselect/react@X.Y.Z` pairs with `dragselect@X.Y.Z`.
