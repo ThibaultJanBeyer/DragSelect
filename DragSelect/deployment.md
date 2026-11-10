@@ -38,9 +38,9 @@ The React package lives in [`../DragSelect-react`](../DragSelect-react) and is p
 
 - If the release depends on new DragSelect features, publish `dragselect` first (see above) and raise the `dragselect` peer range in `DragSelect-react/package.json`.
 - Check that `DragSelect-react/CHANGELOG.md` reflects the new version.
-- `cd DragSelect-react/`
 
 ```
+cd DragSelect-react/
 yarn typecheck
 yarn test
 npm version patch
