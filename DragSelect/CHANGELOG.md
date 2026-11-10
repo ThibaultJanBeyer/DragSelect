@@ -1,3 +1,9 @@
+# 3.1.6
+
+- Fix auto-scroll up (and left) doing nothing when the document is scrolled to its very end. The scrolling element was detected by nudging `scrollTop` by one, which can not change at the end, so the body was scrolled instead of the document.
+- Fix scroll detection on pages with `scroll-behavior: smooth`, browser zoom, or a body that is its own scroll container (`html { overflow: hidden } body { overflow: auto }`). The 1px scroll probe now uses `behavior: 'instant'`, accepts rounded values, and skips probing when the element is already scrolled. `canScroll` also really returns `false` now for areas that can not scroll (it always returned `true` before).
+- Fix auto-scroll in areas whose scroll position goes negative: right-to-left (`dir="rtl"`) areas scrolling left, and `flex-direction: column-reverse` areas scrolling up.
+
 # 3.1.5
 
 - Fix `unsubscribe`: subscription ids are now unique and stable. Before, ids were array positions, so after one unsubscribe the other ids pointed to the wrong subscriber (or none).
