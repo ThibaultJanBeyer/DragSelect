@@ -1,3 +1,10 @@
+# 3.1.5
+
+- Fix `unsubscribe`: subscription ids are now unique and stable. Before, ids were array positions, so after one unsubscribe the other ids pointed to the wrong subscriber (or none).
+- Fix `unsubscribe` with a callback that is not subscribed (or no callback/id at all): it now does nothing. Before, it removed the last (or first) subscriber of that event.
+- Fix a subscriber being skipped when the one before it unsubscribed while being called.
+- Add `@dragselect/react` as a standalone react wrapper for simpler use-age
+
 # 3.1.3-4
 
 - Fix renderings inside dialogs [#302](https://github.com/ThibaultJanBeyer/DragSelect/issues/302) thanks [@imagoiq](https://github.com/imagoiq)

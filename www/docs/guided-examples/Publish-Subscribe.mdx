@@ -32,6 +32,6 @@ ds.subscribe('DS:end', callbackHandler) // starts listening to the events
 ds.unsubscribe('DS:end', callbackHandler) // stops listening to the events
 ```
 
-So to unsubscribe you have to either pass in the exact same method or the ID that the subscriber returns. Protip: passing the ID is more performant!
+So to unsubscribe you have to either pass in the exact same method or the ID that the subscriber returns. Unsubscribing something that is not subscribed does nothing.
 
 You can find a list of all [public event_names](/docs/API/Events#public-events) as well as all potential [callback_object properties](/docs/API/Events#callback-object) in the [Events documentation](/docs/API/Events)

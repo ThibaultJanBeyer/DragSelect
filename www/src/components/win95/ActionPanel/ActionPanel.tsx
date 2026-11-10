@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import styles from './ActionPanel.module.css'
 import { IconButton } from '../IconButton/IconButton'
 import { DropDown } from './DropDown/DropDown'
-import { useDragSelect } from '../../DragSelectContext'
+import { useDragSelect } from '@dragselect/react'
 
 const w95del = '/w95-icons/Recycle Bin with paper.ico'
 const w95paste = '/w95-icons/Paste.png'

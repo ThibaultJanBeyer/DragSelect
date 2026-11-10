@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const fileIcons = [
   '/w95-icons/132.ico',
@@ -539,7 +539,7 @@ const getRandomFileIcon = () =>
 type Props = {}
 
 export const FileIcon: React.FC<Props> = ({}) => {
-  const iconSrc = getRandomFileIcon()
+  const [iconSrc] = useState(getRandomFileIcon)
   return (
     <img
       src={iconSrc}

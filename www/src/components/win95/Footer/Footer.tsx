@@ -1,30 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useSelection } from "@dragselect/react";
 
 import styles from "./Footer.module.scss";
-import { DSPubCallback, useDragSelect } from "../../DragSelectContext";
 
 type Props = {};
 
 export const Footer: React.FC<Props> = ({}) => {
-  const [selectedAmount, setSelectedAmount] = useState(0);
-  const ds = useDragSelect();
-
-  useEffect(() => {
-    if (!ds) return;
-
-    const cb: DSPubCallback<"DS:end"> = ({ items = [] }) => {
-      setSelectedAmount(items.length);
-    };
-    ds?.subscribe("DS:end", cb);
-    return () => {
-      ds?.unsubscribe("DS:end", cb);
-    };
-  }, [ds]);
+  const selectedAmount = useSelection().length;
 
   return (
     <div className={styles.root}>
       <div className={styles.element}>
-        <div className={styles.font}>{selectedAmount || 0} object(s)</div>
+        <div className={styles.font}>{selectedAmount} object(s)</div>
       </div>
       <div className={styles.element}>
         <div className={styles.font}>{selectedAmount * 1.7}MB</div>

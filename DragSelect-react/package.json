@@ -1,0 +1,72 @@
+{
+  "name": "@dragselect/react",
+  "version": "0.1.0",
+  "description": "React hooks for DragSelect: drag-to-select and drag-and-drop for React components.",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "dragselect": "^3.0.0",
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.3",
+    "@testing-library/react": "^14.3.1",
+    "@types/react": "18.2.22",
+    "dragselect": "^3.1.4",
+    "jsdom": "^25.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rollup": "^3.29.5",
+    "rollup-plugin-dts": "^6.0.2",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2",
+    "vitest": "^2.1.9"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThibaultJanBeyer/DragSelect.git",
+    "directory": "DragSelect-react"
+  },
+  "keywords": [
+    "react",
+    "hooks",
+    "drag",
+    "select",
+    "drag-select",
+    "drag-and-drop",
+    "selection",
+    "dragselect"
+  ],
+  "author": "Thibault Jan Beyer",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/ThibaultJanBeyer/DragSelect/issues"
+  },
+  "homepage": "https://DragSelect.com/docs/guided-examples/React"
+}

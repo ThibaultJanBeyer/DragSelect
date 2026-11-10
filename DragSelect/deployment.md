@@ -31,3 +31,26 @@ yarn build
 ```
 npm publish
 ```
+
+## @dragselect/react
+
+The React package lives in [`../DragSelect-react`](../DragSelect-react) and is published separately as [`@dragselect/react`](https://www.npmjs.com/package/@dragselect/react).
+
+- If the release depends on new DragSelect features, publish `dragselect` first (see above) and raise the `dragselect` peer range in `DragSelect-react/package.json`.
+- Check that `DragSelect-react/CHANGELOG.md` reflects the new version.
+- `cd DragSelect-react/`
+
+```
+yarn typecheck
+yarn test
+npm version patch
+yarn build
+```
+- Run from this subfolder, `npm version` only bumps `package.json`: it creates no commit or tag since `.git` is at the repo root.
+- Update `"@dragselect/react"` in `www/package.json` to the new version. The docs site links the local workspace package only while the versions match; otherwise Yarn fetches it from npm.
+- Run `yarn` at the repo root so `yarn.lock` is up to date, commit, push, then publish:
+```
+npm publish
+```
+- `publishConfig.access` is already `public`, which scoped packages need.
+- First release only: the `@dragselect` scope has to exist as an npm organization owned by you (https://www.npmjs.com/org/create).

@@ -1,0 +1,10 @@
+<link rel="stylesheet" href="basics.css">
+
+<button type="button" class="item one">1</button>
+
+<script src="../../dist/DragSelect.js"></script>
+<script>
+  window.calls = [];
+  window.ds = new DragSelect({ selectables: document.querySelectorAll('.item') });
+  window.listener = (name) => () => window.calls.push(name);
+</script>

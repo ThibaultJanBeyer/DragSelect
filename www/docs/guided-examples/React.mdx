@@ -1,170 +1,156 @@
 ---
 sidebar_position: 8
-description: DragSelect can be used with React, Angular, Vue, Svelte, and any library of your choice. This guide will show you how to use DragSelect with React.
+description: Use DragSelect in React with the official @dragselect/react hooks. Selectable components, reactive selection, events, areas and drop zones.
 ---
-
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
 
 # React
 
-DragSelect works well with _any_ library out of the box.
-But for your convenience we created this example page to see how we use it in the "react way"!
+DragSelect has official React bindings: [`@dragselect/react`](https://www.npmjs.com/package/@dragselect/react).
 
-> PS: We are looking into creating custom wrappers for libraries. We will update this guide as soon as available.
-
-## 1. Create a context
-
-Feel free to copy+paste the code:
-
-<Tabs>
-  <TabItem value="ts" label="TypeScript" default>
-
-```tsx DragSelectContext.tsx
-import React, { createContext, useState, useEffect, useContext } from "react";
-import DragSelect, { DSInputElement } from "dragselect";
-
-type ProviderProps = {
-  children: React.ReactNode;
-  settings?: ConstructorParameters<typeof DragSelect<DSInputElement>>[0];
-};
-
-const Context = createContext<DragSelect<DSInputElement> | undefined>(
-  undefined
-);
-
-function DragSelectProvider({ children, settings = {} }: ProviderProps) {
-  const [ds, setDS] = useState<DragSelect<DSInputElement>>();
-
-  useEffect(() => {
-    setDS((prevState) => {
-      if (prevState) return prevState;
-      return new DragSelect({});
-    });
-    return () => {
-      if (ds) {
-        ds.stop();
-        setDS(undefined);
-      }
-    };
-  }, [ds]);
-
-  useEffect(() => {
-    ds?.setSettings(settings);
-  }, [ds, settings]);
-
-  return <Context.Provider value={ds}>{children}</Context.Provider>;
-}
-
-function useDragSelect() {
-  return useContext(Context);
-}
-
-export { DragSelectProvider, useDragSelect };
+```bash
+npm i dragselect @dragselect/react
 ```
 
-  </TabItem>
-  <TabItem value="js" label="JavaScript" default>
+## 1. Wrap your component tree
 
-```jsx DragSelectContext.jsx
-import React, { createContext, useState, useEffect, useContext } from "react";
-import DragSelect from "dragselect";
+Everything inside a `DragSelectProvider` shares one DragSelect instance. It takes any of the [settings](../API/Settings). They are read once on mount; to change them later, call `useDragSelect()?.setSettings({...})`.
 
-const Context = createContext(undefined);
+```tsx
+import { DragSelectProvider } from "@dragselect/react";
 
-function DragSelectProvider({ children, settings = {} }) {
-  const [ds, setDS] = useState();
-
-  useEffect(() => {
-    setDS((prevState) => {
-      if (prevState) return prevState;
-      return new DragSelect({});
-    });
-    return () => {
-      if (ds) {
-        ds.stop();
-        setDS(undefined);
-      }
-    };
-  }, [ds]);
-
-  useEffect(() => {
-    ds?.setSettings(settings);
-  }, [ds, settings]);
-
-  return <Context.Provider value={ds}>{children}</Context.Provider>;
-}
-
-function useDragSelect() {
-  return useContext(Context);
-}
-
-export { DragSelectProvider, useDragSelect };
-```
-
-  </TabItem>
-</Tabs>
-
-## 2. Wrap it
-
-```jsx MyComponent.tsx
-import React from "react";
-
-import { DragSelectProvider } from "./DragSelectContext";
-
-export const MyComponent = () => (
-  // you can add initial settings by passing a settings object
-  <DragSelectProvider settings={{ selectorClass: styles.selector }}>
-    <SomeOtherComponentsThatNeedsDragSelect />
+export const Gallery = ({ photos }) => (
+  <DragSelectProvider settings={{ selectedClass: "is-selected" }}>
+    {photos.map((photo) => (
+      <Photo key={photo.id} photo={photo} />
+    ))}
+    <Toolbar />
   </DragSelectProvider>
 );
 ```
 
-## 3. Use it
+## 2. Make components selectable
 
-```jsx SomeOtherComponentsThatNeedsDragSelect.tsx
-import React, { useEffect, useRef } from "react";
-import { useDragSelect } from "./DragSelectContext";
-
-export const SomeOtherComponentsThatNeedsDragSelect = () => {
-  const ds = useDragSelect();
-  const inputEl = useRef(null);
-
-  // adding a selectable element
-  useEffect(() => {
-    const element = inputEl.current as unknown as HTMLElement;
-    if (!element || !ds) return;
-    ds.addSelectables(element);
-  }, [ds, inputEl]);
-
-  // subscribing to a callback
-  useEffect(() => {
-    if (!ds) return;
-    const id = ds.subscribe("DS:end", (e) => {
-      // do something
-      console.log(e);
-    });
-
-    return () => ds.unsubscribe("DS:end", null, id!);
-  }, [ds]);
-
-  return (
-    <button ref={inputEl} aria-labelledby="Selectable">
-      Selectable
-    </button>
-  );
-};
-
-```
-
-DragSelect also exports some helper types for type safety, i.e. `DSPubCallback` which you can pass in the subscriber for the callback type safety:
+`useSelectable` returns a ref. It registers the element while the component is mounted and removes it on unmount. Put whatever you need to identify the item on the element itself, e.g. a `data-id` attribute.
 
 ```tsx
-import { DSPubCallback } from "dragselect";
-const cb: DSPubCallback<"DS:end"> = ({ items = [] }) => {
-  console.log("CALLBACK", items);
-  setSelectedAmount(items.length);
+import { useSelectable } from "@dragselect/react";
+
+const Photo = ({ photo }) => {
+  const ref = useSelectable();
+  return <img ref={ref} src={photo.url} data-id={photo.id} />;
 };
 ```
 
-You can see this example in use within this docusaurus project. I.e. [the context provider here](https://github.com/ThibaultJanBeyer/DragSelect/blob/00d2e4ec4eb6b10bb7017022093ba403c4ebb208/www/src/components/DragSelectContext.tsx#L13) and a random [useage example here](https://github.com/ThibaultJanBeyer/DragSelect/blob/1e63a9215bf8e38bcedef8105f439d38be00ee14/www/src/components/win95/Footer/Footer.tsx#L16)
+Selected elements get the `ds-selected` class (or your `selectedClass`), so style them with CSS. Selecting does not re-render your items.
+
+## 3. Read the selection
+
+`useSelection` returns the selected elements and re-renders the component that calls it whenever the selection changes:
+
+```tsx
+import { useSelection } from "@dragselect/react";
+
+const Toolbar = () => {
+  const selectedIds = useSelection<HTMLImageElement>().map((el) => el.dataset.id);
+  return <span>{selectedIds.length} selected</span>;
+};
+```
+
+## Events
+
+`useDragSelectEvent` subscribes to any [event](../API/Events) and unsubscribes on unmount. It always calls the latest callback, so you don't need `useCallback`.
+
+```tsx
+import { useDragSelectEvent } from "@dragselect/react";
+
+useDragSelectEvent("DS:end", ({ items, isDragging }) => {
+  console.log(isDragging ? "moved" : "selected", items);
+});
+```
+
+## Area and drop zones
+
+```tsx
+import {
+  useDragSelectArea,
+  useDragSelectEvent,
+  useDropZone,
+  useSelection,
+} from "@dragselect/react";
+
+const Board = ({ onDelete, children }) => {
+  const areaRef = useDragSelectArea(); // only select inside this element
+  const trashRef = useDropZone("trash");
+  const selectedIds = useSelection().map((el) => el.dataset.id);
+
+  useDragSelectEvent("DS:end", ({ isDragging, dropTarget }) => {
+    if (isDragging && dropTarget?.id === "trash") onDelete(selectedIds);
+  });
+
+  return (
+    <div ref={areaRef}>
+      {children}
+      <div ref={trashRef}>🗑 Trash</div>
+    </div>
+  );
+};
+```
+
+### Drop zones
+
+`useDropZone(id)` registers a [drop zone](../API/Settings). The `id` is how DragSelect names the zone: it comes back as `dropTarget.id` in events, works with `ds.getItemsDroppedByZoneId(id)`, and suffixes the classes items get (e.g. `ds-dropped-target-archive`).
+
+```tsx
+import { useDragSelectEvent, useDropZone } from "@dragselect/react";
+
+const Folder = ({ id, name, onMove }) => {
+  const ref = useDropZone(id);
+
+  // `items` is everything that was dragged: one element or the whole selection
+  useDragSelectEvent("DS:end", ({ items, isDragging, dropTarget }) => {
+    if (!isDragging || dropTarget?.id !== id) return;
+    onMove(items.map((el) => el.dataset.id));
+  });
+
+  return <div ref={ref}>📁 {name}</div>;
+};
+
+// used as:
+<Folder id="archive" name="Archive" onMove={(ids) => archive(ids)} />;
+```
+
+```css
+/* the zone while a drag is in progress */
+.ds-dropzone-ready { outline: 2px dashed; }
+/* items that were dropped into the "archive" zone */
+.ds-dropped-target-archive { opacity: 0.5; }
+```
+
+## Anything else
+
+`useDragSelect()` returns the underlying instance, so every [method](../API/Methods) is still available:
+
+```tsx
+import { useDragSelect } from "@dragselect/react";
+
+const ClearButton = () => {
+  const ds = useDragSelect(); // undefined on the first render
+  return <button onClick={() => ds?.clearSelection()}>Clear</button>;
+};
+```
+
+## API overview
+
+| Export | Returns | Purpose |
+| --- | --- | --- |
+| `<DragSelectProvider settings?>` | | Creates and tears down the instance. |
+| `useSelectable()` | `ref` | Registers a selectable element. |
+| `useSelection<E>()` | `E[]` | The selected elements. |
+| `useDragSelectEvent(name, cb)` | | Subscribes to an event. |
+| `useDragSelectArea()` | `ref` | Sets the drag area. |
+| `useDropZone(id)` | `ref` | Registers a drop zone. |
+| `useDragSelect()` | `DragSelect \| undefined` | The raw instance. |
+
+Works with React 18+, StrictMode, SSR, and the Next.js App Router. The bundle is marked `'use client'`.
+
+You can see it in use on this site's [demo window](https://github.com/ThibaultJanBeyer/DragSelect/blob/main/www/src/components/win95/Body/Body.tsx).

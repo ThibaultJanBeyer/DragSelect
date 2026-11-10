@@ -1,10 +1,10 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import { BubbleExplosion } from "beautiful-web-animations";
+import { useDragSelectEvent, useSelectable } from "@dragselect/react";
 
 import styles from "./Item.module.scss";
 import { FileIcon } from "./FileIcon";
 import { getRandomFileName } from "./fileNames";
-import { DSPubCallback, useDragSelect } from "../../../DragSelectContext";
 
 const explode = async (element: HTMLElement, isAppearing?: boolean) => {
   const BE = BubbleExplosion({
@@ -20,41 +20,27 @@ const explode = async (element: HTMLElement, isAppearing?: boolean) => {
 };
 
 const _Item: React.FC = () => {
+  const [name] = useState(getRandomFileName);
   const [available, setAvailable] = useState(true);
-  const ds = useDragSelect();
-  const inputEl = useRef(null);
+  const element = useRef<HTMLButtonElement>(null);
+  const selectableRef = useSelectable();
 
+  // only selectable once the appear animation is done
   useEffect(() => {
-    const element = inputEl.current as unknown as HTMLElement;
-    if (!element || !ds || !available) return;
+    const el = element.current;
+    if (el) explode(el, true).then(() => selectableRef(el));
+  }, [selectableRef]);
 
-    const cb: DSPubCallback<"DS:removed"> = async ({ item }) => {
-      if (item !== element) return;
-      ds.unsubscribe("DS:removed", cb);
-      await explode(element);
-      setAvailable(false);
-    };
-
-    const firstEffect = async () => {
-      await explode(element, true);
-      ds.addSelectables(element);
-      ds?.subscribe("DS:removed", cb);
-    };
-
-    if (!ds.SelectableSet.has(element)) firstEffect();
-
-    return () => {
-      if (!element || !ds) return;
-      ds.unsubscribe("DS:removed", cb);
-    };
-  }, [ds, inputEl, available]);
+  useDragSelectEvent("DS:removed", async ({ item }) => {
+    if (!element.current || item !== element.current) return;
+    await explode(element.current);
+    setAvailable(false);
+  });
 
   if (!available) return null;
 
-  const name = getRandomFileName();
-
   return (
-    <button className={styles.root} ref={inputEl} aria-labelledby={name}>
+    <button className={styles.root} ref={element} aria-labelledby={name}>
       <FileIcon />
       <div>{name}</div>
     </button>
