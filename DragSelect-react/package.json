@@ -1,6 +1,6 @@
 {
   "name": "@dragselect/react",
-  "version": "0.1.0",
+  "version": "3.1.6",
   "description": "React hooks for DragSelect: drag-to-select and drag-and-drop for React components.",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -22,14 +22,14 @@
     "test:watch": "vitest"
   },
   "peerDependencies": {
-    "dragselect": "^3.0.0",
+    "dragselect": "^3.1.6",
     "react": ">=18.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.3",
     "@testing-library/react": "^14.3.1",
     "@types/react": "18.2.22",
-    "dragselect": "^3.1.4",
+    "dragselect": "^3.1.6",
     "jsdom": "^25.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
