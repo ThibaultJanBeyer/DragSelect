@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.1.0
+## 3.1.5
 
-First release.
+First release. Versions follow `dragselect`: `@dragselect/react@X.Y.Z` pairs with `dragselect@X.Y.Z`.
 
 - `<DragSelectProvider settings>`: one DragSelect instance per provider. SSR-safe and StrictMode-safe. Settings are read once.
 - `useSelectable()`: registers an element while mounted and returns its ref.

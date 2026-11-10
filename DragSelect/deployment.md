@@ -34,20 +34,20 @@ npm publish
 
 ## @dragselect/react
 
-The React package lives in [`../DragSelect-react`](../DragSelect-react) and is published separately as [`@dragselect/react`](https://www.npmjs.com/package/@dragselect/react).
+The React package lives in [`../DragSelect-react`](../DragSelect-react) and is published as [`@dragselect/react`](https://www.npmjs.com/package/@dragselect/react). Its version always matches `dragselect`: release both together, after `dragselect` is published.
 
-- If the release depends on new DragSelect features, publish `dragselect` first (see above) and raise the `dragselect` peer range in `DragSelect-react/package.json`.
-- Check that `DragSelect-react/CHANGELOG.md` reflects the new version.
+- In `DragSelect-react/package.json`, set the `dragselect` peer and dev dependency to `^` the new version.
+- Add the version to `DragSelect-react/CHANGELOG.md` (a "no changes, version bump" line is fine).
 
 ```
 cd DragSelect-react/
+npm version $(node -p "require('../DragSelect/package.json').version")
 yarn typecheck
 yarn test
-npm version patch
 yarn build
 ```
-- Run from this subfolder, `npm version` only bumps `package.json`: it creates no commit or tag since `.git` is at the repo root.
-- Update `"@dragselect/react"` in `www/package.json` to the new version. The docs site links the local workspace package only while the versions match; otherwise Yarn fetches it from npm.
+- `npm version` here sets the same version as `DragSelect/package.json`. Run from this subfolder it only bumps `package.json`: no commit or tag, since `.git` is at the repo root.
+- Update `"@dragselect/react"` in `www/package.json` to the same version. The docs site links the local workspace package only while the versions match; otherwise Yarn fetches it from npm.
 - Run `yarn` at the repo root so `yarn.lock` is up to date, commit, push, then publish:
 ```
 npm publish
