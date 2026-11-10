@@ -1,6 +1,6 @@
 /***
 
- ~~~ Version 3.1.5 ~~~
+ ~~~ Version 3.1.6 ~~~
 
  ******************************************
 
@@ -137,42 +137,63 @@
             node.style.position = 'relative';
     };
 
-    let DOC_ELEMENT; // we store this in the module cache as it is highly unlikely the user to change document
+    const canScroll = (area) => {
+        if (!(area instanceof Document))
+            return canScrollElement(area);
+        // the document scrolls via html (body in quirks mode), or body as its own scroll container
+        const main = area.scrollingElement || area.documentElement;
+        return canScrollElement(main) || (!!area.body && canScrollElement(area.body));
+    };
+    /**
+     * Whether the element can scroll: probe it by 1px, read it back, restore.
+     * Already scrolled means it can (at the very end the probe could not move).
+     * Probes +1 then -1, since scrolling can also go negative
+     * (RTL scrollLeft, column-reverse scrollTop).
+     * `behavior: 'instant'` ignores `scroll-behavior: smooth`,
+     * and "did it change" (not `=== 1`) survives zoom rounding.
+     */
+    const canScrollElement = (el) => {
+        const { scrollTop: top, scrollLeft: left } = el;
+        if (top || left)
+            return true;
+        const moved = () => el.scrollTop !== top || el.scrollLeft !== left;
+        el.scrollTo({ top: top + 1, left: left + 1, behavior: 'instant' });
+        if (!moved())
+            el.scrollTo({ top: top - 1, left: left - 1, behavior: 'instant' });
+        const canScroll = moved();
+        el.scrollTo({ top, left, behavior: 'instant' });
+        return canScroll;
+    };
+
+    /**
+     * Returns the element that scrolls the document.
+     * Usually `document.scrollingElement` (html in standards mode, body in quirks mode).
+     * The body can also be its own scroll container,
+     * i.e. `html { overflow: hidden } body { overflow: auto }`.
+     */
+    const getDocumentScroller = (doc = document) => {
+        const main = (doc.scrollingElement || doc.documentElement);
+        const { body } = doc;
+        if (body && body !== main && !canScrollElement(main) && canScrollElement(body))
+            return body;
+        return main;
+    };
+
     /** Scroll the element in the specified direction */
     const scrollElement = (element, directions, multiplier = 1) => {
         if (!directions?.length || !element)
             return;
-        let _element = element; // we are typecasting because if it's of type Document we grab the corresponding HTMLElement anyhow
-        if (element instanceof Document) {
-            if (DOC_ELEMENT)
-                _element = DOC_ELEMENT; // cached
-            // either the document is scrollable or the body is scrollable
-            if (Number.isFinite(document?.documentElement?.scrollTop)) {
-                const prev = document.documentElement.scrollTop;
-                document.documentElement.scrollTop += 1;
-                if (document.documentElement.scrollTop === prev) {
-                    _element = document.body;
-                    DOC_ELEMENT = document.body;
-                }
-                else {
-                    document.documentElement.scrollTop = prev;
-                    _element = document.documentElement;
-                    DOC_ELEMENT = document.documentElement;
-                }
-            }
-        }
-        const scrollTop = directions.includes('top') && _element.scrollTop > 0;
-        const scrollBot = directions.includes('bottom') && _element.scrollTop < _element.scrollHeight;
-        const scrollLeft = directions.includes('left') && _element.scrollLeft > 0;
-        const scrollRight = directions.includes('right') && _element.scrollLeft < _element.scrollWidth;
-        if (scrollTop)
-            _element.scrollTop -= 1 * multiplier;
-        if (scrollBot)
-            _element.scrollTop += 1 * multiplier;
-        if (scrollLeft)
-            _element.scrollLeft -= 1 * multiplier;
-        if (scrollRight)
-            _element.scrollLeft += 1 * multiplier;
+        const _element = element instanceof Document ? getDocumentScroller(element) : element;
+        // no bounds checks: the browser clamps scrollTop/Left to the valid range,
+        // which can also be negative (RTL scrollLeft, column-reverse scrollTop)
+        if (directions.includes('top'))
+            _element.scrollTop -= multiplier;
+        if (directions.includes('bottom'))
+            _element.scrollTop += multiplier;
+        if (directions.includes('left'))
+            _element.scrollLeft -= multiplier;
+        if (directions.includes('right'))
+            _element.scrollLeft += multiplier;
     };
 
     class Area {
@@ -1429,25 +1450,6 @@
             x: area.scrollLeft >= 0 ? area.scrollLeft : getDocumentScroll().x,
             y: area.scrollTop >= 0 ? area.scrollTop : getDocumentScroll().y,
         };
-    };
-
-    const canScroll = area => {
-        const scroll = getCurrentScroll(area);
-        if (scroll.x || scroll.y)
-            return true;
-        if (area instanceof Document) {
-            if (area.body)
-                return _canScroll(area.body);
-            return _canScroll(area.documentElement);
-        }
-        return _canScroll(area);
-    };
-    // @TODO: Determine if there is a better way to test scrollability
-    const _canScroll = (el) => {
-        const currentScrollTop = el.scrollTop;
-        const canScroll = Boolean(el.scrollTop = 1);
-        el.scrollTop = currentScrollTop;
-        return canScroll;
     };
 
     class ScrollStore {
