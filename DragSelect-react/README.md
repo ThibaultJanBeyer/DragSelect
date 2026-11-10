@@ -142,6 +142,7 @@ function SelectAll() {
 
 ## Notes
 
+- Versions follow DragSelect: use `@dragselect/react@X.Y.Z` with `dragselect@X.Y.Z`.
 - Works with React 18+, Next.js App Router (the bundle ships `'use client'`), and SSR.
 - The returned refs are plain functions: you can also call them yourself, e.g. `ref(element)` once an animation is done.
 
