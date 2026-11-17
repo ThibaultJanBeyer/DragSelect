@@ -78,6 +78,14 @@ You can even set it before your data has loaded. The items get selected as soon 
 From a component inside the wrapper, inject the directive:
 
 ```ts
+@Component({
+  selector: 'app-delete-button',
+  template: `
+    <button (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()" (click)="delete()">
+      Delete {{ ds.selection().length }}
+    </button>
+  `,
+})
 export class DeleteButton {
   ds = inject<DragSelectDirective<FileItem>>(DragSelectDirective)
 
@@ -171,6 +179,8 @@ If your items are `<button>`s, people can select them with Enter or Space and mo
 - Needs Angular 19 or newer.
 - Works with and without zone.js. Moving the mouse doesn't trigger change detection.
 - Works with SSR. Nothing runs on the server.
+- If you remove a setting, it keeps its last value. To reset it, pass the default (e.g. `draggability: true`).
+- More than one `dragSelect` on a page? Give each one a `dsArea`. Otherwise they all listen to the whole page and mess up each other's selection.
 - Content passed in with `<ng-content>` can't see a `dragSelect` from inside your component. Put `dragSelect` on the component's tag instead: `<app-list dragSelect>…</app-list>`.
 
 ## License

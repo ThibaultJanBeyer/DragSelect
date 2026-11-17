@@ -75,6 +75,11 @@ Read the [Events API](Events) for more information
 | `getZoneByCoordinates` | coordinates:{ x:number, y:number } (Optional) | Returns the first drop target under the current mouse position, or, if provided at the coordinates.
 | `getItemsDroppedByZoneId` | zoneId:string | Returns the items dropped into a specific zone (by zone.id)
 | `getItemsInsideByZoneId` | zoneId:string, addClasses:boolean | Returns the items that are visually inside a specific zone (by zone.id). `addClasses`: also add the [respective CSS classes](CSS-Classes) to those elements if they don’t have them yet.
+| `getDropZones` | / | Returns the current drop zones (`{ id, element, droppables }`)
+| `addDropZones` | zones:[DropZone] &#124; DropZone | Adds one or more drop zones without touching the others (what was dropped in them stays). A zone with the same id or element replaces the old one. Returns the current drop zones.
+| `removeDropZones` | zones:[string &#124; HTMLElement] &#124; string &#124; HTMLElement | Removes one or more drop zones, by id or by element, without touching the others. Returns the current drop zones.
+
+The `dropZones` [setting](Settings) still replaces all of them, including the ones you added.
 
 ## Example
 
