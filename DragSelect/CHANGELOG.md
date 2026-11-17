@@ -1,3 +1,9 @@
+# NEXT
+
+- Fix an `area` set after init (with `setSettings`) not being watched for size changes.
+- Add `getDropZones()`, `addDropZones()` and `removeDropZones()`: add or remove one drop zone without touching the others. Before, you could only replace all of them with `setSettings({ dropZones })`, which also reset what was dropped in the other zones.
+- Add `@dragselect/angular`: See the [Angular guide](https://dragselect.com/docs/guided-examples/Angular).
+
 # 3.1.6
 
 - Fix auto-scroll up (and left) doing nothing when the document is scrolled to its very end. The scrolling element was detected by nudging `scrollTop` by one, which can not change at the end, so the body was scrolled instead of the document.

@@ -32,6 +32,8 @@ export default class DropZone<E extends DSInputElement> {
   private Settings: DSSettings<E>
   private isDestroyed: boolean = false
   private _parentNodes?: Node[]
+  /** so `destroy` can unsubscribe */
+  private _classSubscription?: number
 
   constructor({
     DS,
@@ -54,11 +56,14 @@ export default class DropZone<E extends DSInputElement> {
     if (droppables) this.droppables = ensureArray(droppables)
     this.element.classList.add(`${this.Settings.dropZoneClass}`)
 
-    this.PS.subscribe('Settings:updated:dropZoneClass', ({ settings }) => {
-      if (!this.element) return
-      this.element.classList.remove(settings['dropZoneClass:pre'])
-      this.element.classList.add(settings.dropZoneClass)
-    })
+    this._classSubscription = this.PS.subscribe(
+      'Settings:updated:dropZoneClass',
+      ({ settings }) => {
+        if (!this.element) return
+        this.element.classList.remove(settings['dropZoneClass:pre'])
+        this.element.classList.add(settings.dropZoneClass)
+      }
+    )
 
     this._observers = addModificationObservers(
       this.parentNodes,
@@ -150,6 +155,7 @@ export default class DropZone<E extends DSInputElement> {
 
   public destroy() {
     this._observers?.cleanup()
+    this.PS.unsubscribe('Settings:updated:dropZoneClass', null, this._classSubscription)
     this.element.classList.remove(`${this.Settings.dropZoneClass}`)
     this.element.classList.remove(`${this.Settings.dropZoneTargetClass}`)
     this.element.classList.remove(`${this.Settings.dropZoneReadyClass}`)

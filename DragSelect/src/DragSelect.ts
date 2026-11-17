@@ -42,6 +42,7 @@ import SelectorArea from './modules/SelectorArea'
 import SettingsStore from './stores/SettingsStore'
 import {
   type DSInternalEventName,
+  type DSInputDropZone,
   type DSInputElement,
   type Settings,
   type Vect2,
@@ -160,6 +161,7 @@ class DragSelect<E extends DSInputElement = DSInputElement> {
   public start = () => {
     this.stopped = false
     this.Interaction.init()
+    this.DropZones.startZones()
   }
 
   /**
@@ -188,6 +190,7 @@ class DragSelect<E extends DSInputElement = DSInputElement> {
     this.stores.KeyStore.stop()
     this.stores.PointerStore.stop()
     this.stores.ScrollStore.stop()
+    this.DropZones.stopZones()
 
     if (remove) this.SelectableSet.clear()
     if (fromSelection) this.SelectedSet.clear()
@@ -397,6 +400,28 @@ class DragSelect<E extends DSInputElement = DSInputElement> {
 
   /** Whether the user is currently drag n dropping elements (instead of selection) */
   public isDragging = (): boolean => this.Interaction.isDragging
+
+  /** Returns the current drop zones */
+  public getDropZones = (): DSInputDropZone<E>[] => this.DropZones.get()
+
+  /**
+   * Adds one or more drop zones, without touching the others.
+   * A zone with the same id or element as an existing one replaces it.
+   * @return the current drop zones
+   */
+  public addDropZones = (zones: DSInputDropZone<E> | DSInputDropZone<E>[]) => {
+    this.DropZones.add(ensureArray(zones))
+    return this.getDropZones()
+  }
+
+  /**
+   * Removes one or more drop zones, by id or by element, without touching the others.
+   * @return the current drop zones
+   */
+  public removeDropZones = (zones: string | E | (string | E)[]) => {
+    this.DropZones.remove(ensureArray(zones))
+    return this.getDropZones()
+  }
 
   /** Returns first DropsZone under coordinates, if no coordinated provided current pointer coordinates are used */
   public getZoneByCoordinates = (

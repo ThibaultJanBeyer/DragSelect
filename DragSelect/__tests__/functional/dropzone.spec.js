@@ -170,4 +170,84 @@ describe('DropZone', () => {
     expect(response.dropZoneTargetClass).toBe(1)
     expect(response.dropZoneInsideClass).toBe(1)
   })
+
+  it('adds and removes drop zones without touching the others', async () => {
+    await page.goto(`${baseUrl}/dropzone.html`)
+    const ids = () => page.evaluate(() => ds.getDropZones().map((zone) => zone.id))
+    expect(await ids()).toEqual(['zone-1', 'zone-2', 'zone-3', 'zone-4'])
+
+    // drop item-1 into zone-1
+    await moveSelectTo(page, 30, 60, 150, 270)
+    const zone1State = () =>
+      page.evaluate(() => ({
+        dropped: ds.getItemsDroppedByZoneId('zone-1').map((item) => item.id),
+        classed: document
+          .querySelector('#item-1')
+          .classList.contains('ds-dropped-target-zone-1'),
+      }))
+    expect(await zone1State()).toEqual({ dropped: ['item-1'], classed: true })
+
+    // adding a zone keeps what was dropped in the others
+    response = await page.evaluate(() => {
+      const element = document.createElement('div')
+      element.id = 'zone-5'
+      document.body.appendChild(element)
+      return ds.addDropZones({ id: 'zone-5', element }).map((zone) => zone.id)
+    })
+    expect(response).toEqual(['zone-1', 'zone-2', 'zone-3', 'zone-4', 'zone-5'])
+    expect(await zone1State()).toEqual({ dropped: ['item-1'], classed: true })
+
+    // same id replaces the zone (and moves it to the end)
+    await page.evaluate(() =>
+      ds.addDropZones([{ id: 'zone-2', element: document.querySelector('#zone-2') }])
+    )
+    expect(await ids()).toEqual(['zone-1', 'zone-3', 'zone-4', 'zone-5', 'zone-2'])
+
+    // remove by id (a single string) and by element
+    response = await page.evaluate(() => {
+      ds.removeDropZones('zone-5')
+      ds.removeDropZones([document.querySelector('#zone-3')])
+      return {
+        ids: ds.getDropZones().map((zone) => zone.id),
+        zone3Class: document.querySelector('#zone-3').classList.contains('ds-dropzone'),
+      }
+    })
+    expect(response).toEqual({ ids: ['zone-1', 'zone-4', 'zone-2'], zone3Class: false })
+    expect(await zone1State()).toEqual({ dropped: ['item-1'], classed: true })
+
+    // the dropZones setting still replaces all of them
+    await page.evaluate(() =>
+      ds.setSettings({ dropZones: [{ id: 'zone-4', element: document.querySelector('#zone-4') }] })
+    )
+    expect(await ids()).toEqual(['zone-4'])
+  })
+
+  it('stop removes the zones and their listeners, start brings them back', async () => {
+    await page.goto(`${baseUrl}/dropzone.html`)
+    response = await page.evaluate(() => {
+      const zone = document.querySelector('#zone-2')
+      // default zones come back without droppables, so they keep following the selectables
+      const before = ds.getDropZones().map((z) => [z.id, !!z.droppables])
+      ds.stop(false, false)
+      const stopped = { zones: ds.getDropZones().length, classed: zone.classList.contains('ds-dropzone') }
+      // a removed zone no longer follows class changes
+      ds.setSettings({ dropZoneClass: 'renamed-zone' })
+      const renamedWhileStopped = zone.classList.contains('renamed-zone')
+      ds.start()
+      return {
+        before,
+        stopped,
+        renamedWhileStopped,
+        after: ds.getDropZones().map((z) => z.id),
+        classedAfter: zone.classList.contains('renamed-zone'),
+      }
+    })
+    expect(response).toEqual({
+      before: [['zone-1', true], ['zone-2', true], ['zone-3', true], ['zone-4', false]],
+      stopped: { zones: 0, classed: false },
+      renamedWhileStopped: false,
+      after: ['zone-1', 'zone-2', 'zone-3', 'zone-4'],
+      classedAfter: true,
+    })
+  })
 })

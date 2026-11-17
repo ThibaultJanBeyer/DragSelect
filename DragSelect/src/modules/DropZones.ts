@@ -11,10 +11,10 @@ export default class DropZones<E extends DSInputElement> {
   private _zoneByElement: Map<Element, DropZone<E>> = new Map()
   /** Get the drop zone by the zone id */
   private _zoneById: Map<string, DropZone<E>> = new Map()
-  /** Get the drop zones by one zone item */
-  private _zonesByDroppable: Map<E, DropZone<E>[]> = new Map()
-  /** Get the drop zones by one zone item */
-  private _zones?: DropZone<E>[]
+  /** All drop zones, in the order they were added */
+  private _zones: DropZone<E>[] = []
+  /** Each zone as it was passed in, for `get` */
+  private _inputs: Map<DropZone<E>, DSInputDropZone<E>> = new Map()
   private DS: DragSelect<E>
   private PS: PubSub<E>
   private Settings: DSSettings<E>
@@ -31,30 +31,66 @@ export default class DropZones<E extends DSInputElement> {
     this.PS.subscribe('Interaction:end', this.stop)
   }
 
+  /** Replaces all drop zones (the `dropZones` setting) */
   private setDropZones = ({
     dropZones,
   }: {
     dropZones: DSInputDropZone<E>[]
   }) => {
     if (!dropZones) return
-    if (this._zones) this._zones.forEach((zone) => zone.destroy())
+    this.remove(this._zones.map((zone) => zone.element))
+    this.add(dropZones)
+  }
 
-    this._zones = dropZones.map(
-      (zone) => new DropZone({ DS: this.DS, PS: this.PS, ...zone })
-    )
-    this._zones.forEach((zone) => {
+  /** Adds drop zones. A zone with the same id or element as an existing one replaces it. */
+  public add = (zones: DSInputDropZone<E>[]) => {
+    this.remove(zones.flatMap((zone) => [zone.id, zone.element]))
+    zones.forEach((input) => {
+      const zone = new DropZone({ DS: this.DS, PS: this.PS, ...input })
+      this._zones.push(zone)
+      this._inputs.set(zone, input)
       this._zoneByElement.set(zone.element, zone)
       this._zoneById.set(zone.id, zone)
-      zone.droppables.forEach((droppable) => {
-        const zones = this._zonesByDroppable.get(droppable)
-        if (!zones?.length) return this._zonesByDroppable.set(droppable, [zone])
-        this._zonesByDroppable.set(droppable, [...new Set([...zones, zone])])
-      })
     })
   }
 
+  /** Removes drop zones by id or by element. The other zones are not touched. */
+  public remove = (idsOrElements: (string | E)[]) => {
+    const match = new Set<string | E>(idsOrElements)
+    const removed = this._zones.filter(
+      (zone) => match.has(zone.id) || match.has(zone.element)
+    )
+    if (!removed.length) return
+    removed.forEach((zone) => {
+      zone.destroy()
+      this._zoneByElement.delete(zone.element)
+      this._zoneById.delete(zone.id)
+      this._inputs.delete(zone)
+    })
+    this._zones = this._zones.filter((zone) => !removed.includes(zone))
+  }
+
+  /** The current drop zones, as they were passed in */
+  public get = (): DSInputDropZone<E>[] =>
+    this._zones.map((zone) => ({ ...this._inputs.get(zone)! }))
+
+  /** Zones removed by `stopZones` (when DragSelect stops), added back by `startZones` */
+  private _stopped: DSInputDropZone<E>[] = []
+
+  /** Removes the zones (and their listeners) but remembers them for `startZones` */
+  public stopZones = () => {
+    this._stopped = this.get()
+    this.remove(this._zones.map((zone) => zone.element))
+  }
+
+  public startZones = () => {
+    if (!this._stopped.length) return
+    this.add(this._stopped)
+    this._stopped = []
+  }
+
   private _handleDrops = (target?: DropZone<E>) => {
-    this._zones?.forEach((zone) => {
+    this._zones.forEach((zone) => {
       if (zone !== target) zone.handleNoDrop()
     })
     if (!target) return
@@ -126,7 +162,7 @@ export default class DropZones<E extends DSInputElement> {
     isDraggingKeyboard?: boolean
     event?: InteractionEvent | KeyboardEvent
   }) => {
-    if (!this._zones?.length) return
+    if (!this._zones.length) return
 
     let keyboardCoordinates: Vect2 | undefined
     if (!coordinates && isDraggingKeyboard && event) {

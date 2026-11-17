@@ -86,8 +86,15 @@ export default class Area<E extends DSInputElement> {
       node: this._node,
     })
 
+    // when the area changes after init, watch the new area (and its parents) instead of the old one
+    if (this._observers) {
+      this._observers.cleanup()
+      this.init()
+    }
+
     // first immediate debounce to update values after dom-update
     setTimeout(() => {
+      if (this.DS.stopped) return
       this.PS.publish('Area:modified:pre', { item: this.HTMLNode })
       this.reset()
       this.PS.publish('Area:modified', { item: this.HTMLNode })
@@ -139,6 +146,7 @@ export default class Area<E extends DSInputElement> {
 
   public stop = () => {
     this._observers?.cleanup()
+    this._observers = undefined
     this.reset()
   }
 
