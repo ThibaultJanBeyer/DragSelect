@@ -1,0 +1,54 @@
+{
+  "name": "@dragselect/angular",
+  "version": "3.1.6",
+  "description": "Angular directives for DragSelect: drag-to-select and drag-and-drop for Angular components.",
+  "scripts": {
+    "build": "ng-packagr -p ng-package.json -c tsconfig.lib.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "@angular/common": ">=19.0.0",
+    "@angular/core": ">=19.0.0",
+    "dragselect": "^3.1.6"
+  },
+  "devDependencies": {
+    "@angular/common": "^22.2.6",
+    "@angular/compiler": "^22.2.6",
+    "@angular/compiler-cli": "^22.2.6",
+    "@angular/core": "^22.2.6",
+    "@angular/platform-browser": "^22.2.6",
+    "dragselect": "^3.1.6",
+    "jsdom": "^25.0.1",
+    "ng-packagr": "^22.2.6",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.6.2",
+    "typescript": "~6.0.0",
+    "vitest": "^2.1.9"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThibaultJanBeyer/DragSelect.git",
+    "directory": "DragSelect-angular"
+  },
+  "keywords": [
+    "angular",
+    "directive",
+    "drag",
+    "select",
+    "drag-select",
+    "drag-and-drop",
+    "selection",
+    "dragselect"
+  ],
+  "author": "Thibault Jan Beyer",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/ThibaultJanBeyer/DragSelect/issues"
+  },
+  "homepage": "https://DragSelect.com/docs/guided-examples/Angular"
+}

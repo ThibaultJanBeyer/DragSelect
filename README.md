@@ -201,6 +201,10 @@ Find all possible properties and methods in **[the docs](https://dragselect.com/
 
 Read the [React Guide](http://dragselect.com/docs/guided-examples/React)
 
+## Angular
+
+Read the [Angular Guide](http://dragselect.com/docs/guided-examples/Angular)
+
 ## Mobile/Touch usage
 
 Read the [Mobile Touch Guide](http://dragselect.com/docs/guided-examples/Mobile-Touch)
