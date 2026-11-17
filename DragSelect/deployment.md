@@ -33,29 +33,26 @@ yarn build
 npm publish
 ```
 
-## @dragselect/react
+## @dragselect/react & @dragselect/angular
 
-The React package lives in [`../DragSelect-react`](../DragSelect-react) and is published as [`@dragselect/react`](https://www.npmjs.com/package/@dragselect/react). Its version always matches `dragselect`: release both together, after `dragselect` is published.
+Match `dragselect` version, release together, after `dragselect` is published.
 
-- In `DragSelect-react/package.json`, set the `dragselect` peer and dev dependency to `^` the new version.
-- Add the version to `DragSelect-react/CHANGELOG.md` (a "no changes, version bump" line is fine).
+- Add the new version to `DragSelect-react/CHANGELOG.md` and `DragSelect-angular/CHANGELOG.md` (a "no changes, version bump" line is fine).
+- From the repo root:
 
 ```
-cd DragSelect-react/
-yarn build
-npm version $(node -p "require('../DragSelect/package.json').version") --no-workspaces-update
-yarn typecheck
-yarn test
-yarn build
+yarn release:wrappers
 ```
-- `npm version` here sets the same version as `DragSelect/package.json`.
-- Update `"@dragselect/react"` in `www/package.json` to the same version. The docs site links the local workspace package only while the versions match; otherwise Yarn fetches it from npm.
-- Run `yarn` at the repo root so `yarn.lock` is up to date, commit, push, then publish:
+
+- This sets both wrappers' `version` and their `dragselect` peer/dev dependency to the `dragselect` version, updates `"@dragselect/react"` in `www/package.json` (the docs site links the local workspace package only while the versions match; otherwise Yarn fetches it from npm), runs `yarn` so `yarn.lock` is up to date, then typechecks, tests and builds both wrappers, and runs the browser tests of the Angular example app (`DragSelect-angular/example`) against the built packages. Build `dragselect` first: the example installs it from `DragSelect/`. It warns if a changelog has no entry for the version.
+- Commit, push, then publish:
+
 ```
-npm publish
+yarn publish:wrappers
 ```
-- `publishConfig.access` is already `public`, which scoped packages need.
-- First release only: the `@dragselect` scope has to exist as an npm organization owned by you (https://www.npmjs.com/org/create).
+
+- React publishes its package folder. Angular publishes `dist`, because ng-packagr writes the publishable `package.json` there.
+- `publishConfig.access` is already `public` for both, which scoped packages need.
 
 ## www
 
