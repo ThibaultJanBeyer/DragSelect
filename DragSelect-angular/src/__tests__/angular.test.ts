@@ -11,6 +11,12 @@ import {
 
 afterEach(() => TestBed.resetTestingModule())
 
+/**
+ * Lets queued work run: removing destroyed items and writing `selection` after changes made
+ * through the raw instance both happen in a microtask.
+ */
+const flushItems = () => new Promise((resolve) => setTimeout(resolve))
+
 const byId = (id: string) => document.querySelector<HTMLElement>(`[data-id="${id}"]`)!
 
 /** Renders `component` and returns its fixture plus the DragSelect directive inside it. */
@@ -86,11 +92,12 @@ describe('dragSelect', () => {
 })
 
 describe('dsSelectable / selection', () => {
-  it('registers and unregisters selectables with the element lifecycle', () => {
+  it('registers and unregisters selectables with the element lifecycle', async () => {
     const { fixture, instance } = setup(List)
     expect(instance().getSelectables()).toHaveLength(3)
     fixture.componentInstance.ids.set(['a'])
     fixture.detectChanges()
+    await flushItems()
     expect(instance().getSelectables()).toEqual([byId('a')])
   })
 
@@ -115,11 +122,12 @@ describe('dsSelectable / selection', () => {
     expect(byId('b').classList.contains('on')).toBe(true)
   })
 
-  it('drops removed items from the selection', () => {
+  it('drops removed items from the selection', async () => {
     const { fixture, instance, ds } = setup(List)
     instance().setSelection([byId('a'), byId('b')])
     fixture.componentInstance.ids.set(['a'])
     fixture.detectChanges()
+    await flushItems()
     expect(ds().selectedElements()).toEqual([byId('a')])
   })
 
@@ -142,6 +150,96 @@ describe('dsSelectable / selection', () => {
     fixture.detectChanges()
     expect(byId('opt').getAttribute('aria-selected')).toBe('true')
     expect(byId('img').hasAttribute('aria-selected')).toBe(false)
+  })
+
+  it('keeps items selected when their element is re-created with the same value', async () => {
+    @Component({
+      imports: [DragSelectDirectives],
+      template: `
+        <div dragSelect [(dsSelection)]="selected">
+          @for (row of rows(); track row) {
+            <i [dsSelectable]="row.id" [attr.data-id]="row.id"></i>
+          }
+        </div>
+      `,
+    })
+    class Rows {
+      @ViewChild(DragSelectDirective) ds!: DragSelectDirective
+      rows = signal([{ id: 'a' }, { id: 'b' }])
+      selected = signal<string[]>([])
+    }
+    const { fixture, ds } = setup(Rows)
+    ds().select(['a'])
+    const oldA = byId('a')
+    // an immutable update: new objects, so `track row` re-creates the elements
+    fixture.componentInstance.rows.set([{ id: 'a' }, { id: 'b' }])
+    fixture.detectChanges()
+    await flushItems()
+    expect(byId('a')).not.toBe(oldA)
+    expect(ds().selectedElements()).toEqual([byId('a')])
+    expect(fixture.componentInstance.selected()).toEqual(['a'])
+  })
+
+  it('writes the selection before (dsEnd)', () => {
+    const seen: string[][] = []
+    @Component({
+      imports: [DragSelectDirectives],
+      template: `
+        <div dragSelect #ds="dragSelect" (dsEnd)="seen.push($any(ds.selection()))">
+          <i dsSelectable="x" data-id="x"></i>
+        </div>
+      `,
+    })
+    class End {
+      @ViewChild(DragSelectDirective) ds!: DragSelectDirective
+      seen = seen
+    }
+    const { instance } = setup(End)
+    // like a keyboard select: the select and DS:end in one go
+    instance().addSelection(byId('x'), true)
+    expect(seen).toEqual([['x']])
+  })
+
+  it('cleans up drop zones when destroyed', () => {
+    @Component({
+      imports: [DragSelectDirectives],
+      template: `<div dragSelect><div dsDropZone="trash" data-id="trash"></div></div>`,
+    })
+    class Zone {
+      @ViewChild(DragSelectDirective) ds!: DragSelectDirective
+    }
+    const { fixture, instance } = setup(Zone)
+    const ds = instance()
+    const zone = byId('trash')
+    expect(zone.classList.contains('ds-dropzone')).toBe(true)
+    fixture.destroy()
+    expect(ds.getDropZones()).toEqual([])
+    expect(zone.classList.contains('ds-dropzone')).toBe(false)
+  })
+
+  it('keeps a bound selection when the whole thing is destroyed', async () => {
+    const store = signal<string[]>([])
+    @Component({
+      imports: [DragSelectDirectives],
+      template: `
+        <div dragSelect [(dsSelection)]="store">
+          @for (id of ids; track id) {
+            <i [dsSelectable]="id"></i>
+          }
+        </div>
+      `,
+    })
+    class Page {
+      @ViewChild(DragSelectDirective) ds!: DragSelectDirective
+      store = store
+      ids = ['a', 'b', 'c']
+    }
+    const { fixture, ds } = setup(Page)
+    ds().select(['a', 'b'])
+    expect(store()).toEqual(['a', 'b'])
+    fixture.destroy()
+    await flushItems()
+    expect(store()).toEqual(['a', 'b'])
   })
 
   it('throws a readable error outside dragSelect', () => {
@@ -173,9 +271,10 @@ describe('values / programmatic selection', () => {
     photos = signal(photos)
   }
 
-  it('returns the values of selected items, elements for items without one', () => {
+  it('returns the values of selected items, elements for items without one', async () => {
     const { ds, instance } = setup(Photos)
     instance().setSelection([byId('c'), byId('plain'), byId('a')])
+    await flushItems()
     expect(ds().selection()).toEqual([photos[2], byId('plain'), photos[0]])
     expect(ds().dataOf([byId('b')])).toEqual([photos[1]])
   })
@@ -198,7 +297,7 @@ describe('values / programmatic selection', () => {
     expect(ds().selectedElements()).toEqual([])
   })
 
-  it('two-way binds the selection', () => {
+  it('two-way binds the selection', async () => {
     @Component({
       imports: [DragSelectDirectives],
       template: `
@@ -224,8 +323,9 @@ describe('values / programmatic selection', () => {
     expect(ds().selectedElements()).toEqual([byId('b')])
     expect(host.selected()).toEqual([photos[1]])
 
-    // DragSelect -> parent
+    // DragSelect -> parent (a microtask later, once DragSelect is done)
     instance().addSelection(byId('c'))
+    await flushItems()
     expect(host.selected()).toEqual([photos[1], photos[2]])
 
     // parent -> DragSelect, without echoing a change back
@@ -241,12 +341,36 @@ describe('values / programmatic selection', () => {
     expect(host.selected()).toEqual([])
   })
 
-  it('follows value changes and drops removed items', () => {
+  it('selects a pending value when an existing item gets it', () => {
+    @Component({
+      imports: [DragSelectDirectives],
+      template: `
+        <div dragSelect [(dsSelection)]="selected">
+          @for (id of ids(); track $index) {
+            <i [dsSelectable]="id" [attr.data-id]="'slot' + $index"></i>
+          }
+        </div>
+      `,
+    })
+    class Slots {
+      @ViewChild(DragSelectDirective) ds!: DragSelectDirective
+      ids = signal(['a', 'b'])
+      selected = signal(['z'])
+    }
+    const { fixture, ds } = setup(Slots)
+    expect(ds().selectedElements()).toEqual([])
+    fixture.componentInstance.ids.set(['a', 'z'])
+    fixture.detectChanges()
+    expect(ds().selectedElements()).toEqual([byId('slot1')])
+  })
+
+  it('follows value changes and drops removed items', async () => {
     const { fixture, ds } = setup(Photos)
     ds().selectAll()
     const renamed = { id: 'a' }
     fixture.componentInstance.photos.set([renamed])
     fixture.detectChanges()
+    await flushItems()
     // static items init before @for items, so don't rely on the order
     expect(new Set(ds().selection())).toEqual(new Set([renamed, byId('plain')]))
   })
@@ -392,7 +516,7 @@ describe('dsArea / dsDropZone', () => {
       zones = signal(['trash', 'archive'])
     }
     const { fixture, instance } = setup(Zones)
-    const zones = () => instance().stores.SettingsStore.s.dropZones
+    const zones = () => instance().getDropZones()
     const ids = () => zones().map((zone) => zone.id)
 
     expect(ids()).toEqual(['static', 'trash', 'archive'])
@@ -421,10 +545,22 @@ describe('dsArea / dsDropZone', () => {
       settings = signal<DragSelectSettings>({})
     }
     const { fixture, instance } = setup(Live)
-    const s = () => instance().stores.SettingsStore.s
-    fixture.componentInstance.settings.set({ area: document.body, dropZones: [] })
+    const ids = () => instance().getDropZones().map((zone) => zone.id)
+    const settings = fixture.componentInstance.settings
+
+    settings.set({ area: document.body, dropZones: [] })
     fixture.detectChanges()
-    expect(s().area).toBe(byId('area'))
-    expect(s().dropZones.map((zone) => zone.id)).toEqual(['trash'])
+    expect(instance().stores.SettingsStore.s.area).toBe(byId('area'))
+    expect(ids()).toEqual(['trash'])
+
+    // only the zones from the settings are swapped
+    const a = document.createElement('div')
+    const b = document.createElement('div')
+    settings.set({ dropZones: [{ id: 'a', element: a }] })
+    fixture.detectChanges()
+    expect(ids()).toEqual(['trash', 'a'])
+    settings.set({ dropZones: [{ id: 'b', element: b }] })
+    fixture.detectChanges()
+    expect(ids()).toEqual(['trash', 'b'])
   })
 })

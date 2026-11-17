@@ -12,4 +12,6 @@ import '@angular/compiler'
 import { getTestBed } from '@angular/core/testing'
 import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing'
 
-getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting())
+// not in the server render test (plain Node): it would switch Angular to its browser DOM adapter
+if (typeof document !== 'undefined')
+  getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting())

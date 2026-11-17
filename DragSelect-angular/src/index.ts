@@ -19,7 +19,7 @@ import {
 } from '@angular/core'
 import { isPlatformBrowser } from '@angular/common'
 import DragSelect from 'dragselect'
-import type { DSInputDropZone, DSInputElement, DSPubCallback, Settings } from 'dragselect'
+import type { DSInputElement, DSPubCallback, Settings } from 'dragselect'
 
 export type { DSInputElement, DSPubCallback } from 'dragselect'
 export type DragSelectInstance = DragSelect<DSInputElement>
@@ -74,10 +74,17 @@ export class DragSelectDirective<T = unknown> implements OnInit, OnDestroy {
   /** Callbacks waiting for `ds` to be created. */
   private readonly waiting = new Set<(ds: DragSelectInstance) => void>()
 
-  private readonly _elements = signal<DSInputElement[]>([])
-  private readonly items = signal<ReadonlyMap<DSInputElement, Item>>(new Map())
+  // Bumped on every DragSelect select/unselect. Reading the selection itself is O(n), so it's
+  // done lazily and once per batch instead of once per element.
+  private readonly selectionVersion = signal(0)
+  private writeScheduled = false
+  // A plain Map plus a counter: copying the Map on every change is too slow with thousands of items.
+  private readonly itemMap = new Map<DSInputElement, Item>()
+  private readonly itemsVersion = signal(0)
+  /** Items destroyed in this tick, removed together in a microtask. */
+  private readonly removedItems = new Set<Item>()
   /** DragSelect's selection, as values. */
-  private readonly selectedValues = computed(() => this.dataOf<T>(this._elements()))
+  private readonly selectedValues = computed(() => this.dataOf<T>(this.selectedElements()))
   /**
    * The last `selection` that came from DragSelect. If `selection` is something else, the parent set it and we still have to select it.
    */
@@ -85,15 +92,17 @@ export class DragSelectDirective<T = unknown> implements OnInit, OnDestroy {
   /** True while we select what the parent asked for, so we don't write it back half done. */
   private applying = false
 
-  // We keep the area and drop zones ourselves, so they survive settings changes.
+  /** The element from `dsArea`. It wins over the `area` setting. */
   private area?: HTMLElement
-  private readonly dropZones = new Map<DSInputElement, string>()
   private appliedSettings?: DragSelectSettings | ''
 
   /** The selected DOM elements. */
-  readonly selectedElements: Signal<DSInputElement[]> = this._elements.asReadonly()
+  readonly selectedElements: Signal<DSInputElement[]> = computed(() => {
+    this.selectionVersion()
+    return this.ds?.getSelection() ?? []
+  })
   /** @internal For `dsSelectable`. */
-  readonly _elementSet = computed(() => new Set(this._elements()))
+  readonly _elementSet = computed(() => new Set(this.selectedElements()))
 
   /**
    * The DragSelect instance, for anything this directive doesn't cover.
@@ -108,16 +117,27 @@ export class DragSelectDirective<T = unknown> implements OnInit, OnDestroy {
     effect(() => {
       const settings = this.settings()
       untracked(() => {
-        if (!this.ds || settings === this.appliedSettings) return
+        const ds = this.ds
+        if (!ds || settings === this.appliedSettings) return
+        const before = this.appliedSettings || {}
         this.appliedSettings = settings
-        this.ds.setSettings(this.fullSettings())
+        const { dropZones, ...rest } = this.userSettings()
+        this.outside(() => {
+          ds.setSettings({ ...rest, ...(this.area && { area: this.area }) })
+          // Only swap the zones from the settings, so the ones from `dsDropZone` stay.
+          if (dropZones !== before.dropZones) {
+            ds.removeDropZones((before.dropZones ?? []).map((zone) => zone.element))
+            if (dropZones) ds.addDropZones(dropZones)
+          }
+        })
       })
     })
 
-    // The parent set `selection`: select those items. Runs again when items come and go, so values whose item wasn't there yet get selected when it shows up.
+    // The parent set `selection`: select those items. Runs again when items come, go or change,
+    // so values whose item wasn't there yet get selected when it shows up.
     effect(() => {
       const values = this.selection()
-      this.items()
+      this.items().forEach((item) => item.data()) // also when an item's value changes
       untracked(() => {
         if (values !== this.fromDragSelect) this.apply(values)
       })
@@ -135,29 +155,35 @@ export class DragSelectDirective<T = unknown> implements OnInit, OnDestroy {
   ngOnInit() {
     if (!this.isBrowser) return
     this.appliedSettings = this.settings()
-    const settings = this.fullSettings()
+    const settings = { ...this.userSettings(), ...(this.area && { area: this.area }) }
     // Outside the zone, so moving the mouse doesn't run change detection.
     this.ds = this.zone.runOutsideAngular(() => new DragSelect<DSInputElement>(settings))
 
-    const update = () => {
-      this._elements.set(this.ds!.getSelection())
-      if (!this.applying) this.writeSelection()
+    const changed = () => {
+      this.selectionVersion.update((version) => version + 1)
+      if (!this.applying) this.scheduleWrite()
     }
-    this.on('DS:select', update)
-    this.on('DS:unselect', update)
+    this.on('DS:select', changed)
+    this.on('DS:unselect', changed)
     this.on('DS:start', (e) => this.dsStart.emit(e))
-    this.on('DS:end', (e) => this.dsEnd.emit(e))
+    this.on('DS:end', (e) => {
+      // With the keyboard, DS:end comes right after the selects: write `selection` first.
+      if (this.writeScheduled) this.writeSelection()
+      this.dsEnd.emit(e)
+    })
     this.on('DS:select', (e) => this.dsSelect.emit(e))
     this.on('DS:unselect', (e) => this.dsUnselect.emit(e))
 
     const waiting = [...this.waiting]
     this.waiting.clear()
-    waiting.forEach((callback) => callback(this.ds!))
+    waiting.forEach((callback) => this.outside(() => callback(this.ds!)))
   }
 
   ngOnDestroy() {
-    this.ds?.stop()
+    const ds = this.ds
+    // Forget it first: stopping unselects everything, and that must not reach `selection`.
     this.ds = undefined
+    ds?.stop()
     this.waiting.clear()
   }
 
@@ -173,11 +199,13 @@ export class DragSelectDirective<T = unknown> implements OnInit, OnDestroy {
   /** Adds items to the selection. Pass values (compared with `===`) or elements. */
   select(values: readonly unknown[]): void {
     this.ds?.addSelection(this.toElements(values), false, true)
+    this.writeSelection()
   }
 
   /** Removes items from the selection. Pass values or elements. */
   deselect(values: readonly unknown[]): void {
     this.ds?.removeSelection(this.toElements(values))
+    this.writeSelection()
   }
 
   /** Replaces the selection. Same as `selection.set(values)`. */
@@ -188,20 +216,23 @@ export class DragSelectDirective<T = unknown> implements OnInit, OnDestroy {
 
   /** Selects everything. */
   selectAll(): void {
-    if (this.ds) this.ds.addSelection(this.ds.getSelectables(), false, true)
+    this.ds?.addSelection(this.ds.getSelectables(), false, true)
+    this.writeSelection()
   }
 
   /** Selects nothing. */
   clearSelection(): void {
     this.ds?.clearSelection()
+    this.writeSelection()
   }
 
   /**
    * Calls `callback` with the DragSelect instance once it exists, or right away if it does. Never on the server. Returns a function to cancel it.
    */
   whenReady(callback: (ds: DragSelectInstance) => void): () => void {
-    if (this.ds) {
-      callback(this.ds)
+    const ds = this.ds
+    if (ds) {
+      this.outside(() => callback(ds))
       return () => {}
     }
     if (this.isBrowser) this.waiting.add(callback)
@@ -213,9 +244,12 @@ export class DragSelectDirective<T = unknown> implements OnInit, OnDestroy {
    * You can call it before DragSelect exists. In components, `injectDragSelectEvent` is easier.
    */
   on<K extends DragSelectEventName>(eventName: K, callback: DSPubCallback<K>): () => void {
-    // back in the zone, so Angular notices what the callback changes
-    const handler: DSPubCallback<K> = (event) => this.zone.run(() => callback(event))
     let subscribedTo: DragSelectInstance | undefined
+    const handler: DSPubCallback<K> = (event) => {
+      // Ignore what an instance we already let go of says while it stops.
+      // Run in the zone, so Angular notices what the callback changes.
+      if (subscribedTo === this.ds) this.zone.run(() => callback(event))
+    }
     const cancel = this.whenReady((ds) => {
       subscribedTo = ds
       ds.subscribe(eventName, handler)
@@ -228,33 +262,77 @@ export class DragSelectDirective<T = unknown> implements OnInit, OnDestroy {
 
   /** @internal For `dsSelectable`. */
   _addItem(item: Item): void {
-    this.items.update((items) => new Map(items).set(item.element, item))
+    this.itemMap.set(item.element, item)
+    this.itemsVersion.update((version) => version + 1)
+    this.whenReady((ds) => {
+      if (this.itemMap.get(item.element) === item) ds.addSelectables(item.element)
+    })
   }
 
-  /** @internal For `dsSelectable`. */
+  /**
+   * @internal For `dsSelectable`.
+   * Waits a microtask: when the whole page goes away, the items are destroyed before `dragSelect`,
+   * and unselecting them one by one would empty `selection` on the way out. It also batches the
+   * removal when a big list goes away.
+   */
   _removeItem(item: Item): void {
-    this.items.update((items) => {
-      const copy = new Map(items)
-      copy.delete(item.element)
-      return copy
-    })
+    this.removedItems.add(item)
+    if (this.removedItems.size === 1) queueMicrotask(() => this.flushRemovedItems())
   }
 
   /** @internal For `dsArea`. `undefined` goes back to the `area` setting. */
   _setArea(element: HTMLElement | undefined): void {
     this.area = element
-    this.ds?.setSettings({ area: element ?? this.userSettings().area ?? document })
+    const ds = this.ds
+    // only with an instance: there is no `document` on the server
+    if (ds) this.outside(() => ds.setSettings({ area: element ?? this.userSettings().area ?? document }))
   }
 
-  /** @internal For `dsDropZone`. An `undefined` id removes the zone. */
-  _setDropZone(element: DSInputElement, id: string | undefined): void {
-    this.dropZones.delete(element) // so a renamed zone goes to the end, like a new one
-    if (id !== undefined) this.dropZones.set(element, id)
-    this.ds?.setSettings({ dropZones: this.allDropZones() })
+  /** The items, read so that signals notice when they change. */
+  private items(): ReadonlyMap<DSInputElement, Item> {
+    this.itemsVersion()
+    return this.itemMap
+  }
+
+  private flushRemovedItems() {
+    const removed = [...this.removedItems]
+    this.removedItems.clear()
+    const selected = new Set(this.ds?.getSelection())
+    // Values of removed items that were selected. If a new item has the same value, it's the same
+    // thing re-rendered (e.g. `track` by object after an immutable update), so it stays selected.
+    const keep = removed
+      .filter((item) => selected.has(item.element))
+      .flatMap((item) => (item.data() === undefined ? [] : [item.data()]))
+    removed.forEach((item) => this.itemMap.delete(item.element))
+    this.itemsVersion.update((version) => version + 1)
+    // Still running, so the items were removed from a list that stays: unselect them.
+    this.outside(() => {
+      this.ds?.removeSelectables(removed.map((item) => item.element), true)
+      if (keep.length) this.ds?.addSelection(this.toElements(keep), false, true)
+    })
+  }
+
+  /**
+   * DragSelect adds window and DOM listeners. Outside the zone, so with zone.js they don't
+   * trigger change detection on every scroll or resize.
+   */
+  private outside<R>(fn: () => R): R {
+    return this.zone.runOutsideAngular(fn)
+  }
+
+  /** Writes `selection` once, after DragSelect is done with a batch of selects and unselects. */
+  private scheduleWrite() {
+    if (this.writeScheduled) return
+    this.writeScheduled = true
+    queueMicrotask(() => {
+      this.writeScheduled = false
+      if (this.ds) this.writeSelection()
+    })
   }
 
   /** Copies DragSelect's selection into `selection` (which tells the parent). */
   private writeSelection() {
+    if (!this.ds) return
     const values = this.selectedValues()
     if (!sameItems(values, this.selection())) this.selection.set(values)
     this.fromDragSelect = this.selection()
@@ -289,20 +367,6 @@ export class DragSelectDirective<T = unknown> implements OnInit, OnDestroy {
 
   private userSettings(): DragSelectSettings {
     return this.settings() || {}
-  }
-
-  private allDropZones(): DSInputDropZone<DSInputElement>[] {
-    const ours = [...this.dropZones].map(([element, id]) => ({ id, element }))
-    return [...(this.userSettings().dropZones ?? []), ...ours]
-  }
-
-  /** Your settings, plus the area and drop zones from the other directives. */
-  private fullSettings(): DragSelectSettings {
-    return {
-      ...this.userSettings(),
-      ...(this.area && { area: this.area }),
-      dropZones: this.allDropZones(),
-    }
   }
 }
 
@@ -359,17 +423,12 @@ export class SelectableDirective<T = unknown> implements OnInit, OnDestroy {
     return role && ARIA_SELECTED_ROLES.has(role) ? this.selected() : null
   })
 
-  private cancel = () => {}
-
   ngOnInit() {
     this.ds._addItem(this)
-    this.cancel = this.ds.whenReady((ds) => ds.addSelectables(this.element))
   }
 
   ngOnDestroy() {
-    this.cancel()
     this.ds._removeItem(this)
-    this.ds.instance?.removeSelectables(this.element, true)
   }
 }
 
@@ -404,13 +463,17 @@ export class DropZoneDirective implements OnChanges, OnDestroy {
 
   private readonly ds = injectDragSelect('dsDropZone')
   private readonly element: DSInputElement = inject(ElementRef).nativeElement
+  private cancel = () => {}
 
   ngOnChanges() {
-    this.ds._setDropZone(this.element, this.id())
+    // A zone with the same element gets replaced, so a new id just renames it.
+    this.cancel()
+    this.cancel = this.ds.whenReady((ds) => ds.addDropZones({ id: this.id(), element: this.element }))
   }
 
   ngOnDestroy() {
-    this.ds._setDropZone(this.element, undefined)
+    this.cancel()
+    this.ds.instance?.removeDropZones(this.element)
   }
 }
 
