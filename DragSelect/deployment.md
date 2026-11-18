@@ -44,7 +44,7 @@ Match `dragselect` version, release together, after `dragselect` is published.
 yarn release:wrappers
 ```
 
-- This sets both wrappers' `version` and their `dragselect` peer/dev dependency to the `dragselect` version, updates `"@dragselect/react"` in `www/package.json` (the docs site links the local workspace package only while the versions match; otherwise Yarn fetches it from npm), runs `yarn` so `yarn.lock` is up to date, then typechecks, tests and builds both wrappers, and runs the browser tests of the Angular example app (`DragSelect-angular/example`) against the built packages. Build `dragselect` first: the example installs it from `DragSelect/`. It warns if a changelog has no entry for the version.
+- This sets both wrappers' `version` and their `dragselect` peer/dev dependency to the `dragselect` version, updates `"@dragselect/react"` and `"dragselect"` in `www/package.json` (the docs site links the local workspace package only while the versions match; otherwise Yarn fetches it from npm), runs `yarn` so `yarn.lock` is up to date, then typechecks, tests and builds both wrappers, and runs the browser tests of the Angular example app (`DragSelect-angular/example`) against the built packages. Build `dragselect` first: the example installs it from `DragSelect/`. It warns if a changelog has no entry for the version.
 - Commit, push, then publish:
 
 ```
@@ -56,7 +56,7 @@ yarn publish:wrappers
 
 ## www
 
-Make sure that www pins the latest react version.
+`yarn release:wrappers` already pins the new versions in `www/package.json`. The React and Angular guides are generated from the wrappers' READMEs (`scripts/sync-wrapper-guides.js`, runs before `yarn start` and `yarn build`), so edit the READMEs, not the `.mdx` files. The build also writes `llms.txt`, `llms-full.txt` and a `.md` copy of each page for AI coding agents. `yarn build` in `DragSelect/` turns the docs into Markdown in `DragSelect/docs` (shipped in the npm package) and refreshes the docs list at the end of both READMEs: commit the README changes.
 
 ## All Together
 

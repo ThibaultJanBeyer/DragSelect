@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.1
+
+- Version bump to match `dragselect`. README links to the drop zones and accessibility guides.
+
 ## 3.2.0
 
 - Fix: an area from `useDragSelectArea` that grows (e.g. after your data loads) now works everywhere in it. Before, clicks in the new part were ignored.

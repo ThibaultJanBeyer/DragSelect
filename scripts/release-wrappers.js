@@ -34,8 +34,9 @@ for (const dir of WRAPPERS) {
 
 const www = readJson("www/package.json");
 www.dependencies["@dragselect/react"] = version;
+www.dependencies.dragselect = version;
 writeJson("www/package.json", www);
-console.info(`www @dragselect/react -> ${version}`);
+console.info(`www @dragselect/react and dragselect -> ${version}`);
 
 run("yarn");
 

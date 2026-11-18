@@ -17,7 +17,7 @@
     "test:watch": "yarn jest --watch",
     "\n# BUILDING:": "",
     "prebuild": "yarn install",
-    "build": "yarn rollup",
+    "build": "yarn rollup && node ../scripts/build-package-docs.js",
     "rollup": "rollup -c",
     "rollup:watch": "yarn rollup -w"
   },
@@ -69,6 +69,7 @@
   ],
   "files": [
     "dist",
+    "docs",
     "README.md",
     "LICENSE",
     "CHANGELOG.md",

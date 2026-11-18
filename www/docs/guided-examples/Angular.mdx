@@ -1,6 +1,8 @@
 ---
+# Generated from DragSelect-angular/README.md by scripts/sync-wrapper-guides.js. Edit the README instead.
 sidebar_position: 9
-description: Use DragSelect in Angular with the official @dragselect/angular directives. Two-way bound selection, events, areas and drop zones.
+description: "The official Angular directives: @dragselect/angular."
+custom_edit_url: https://github.com/ThibaultJanBeyer/DragSelect/edit/main/DragSelect-angular/README.md
 ---
 
 # Angular
@@ -14,13 +16,13 @@ npm i dragselect @dragselect/angular
 ## Quick start
 
 ```ts
-import { Component, input, signal } from "@angular/core";
-import { DragSelectDirectives } from "@dragselect/angular";
+import { Component, input, signal } from '@angular/core'
+import { DragSelectDirectives } from '@dragselect/angular'
 
-type Photo = { id: string; url: string };
+type Photo = { id: string; url: string }
 
 @Component({
-  selector: "app-gallery",
+  selector: 'app-gallery',
   imports: [DragSelectDirectives],
   template: `
     <div dragSelect [(dsSelection)]="selected" #ds="dragSelect">
@@ -34,8 +36,8 @@ type Photo = { id: string; url: string };
   `,
 })
 export class Gallery {
-  photos = input.required<Photo[]>();
-  selected = signal<Photo[]>([]);
+  photos = input.required<Photo[]>()
+  selected = signal<Photo[]>([])
 }
 ```
 
@@ -43,7 +45,7 @@ That's it. Drag over the photos and `selected` fills up with your `Photo` object
 
 ## 1. `dragSelect` goes on the wrapper
 
-Everything inside it shares one DragSelect. You can pass any of the [settings](../API/Settings):
+Everything inside it shares one DragSelect. You can pass any of the [settings](/docs/API/Settings):
 
 ```html
 <ul [dragSelect]="{ selectedClass: 'is-selected', draggability: false }">…</ul>
@@ -73,7 +75,7 @@ Selected items get the `ds-selected` class, so most of the time CSS is enough. I
 `[(dsSelection)]` works like any two-way binding. DragSelect writes to it when the user selects something, and you can write to it to change the selection:
 
 ```ts
-selected = signal<Photo[]>(savedSelection);
+selected = signal<Photo[]>(savedSelection)
 ```
 
 You can even set it before your data has loaded. The items get selected as soon as they show up.
@@ -82,7 +84,7 @@ From a component inside the wrapper, inject the directive:
 
 ```ts
 @Component({
-  selector: "app-delete-button",
+  selector: 'app-delete-button',
   template: `
     <button (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()" (click)="delete()">
       Delete {{ ds.selection().length }}
@@ -90,11 +92,11 @@ From a component inside the wrapper, inject the directive:
   `,
 })
 export class DeleteButton {
-  ds = inject<DragSelectDirective<FileItem>>(DragSelectDirective);
+  ds = inject<DragSelectDirective<FileItem>>(DragSelectDirective)
 
   delete() {
-    console.log("deleting", this.ds.selection());
-    this.ds.clearSelection();
+    console.log('deleting', this.ds.selection())
+    this.ds.clearSelection()
   }
 }
 ```
@@ -109,7 +111,7 @@ The directive has a few helpers for this:
 | `setSelection(values)` | Replace the selection |
 | `selectAll()` / `clearSelection()` | Everything or nothing |
 | `dataOf(elements)` | Turns elements (like an event's `items`) into your values |
-| `instance` | The DragSelect instance itself, for any of the [methods](../API/Methods). It's `undefined` on the server and before init |
+| `instance` | The DragSelect instance itself, for any of the [methods](/docs/API/Methods). It's `undefined` on the server and before init |
 
 ## 4. Events
 
@@ -119,17 +121,17 @@ On the wrapper, you get `(dsStart)`, `(dsEnd)`, `(dsSelect)` and `(dsUnselect)`:
 <div dragSelect (dsEnd)="onEnd($event)">…</div>
 ```
 
-In a component inside, `injectDragSelectEvent` listens to any [DragSelect event](../API/Events). It stops listening when the component is destroyed:
+In a component inside, `injectDragSelectEvent` listens to any [DragSelect event](/docs/API/Events). It stops listening when the component is destroyed:
 
 ```ts
 export class Logger {
   constructor() {
-    injectDragSelectEvent("DS:start", ({ items }) => console.log("started with", items.length));
+    injectDragSelectEvent('DS:start', ({ items }) => console.log('started with', items.length))
   }
 }
 ```
 
-The type of an event is `DragSelectEvent<"DS:end">`.
+The type of an event is `DragSelectEvent<'DS:end'>`.
 
 ## 5. Area and drop zones
 
@@ -143,38 +145,38 @@ By default you can start a selection anywhere on the page. `dsArea` limits it to
 
 ```ts
 @Component({
-  selector: "app-folder",
+  selector: 'app-folder',
   imports: [DragSelectDirectives],
   template: `<div [dsDropZone]="id()">📁 {{ name() }}</div>`,
 })
 export class Folder {
-  id = input.required<string>();
-  name = input.required<string>();
-  dropped = output<FileItem[]>();
-  ds = inject(DragSelectDirective);
+  id = input.required<string>()
+  name = input.required<string>()
+  dropped = output<FileItem[]>()
+  ds = inject(DragSelectDirective)
 
   constructor() {
-    injectDragSelectEvent("DS:end", ({ items, isDragging, dropTarget }) => {
-      if (isDragging && dropTarget?.id === this.id()) this.dropped.emit(this.ds.dataOf<FileItem>(items));
-    });
+    injectDragSelectEvent('DS:end', ({ items, isDragging, dropTarget }) => {
+      if (isDragging && dropTarget?.id === this.id()) this.dropped.emit(this.ds.dataOf<FileItem>(items))
+    })
   }
 }
 ```
 
-The id also ends up in CSS classes, so you can style things. More about that in [drop zones](./DropZones):
+The id also ends up in CSS classes, so you can style things. More about that in [drop zones](/docs/guided-examples/DropZones):
 
 ```css
 /* zones while something is being dragged */
-.ds-dropzone-ready { outline: 2px dashed; }
+.ds-dropzone-ready { outline: 2px dashed }
 /* items dropped on the "archive" zone */
-.ds-dropped-target-archive { opacity: 0.5; }
+.ds-dropped-target-archive { opacity: 0.5 }
 ```
 
 ## 6. Accessibility
 
 Use `role="listbox"` on the wrapper and `role="option"` on the items, and `dsSelectable` keeps `aria-selected` up to date for screen readers. It only does that for roles where `aria-selected` is allowed (`option`, `gridcell`, `row`, `tab`, `treeitem`, `columnheader`, `rowheader`).
 
-If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys. More in [accessibility](./Accessibility).
+If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys. More in [accessibility](/docs/guided-examples/Accessibility).
 
 ## Good to know
 
@@ -185,3 +187,4 @@ If your items are `<button>`s, people can select them with Enter or Space and mo
 - If you remove a setting, it keeps its last value. To reset it, pass the default (e.g. `draggability: true`).
 - More than one `dragSelect` on a page? Give each one a `dsArea`. Otherwise they all listen to the whole page and mess up each other's selection.
 - Content passed in with `<ng-content>` can't see a `dragSelect` from inside your component. Put `dragSelect` on the component's tag instead: `<app-list dragSelect>…</app-list>`.
+

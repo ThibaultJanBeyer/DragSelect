@@ -1,6 +1,6 @@
 ---
 sidebar_position: 3
-description: DragSelect can be used for drag and drop. Learn how to use DropZones and DropTargets to create a drag and drop functionality.
+description: Drop selected elements on zones and find out what was dropped where.
 ---
 
 # With DropZones
@@ -32,6 +32,16 @@ const ds = new DragSelect({
 ```
 
 Find all possible keys in the [DropZone Settings](/docs/API/Settings#dropping) section.
+
+## Adding and removing zones later
+
+`setSettings({ dropZones })` replaces all zones, and the other zones forget what was dropped in them. To add or remove one zone without touching the others (since 3.2.0):
+
+```js
+ds.addDropZones({ element: document.querySelector('#zone-3'), id: 'zone-3' });
+ds.removeDropZones('zone-3'); // by id or by element
+ds.getDropZones(); // all zones, as you passed them in
+```
 
 ## The DS:end callback
 Now you will see the `dropTarget` in the `DS:end` callback, which represents the topmost Zone that was targeted by the mouse on drag release. Here is an example on how you could use it:
@@ -72,6 +82,6 @@ Check out the [DropZone specific methods](/docs/API/Methods#dropzones) for more 
 
 Try it out yourself:
 
-<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/bGKgVxp?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen>
-  See <a href="https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp">this Pen about DragSelect</a> on CodePen.
-</iframe>
+<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/bGKgVxp?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen />
+
+[Open this example on CodePen](https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp)

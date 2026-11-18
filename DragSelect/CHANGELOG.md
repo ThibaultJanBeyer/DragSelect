@@ -1,3 +1,8 @@
+# 3.2.1
+
+- The docs now ship with the package, as Markdown in `node_modules/dragselect/docs`, matching the installed version. Handy for you and for AI coding agents, see [coding agents](https://dragselect.com/docs/Coding-Agents).
+- The README lists all docs pages.
+
 # 3.2.0
 
 - Fix an `area` set after init (with `setSettings`) not being watched for size changes.

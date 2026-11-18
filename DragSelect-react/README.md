@@ -128,7 +128,7 @@ function Folder({ id, name, onDrop }) {
 }
 ```
 
-The id also ends up in CSS classes, so you can style things:
+The id also ends up in CSS classes, so you can style things. More about that in [drop zones](https://dragselect.com/docs/guided-examples/DropZones):
 
 ```css
 /* zones while something is being dragged */
@@ -139,7 +139,7 @@ The id also ends up in CSS classes, so you can style things:
 
 ### 6. Keyboard
 
-If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys.
+If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys. More in [accessibility](https://dragselect.com/docs/guided-examples/Accessibility).
 
 ## Good to know
 
@@ -148,6 +148,8 @@ If your items are `<button>`s, people can select them with Enter or Space and mo
 - Works with the Next.js App Router (the package is marked `'use client'`) and with SSR.
 - More than one `DragSelectProvider` on a page? Give each one a `useDragSelectArea`. Otherwise they all listen to the whole page and mess up each other's selection.
 - The refs are plain functions, so you can also call them yourself, e.g. `ref(element)` once an animation is done.
+
+You can see it in use on this site's [demo window](https://github.com/ThibaultJanBeyer/DragSelect/blob/main/www/src/components/win95/Body/Body.tsx).
 
 ## License
 

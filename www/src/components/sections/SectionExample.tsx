@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Waypoint } from 'react-waypoint'
+import BrowserOnly from '@docusaurus/BrowserOnly'
 
 import styles from './Sections.module.scss'
 import { Window } from '../win95/Window'
@@ -38,7 +39,8 @@ export const SectionExample: React.FC<{}> = () => {
       <div className={styles.hArea} ref={bgRef}>
         <div className={`${styles.container} ${styles.expanded}`}>
           <div style={{ height: '450px' }}>
-            <Window />
+            {/* browser only: the demo files get random names, which would differ from the server render */}
+            <BrowserOnly>{() => <Window />}</BrowserOnly>
           </div>
         </div>
       </div>

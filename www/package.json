@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "prestart": "yarn && yarn typecheck",
+    "prestart": "node ../scripts/sync-wrapper-guides.js && yarn && yarn typecheck",
     "start": "docusaurus start",
-    "prebuild": "yarn typecheck",
+    "prebuild": "node ../scripts/sync-wrapper-guides.js && yarn typecheck",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
@@ -17,17 +17,18 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@docusaurus/core": "2.4.3",
-    "@docusaurus/preset-classic": "2.4.3",
-    "@docusaurus/theme-live-codeblock": "^2.4.3",
+    "@docusaurus/core": "3.10.2",
+    "@docusaurus/preset-classic": "3.10.2",
+    "@docusaurus/theme-live-codeblock": "3.10.2",
     "@dragselect/react": "3.2.0",
-    "@mdx-js/react": "^1.6.22",
+    "@mdx-js/react": "^3.1.0",
     "@react-spring/web": "^9.7.3",
     "autoprefixer": "^10.4.16",
     "beautiful-web-animations": "^0.1.37",
     "clsx": "^2.0.0",
-    "docusaurus-plugin-sass": "^0.2.5",
-    "dragselect": "3.0.6",
+    "docusaurus-plugin-llms": "^0.6.1",
+    "docusaurus-plugin-sass": "^0.2.7",
+    "dragselect": "3.2.0",
     "postcss": "^8.5.18",
     "prism-react-renderer": "^2.0.6",
     "react": "^18.2.0",
@@ -39,9 +40,10 @@
     "typewriter-effect": "^2.21.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "2.4.3",
+    "@docusaurus/module-type-aliases": "3.10.2",
+    "@docusaurus/tsconfig": "3.10.2",
+    "@docusaurus/types": "3.10.2",
     "@iconify/react": "^4.1.1",
-    "@tsconfig/docusaurus": "^2.0.1",
     "typescript": "^5.2.2"
   },
   "browserslist": {
@@ -57,6 +59,6 @@
     ]
   },
   "engines": {
-    "node": ">=16.14"
+    "node": ">=20.0"
   }
 }

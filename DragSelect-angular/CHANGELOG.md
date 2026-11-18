@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.1
+
+- Version bump to match `dragselect`. README links to the drop zones and accessibility guides.
+
 ## 3.2.0
 
 First release. Versions follow `dragselect`: `@dragselect/angular@X.Y.Z` pairs with `dragselect@X.Y.Z`.

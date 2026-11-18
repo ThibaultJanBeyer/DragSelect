@@ -8,7 +8,9 @@ const config = {
   url: "https://DragSelect.com/",
   baseUrl: "/",
   onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
+  markdown: {
+    hooks: { onBrokenMarkdownLinks: "warn" },
+  },
   favicon: "img/favicon.ico",
   scripts: ["https://assets.lemonsqueezy.com/lemon.js"],
 
@@ -28,6 +30,19 @@ const config = {
 
   plugins: [
     "docusaurus-plugin-sass",
+    [
+      // llms.txt, llms-full.txt and a .md copy of each docs page, for AI coding agents
+      "docusaurus-plugin-llms",
+      {
+        title: "DragSelect",
+        description:
+          "Select elements by dragging a box around them, like on your desktop, then drag and drop them. Plain JavaScript, with official React (@dragselect/react) and Angular (@dragselect/angular) bindings.",
+        generateMarkdownFiles: true,
+        excludeImports: true,
+        includeOrder: ["intro.mdx", "Coding-Agents.mdx", "guided-examples/*", "API/*"],
+        ignoreFiles: ["info.mdx"],
+      },
+    ],
     async function tailwind(context, options) {
       return {
         name: "docusaurus-tailwindcss",
@@ -52,9 +67,7 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/ThibaultJanBeyer/DragSelect",
+          editUrl: "https://github.com/ThibaultJanBeyer/DragSelect/edit/main/www/",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),

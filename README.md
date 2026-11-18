@@ -25,29 +25,20 @@
 
 # DragSelect [![GitHub release](https://img.shields.io/github/release/ThibaultJanBeyer/DragSelect.svg)](https://GitHub.com/ThibaultJanBeyer/DragSelect/releases/)
 
-easily add a selection algorithm to your application/website.
+Select elements by dragging a box around them, like on your desktop, then drag and drop them. No dependencies, with official [React](https://dragselect.com/docs/guided-examples/React) and [Angular](https://dragselect.com/docs/guided-examples/Angular) bindings.
 
-The documentation is being migrated to [https://dragselect.com/](https://dragselect.com/). Find the [most up to date documentation there](http://dragselect.com/docs/intro).
+- 🧑‍💻 Project page and demo: [https://dragselect.com/](https://dragselect.com/)
+- 📘 Docs: [https://dragselect.com/docs/intro](https://dragselect.com/docs/intro), or see the [list of all docs](#docs) below
 
 # TOC
 
-- [Project Page: Demo \& Info](#project-page-demo--info)
 - [Key-Features](#key-features)
 - [Why?](#why)
 - [Supporters](#supporters)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Constructor Properties (Settings)](#constructor-properties-settings)
-- [Event Callbacks](#event-callbacks)
-- [Methods](#methods)
-- [CSS Classes](#css-classes)
 - [Have Fun!](#have-fun)
-
-# Project Page: Demo & Info
-
-- 🧑‍💻 Project Page: [https://dragselect.com/](https://dragselect.com/)
-- 📘 Docs Page: [https://dragselect.com/docs/intro](https://dragselect.com/docs/intro)
-- [React Guide](http://dragselect.com/docs/guided-examples/React), [Angular Guide](http://dragselect.com/docs/guided-examples/Angular)
+- [Docs](#docs)
 
 # Key-Features
 
@@ -120,149 +111,38 @@ Donations are distributed with all project contributors proportionally to their 
 
 # Installation
 
-Read the [Getting Started](http://dragselect.com/docs/intro).
-
-## NPM
-
 ```console
-npm install --save dragselect
+npm install dragselect
 ```
 
-## Yarn
-
-```console
-yarn add dragselect
-```
-
-## Global
-
-You can still [download the file](https://dragselect.com/DragSelect.js) ([minified](https://dragselect.com/ds.min.js)) and add it to your document:
+Or without a bundler:
 
 ```html
 <script src="https://unpkg.com/dragselect@latest/dist/ds.min.js"></script>
 ```
 
-> Note: if you are using `<script type=module` you can use the `DragSelect.esm.js` or `ds.esm.min.js` files as they include `export default DragSelect`
+> For `<script type="module">`, use `DragSelect.esm.js` or `ds.esm.min.js`. We don’t recommend linking directly for production. Please use `npm` if you can.
 
-> We don’t recommend the direct linking for production set-up. Please use `npm` if you can.
-
-## That's it, you're ready to rock!
-
-Of course you can also just include the code within your code and bundle it to save a request.
-
-DragSelect supports `module.exports`, `AMD Modules` with `define`, `es6 modules` with `.esm` versions and has a fallback to global namespace for maximum out of the box support.
+More ways to install in [Getting Started](https://dragselect.com/docs/intro).
 
 # Usage
 
-Now in your JavaScript you can simply pass elements to the function like so:
-
-## Simple
-
-Read the [Simple Usage Guide](http://dragselect.com/docs/guided-examples/Simple)
-
-The simplest possible usage.  
-Choose which elements can be selected:
-
 ```javascript
-new DragSelect({
-  selectables: document.getElementsByClassName("selectable-nodes"),
+import DragSelect from "dragselect";
+
+const ds = new DragSelect({
+  selectables: document.querySelectorAll(".selectable"),
+  area: document.getElementById("area"), // optional: only select inside this element
 });
+
+ds.subscribe("DS:end", ({ items }) => console.log("selected", items));
 ```
 
-Find a live [example in the Guide](http://dragselect.com/docs/guided-examples/Simple)
+> Hint: use "shift", "ctrl" or "command" to make multiple independent selections.
 
-## Within a Scroll-Able Area
+Using React or Angular? Use [`@dragselect/react`](https://dragselect.com/docs/guided-examples/React) or [`@dragselect/angular`](https://dragselect.com/docs/guided-examples/Angular).
 
-Read the [Area Guide](http://dragselect.com/docs/guided-examples/Area)
-
-Here the selection is constrained. You can only use the selection/drag inside of the area container:
-
-```javascript
-new DragSelect({
-  selectables: document.getElementsByClassName("selectable-nodes"),
-  area: document.getElementById("area"),
-});
-```
-
-Find a live [example in the Area Guide](http://dragselect.com/docs/guided-examples/Area)
-
-## With DropZones
-
-Read the [DropZones Guide](http://dragselect.com/docs/guided-examples/DropZones) where you’ll also find a live example.
-
-## Extended
-
-All options are optional. You could also just initiate the Dragselect by `new DragSelect({});` without any option.
-
-Find all possible properties and methods in **[the docs](https://dragselect.com/docs/category/api)**
-
-> Hint: you can also use the "shift", "ctrl" or "command" key to make multiple independent selections.
-
-## React
-
-Read the [React Guide](http://dragselect.com/docs/guided-examples/React)
-
-## Angular
-
-Read the [Angular Guide](http://dragselect.com/docs/guided-examples/Angular)
-
-## Mobile/Touch usage
-
-Read the [Mobile Touch Guide](http://dragselect.com/docs/guided-examples/Mobile-Touch)
-
-## Accessibility (a11y)
-
-**DragSelect is accessible by default**:
-
-> TLDR;  
-> => Your `selectables` should be buttons: `<button type="button"></button>`.  
-> => <kbd>ArrowKeys</kbd> are used for keyboard dragging.
-
-Read the [Accessibility Guide](http://dragselect.com/docs/guided-examples/Accessibility)
-
-## Use Your Own Drag & Drop
-
-Read the [Custom Drag and Drop Guide](http://dragselect.com/docs/guided-examples/CustomDnD)
-
-# Constructor Properties (Settings)
-
-_DragSelect is hyper customizable_. Note, all properties are optional.
-
-Read the [Settings API docs](http://dragselect.com/docs/API/Settings)
-
-Moreover any setting can also be updated or added after the initialization, see [post-initialization setting updates](#post-initialization-setting-updates).
-
-## Post-Initialization Setting-Updates
-
-Any setting can be updated/added after initialization by using the `setSettings` method. Here is an example updating the `area` and the `selectables`:
-
-```JavaScript
-const ds = new DragSelect({})
-ds.setSettings({
-  selectables: document.getElementsByClassName('selectable-nodes'),
-  area: document.getElementById('area')
-})
-```
-
-# Event Callbacks
-
-Read the [Events API docs](http://dragselect.com/docs/API/Events)
-
-Event Callbacks are used like this:
-
-```JavaScript
-ds.subscribe('<event_name>', (callback_object) => {})
-```
-
-For all available callback `event_names` and their respective `callback_object`, please read the [Events API docs](http://dragselect.com/docs/API/Events)
-
-# Methods
-
-Read the [Methods API docs](http://dragselect.com/docs/API/Methods)
-
-# CSS Classes
-
-Read the [CSS Classes API docs](http://dragselect.com/docs/API/CSS-Classes)
+All settings, events, methods and guides are in the [docs](#docs).
 
 # Have Fun!
 
@@ -273,3 +153,36 @@ Star this repo, tell all your friends and start contributing and/or [donating 1$
 [![Typewriter Gif](https://dragselect.com/img/typewriter.gif)](https://thibaultjanbeyer.com/)
 
 [http://dragselect.com/](http://dragselect.com/) | [documentation](http://dragselect.com/docs/intro)
+
+<!-- docs:start (generated from www/docs by scripts/build-package-docs.js, don't edit) -->
+
+# Docs
+
+**Getting started**
+
+- [Getting Started](https://dragselect.com/docs/intro): Install DragSelect and select your first elements in two minutes.
+- [Coding agents](https://dragselect.com/docs/Coding-Agents): Give your AI coding agent the real docs: a skill, docs in node_modules and llms.txt.
+
+**Guides**
+
+- [Simple](https://dragselect.com/docs/guided-examples/Simple): The simplest setup: tell DragSelect which elements can be selected.
+- [With an Area](https://dragselect.com/docs/guided-examples/Area): Limit selecting and dragging to one container, which also scrolls automatically.
+- [With DropZones](https://dragselect.com/docs/guided-examples/DropZones): Drop selected elements on zones and find out what was dropped where.
+- [Accessibility (a11y)](https://dragselect.com/docs/guided-examples/Accessibility): Select and drag with the keyboard.
+- [Updating Settings](https://dragselect.com/docs/guided-examples/Updating-Settings): Change any setting after DragSelect has started.
+- [Mobile/Touch usage](https://dragselect.com/docs/guided-examples/Mobile-Touch): Use DragSelect on touch devices and keep the page scrollable.
+- [Publish & Subscribe](https://dragselect.com/docs/guided-examples/Publish-Subscribe): Listen to events like DS:start and DS:end.
+- [React](https://dragselect.com/docs/guided-examples/React): The official React hooks: @dragselect/react.
+- [Angular](https://dragselect.com/docs/guided-examples/Angular): The official Angular directives: @dragselect/angular.
+- [Custom Drag and Drop](https://dragselect.com/docs/guided-examples/CustomDnD): Use your own drag and drop, or another library, together with DragSelect.
+- [Advanced Overrides (Custom Selection Filter)](https://dragselect.com/docs/guided-examples/Custom-Selection-Filter-Override): Hook into the selection and change what gets selected.
+
+**API**
+
+- [Settings](https://dragselect.com/docs/API/Settings): Every setting, for new DragSelect() and setSettings().
+- [Events (Pub/sub)](https://dragselect.com/docs/API/Events): Every event (DS:start, DS:end, DS:select…) and what it gives you.
+- [Methods](https://dragselect.com/docs/API/Methods): Every method of a DragSelect instance.
+- [CSS Classes (Styling)](https://dragselect.com/docs/API/CSS-Classes): The classes DragSelect adds, for styling.
+- [Overrides & Exposed Methods (Advanced)](https://dragselect.com/docs/API/Overrides): Replace DragSelect's internal logic, e.g. what gets selected or dragged.
+
+<!-- docs:end -->

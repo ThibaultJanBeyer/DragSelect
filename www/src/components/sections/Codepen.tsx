@@ -11,11 +11,5 @@ export const CodePen: React.FC<{
     frameBorder="no"
     loading="lazy"
     allowFullScreen
-  >
-    See the Pen{' '}
-    <a href={src} className="metalink">
-      DragSelect
-    </a>{' '}
-    on CodePen.
-  </iframe>
+  />
 )

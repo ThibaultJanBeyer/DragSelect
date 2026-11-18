@@ -106,7 +106,7 @@ The directive has a few helpers for this:
 | `setSelection(values)` | Replace the selection |
 | `selectAll()` / `clearSelection()` | Everything or nothing |
 | `dataOf(elements)` | Turns elements (like an event's `items`) into your values |
-| `instance` | The DragSelect instance itself, for anything else. It's `undefined` on the server and before init |
+| `instance` | The DragSelect instance itself, for any of the [methods](https://dragselect.com/docs/API/Methods). It's `undefined` on the server and before init |
 
 ### 4. Events
 
@@ -158,7 +158,7 @@ export class Folder {
 }
 ```
 
-The id also ends up in CSS classes, so you can style things:
+The id also ends up in CSS classes, so you can style things. More about that in [drop zones](https://dragselect.com/docs/guided-examples/DropZones):
 
 ```css
 /* zones while something is being dragged */
@@ -171,7 +171,7 @@ The id also ends up in CSS classes, so you can style things:
 
 Use `role="listbox"` on the wrapper and `role="option"` on the items, and `dsSelectable` keeps `aria-selected` up to date for screen readers. It only does that for roles where `aria-selected` is allowed (`option`, `gridcell`, `row`, `tab`, `treeitem`, `columnheader`, `rowheader`).
 
-If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys.
+If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys. More in [accessibility](https://dragselect.com/docs/guided-examples/Accessibility).
 
 ## Good to know
 
