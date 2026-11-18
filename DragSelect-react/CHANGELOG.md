@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.2
+
+- no changes, version bump, see core release notes
+
 ## 3.2.1
 
 - Version bump to match `dragselect`. README links to the drop zones and accessibility guides.

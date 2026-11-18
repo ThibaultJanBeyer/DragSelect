@@ -129,8 +129,9 @@ test.describe('keyboard', () => {
     await expect(count(page)).toHaveText('1 selected');
 
     // p9 is in the last row; the trash is right below the grid
+    // hold each key like a person: DragSelect caches positions for 80ms (refreshMemoryRate), faster presses count as moving, not dropping
     for (let i = 0; i < 40 && !(await page.getByTestId('trash').textContent()); i++)
-      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown', { delay: 100 });
 
     await expect(page.getByTestId('trash')).toHaveText('Photo 10');
     await expect(item(page, 'p9')).toHaveCount(0);
