@@ -1,6 +1,6 @@
 # @dragselect/react
 
-React hooks for [DragSelect](https://DragSelect.com): drag-to-select and drag-and-drop for your components. No refs to juggle, no manual subscribe/unsubscribe.
+[DragSelect](https://DragSelect.com) for React. Select things by dragging a box around them, like on your desktop, then you can even drag and drop them.
 
 ```bash
 npm i dragselect @dragselect/react
@@ -9,11 +9,7 @@ npm i dragselect @dragselect/react
 ## Quick start
 
 ```tsx
-import {
-  DragSelectProvider,
-  useSelectable,
-  useSelection,
-} from '@dragselect/react'
+import { DragSelectProvider, useSelectable, useSelection } from '@dragselect/react'
 
 function Gallery({ photos }) {
   return (
@@ -28,21 +24,22 @@ function Gallery({ photos }) {
 
 function Photo({ photo }) {
   const ref = useSelectable()
-  return <img ref={ref} src={photo.url} data-id={photo.id} /> // selected ones get the .ds-selected class
+  return <img ref={ref} src={photo.url} data-id={photo.id} />
 }
 
 function Toolbar() {
-  const selected = useSelection<HTMLImageElement>()
-  const selectedIds = selected.map((el) => el.dataset.id)
-  return <span>{selectedIds.length} selected</span>
+  const selected = useSelection()
+  return <p>{selected.length} selected</p>
 }
 ```
 
-## API
+That's it. Drag over the photos and `Toolbar` shows how many are selected.
 
-### `<DragSelectProvider settings?>`
+## How it works
 
-Creates one DragSelect instance for everything inside it and stops it on unmount. Accepts any [DragSelect setting](https://dragselect.com/docs/API/Settings). Settings are read once; change them later with `useDragSelect()?.setSettings({...})`.
+### 1. `DragSelectProvider` goes around your list
+
+Everything inside it shares one DragSelect. You can pass any of the [settings](https://dragselect.com/docs/API/Settings):
 
 ```tsx
 <DragSelectProvider settings={{ selectedClass: 'is-selected', draggability: false }}>
@@ -50,9 +47,11 @@ Creates one DragSelect instance for everything inside it and stops it on unmount
 </DragSelectProvider>
 ```
 
-### `useSelectable()` → `ref`
+The settings are read once. To change them later, use `useDragSelect()?.setSettings({...})`.
 
-Makes the element selectable while the component is mounted. Selecting does not re-render the item: style it with the `ds-selected` class (or your `selectedClass`).
+### 2. `useSelectable` goes on each item
+
+It gives you a ref. Put it on the element, and put whatever you need to find the item again on the element too, e.g. a `data-id`:
 
 ```tsx
 function File({ file }) {
@@ -61,9 +60,11 @@ function File({ file }) {
 }
 ```
 
-### `useSelection<E>()` → `E[]`
+Selecting doesn't re-render your items. Selected items get the `ds-selected` class, so style them with CSS.
 
-The selected elements, as DragSelect holds them. Only the component calling it re-renders when the selection changes. To get your ids back, put them on the element (`data-id={id}`) and read `el.dataset.id`.
+### 3. The selection
+
+`useSelection` gives you the selected elements. Only the component that calls it re-renders when the selection changes. Read your ids back with `el.dataset.id`:
 
 ```tsx
 function DeleteButton({ onDelete }) {
@@ -81,19 +82,26 @@ function DeleteButton({ onDelete }) {
 }
 ```
 
-### `useDragSelectEvent(eventName, callback)`
-
-Subscribes to any [DragSelect event](https://dragselect.com/docs/API/Events) for the component's lifetime. The latest callback is always called, so you don't need `useCallback`.
+To change the selection, `useDragSelect()` gives you the DragSelect instance itself. It has all the [methods](https://dragselect.com/docs/API/Methods), like `setSelection`, `addSelection` or `clearSelection`. It's `undefined` on the first render and on the server:
 
 ```tsx
-useDragSelectEvent('DS:start', ({ items }) => {
-  console.log('started with', items.length, 'selected')
-})
+function SelectAll() {
+  const ds = useDragSelect()
+  return <button onClick={() => ds?.setSelection(ds.getSelectables())}>Select all</button>
+}
 ```
 
-### `useDragSelectArea()` → `ref`
+### 4. Events
 
-Restricts selecting and dragging to this element. Without it, the whole document is the area.
+`useDragSelectEvent` listens to any [DragSelect event](https://dragselect.com/docs/API/Events). It stops listening when the component unmounts, and it always calls your latest callback, so you don't need `useCallback`:
+
+```tsx
+useDragSelectEvent('DS:start', ({ items }) => console.log('started with', items.length))
+```
+
+### 5. Area and drop zones
+
+By default you can start a selection anywhere on the page. `useDragSelectArea` limits it to one element:
 
 ```tsx
 function FileList({ files }) {
@@ -106,51 +114,41 @@ function FileList({ files }) {
 }
 ```
 
-### `useDropZone(id)` → `ref`
-
-Registers the element as a drop zone. The `id` is DragSelect's name for the zone: it comes back as `dropTarget.id` in events, works with `ds.getItemsDroppedByZoneId(id)`, and suffixes the classes items get (e.g. `ds-dropped-target-archive`).
+`useDropZone` turns an element into a place you can drop things on. Here is a folder that tells you which files were dropped on it:
 
 ```tsx
-function Folder({ id, name, onMove }) {
+function Folder({ id, name, onDrop }) {
   const ref = useDropZone(id)
 
-  // `items` is everything that was dragged: one element or the whole selection
   useDragSelectEvent('DS:end', ({ items, isDragging, dropTarget }) => {
-    if (!isDragging || dropTarget?.id !== id) return
-    onMove(items.map((el) => el.dataset.id))
+    if (isDragging && dropTarget?.id === id) onDrop(items.map((el) => el.dataset.id))
   })
 
   return <div ref={ref}>📁 {name}</div>
 }
-
-// used as:
-<Folder id="archive" name="Archive" onMove={(ids) => archive(ids)} />
 ```
 
+The id also ends up in CSS classes, so you can style things:
+
 ```css
-/* the zone while a drag is in progress */
+/* zones while something is being dragged */
 .ds-dropzone-ready { outline: 2px dashed }
-/* items that were dropped into the "archive" zone */
+/* items dropped on the "archive" zone */
 .ds-dropped-target-archive { opacity: 0.5 }
 ```
 
-### `useDragSelect()` → `DragSelect | undefined`
+### 6. Keyboard
 
-The raw instance, for anything the hooks don't cover. It is `undefined` on the first render and during SSR.
+If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys.
 
-```tsx
-function SelectAll() {
-  const ds = useDragSelect()
-  return <button onClick={() => ds?.setSelection(ds.getSelectables())}>Select all</button>
-}
-```
+## Good to know
 
-## Notes
-
-- Versions follow DragSelect: use `@dragselect/react@X.Y.Z` with `dragselect@X.Y.Z`.
-- Works with React 18+, Next.js App Router (the bundle ships `'use client'`), and SSR.
-- The returned refs are plain functions: you can also call them yourself, e.g. `ref(element)` once an animation is done.
+- The version matches DragSelect. Use `@dragselect/react@X.Y.Z` with `dragselect@X.Y.Z`.
+- Needs React 18 or newer.
+- Works with the Next.js App Router (the package is marked `'use client'`) and with SSR.
+- More than one `DragSelectProvider` on a page? Give each one a `useDragSelectArea`. Otherwise they all listen to the whole page and mess up each other's selection.
+- The refs are plain functions, so you can also call them yourself, e.g. `ref(element)` once an animation is done.
 
 ## License
 
-GPL-3.0 or [commercial license](https://dragselect.com/licenses), the same as DragSelect.
+GPL-3.0 or a [commercial license](https://dragselect.com/licenses), same as DragSelect.
