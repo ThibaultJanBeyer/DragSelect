@@ -249,12 +249,12 @@ describe('useDragSelectArea / useDropZone', () => {
       </DragSelectProvider>
     )
     const ids = () =>
-      ds!.stores.SettingsStore.s.dropZones.map((zone) => zone.id)
+      ds!.getDropZones().map((zone) => zone.id)
 
     const { rerender } = render(ui(['trash', 'archive']))
     expect(ids()).toEqual(['static', 'trash', 'archive'])
     expect(
-      ds!.stores.SettingsStore.s.dropZones.find((z) => z.id === 'trash')
+      ds!.getDropZones().find((z) => z.id === 'trash')
         ?.element
     ).toBe(screen.getByTestId('trash'))
     rerender(ui(['archive']))

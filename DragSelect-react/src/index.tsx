@@ -112,13 +112,8 @@ export function useDropZone(id: string) {
 
   useEffect(() => {
     if (!ds || !element) return
-    const zones = () => ds.stores.SettingsStore.s.dropZones ?? []
-    ds.setSettings({ dropZones: [...zones(), { id, element }] })
-    return () =>
-      void (
-        !ds.stopped &&
-        ds.setSettings({ dropZones: zones().filter((z) => z.element !== element) })
-      )
+    ds.addDropZones({ id, element })
+    return () => void (!ds.stopped && ds.removeDropZones(element))
   }, [ds, element, id])
 
   return ref

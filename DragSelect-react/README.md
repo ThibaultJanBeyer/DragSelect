@@ -69,7 +69,12 @@ The selected elements, as DragSelect holds them. Only the component calling it r
 function DeleteButton({ onDelete }) {
   const selected = useSelection<HTMLLIElement>()
   return (
-    <button disabled={!selected.length} onClick={() => onDelete(selected.map((el) => el.dataset.id))}>
+    <button
+      onMouseDownCapture={e => e.stopPropagation()}
+      onTouchStartCapture={e => e.stopPropagation()}
+      disabled={!selected.length}
+      onClick={() => onDelete(selected.map((el) => el.dataset.id))}
+    >
       Delete {selected.length}
     </button>
   )

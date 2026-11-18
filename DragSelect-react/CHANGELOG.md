@@ -1,5 +1,11 @@
 # Changelog
 
+## NEXT
+
+- Fix: an area from `useDragSelectArea` that grows (e.g. after your data loads) now works everywhere in it. Before, clicks in the new part were ignored.
+- `useDropZone` adds and removes only its own zone now, so other zones keep what was dropped in them.
+- Requires the matching `dragselect` version, which has the area fix and the new `addDropZones`/`removeDropZones`.
+
 ## 3.1.6
 
 - No API changes. Requires `dragselect@^3.1.6` (scroll detection fixes, see the DragSelect changelog).
