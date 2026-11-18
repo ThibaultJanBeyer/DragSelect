@@ -1,0 +1,84 @@
+# With DropZones
+
+> Drop selected elements on zones and find out what was dropped where.
+
+DropZones are areas where you can drop the selected elements into. 
+- Set it up via [Settings](/docs/API/Settings#dropping).
+- When dropped you’ll find a `dropTarget` in the [DS:end](/docs/API/Events#callback-object) event callback.
+- You can also use some useful [methods](/docs/API/Methods#dropzones) related to DropZones.
+- Using DropZones will also automatically add respective [classes](/docs/API/CSS-Classes#drop).
+
+Here is an example:  
+
+## The Setup
+
+Setting up is easy, here is an example:
+```js
+const ds = new DragSelect({
+  …
+  // 1. Add DropZones settings
+  dropZones: [
+    // 2. By default all selectables can be dropped into a zone
+    { element: document.querySelector('#zone-1'), id: 'zone-1' },
+    // 3. However, if you want to restrict that, add the `droppables` key to the zone
+    { element: document.querySelector('#zone-2'), id: 'zone-2', droppables: document.querySelectorAll('#item-2,#item-4') }, // here, only items 2 & 4 are droppable into zone 2
+  ],
+  // 4. There are also other customization you can do, for example:
+  dropInsideThreshold: 1, // 1 = has to be 100% inside the dropzone, 0.5 = 50% inside, 0 = just touching is fine
+});
+```
+
+Find all possible keys in the [DropZone Settings](/docs/API/Settings#dropping) section.
+
+## Adding and removing zones later
+
+`setSettings({ dropZones })` replaces all zones, and the other zones forget what was dropped in them. To add or remove one zone without touching the others (since 3.2.0):
+
+```js
+ds.addDropZones({ element: document.querySelector('#zone-3'), id: 'zone-3' });
+ds.removeDropZones('zone-3'); // by id or by element
+ds.getDropZones(); // all zones, as you passed them in
+```
+
+## The DS:end callback
+Now you will see the `dropTarget` in the `DS:end` callback, which represents the topmost Zone that was targeted by the mouse on drag release. Here is an example on how you could use it:
+
+```js
+ds.subscribe('DS:end', ({
+  // 4. If successfully drop by mouse, you’ll find a dropTarget key
+  dropTarget: {
+    // 5. It is an object with following keys
+    id: "zone-1", // The ID of the zone
+    element: <node />, // The DropZone element itself
+    droppables: [ <node />, … ], // The elements that can potentially be dropped into that zone
+    itemsDropped: [ <node />, … ], // elements that were selected when the mouse targeted the zone on drop
+    itemsInside: [ <node />, … ] // elements that are actually inside the bounds of the dropzone
+  }) => {
+  
+  // 6. We can check which items are dropped into the zone and do something
+  if(dropTarget?.itemsDropped?.length) {
+    console.log('Dropped', dropTarget.itemsDropped, 'into', dropTarget.id);
+  }
+})
+```
+
+Check out the [callback object API](/docs/API/Events#callback-object) for more information.
+
+## The methods
+
+You can also anytime use the [DropZone specific methods](/docs/API/Methods#dropzones) to get what you need. For example: 
+
+```js
+console.log('items dropped into zone-1', ds.getItemsDroppedByZoneId('zone-1'))
+console.log('items inside zone-2', ds.getItemsInsideByZoneId('zone-1'))
+```
+
+Check out the [DropZone specific methods](/docs/API/Methods#dropzones) for more information.
+
+## Example
+
+Try it out yourself:
+
+<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/bGKgVxp?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen />
+
+[Open this example on CodePen](https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp)

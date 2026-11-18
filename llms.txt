@@ -1,0 +1,26 @@
+# DragSelect
+
+> Select elements by dragging a box around them, like on your desktop, then drag and drop them. Plain JavaScript, with official React (@dragselect/react) and Angular (@dragselect/angular) bindings.
+
+This file contains links to documentation sections following the llmstxt.org standard.
+
+## Table of Contents
+
+- [Getting Started](https://DragSelect.com/docs/intro.md): Install DragSelect and select your first elements in two minutes.
+- [Coding agents](https://DragSelect.com/docs/Coding-Agents.md): Give your AI coding agent the real docs: a skill, docs in node_modules and llms.txt.
+- [Accessibility (a11y)](https://DragSelect.com/docs/guided-examples/Accessibility.md): Select and drag with the keyboard.
+- [Angular](https://DragSelect.com/docs/guided-examples/Angular.md): The official Angular directives: @dragselect/angular.
+- [With an Area](https://DragSelect.com/docs/guided-examples/Area.md): Limit selecting and dragging to one container, which also scrolls automatically.
+- [Advanced Overrides (Custom Selection Filter)](https://DragSelect.com/docs/guided-examples/Custom-Selection-Filter-Override.md): Hook into the selection and change what gets selected.
+- [Custom Drag and Drop](https://DragSelect.com/docs/guided-examples/CustomDnD.md): Use your own drag and drop, or another library, together with DragSelect.
+- [With DropZones](https://DragSelect.com/docs/guided-examples/DropZones.md): Drop selected elements on zones and find out what was dropped where.
+- [Mobile/Touch usage](https://DragSelect.com/docs/guided-examples/Mobile-Touch.md): Use DragSelect on touch devices and keep the page scrollable.
+- [Publish & Subscribe](https://DragSelect.com/docs/guided-examples/Publish-Subscribe.md): Listen to events like DS:start and DS:end.
+- [React](https://DragSelect.com/docs/guided-examples/React.md): The official React hooks: @dragselect/react.
+- [Simple](https://DragSelect.com/docs/guided-examples/Simple.md): The simplest setup: tell DragSelect which elements can be selected.
+- [Updating Settings](https://DragSelect.com/docs/guided-examples/Updating-Settings.md): Change any setting after DragSelect has started.
+- [CSS Classes (Styling)](https://DragSelect.com/docs/API/CSS-Classes.md): The classes DragSelect adds, for styling.
+- [Events (Pub/sub)](https://DragSelect.com/docs/API/Events.md): Every event (DS:start, DS:end, DS:select…) and what it gives you.
+- [Methods](https://DragSelect.com/docs/API/Methods.md): Every method of a DragSelect instance.
+- [Overrides & Exposed Methods (Advanced)](https://DragSelect.com/docs/API/Overrides.md): Replace DragSelect's internal logic, e.g. what gets selected or dragged.
+- [Settings](https://DragSelect.com/docs/API/Settings.md): Every setting, for new DragSelect() and setSettings().

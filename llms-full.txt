@@ -1,0 +1,1337 @@
+# DragSelect
+
+> Select elements by dragging a box around them, like on your desktop, then drag and drop them. Plain JavaScript, with official React (@dragselect/react) and Angular (@dragselect/angular) bindings.
+
+This file contains all documentation content in a single document following the llmstxt.org standard.
+
+## Getting Started
+
+DragSelect is a small but professional, cross platform library with no dependencies that adds a selection mechanism similar to your operating system to the browser. It allows you to select multiple elements and drag and drop them around.
+
+Let's discover how to use **DragSelect in less than 2 minutes**. You don’t believe me? It’s very easy, you’ll see!
+
+### 🧩 Installation (Install it)
+
+You can download the binary files and add them to your document.
+Or better use a Content Delivery Network (CDN).
+Or even better install it via a package manager like NPM:
+
+**NPM**
+
+```
+npm i -S dragselect
+```
+
+**Yarn**
+
+```
+yarn add dragselect
+```
+
+**Download**
+
+- [DragSelect](https://dragselect.com/DragSelect.js) ([minified](https://dragselect.com/ds.min.js))
+- [DragSelect ES6 Module](https://dragselect.com/DragSelect.esm.js) ([minified](https://dragselect.com/ds.esm.min.js))
+- From our website:
+
+```html
+<script src="https://dragselect.com/ds.min.js"></script>
+```
+
+> We don't recommend the direct linking for production set-up. Please use `npm` if you can.
+
+**CDN**
+
+**Modules**
+
+```html
+<script
+  type="module"
+  src="https://unpkg.com/dragselect@latest/dist/DragSelect.esm.js"
+></script>
+```
+
+Or Minified:
+
+```html
+<script
+  type="module"
+  src="https://unpkg.com/dragselect@latest/dist/ds.esm.min.js"
+></script>
+```
+
+**Traditional**
+
+```html
+<script src="https://unpkg.com/dragselect@latest/dist/DragSelect.js"></script>
+```
+
+Or Minified:
+
+```html
+<script src="https://unpkg.com/dragselect@latest/dist/ds.min.js"></script>
+```
+
+> Using React or Angular? There are official bindings: see the [React](/docs/guided-examples/React) and [Angular](/docs/guided-examples/Angular) guides.
+
+### 🎸 That's it, you're ready to rock! (Use it)
+
+DragSelect supports `module.exports`, `AMD Modules` with `define`, `es6 modules` with `.esm` versions and has a fallback to global namespace for maximum out of the box support:
+
+**ES6**
+
+```js
+import DragSelect from "dragselect";
+
+const ds = new DragSelect({
+  selectables: document.querySelectorAll(".selectable"),
+});
+
+ds.subscribe("DS:end", (e) => {
+  console.log(e);
+});
+```
+
+**CommonJS**
+
+```js
+const DragSelect = require("dragselect");
+
+const ds = new DragSelect({
+  selectables: document.querySelectorAll(".selectable"),
+});
+
+ds.subscribe("DS:end", (e) => {
+  console.log(e);
+});
+```
+
+**AMD**
+
+```js
+require(["dragselect"], function (DragSelect) {
+  const ds = new DragSelect({
+    selectables: document.querySelectorAll(".selectable"),
+  });
+
+  ds.subscribe("DS:end", (e) => {
+    console.log(e);
+  });
+});
+```
+
+**Global**
+
+```js
+const ds = new DragSelect({
+  selectables: document.querySelectorAll(".selectable"),
+});
+
+ds.subscribe("DS:end", (e) => {
+  console.log(e);
+});
+```
+
+**From CDN**
+
+```js
+import DragSelect from "https://unpkg.com/dragselect@latest/dist/ds.esm.min.js";
+
+const ds = new DragSelect({
+  selectables: document.querySelectorAll(".selectable"),
+});
+
+ds.subscribe("DS:end", (e) => {
+  console.log(e);
+});
+```
+
+### 🎬 Aaaand action! (See it)
+
+<iframe
+  height="400"
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="DragSelect"
+  src="https://codepen.io/ThibaultJanBeyer/embed/prpwYG?default-tab=result&editable=true&theme-id=dark"
+  frameBorder="no"
+  loading="lazy"
+  allowtransparency="true"
+  allowFullScreen />
+
+[Open this example on CodePen](https://codepen.io/ThibaultJanBeyer/pen/prpwYG)
+
+_Pssst: try using your keyboard only or selecting multiple elements with Shift. It just works ;-)_
+
+#### Within a scroll-able Area
+
+<iframe
+  height="400"
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="DragSelect with Scrollable AREA"
+  src="https://codepen.io/ThibaultJanBeyer/embed/Nvobgq?default-tab=result&editable=true&theme-id=dark"
+  frameBorder="no"
+  loading="lazy"
+  allowtransparency="true"
+  allowFullScreen />
+
+[Open this example on CodePen](https://codepen.io/ThibaultJanBeyer/pen/Nvobgq)
+
+#### With DropZones
+
+<iframe
+  height="400"
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="DragSelect with Scrollable AREA"
+  src="https://codepen.io/ThibaultJanBeyer/embed/bGKgVxp?default-tab=result&editable=true&theme-id=dark"
+  frameBorder="no"
+  loading="lazy"
+  allowtransparency="true"
+  allowFullScreen />
+
+[Open this example on CodePen](https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp)
+
+### 📚 What next?
+
+Most importantly:
+
+    If you like what you see, make sure to{" "}
+
+      Star
+    {" "}
+    DragSelect
+
+Tell all your friends/colleagues.
+
+    If you think it is worth continuing developing & maintaining DragSelect,
+    please{" "}
+
+      Sponsor
+    {" "}
+    or{" "}
+
+      contribute
+
+    !
+
+    If your project makes money:{" "}
+    Purchase a commercial license.
+
+> Creating and maintaining useful tools is a lot of work. Thank you :-)
+
+#### Learn
+
+This page is just a very brief introduction showcasing a limited set of the many features.
+DragSelect is ultra extensible and feature rich!
+Make sure to read the guides and the documentation. If you’re stuck feel free to [reach out on Github](https://github.com/ThibaultJanBeyer/DragSelect).
+
+- [API](/docs/category/api)
+- [Guided Examples](/docs/category/guided-examples)
+
+[![Typewriter Gif](/img/typewriter.gif)](https://thibaultjanbeyer.com/)
+
+---
+
+## Coding agents
+
+AI coding agents often write DragSelect code from memory, and their memory is mostly of old versions. Here is how to give them the real docs.
+
+### 1. Install the skill
+
+```bash
+npx skills add ThibaultJanBeyer/DragSelect
+```
+
+This adds a DragSelect skill to your agent (Claude Code, Cursor, Codex and [many more](https://skills.sh)). The agent loads it when you work with DragSelect. It tells the agent:
+
+- which package to use (`dragselect`, `@dragselect/react` or `@dragselect/angular`)
+- to look things up in the docs of your installed version instead of guessing
+- the things that are easy to get wrong, like buttons inside the area or adding a single drop zone
+
+### 2. The docs are in your node_modules
+
+Every `dragselect` release has its docs as Markdown in `node_modules/dragselect/docs/`, for exactly the version you have installed. `@dragselect/react` and `@dragselect/angular` have everything in their README.
+
+So even without the skill, you can tell your agent: "read `node_modules/dragselect/docs` first".
+
+### 3. llms.txt
+
+For agents and tools that read the web:
+
+- [`/llms.txt`](https://dragselect.com/llms.txt): a list of all docs pages
+- [`/llms-full.txt`](https://dragselect.com/llms-full.txt): all docs in one file
+- Add `.md` to any docs page for its Markdown, e.g. [`/docs/API/Settings.md`](https://dragselect.com/docs/API/Settings.md)
+
+---
+
+## Accessibility (a11y)
+
+**Congratulations, DragSelect is accessible by default 🎉**
+
+> TLDR;  
+> => Your `selectables` should be buttons: `<button type="button"></button>`.  
+> => <kbd>ArrowKeys</kbd> are used for keyboard dragging.  
+
+Obviously, keyboard users won’t get the full visual experience but it works similarly to the OS default behavior.  
+
+1. Selection: You can select items using the default select keys (usually space or enter) and also multi-select when using a modifier key at the same time. There is one little thing you have to do tho’: the `selectables` have to be pressable (clickable)! To achieve this, they should be of type `<button type="button"></button>`.  
+
+2. Drag: You can drag elements using the keyboard arrow keys, this will also scroll the area by default. You can press <kbd>Shift</kbd> in combination with an arrow i.e. <kbd>Shift</kbd>+<kbd>ArrowRight</kbd> to move the element 4x faster and also not scroll the area.
+
+Try it out with your keyboard:  
+
+<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/prpwYG?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen />
+
+[Open this example on CodePen](https://codepen.io/ThibaultJanBeyer/pen/prpwYG)
+
+---
+
+## Angular
+
+DragSelect has official Angular bindings: [`@dragselect/angular`](https://www.npmjs.com/package/@dragselect/angular). Select things by dragging a box around them, like on your desktop, then you can even drag and drop them.
+
+```bash
+npm i dragselect @dragselect/angular
+```
+
+### Quick start
+
+```ts
+import { Component, input, signal } from '@angular/core'
+import { DragSelectDirectives } from '@dragselect/angular'
+
+type Photo = { id: string; url: string }
+
+@Component({
+  selector: 'app-gallery',
+  imports: [DragSelectDirectives],
+  template: `
+    <div dragSelect [(dsSelection)]="selected" #ds="dragSelect">
+      @for (photo of photos(); track photo.id) {
+        <img [dsSelectable]="photo" [src]="photo.url" />
+      }
+      <p>{{ selected().length }} selected</p>
+      <button (click)="ds.selectAll()">Select all</button>
+      <button (click)="ds.clearSelection()">Clear</button>
+    </div>
+  `,
+})
+export class Gallery {
+  photos = input.required<Photo[]>()
+  selected = signal<Photo[]>([])
+}
+```
+
+That's it. Drag over the photos and `selected` fills up with your `Photo` objects.
+
+### 1. `dragSelect` goes on the wrapper
+
+Everything inside it shares one DragSelect. You can pass any of the [settings](/docs/API/Settings):
+
+```html
+<ul [dragSelect]="{ selectedClass: 'is-selected', draggability: false }">…</ul>
+```
+
+If the settings change, DragSelect gets the new ones. If you don't want an extra element, use `<ng-container dragSelect>`.
+
+### 2. `dsSelectable` goes on each item
+
+Give it the thing you want back when it's selected. That can be the whole object or just an id:
+
+```html
+<li [dsSelectable]="file">{{ file.name }}</li>
+<li [dsSelectable]="file.id">{{ file.name }}</li>
+```
+
+Items are compared with `===`. So if you reload your list and get new objects, use the id.
+
+Selected items get the `ds-selected` class, so most of the time CSS is enough. If you need the state in the template, use `selected()`:
+
+```html
+<li [dsSelectable]="file" #item="dsSelectable" [class.active]="item.selected()">…</li>
+```
+
+### 3. The selection
+
+`[(dsSelection)]` works like any two-way binding. DragSelect writes to it when the user selects something, and you can write to it to change the selection:
+
+```ts
+selected = signal<Photo[]>(savedSelection)
+```
+
+You can even set it before your data has loaded. The items get selected as soon as they show up.
+
+From a component inside the wrapper, inject the directive:
+
+```ts
+@Component({
+  selector: 'app-delete-button',
+  template: `
+    <button (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()" (click)="delete()">
+      Delete {{ ds.selection().length }}
+    </button>
+  `,
+})
+export class DeleteButton {
+  ds = inject<DragSelectDirective<FileItem>>(DragSelectDirective)
+
+  delete() {
+    console.log('deleting', this.ds.selection())
+    this.ds.clearSelection()
+  }
+}
+```
+
+The directive has a few helpers for this:
+
+| | |
+| --- | --- |
+| `selection()` | Your selected values |
+| `selectedElements()` | The selected DOM elements |
+| `select(values)` / `deselect(values)` | Add or remove items |
+| `setSelection(values)` | Replace the selection |
+| `selectAll()` / `clearSelection()` | Everything or nothing |
+| `dataOf(elements)` | Turns elements (like an event's `items`) into your values |
+| `instance` | The DragSelect instance itself, for any of the [methods](/docs/API/Methods). It's `undefined` on the server and before init |
+
+### 4. Events
+
+On the wrapper, you get `(dsStart)`, `(dsEnd)`, `(dsSelect)` and `(dsUnselect)`:
+
+```html
+<div dragSelect (dsEnd)="onEnd($event)">…</div>
+```
+
+In a component inside, `injectDragSelectEvent` listens to any [DragSelect event](/docs/API/Events). It stops listening when the component is destroyed:
+
+```ts
+export class Logger {
+  constructor() {
+    injectDragSelectEvent('DS:start', ({ items }) => console.log('started with', items.length))
+  }
+}
+```
+
+The type of an event is `DragSelectEvent<'DS:end'>`.
+
+### 5. Area and drop zones
+
+By default you can start a selection anywhere on the page. `dsArea` limits it to one element:
+
+```html
+<ul dragSelect dsArea>…</ul>
+```
+
+`dsDropZone` turns an element into a place you can drop things on. Here is a folder that tells you which files were dropped on it:
+
+```ts
+@Component({
+  selector: 'app-folder',
+  imports: [DragSelectDirectives],
+  template: `<div [dsDropZone]="id()">📁 {{ name() }}</div>`,
+})
+export class Folder {
+  id = input.required<string>()
+  name = input.required<string>()
+  dropped = output<FileItem[]>()
+  ds = inject(DragSelectDirective)
+
+  constructor() {
+    injectDragSelectEvent('DS:end', ({ items, isDragging, dropTarget }) => {
+      if (isDragging && dropTarget?.id === this.id()) this.dropped.emit(this.ds.dataOf<FileItem>(items))
+    })
+  }
+}
+```
+
+The id also ends up in CSS classes, so you can style things. More about that in [drop zones](/docs/guided-examples/DropZones):
+
+```css
+/* zones while something is being dragged */
+.ds-dropzone-ready { outline: 2px dashed }
+/* items dropped on the "archive" zone */
+.ds-dropped-target-archive { opacity: 0.5 }
+```
+
+### 6. Accessibility
+
+Use `role="listbox"` on the wrapper and `role="option"` on the items, and `dsSelectable` keeps `aria-selected` up to date for screen readers. It only does that for roles where `aria-selected` is allowed (`option`, `gridcell`, `row`, `tab`, `treeitem`, `columnheader`, `rowheader`).
+
+If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys. More in [accessibility](/docs/guided-examples/Accessibility).
+
+### Good to know
+
+- The version matches DragSelect. Use `@dragselect/angular@X.Y.Z` with `dragselect@X.Y.Z`.
+- Needs Angular 19 or newer.
+- Works with and without zone.js. Moving the mouse doesn't trigger change detection.
+- Works with SSR. Nothing runs on the server.
+- If you remove a setting, it keeps its last value. To reset it, pass the default (e.g. `draggability: true`).
+- More than one `dragSelect` on a page? Give each one a `dsArea`. Otherwise they all listen to the whole page and mess up each other's selection.
+- Content passed in with `<ng-content>` can't see a `dragSelect` from inside your component. Put `dragSelect` on the component's tag instead: `<app-list dragSelect>…</app-list>`.
+
+---
+
+## With an Area
+
+- You can restrict DragSelect to only operate within a certain area
+- This Area will also be auto-scrollable by default
+
+For example:
+
+```javascript
+new DragSelect({
+  selectables: document.getElementsByClassName('selectable'),
+  area: document.getElementById('area'),
+});
+```
+
+^ given this example you can only use the selection/drag inside of the container with the ID `area`.
+
+### Example
+
+Try it out yourself:
+
+<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/Nvobgq?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen />
+
+[Open this example on CodePen](https://codepen.io/ThibaultJanBeyer/pen/Nvobgq)
+
+---
+
+## Advanced Overrides (Custom Selection Filter)
+
+DragSelect is very extensible, you can even override some publicly exposed methods to alter internal behavior like i.e. dragging or selecting. In this example we are going to look at selecting specifically. You can find all possible overrides under [Overrides](/docs/API/Overrides).
+
+> Disclaimer: By hooking into the selection you’re modifying internal behavior. Don’t expect support for any misbehaving caused by hooking in. We will try our best to not introduce breaking changes the over-rideable methods but if you use them, it’s best if you double check each time before updating the library even on minor changes.
+
+The logic for actually selecting elements is straight forward, it all happens [in the Selection module](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/DragSelect/src/modules/Selection.js).
+
+You can change the selection-process during the selection process (not before, not after) by overwriting the `filterSelected` method.
+But why? Well, you might want to change the selection logic to your likings.
+One use-case we had for example is to filter out the parent elements of the selected elements to prevent multiple elements laying on top of each other to be all selected/deselected together. Overwriting is perfect for this use-case since the recommended [Methods](/docs/API/Methods) or [Events](/docs/API/Events) are not applicable here.
+
+We’ll take an easier example to show how you can overwrite certain methods:
+
+### Have a look at `.filterSelected()`
+
+The method is called after the elements that are going to be selected/unselected have already been collected.
+Just before the actual selection happens.
+It gets called with the following arguments:
+
+```ts
+Selection.filterSelected = ({
+  select,
+  unselect,
+  selectorRect,
+}: {
+  select: Map<DSElement, DSBoundingRect>; // the elements and their bounds that are supposed to be selected
+  unselect: Map<DSElement, DSBoundingRect>; // the elements and their bounds that are supposed to be de-selected (or un-selected)
+  selectorRect: DSBoundingRect; // the bounds of the selector element
+}) => ({ select, unselect }); // it expects you to return an object that holds the select and unselect keys of same type as the arguments
+```
+
+### Use the `.filterSelected()`
+
+Now that we know how the method looks like,
+we can use it:
+
+```ts
+// initialize like you do before
+const ds = new DragSelect({…})
+
+// then you can override the exposed internal method
+ds.Selection.filterSelected = ({ selectorRect, select: _select, unselect: _unselect }: {
+  select:Map<DSElement,DSBoundingRect>,
+  unselect:Map<DSElement,DSBoundingRect>,
+  selectorRect:DSBoundingRect
+}) => {
+  // here we just re-assign the maps to new variables so we can modify them without changing the original ones
+  const select = new Map(_select), unselect = new Map(_unselect)
+  // now we can do whatever, in this example we just filter out all elements that have a red color style if there is more than five selected elements in total
+  select.forEach((boundingRect, element) => {
+    if(element.style.color === 'red' && select.size > 5) {
+      select.delete(element)
+      unselect.set(element, boundingRect)
+    }
+  })
+  // we return the modified maps
+  return { select, unselect }
+}
+```
+
+That’s it, you’ve successfully overwritten a method to add your custom filter to the selection logic. Now go celebrate that you’ve just learned something new! 🎉
+
+---
+
+## Custom Drag and Drop
+
+> Note: this functionality is still a work in progress. If you find what you want to do is not working, please give your use-case and feedback in the [Discussions](https://github.com/ThibaultJanBeyer/DragSelect/discussions) section and we’ll try to support it.
+
+DragSelect comes with a build-in Drag and Drop functionality. However, the ideal is to be as extensible as possible. So the usage of other libraries in combination with DragSelect is definitively welcome! There is multiple ways to achieve this:
+
+### Using `.stop()`
+
+```js
+// 1. Setup DragSelect:
+const ds = new DragSelect({ 
+  // if your library can not handle keyboard dragging
+  keyboardDragSpeed: 0, 
+  keyboardDrag: false,
+  // …your other settings…
+})
+
+// 2. Setup the other library. Here we call it MyCustomDrag
+const myCustomDrag = new MyCustomDrag({/* …your settings… */})
+
+// 3. Stop DragSelect dragging
+ds.subscribe('DS:start:pre', ({ items, isDragging, isDraggingKeyboard }) => {
+  if(isDragging) {
+    ds.stop(false, false)
+    // if anything is necessary in MyCustomDrag, here is the place
+    myCustomDrag.start(items)
+  }
+})
+
+// 4. ReStart DragSelect when the other library is done dragging
+myCustomDrag.subscribe('finished', () => ds.start())
+```
+
+If your library has no callback you could try to disable, then re-enable directly:
+
+```js
+ds.subscribe('DS:start:pre', ({ isDragging, isDraggingKeyboard }) => {
+   if(isDragging) {
+     ds.stop(false, false)
+     setTimeout(ds.start)
+   }
+})
+```
+
+*Note: it is important to debounce (i.e. with `setTimeout(ds.start)`) the start function if it's called within a single subscriber so that all the scheduled callbacks finish triggering before we start again.*
+
+### Using `.break()`
+
+> /!\ only use break when you know what you're doing
+
+In case you want to build something completely custom on top of DragSelect, we got you covered! You can use `.break` for this.  
+
+This utility to override DragSelects internal functionality allowing you to write it all yourself: You can write your own drag and drop, if you want, you can even write your own selection:  
+
+```js
+ds.subscribe('DS:update:pre', ({ isDragging, isDraggingKeyboard }) => {
+  if(isDragging || isDraggingKeyboard) {
+    ds.break()
+    /* your custom logic for drag handling here. */
+  } else {
+    ds.break()
+    /* your custom logic for selection handling here. */
+  }
+}
+```
+
+---
+
+## With DropZones
+
+DropZones are areas where you can drop the selected elements into. 
+- Set it up via [Settings](/docs/API/Settings#dropping).
+- When dropped you’ll find a `dropTarget` in the [DS:end](/docs/API/Events#callback-object) event callback.
+- You can also use some useful [methods](/docs/API/Methods#dropzones) related to DropZones.
+- Using DropZones will also automatically add respective [classes](/docs/API/CSS-Classes#drop).
+
+Here is an example:  
+
+### The Setup
+
+Setting up is easy, here is an example:
+```js
+const ds = new DragSelect({
+  …
+  // 1. Add DropZones settings
+  dropZones: [
+    // 2. By default all selectables can be dropped into a zone
+    { element: document.querySelector('#zone-1'), id: 'zone-1' },
+    // 3. However, if you want to restrict that, add the `droppables` key to the zone
+    { element: document.querySelector('#zone-2'), id: 'zone-2', droppables: document.querySelectorAll('#item-2,#item-4') }, // here, only items 2 & 4 are droppable into zone 2
+  ],
+  // 4. There are also other customization you can do, for example:
+  dropInsideThreshold: 1, // 1 = has to be 100% inside the dropzone, 0.5 = 50% inside, 0 = just touching is fine
+});
+```
+
+Find all possible keys in the [DropZone Settings](/docs/API/Settings#dropping) section.
+
+### Adding and removing zones later
+
+`setSettings({ dropZones })` replaces all zones, and the other zones forget what was dropped in them. To add or remove one zone without touching the others (since 3.2.0):
+
+```js
+ds.addDropZones({ element: document.querySelector('#zone-3'), id: 'zone-3' });
+ds.removeDropZones('zone-3'); // by id or by element
+ds.getDropZones(); // all zones, as you passed them in
+```
+
+### The DS:end callback
+Now you will see the `dropTarget` in the `DS:end` callback, which represents the topmost Zone that was targeted by the mouse on drag release. Here is an example on how you could use it:
+
+```js
+ds.subscribe('DS:end', ({
+  // 4. If successfully drop by mouse, you’ll find a dropTarget key
+  dropTarget: {
+    // 5. It is an object with following keys
+    id: "zone-1", // The ID of the zone
+    element: <node />, // The DropZone element itself
+    droppables: [ <node />, … ], // The elements that can potentially be dropped into that zone
+    itemsDropped: [ <node />, … ], // elements that were selected when the mouse targeted the zone on drop
+    itemsInside: [ <node />, … ] // elements that are actually inside the bounds of the dropzone
+  }) => {
+  
+  // 6. We can check which items are dropped into the zone and do something
+  if(dropTarget?.itemsDropped?.length) {
+    console.log('Dropped', dropTarget.itemsDropped, 'into', dropTarget.id);
+  }
+})
+```
+
+Check out the [callback object API](/docs/API/Events#callback-object) for more information.
+
+### The methods
+
+You can also anytime use the [DropZone specific methods](/docs/API/Methods#dropzones) to get what you need. For example: 
+
+```js
+console.log('items dropped into zone-1', ds.getItemsDroppedByZoneId('zone-1'))
+console.log('items inside zone-2', ds.getItemsInsideByZoneId('zone-1'))
+```
+
+Check out the [DropZone specific methods](/docs/API/Methods#dropzones) for more information.
+
+### Example
+
+Try it out yourself:
+
+<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/bGKgVxp?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen />
+
+[Open this example on CodePen](https://codepen.io/ThibaultJanBeyer/pen/bGKgVxp)
+
+---
+
+## Mobile/Touch usage
+
+**Congratulations, DragSelect can be used on a mobile by default 🎉**
+
+Keep in mind that using DragSelect on a mobile/touch device will also turn off the default scroll behavior (on `click` + `drag` interaction).
+
+In 99% of the use-cases, this is what you want.
+
+However, if DragSelect is only one part of a website, and you still want to be able to scroll the page on mobile, you can use an `area` [see settings](/docs/API/Settings). This way the default scroll behavior remains intact for the rest of the page.
+
+For example like this:
+
+```js
+const ds = new DragSelect({
+  selectables: document.querySelectorAll('.selectable'),
+  area: document.querySelector('#area'),
+});
+```
+
+---
+
+## Publish & Subscribe
+
+DragSelect uses a pub/sub pattern under the hood and exposes some friendly methods.
+You totally can subscribe to the internal events but we suggest only subscribing to the public ones because the internal ones could change in future and break your code, hence we are only documenting the public ones in the [Events API Section](/docs/API/Events). If you feel any public event is missing or stumble upon an internal one that you would like to use, [open an issue](https://github.com/ThibaultJanBeyer/DragSelect/issues) in github and we’ll add it.
+
+The pub/sub basically offers 3 Methods: `subscribe`, `unsubscribe` and `publish`.
+If you are familiar with `.addEventListener` in the browser, this is the same concept.
+
+Here is an Example on how you would use it:
+
+```js
+const ds = new DragSelect({…})
+// Subscribe to an event
+const subscriptionId = ds.subscribe('DS:end', (callback_object) => { /* do something */ })
+// If you stored the ID of that handler you can just unsubscribe by passing the ID
+ds.unsubscribe('DS:end', null, subscriptionId)
+// If you want to publish some event yourself, you can totally do that aswell
+ds.publish('DS:end', { foo: 'bar' })
+```
+
+Let’s say you can’t store the subsciptionId, then you can also pass in the handler like so:
+
+```js
+const ds = new DragSelect({…})
+const callbackHandler = (callback_object) => { /* do something */ }
+ds.subscribe('DS:end', callbackHandler) // starts listening to the events
+ds.unsubscribe('DS:end', callbackHandler) // stops listening to the events
+```
+
+So to unsubscribe you have to either pass in the exact same method or the ID that the subscriber returns. Unsubscribing something that is not subscribed does nothing.
+
+You can find a list of all [public event_names](/docs/API/Events#public-events) as well as all potential [callback_object properties](/docs/API/Events#callback-object) in the [Events documentation](/docs/API/Events)
+
+---
+
+## React
+
+DragSelect has official React bindings: [`@dragselect/react`](https://www.npmjs.com/package/@dragselect/react). Select things by dragging a box around them, like on your desktop, then you can even drag and drop them.
+
+```bash
+npm i dragselect @dragselect/react
+```
+
+### Quick start
+
+```tsx
+import { DragSelectProvider, useSelectable, useSelection } from '@dragselect/react'
+
+function Gallery({ photos }) {
+  return (
+    <DragSelectProvider>
+      {photos.map((photo) => (
+        <Photo key={photo.id} photo={photo} />
+      ))}
+      <Toolbar />
+    </DragSelectProvider>
+  )
+}
+
+function Photo({ photo }) {
+  const ref = useSelectable()
+  return <img ref={ref} src={photo.url} data-id={photo.id} />
+}
+
+function Toolbar() {
+  const selected = useSelection()
+  return <p>{selected.length} selected</p>
+}
+```
+
+That's it. Drag over the photos and `Toolbar` shows how many are selected.
+
+### 1. `DragSelectProvider` goes around your list
+
+Everything inside it shares one DragSelect. You can pass any of the [settings](/docs/API/Settings):
+
+```tsx
+<DragSelectProvider settings={{ selectedClass: 'is-selected', draggability: false }}>
+  <FileList />
+</DragSelectProvider>
+```
+
+The settings are read once. To change them later, use `useDragSelect()?.setSettings({...})`.
+
+### 2. `useSelectable` goes on each item
+
+It gives you a ref. Put it on the element, and put whatever you need to find the item again on the element too, e.g. a `data-id`:
+
+```tsx
+function File({ file }) {
+  const ref = useSelectable()
+  return <li ref={ref} data-id={file.id}>{file.name}</li>
+}
+```
+
+Selecting doesn't re-render your items. Selected items get the `ds-selected` class, so style them with CSS.
+
+### 3. The selection
+
+`useSelection` gives you the selected elements. Only the component that calls it re-renders when the selection changes. Read your ids back with `el.dataset.id`:
+
+```tsx
+function DeleteButton({ onDelete }) {
+  const selected = useSelection<HTMLLIElement>()
+  return (
+    <button
+      onMouseDownCapture={e => e.stopPropagation()}
+      onTouchStartCapture={e => e.stopPropagation()}
+      disabled={!selected.length}
+      onClick={() => onDelete(selected.map((el) => el.dataset.id))}
+    >
+      Delete {selected.length}
+    </button>
+  )
+}
+```
+
+To change the selection, `useDragSelect()` gives you the DragSelect instance itself. It has all the [methods](/docs/API/Methods), like `setSelection`, `addSelection` or `clearSelection`. It's `undefined` on the first render and on the server:
+
+```tsx
+function SelectAll() {
+  const ds = useDragSelect()
+  return <button onClick={() => ds?.setSelection(ds.getSelectables())}>Select all</button>
+}
+```
+
+### 4. Events
+
+`useDragSelectEvent` listens to any [DragSelect event](/docs/API/Events). It stops listening when the component unmounts, and it always calls your latest callback, so you don't need `useCallback`:
+
+```tsx
+useDragSelectEvent('DS:start', ({ items }) => console.log('started with', items.length))
+```
+
+### 5. Area and drop zones
+
+By default you can start a selection anywhere on the page. `useDragSelectArea` limits it to one element:
+
+```tsx
+function FileList({ files }) {
+  const ref = useDragSelectArea()
+  return (
+    <ul ref={ref}>
+      {files.map((file) => <File key={file.id} file={file} />)}
+    </ul>
+  )
+}
+```
+
+`useDropZone` turns an element into a place you can drop things on. Here is a folder that tells you which files were dropped on it:
+
+```tsx
+function Folder({ id, name, onDrop }) {
+  const ref = useDropZone(id)
+
+  useDragSelectEvent('DS:end', ({ items, isDragging, dropTarget }) => {
+    if (isDragging && dropTarget?.id === id) onDrop(items.map((el) => el.dataset.id))
+  })
+
+  return <div ref={ref}>📁 {name}</div>
+}
+```
+
+The id also ends up in CSS classes, so you can style things. More about that in [drop zones](/docs/guided-examples/DropZones):
+
+```css
+/* zones while something is being dragged */
+.ds-dropzone-ready { outline: 2px dashed }
+/* items dropped on the "archive" zone */
+.ds-dropped-target-archive { opacity: 0.5 }
+```
+
+### 6. Keyboard
+
+If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys. More in [accessibility](/docs/guided-examples/Accessibility).
+
+### Good to know
+
+- The version matches DragSelect. Use `@dragselect/react@X.Y.Z` with `dragselect@X.Y.Z`.
+- Needs React 18 or newer.
+- Works with the Next.js App Router (the package is marked `'use client'`) and with SSR.
+- More than one `DragSelectProvider` on a page? Give each one a `useDragSelectArea`. Otherwise they all listen to the whole page and mess up each other's selection.
+- The refs are plain functions, so you can also call them yourself, e.g. `ref(element)` once an animation is done.
+
+You can see it in use on this site's [demo window](https://github.com/ThibaultJanBeyer/DragSelect/blob/main/www/src/components/win95/Body/Body.tsx).
+
+---
+
+## Simple
+
+The simplest possible use-case. Is to choose which elements can be selected:
+
+```javascript
+new DragSelect({
+  selectables: document.getElementsByClassName('selectable-nodes')
+});
+```
+
+That’s it. Check it out:
+
+<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/prpwYG?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen />
+
+[Open this example on CodePen](https://codepen.io/ThibaultJanBeyer/pen/prpwYG)
+
+---
+
+## Updating Settings
+
+*DragSelect is hyper customizable*: all properties are optional, you can totally just pass an empty object and set the settings later.
+
+### setSettings
+
+Any setting can be updated/added after the initialization by using the `setSettings` method. Here is an example updating the `area` and the `selectables`:
+
+```js
+const ds = new DragSelect({})
+// And set any settings at any point in time
+ds.setSettings({
+  selectables: document.getElementsByClassName('selectable-nodes'),
+  area: document.getElementById('area')
+})
+```
+
+See the [Settings](../API/Settings) page for a list of all possible options.
+
+---
+
+## CSS Classes (Styling)
+
+DragSelect adds some useful classes to the elements by default.
+*note: you can change every class name via settings, see [Settings](Settings) section.*
+
+### Selection
+| name | trigger |
+|--- |--- |
+| `ds-selected` | On items that are selected
+| `ds-hover` | On items that are currently hovered
+| `ds-selector` | On the selector element
+| `ds-selector-area` | The overlay where the selector resides in
+| `ds-selectable` | On items that can be selected
+
+### Drop
+| name | trigger |
+|--- |--- |
+| `ds-droppable` | On item that can be dropped into at least one zone
+| `ds-droppable-${id}` | On item that can be dropped into a zone with specific identifier, `${id}` will be replaced by the corresponding zone.id
+| `ds-dropped-target` | On an item corresponding the target dropzone
+| `ds-dropped-target-${id}` | On an item corresponding the target dropzone with specific identifier, `${id}` will be replaced by the corresponding zone.id
+| `ds-dropped-inside` | On an item that is within its dropzone bounds after a drop
+| `ds-dropped-inside-${id}` | On an item that is within its dropzone bounds after a drop with specific identifier, `${id}` will be replaced by the corresponding zone.id
+
+### DropZone
+| name | trigger |
+|--- |--- |
+| `ds-dropzone` | On each dropZone
+| `ds-dropzone-ready` | On corresponding dropZone when corresponding item is being dragged
+| `ds-dropzone-target` | On dropZone when it was target of a successful drop
+| `ds-dropzone-inside` | On dropZone that has elements inside after any drop
+
+---
+
+## Events (Pub/sub)
+
+DragSelect follows a PubSub pattern. It will emit useful events you can subscribe to like this:
+
+```js
+const ds = new DragSelect({});
+ds.subscribe('<event_name>', (callback_object) => {})
+```
+
+### Public Events
+
+|event_name |callback_object |description |
+|--- |--- |---
+|`DS:end` |`{ items, event, isDragging, isDraggingKeyboard, dropTarget, … }` |Fired after the selection (i.e. on mouse-up). 
+|`DS:start` |`{ items, event, isDragging, isDraggingKeyboard, … }` |Fired when the selection starts (i.e. on mouse-down). 
+|`DS:update` |`{ items, event, isDragging, isDraggingKeyboard, … }` |Fired when the mouse moves while dragging (i.e. on mouse-move).
+|`DS:scroll` |`{ items, isDragging, scroll_directions, scroll_multiplier, … }` |Fired when the area is auto-scrolled (i.e. cursor on a corner of the area).
+|`DS:select` |`{ items, item, isDragging, … }` |Fired when an element is added to the selection.
+|`DS:unselect` |`{ items, item, isDragging, … }` |Fired when an element is removed from the selection.
+|`DS:added` |`{ items, item, isDragging, … }` |Fired when an element is added from the list of selectable elements.
+|`DS:removed` |`{ items, item, isDragging, … }` |Fired when an element is removed from the list of selectable elements.
+
+> Note: all your callbacks subscribers will run after the internal code ran. If you want to run something before everything else, use the `:pre` postfix. I.e. `DS:start:pre` is an event that runs before any internal start logic.
+
+> Note: there are way more so called "internal events" but hooking to those is not recommended since they might change in future and break your implementation.
+
+### Callback Object
+
+The callback object is made up of different parts depending of the event. All properties are not guaranteed so it is important to check for their availability before using them. I.e. like this:
+
+```js
+const ds = new DragSelect({});
+ds.subscribe('DS:end', (callback_object) => {
+  if(callback_object.items) {
+    // do something with the items
+  }
+})
+```
+
+|callback_object_keys |type |description |
+|--- |--- |---
+| `event` | MouseEvent &#124 TouchEvent &#124 KeyboardEvent &#124 any | The native browser event, the type is depending on the situational context
+| `items` | [ HTMLElement &#124 SVGElement &#124 any ] | Current selected elements
+| `item` | HTMLElement &#124 SVGElement &#124 any | The single element currently being interacted with if any
+| `isDragging` | boolean | If true, the user is dragging the selected elements, if false the user is selecting
+| `isDraggingKeyboard` | boolean | If true, the user is dragging the selected elements with the keyboard
+| `scroll_directions` | [ 'top' &#124 'bottom' &#124 'left' &#124 'right' &#124 undefined ] | The direction in which the event is happening (i.e. scroll direction)
+| `scroll_multiplier` | number | The scrolling speed
+| `dropTarget` | \{ &nbsp;&nbsp;`id`: string, &nbsp;&nbsp;`element`: HTMLElement &#124; SVGElement &#124; any, &nbsp;&nbsp;`droppables`: [ HTMLElement &#124; SVGElement &#124; any ], &nbsp;&nbsp;`itemsDropped`: [ HTMLElement &#124; SVGElement &#124; any ], &nbsp;&nbsp;`itemsInside`: [ HTMLElement &#124; SVGElement &#124; * ] \} | dropZone in which the droppable elements were dropped into. `id`: is the identifier string of the zone. `droppables`: the elements that are assigned to this zone. `itemsDropped`: all items that were dropped on the target. `itemsInside`: all items that are within the bounds of the zone |
+| `key` | string | Pressed key (lowercase)
+| `settings` | [Settings](Settings) | The settings being updates/manipulated/passed, also holds the previous value. i.e. updating selectorClass will publish `{ settings: { selectorClass: 'newVal', 'selectorClass:pre': 'oldVal' } }`
+
+> Note: all object keys are optional and might not be available, depending on the event type. So make sure to check for availability first
+
+---
+
+## Methods
+
+DragSelect exposes some useful methods.
+When the function is saved into a variable `const ds = new DragSelect()` you have access to all its inner functions. You can simply use them like this:
+
+```js
+const ds = new DragSelect({});
+ds.methodName(method_props);
+```
+
+### Methods
+
+#### Functionality
+| method | properties | usage |
+|--- |--- |--- |
+| `stop` | / | Will teardown/stop the whole functionality
+| `start` | / | Reset the functionality after a stop/teardown
+| `break` | / | Utility to override DragSelect internal functionality. Breaks out of current flow. Read [Custom Drag and Drop](/docs/guided-examples/CustomDnD) for more info.
+
+#### Pub/Sub
+| method | properties | usage |
+|--- |--- |--- |
+| `subscribe` | (event_name, callback:(callback_object) => void):number | Subscribes to an event, see the [Events API](Events) for infos on the names and callback_object.
+| `unsubscribe` | (event_name, callback, id) | Unsubscribes from an event, either pass the exact same callback method as when subscribing or the ID which is returned from the subscribe method
+| `publish` | (event_name, callback_object:any) | Publishes an event, see the [Events API](Events) for infos on the names and callback_object.
+Read the [Events API](Events) for more information
+
+#### Settings
+| method | properties | usage |
+|--- |--- |--- |
+| `setSettings` | [Settings](Settings) | Update any setting dynamically, see [Updating Settings](/docs/guided-examples/Updating-Settings)
+
+#### Interaction
+| method | properties | usage |
+|--- |--- |--- |
+| `isDragging` | / | Whether the user is currently drag n dropping elements (instead of selection)
+| `isMultiSelect` | event:KeyboardEvent|MouseEvent|TouchEvent (optional) | Whether the multi-select key is currently pressed
+
+#### Selection
+| method | properties | usage |
+|--- |--- |--- |
+| `getSelection` | / | Returns all currently selected nodes 
+| `addSelection` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, triggerCallback:boolean, dontAddToSelectables:boolean | adds one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true) 
+| `removeSelection` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, triggerCallback:boolean, removeFromSelectables:boolean | removes one or multiple elements to the selection. If boolean is set to true: callback will be called afterwards. If last boolean is set to true, it also removes them from the possible selectable nodes if they were. 
+| `toggleSelection` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, triggerCallback:boolean, removeFromSelectables:boolean | toggles one or multiple elements to the selection. If element is not in selection it will be added, if it is already selected, it will be removed. If `triggerCallback` is set to true: callback will be called afterward. If `removeFromSelectables` is set to true: will NOT add elements to the list of selectable elements but will remove elements from the selectables if they are toggled off. (By default the toggling will add elements to the list of selectables and will not remove them).
+| `setSelection` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, triggerCallback:boolean, dontAddToSelectables:boolean |sets the selection to one or multiple elements. If boolean is set to true: callback will be called afterwards. Adds them to the selectables if they're not yet in the set (can be turned off by setting the last boolean to true)
+| `clearSelection` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, triggerCallback:boolean | Removes all elements from the selection. If callback is set to true: callback will be called afterwards. |
+| `clearSelection` | triggerCallback:boolean | Unselect / Deselect all current selected Nodes |
+
+#### Selectables
+| method | properties | usage |
+|--- |--- |--- |
+| `addSelectables` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, addToSelection:boolean | Adds elements that can be selected. Don’t worry, nodes are never added twice. `addToSelection`: elements will also be added to current selection.
+| `removeSelectables` | elements:[HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement, removeFromSelection:boolean | Remove elements from the set of elements that can be selected. `removeFromSelection`: elements will also be removed from current selection.
+| `getSelectables` | / | Returns array with all nodes that can be selected.
+
+#### Pointer
+| method | properties | usage |
+|--- |--- |--- |
+| `getInitialCursorPosition` | / | Returns the registered x, y coordinates the cursor had when first clicked 
+| `getCurrentCursorPosition` | / | Returns current x, y coordinates of the cursor 
+| `getPreviousCursorPosition` | / | Returns last registered x, y coordinates of the cursor (after last end callback) 
+| `getInitialCursorPositionArea` | / | Returns the registered x, y coordinates relative to the area the cursor had when first clicked 
+| `getCurrentCursorPositionArea` | / | Returns current x, y coordinates of the cursor relative to the area
+| `getPreviousCursorPositionArea` | / | Returns last registered x, y coordinates of the cursor relative to the area (after last end callback) 
+
+#### DropZones
+| method | properties | usage |
+|--- |--- |--- |
+| `getZoneByCoordinates` | `coordinates: { x: number, y: number }` (optional) | Returns the first drop target under the current mouse position, or, if provided at the coordinates.
+| `getItemsDroppedByZoneId` | zoneId:string | Returns the items dropped into a specific zone (by zone.id)
+| `getItemsInsideByZoneId` | zoneId:string, addClasses:boolean | Returns the items that are visually inside a specific zone (by zone.id). `addClasses`: also add the [respective CSS classes](CSS-Classes) to those elements if they don’t have them yet.
+| `getDropZones` | / | Returns the current drop zones (`{ id, element, droppables }`)
+| `addDropZones` | zones:[DropZone] &#124; DropZone | Adds one or more drop zones without touching the others (what was dropped in them stays). A zone with the same id or element replaces the old one. Returns the current drop zones.
+| `removeDropZones` | zones:[string &#124; HTMLElement] &#124; string &#124; HTMLElement | Removes one or more drop zones, by id or by element, without touching the others. Returns the current drop zones.
+
+The `dropZones` [setting](Settings) still replaces all of them, including the ones you added.
+
+### Example
+
+```js
+const ds = new DragSelect({});
+ds.setSettings({ selectables: document.querySelectorAll('.selectable') });
+ds.getSelection();
+```
+
+---
+
+## Overrides & Exposed Methods (Advanced)
+
+> Disclaimer: By hooking into the selection you’re modifying internal behavior. Don’t expect support for any misbehaving caused by hooking in. We will try our best to not introduce breaking changes the overrideable methods but if you use them, it’s best if you double check each time before updating the library even on minor changes.
+
+DragSelect exposes some internal methods that are available to override. It is not recommended to use them unless [Methods](Methods) or [Events](Events) are not possible for your use-case and you know what you are doing.
+
+For a concrete example on how to use the overrides see [CustomSelectionFilter](/docs/guided-examples/Custom-Selection-Filter-Override).
+
+### [.Selection](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/DragSelect/src/modules/Selection.js)
+
+| method           | properties                                                                                                                         | returns                                                                                          | usage                                                                                                                                                                                                              |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `filterSelected` | \{ select: Map&lt;DSElement, DSBoundingRect&gt;, unselect: Map&lt;DSElement, DSBoundingRect&gt;, selectorRect: DSBoundingRect \} | \{ select: Map&lt;DSElement, DSBoundingRect&gt;, unselect: Map&lt;DSElement, DSBoundingRect&gt; \} | Can be overridden to apply further filtering logic after the items to select are identified but before they actually get selected. Is expected to return the select / unselect maps in the same shape as passed in |
+
+#### Example
+
+```js
+const ds = new DragSelect({});
+ds.Selection.filterSelected = (obj) => obj;
+```
+
+### [.Drag](https://github.com/ThibaultJanBeyer/DragSelect/blob/master/DragSelect/src/modules/Drag.js)
+
+| method               | properties                                                                  | returns                                                                     | usage                                                                                                                                                                                            |
+| -------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `filterDragElements` | \{ elements: DSElement[], direction: \{ x: number, y: number \}, \} | \{ elements: DSElement[], direction: \{ x: number, y: number \}, \} | Can be overridden to apply further filtering logic after the items to move are identified but before they actually get moved. Is expected to return the elements in the same shape as passed in. |
+
+#### Example
+
+```js
+const ds = new DragSelect({});
+ds.Drag.filterDragElements = (obj) => obj;
+```
+
+### Exposed Helper Methods
+
+| method        | properties                                                                                                                                   | usage                                                                                                                                                        |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `isCollision` | `el1: { left: number, right: number, top: number, bottom: number }`, `el2: { left: number, right: number, top: number, bottom: number }`, `percent: number` | Axis-Aligned Bounding Box Collision Detection. ([Docs](https://github.com/ThibaultJanBeyer/DragSelect/tree/master/DragSelect/src/methods/isCollision.js#L3)) |
+
+#### Example
+
+```js
+DragSelect.isCollision(
+  document.querySelector("#foo").getBoundingClientRect(),
+  document.querySelector("#bar").getBoundingClientRect(),
+  1
+);
+```
+
+### Example
+
+```js
+const ds = new DragSelect({});
+ds.Selection.filterSelected = (obj) => {
+  // do something here
+  console.log("filterSelected", obj);
+  // you can also use helper methods:
+  if (
+    DragSelect.isCollision(
+      document.querySelector("#foo").getBoundingClientRect(),
+      obj.selectorRect,
+      1
+    )
+  ) {
+    console.log("#foo is inside the selector");
+  }
+  // return what needs to be returned
+  return obj;
+};
+```
+
+### Something is missing?
+
+Feel free to open a [feature request](https://github.com/ThibaultJanBeyer/DragSelect/issues/new?assignees=&labels=&template=feature_request.md) for more overrides.
+
+---
+
+## Settings
+
+aka `Constructor Properties` aka `Properties` aka `options`.  
+
+```js
+const ds = new DragSelect({
+  selectables: document.querySelectorAll('.selectable'),
+});
+```
+
+*DragSelect is hyper customizable*: all properties are optional, you can totally just pass an empty object and set the settings later. See [updating-settings](../guided-examples/Updating-Settings)
+
+### Selecting
+| property              | type                                                    | default                     | description
+|--- |--- |--- |---
+| `selectables`         | [HTMLElement &#124; SVGElement] &#124; HTMLElement &#124; SVGElement | []        | The elements that can be selected
+| `area`                | HTMLElement &#124; SVGElement &#124; Document       | document                     | The square in which you are able to select the elements
+| `selector`            | HTMLElement                                             | Is Auto-Created              | The square that will be used to draw the selection.
+| `selectionThreshold`  | number                                                  | 0                            | How much % of the element has to be selected to be considered selected (0 = just touching, 1 = fully inside the selection)
+| `multiSelectMode`     | boolean                                                 | false                        | Add newly selected elements to the selection instead of replacing them
+| `multiSelectToggling` | boolean                                                 | true                         | Whether or not to toggle already active elements while multi-selecting (default mimics MacOS behavior)
+| `multiSelectKeys`     | ['Shift'&#124;'Control'&#124;'Meta'&#124;string]  | ['Control', 'Shift', 'Meta'] | Keys for multi-selection. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)). The best support is given for <kbd>Control</kbd>, <kbd>Shift</kbd> and <kbd>Meta</kbd>. Provide an empty array `[]` if you want to turn off the functionality.
+
+### AutoScroll
+| property              | type                                                    | default                     | description
+|--- |--- |--- |---
+| `autoScrollSpeed`     | number                                                  | 5                            | The speed in which the area scrolls while selecting (if available). The unit is arbitrary (aims for 30fps). Set to `0.0001` to disable auto-scrolling
+| `overflowTolerance`   | `{ x: number, y: number }` | `{ x: 25, y: 25 }` | Tolerance for autoScroll (how close one has to be near an edges for autoScroll to start)
+
+### Dragging
+| property       | type    | default | description
+|--- |--- |--- |---
+| `draggability` | boolean | true    | When a user is dragging on an already selected element, the selection is dragged.
+| `useTransform` | boolean | true    | Whether to use the more performant hardware accelerated css transforms when dragging instead of the top/left positions.
+| `immediateDrag`| boolean | true    | Whether a selectable element is draggable before being selected or needs to be selected first
+| `keyboardDrag` | boolean | true    |Whether or not the user can drag with the keyboard (Accessibility).
+| `dragKeys` | `{ up: string[], down: string[], left: string[], right: string[] }` | `{ up: ['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'] }` |The keys available to drag element using the keyboard. Any key value is possible ([see MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)).
+| `keyboardDragSpeed` | number | 10  | The speed at which elements are dragged using the keyboard. In pixels per keyDown.
+| `useLayers` | boolean | true    | Whether to apply z-index when dragging and once dragged.
+
+### Dropping
+| property       | type    | default | description
+|--- |--- |--- |---
+| `dropZones` | `[{ id: string, element: HTMLElement, droppables?: DSElement[] \| DSElement }]` | [] | Zones with association of droppable items that can be dropped into them. `id`: any unique identifying string. `element`: is the dropzone itself. `droppables`: the elements that can be dropped into that zone. This is optional, by default it is all selectables
+| `dropInsideThreshold` | number | 1 | How much % of the item has to be inside the dropzone to be considered inside (0 = barely touching, 1 = completely inside)
+| `dropTargetThreshold` | number | 0 | How much % of the zone does the pointer has to be in to be considered a target (0 = anywhere in the zone, max: 0.5 = has to point at the center of the zone)
+
+### Styling
+| property              | type    | default            | description |
+|--- |--- |--- |--- |
+| `customStyles`        | boolean | false              | If true, no styles will be automatically applied to the selector element (except position: absolute)
+| `selectedClass`       | string  | ds-selected                | The class name assigned to the selected items.
+| `hoverClass`          | string  | ds-hover                | The class name assigned to the mouse hovered items.
+| `selectorClass`       | string  | ds-selector        | The class name assigned to the square selector helper.
+| `selectableClass`     | string  | ds-selectable                | The class name assigned to the elements that can be selected.
+| `selectorAreaClass`   | string  | ds-selector-area   | The class assigned to the square in which the selector resides. By default it's invisible
+| `droppedTargetClass`  | string  | `ds-dropped-target` & `ds-dropped-target-${zone.id}` | On an item corresponding the target dropzone. This is also the prefix for `ds-dropped-target-${zone.id}`.
+| `droppedInsideClass`  | string  | `ds-dropped-inside` & `ds-dropped-inside-${zone.id}` | On an item that is within its dropzone bounds after a drop. This is also the prefix for `ds-dropped-inside-${zone.id}`
+| `droppableClass`      | string  | `ds-droppable` & `ds-droppable-${zone.id}` | On element that can be dropped into at least one container. This is also the prefix for `ds-droppable-${zone.id}`
+| `dropZoneClass`       | string  | ds-dropzone        | On each dropZone
+| `dropZoneReadyClass`  | string  | ds-dropzone-ready  | On corresponding dropZone when element is dragged
+| `dropZoneTargetClass` | string  | ds-dropzone-target | On dropZone that has elements from any successful target drop
+| `dropZoneInsideClass` | string  | ds-dropzone-inside | On dropZone that has elements inside after any drop
+
+### Miscellaneous
+| property            | type                  | default | description
+|--- |--- |--- |---
+| `refreshMemoryRate`       | number (milliseconds) | 80      | Refresh rate on memoization, higher numbers mean better performance but more lag if elements are moving while interacting/selecting, lower numbers mean less lag but worse performance. If none of your DOMNodes are moving, you can set it to a very high number to increase performance
+| `usePointerEvents`        | boolean               | false   | Whether to use Pointer Events to replace traditional Mouse or Touch Events. Useful for tools like Google Blockly.
+| `zoom`                    | number                | 1       | Zoom scale factor (in case of using CSS style transform: scale() which messes with real positions). Unit scale zoom. (deprecated)
+
+### DragSelect Example with all Props
+
+Here is an example using all available settings for your convenience:
+
+```js
+new DragSelect({
+  selectables: document.querySelectorAll('.selectable'),
+  area: document.querySelector('#area'),
+  selector: document.querySelector('#selector'),
+  selectionThreshold: 0,
+  multiSelectMode: false,
+  multiSelectToggling: true,
+  multiSelectKeys: ['Control', 'Shift', 'Meta'],
+  autoScrollSpeed: 5,
+  overflowTolerance: { x: 25, y: 25 },
+  draggability: true,
+  useTransform: true,
+  immediateDrag: true,
+  keyboardDrag: true,
+  dragKeys: { up:['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'] },
+  keyboardDragSpeed: 10,
+  dropZones: [{ id: 'foo', element: document.querySelector('#zone') }],
+  dropInsideThreshold: 1,
+  dropTargetThreshold: 0,
+  customStyles: false,
+  selectedClass: 'ds-selected',
+  hoverClass: 'ds-hover',
+  selectorClass: 'ds-selector',
+  selectableClass: 'ds-selectable',
+  selectorAreaClass: 'ds-selector-area',
+  droppedTargetClass: 'ds-dropped-target',
+  droppedInsideClass: 'ds-dropped-inside',
+  droppableClass: 'ds-droppable',
+  dropZoneClass: 'ds-dropzone',
+  dropZoneReadyClass: 'ds-dropzone-ready',
+  dropZoneTargetClass: 'ds-dropzone-target',
+  dropZoneInsideClass: 'ds-dropzone-inside',
+  refreshMemoryRate: 80,
+  usePointerEvents: false,
+  zoom: 1,
+  useLayers: true,
+});
+```

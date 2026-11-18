@@ -1,0 +1,31 @@
+# Coding agents
+
+> Give your AI coding agent the real docs: a skill, docs in node_modules and llms.txt.
+
+AI coding agents often write DragSelect code from memory, and their memory is mostly of old versions. Here is how to give them the real docs.
+
+## 1. Install the skill
+
+```bash
+npx skills add ThibaultJanBeyer/DragSelect
+```
+
+This adds a DragSelect skill to your agent (Claude Code, Cursor, Codex and [many more](https://skills.sh)). The agent loads it when you work with DragSelect. It tells the agent:
+
+- which package to use (`dragselect`, `@dragselect/react` or `@dragselect/angular`)
+- to look things up in the docs of your installed version instead of guessing
+- the things that are easy to get wrong, like buttons inside the area or adding a single drop zone
+
+## 2. The docs are in your node_modules
+
+Every `dragselect` release has its docs as Markdown in `node_modules/dragselect/docs/`, for exactly the version you have installed. `@dragselect/react` and `@dragselect/angular` have everything in their README.
+
+So even without the skill, you can tell your agent: "read `node_modules/dragselect/docs` first".
+
+## 3. llms.txt
+
+For agents and tools that read the web:
+
+- [`/llms.txt`](https://dragselect.com/llms.txt): a list of all docs pages
+- [`/llms-full.txt`](https://dragselect.com/llms-full.txt): all docs in one file
+- Add `.md` to any docs page for its Markdown, e.g. [`/docs/API/Settings.md`](https://dragselect.com/docs/API/Settings.md)

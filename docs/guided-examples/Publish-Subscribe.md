@@ -1,0 +1,34 @@
+# Publish & Subscribe
+
+> Listen to events like DS:start and DS:end.
+
+DragSelect uses a pub/sub pattern under the hood and exposes some friendly methods.
+You totally can subscribe to the internal events but we suggest only subscribing to the public ones because the internal ones could change in future and break your code, hence we are only documenting the public ones in the [Events API Section](/docs/API/Events). If you feel any public event is missing or stumble upon an internal one that you would like to use, [open an issue](https://github.com/ThibaultJanBeyer/DragSelect/issues) in github and we’ll add it.
+
+The pub/sub basically offers 3 Methods: `subscribe`, `unsubscribe` and `publish`.
+If you are familiar with `.addEventListener` in the browser, this is the same concept.
+
+Here is an Example on how you would use it:
+
+```js
+const ds = new DragSelect({…})
+// Subscribe to an event
+const subscriptionId = ds.subscribe('DS:end', (callback_object) => { /* do something */ })
+// If you stored the ID of that handler you can just unsubscribe by passing the ID
+ds.unsubscribe('DS:end', null, subscriptionId)
+// If you want to publish some event yourself, you can totally do that aswell
+ds.publish('DS:end', { foo: 'bar' })
+```
+
+Let’s say you can’t store the subsciptionId, then you can also pass in the handler like so:
+
+```js
+const ds = new DragSelect({…})
+const callbackHandler = (callback_object) => { /* do something */ }
+ds.subscribe('DS:end', callbackHandler) // starts listening to the events
+ds.unsubscribe('DS:end', callbackHandler) // stops listening to the events
+```
+
+So to unsubscribe you have to either pass in the exact same method or the ID that the subscriber returns. Unsubscribing something that is not subscribed does nothing.
+
+You can find a list of all [public event_names](/docs/API/Events#public-events) as well as all potential [callback_object properties](/docs/API/Events#callback-object) in the [Events documentation](/docs/API/Events)

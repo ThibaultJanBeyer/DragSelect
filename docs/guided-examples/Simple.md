@@ -1,0 +1,17 @@
+# Simple
+
+> The simplest setup: tell DragSelect which elements can be selected.
+
+The simplest possible use-case. Is to choose which elements can be selected:
+
+```javascript
+new DragSelect({
+  selectables: document.getElementsByClassName('selectable-nodes')
+});
+```
+
+That’s it. Check it out:
+
+<iframe height="400" style={{ width: '100%' }} scrolling="no" title="DragSelect with Scrollable AREA" src="https://codepen.io/ThibaultJanBeyer/embed/prpwYG?default-tab=result&editable=true&theme-id=dark" frameBorder="no" loading="lazy" allowtransparency="true" allowFullScreen />
+
+[Open this example on CodePen](https://codepen.io/ThibaultJanBeyer/pen/prpwYG)

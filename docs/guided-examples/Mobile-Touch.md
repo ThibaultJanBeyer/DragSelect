@@ -1,0 +1,20 @@
+# Mobile/Touch usage
+
+> Use DragSelect on touch devices and keep the page scrollable.
+
+**Congratulations, DragSelect can be used on a mobile by default 🎉**
+
+Keep in mind that using DragSelect on a mobile/touch device will also turn off the default scroll behavior (on `click` + `drag` interaction).
+
+In 99% of the use-cases, this is what you want.
+
+However, if DragSelect is only one part of a website, and you still want to be able to scroll the page on mobile, you can use an `area` [see settings](/docs/API/Settings). This way the default scroll behavior remains intact for the rest of the page.
+
+For example like this:
+
+```js
+const ds = new DragSelect({
+  selectables: document.querySelectorAll('.selectable'),
+  area: document.querySelector('#area'),
+});
+```
