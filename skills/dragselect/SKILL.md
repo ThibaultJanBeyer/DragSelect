@@ -28,6 +28,37 @@ Check every API against the installed version before you use it:
 
 If you can't find something there, say so instead of guessing.
 
+## Prefer buttons for the items
+
+When you write new markup, prefer `<button type="button">` for the selectable items. It's not required: if the items already exist as other elements, or the user wants something else, keep them, but mention that they won't work with the keyboard. DragSelect doesn't manage focus, and a `<div>`, `<li>` or `<img>` can't be focused. With buttons:
+
+- Tab focuses an item, Enter or Space selects it (Shift/Ctrl/Cmd + Enter adds to the selection), and the arrow keys move the selection (`keyboardDrag`, on by default). Moving onto a drop zone drops there.
+- `type="button"` keeps it from submitting a surrounding form.
+
+```html
+<!-- plain JS -->
+<button type="button" class="item" data-id="1">File 1</button>
+```
+
+```tsx
+// React
+const ref = useSelectable()
+return <button type="button" ref={ref} className="item" data-id={file.id}>{file.name}</button>
+```
+
+```html
+<!-- Angular -->
+<button type="button" class="item" [dsSelectable]="file">{{ file.name }}</button>
+```
+
+Put images and other content inside the button (`<button type="button"><img …/></button>`), not the other way around. Reset the button look in CSS and keep a visible focus style:
+
+```css
+.item { border: 0; padding: 0; font: inherit; color: inherit; background: none; }
+.item:focus-visible { outline: 2px solid; }
+.item.ds-selected { /* selected look */ }
+```
+
 ## Things that are easy to get wrong
 
 - **Use the wrapper for React and Angular.** Don't call `new DragSelect()` in a `useEffect` or `ngOnInit` yourself. The wrappers handle creating it, cleaning up, re-renders, SSR and change detection.
@@ -41,9 +72,9 @@ If you can't find something there, say so instead of guessing.
 - **Drop zones.** `setSettings({ dropZones })` replaces all zones and resets what was dropped in them. To add or remove one zone, use `ds.addDropZones(...)` / `ds.removeDropZones(idOrElement)` (since 3.2.0). React: `useDropZone(id)`. Angular: `[dsDropZone]="id"`. Find out where things were dropped in `DS:end`: `if (isDragging && dropTarget?.id === 'trash')`.
 - **Clicks vs drags.** `DS:end` fires after selecting and after dragging. `isDragging` tells you which one it was.
 - **Styling.** DragSelect only sets classes, e.g. `ds-selected`, `ds-selector`, `ds-dropzone-ready`, `ds-dropped-target-<zoneId>`. Style those in CSS. The full list is in `docs/API/CSS-Classes.md`.
-- **Keyboard.** Make the items `<button type="button">`. Then Enter/Space selects and the arrow keys move the selection (`keyboardDrag`).
+- **Keyboard.** Items that aren't buttons can't be used with the keyboard, see "Prefer buttons for the items" above.
 - **Selection state in React.** `useSelection()` re-renders only the component that calls it. Selecting doesn't re-render the items, so don't put selection state into every item.
 
 ## After making changes
 
-Run the type checker. Then test in a browser: drag a box, click, Shift+click, drag items onto a drop zone, and use the keyboard.
+Run the type checker. Then test in a browser: drag a box, click, Shift+click, drag items onto a drop zone, and use the keyboard: Tab to an item, Enter to select it, arrow keys to move it onto a drop zone.

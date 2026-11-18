@@ -63,7 +63,7 @@ export default class Interaction<E extends DSInputElement> {
       this._start(event)
     )
     this.PS.subscribe('Interaction:init:pre', this._init)
-    this.PS.subscribe('Interaction:end:pre', ({ event }) => this._reset(event))
+    this.PS.subscribe('Interaction:end:pre', this._reset)
     this.PS.subscribe('Area:scroll', this.update)
   }
 
@@ -196,12 +196,11 @@ export default class Interaction<E extends DSInputElement> {
       isDragging: this.isDragging,
     })
 
-  _reset = (event: InteractionEvent | KeyboardEvent) => {
-    const { isDragging } = this
+  _reset = (data: DSInteractionPublishEventData) => {
     this.isInteracting = false
     this.isDragging = false
     this.removeDocEventListeners()
-    this.PS.publish('Interaction:end', { event, isDragging })
+    this.PS.publish('Interaction:end', data)
   }
 
   //////////////////////////////////////////////////////////////////////////////////////

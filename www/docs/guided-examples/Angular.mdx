@@ -27,7 +27,7 @@ type Photo = { id: string; url: string }
   template: `
     <div dragSelect [(dsSelection)]="selected" #ds="dragSelect">
       @for (photo of photos(); track photo.id) {
-        <img [dsSelectable]="photo" [src]="photo.url" />
+        <button type="button" [dsSelectable]="photo"><img [src]="photo.url" alt="" /></button>
       }
       <p>{{ selected().length }} selected</p>
       <button (click)="ds.selectAll()">Select all</button>
@@ -55,11 +55,11 @@ If the settings change, DragSelect gets the new ones. If you don't want an extra
 
 ## 2. `dsSelectable` goes on each item
 
-Give it the thing you want back when it's selected. That can be the whole object or just an id:
+Give it the thing you want back when it's selected. That can be the whole object or just an id. Use a `<button type="button">`, so it works with the [keyboard](#6-accessibility):
 
 ```html
-<li [dsSelectable]="file">{{ file.name }}</li>
-<li [dsSelectable]="file.id">{{ file.name }}</li>
+<button type="button" [dsSelectable]="file">{{ file.name }}</button>
+<button type="button" [dsSelectable]="file.id">{{ file.name }}</button>
 ```
 
 Items are compared with `===`. So if you reload your list and get new objects, use the id.
@@ -67,7 +67,7 @@ Items are compared with `===`. So if you reload your list and get new objects, u
 Selected items get the `ds-selected` class, so most of the time CSS is enough. If you need the state in the template, use `selected()`:
 
 ```html
-<li [dsSelectable]="file" #item="dsSelectable" [class.active]="item.selected()">…</li>
+<button type="button" [dsSelectable]="file" #item="dsSelectable" [class.active]="item.selected()">…</button>
 ```
 
 ## 3. The selection
@@ -176,7 +176,7 @@ The id also ends up in CSS classes, so you can style things. More about that in 
 
 Use `role="listbox"` on the wrapper and `role="option"` on the items, and `dsSelectable` keeps `aria-selected` up to date for screen readers. It only does that for roles where `aria-selected` is allowed (`option`, `gridcell`, `row`, `tab`, `treeitem`, `columnheader`, `rowheader`).
 
-If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys. More in [accessibility](/docs/guided-examples/Accessibility).
+Make your items `<button type="button">`s. Then people can focus them with Tab, select them with Enter or Space and move them with the arrow keys, also onto drop zones. A `<div>`, `<li>` or `<img>` can't be focused, so it doesn't work with the keyboard. More in [accessibility](/docs/guided-examples/Accessibility).
 
 ## Good to know
 

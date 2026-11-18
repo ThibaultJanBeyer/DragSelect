@@ -79,3 +79,39 @@ test('dropping on a dsDropZone folder updates component state', async ({ page })
   await expect(folder(page, 'Trash')).toContainText('Trash (1)')
   await expect(folder(page, 'Archive')).toContainText('Archive (2)')
 })
+
+test('dropping next to the folders takes items out of their folder', async ({ page }) => {
+  await item(page, 1).click()
+  await dragOnto(page, item(page, 1), folder(page, 'Archive'))
+  await expect(item(page, 1).locator('small')).toHaveText('archive')
+
+  // the empty space below the grid
+  const from = await item(page, 1).boundingBox()
+  const grid = await page.locator('.grid').boundingBox()
+  await drag(
+    page,
+    { x: from.x + from.width / 2, y: from.y + from.height / 2 },
+    { x: grid.x + 32, y: grid.y + grid.height + 20 }
+  )
+
+  await expect(log(page)).toContainText('dropped [1] on nothing')
+  await expect(item(page, 1).locator('small')).toHaveCount(0)
+  await expect(folder(page, 'Archive')).toContainText('Archive (0)')
+})
+
+test('keyboard: select with Enter, move onto a folder with the arrow keys', async ({ page }) => {
+  await item(page, 4).focus()
+  await page.keyboard.press('Enter')
+  await expectSelected(page, ['4'])
+
+  const zone = await folder(page, 'Archive').boundingBox()
+  for (let i = 0; i < 20; i++) {
+    const box = await item(page, 4).boundingBox()
+    if (box.x + box.width / 2 > zone.x + 20) break
+    await page.keyboard.press('ArrowRight', { delay: 100 }) // held like a person: faster presses count as moving, not dropping
+  }
+
+  await expect(log(page)).toContainText('dropped [4] on archive')
+  await expect(folder(page, 'Archive')).toContainText('Archive (1)')
+  await expect(item(page, 4).locator('small')).toHaveText('archive')
+})

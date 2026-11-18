@@ -4,7 +4,7 @@ import PubSub, { DSCallback } from './PubSub'
 import { DSInputDropZone, DSInputElement, Vect2 } from '../types'
 import { DSSettings } from '../stores/SettingsStore'
 import { isCollision } from '../methods/isCollision'
-import { DSInteractionPublishEventData, InteractionEvent } from './Interaction'
+import { DSInteractionPublishEventData } from './Interaction'
 
 export default class DropZones<E extends DSInputElement> {
   /** Get the drop zone by the zone element */
@@ -114,14 +114,16 @@ export default class DropZones<E extends DSInputElement> {
     }
   }
 
+  /** The zone under the pointer (or the keyboard-dragged items) when the last interaction ended.
+   * Looked up once in `stop`, the `DS:end` events use it too. */
+  public endTarget?: DropZone<E>
+
   private stop: DSCallback<DSInteractionPublishEventData> = ({
     isDragging,
     isDraggingKeyboard,
-    event,
   }) => {
-    if (!isDragging) return
-    const target = this.getTarget({ isDraggingKeyboard, event })
-    this._handleDrops(target)
+    this.endTarget = this.getTarget({ isDraggingKeyboard })
+    if (isDragging) this._handleDrops(this.endTarget)
   }
 
   /// ///////////////////////////////////////////////////////////////////////////////////
@@ -140,48 +142,34 @@ export default class DropZones<E extends DSInputElement> {
     return zone.itemsInside
   }
 
-  private getKeyboardItemCenter = (
-    isDraggingKeyboard?: boolean,
-    event?: InteractionEvent | KeyboardEvent
-  ) => {
-    if (!isDraggingKeyboard || !event) return
-    const rect = (event.target as DSInputElement)?.getBoundingClientRect()
-    // center of rect
-    const x = rect.left + rect.width / 2
-    const y = rect.top + rect.height / 2
-    return { x, y }
+  /** No pointer when dragging with the keyboard: the zone under any of the dragged (selected) items */
+  private getKeyboardTarget = () => {
+    const threshold = Math.min(this.Settings.dropTargetThreshold, 0.5)
+    for (const rect of this.DS.SelectedSet.rects.values()) {
+      const x = rect.left + rect.width / 2
+      const y = rect.top + rect.height / 2
+      const point = { left: x, right: x, top: y, bottom: y }
+      if (!this._zones.some((zone) => isCollision(zone.rect, point, threshold)))
+        continue
+      const zone = this.getTargetAt({ x, y })
+      if (zone) return zone
+    }
   }
 
   /** Returns first DropsZone under current pointer or coordinates if passed */
   public getTarget = ({
     coordinates,
     isDraggingKeyboard,
-    event,
   }: {
     coordinates?: Vect2
     isDraggingKeyboard?: boolean
-    event?: InteractionEvent | KeyboardEvent
-  }) => {
+  }): DropZone<E> | undefined => {
     if (!this._zones.length) return
-
-    let keyboardCoordinates: Vect2 | undefined
-    if (!coordinates && isDraggingKeyboard && event) {
-      keyboardCoordinates = this.getKeyboardItemCenter(
-        isDraggingKeyboard,
-        event
-      )
-    }
-
-    const x =
-      coordinates?.x ||
-      keyboardCoordinates?.x ||
-      this.DS.stores.PointerStore.currentVal.x
-    const y =
-      coordinates?.y ||
-      keyboardCoordinates?.y ||
-      this.DS.stores.PointerStore.currentVal.y
-
-    const elements = document.elementsFromPoint(x, y)
-    return this._getZoneByElementsFromPoint(elements, { x, y })
+    if (!coordinates && isDraggingKeyboard) return this.getKeyboardTarget()
+    return this.getTargetAt(coordinates ?? this.DS.stores.PointerStore.currentVal)
   }
+
+  /** The topmost zone at this point */
+  private getTargetAt = ({ x, y }: Vect2) =>
+    this._getZoneByElementsFromPoint(document.elementsFromPoint(x, y), { x, y })
 }

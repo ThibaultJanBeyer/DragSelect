@@ -1,3 +1,9 @@
+# 3.2.2
+
+- Fix dropping with the keyboard when the dragged items are not focused.
+- Fix every keyboard drag step firing `DS:end` twice.
+- Fix `ds.stop()` leaving the `keyup` listener on the document.
+
 # 3.2.1
 
 - The docs now ship with the package, as Markdown in `node_modules/dragselect/docs`, matching the installed version. Handy for you and for AI coding agents, see [coding agents](https://dragselect.com/docs/Coding-Agents).

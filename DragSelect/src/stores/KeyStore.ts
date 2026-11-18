@@ -63,7 +63,7 @@ export default class KeyStore<E extends DSInputElement> {
 
   public stop = () => {
     document.removeEventListener('keydown', this.keydown)
-    document.removeEventListener('keyup', this.reset)
+    document.removeEventListener('keyup', this.keyup)
     window.removeEventListener('blur', this.reset)
     this.reset()
   }

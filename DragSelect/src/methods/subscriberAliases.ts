@@ -123,7 +123,7 @@ const endExtraData = <E extends DSInputElement>(
   data: UsedPublishMappings<E>['Interaction:end'],
   DS: DragSelect<E>
 ) => {
-  const target = DS.DropZones.getTarget(data)
+  const target = DS.DropZones.endTarget
   return {
     ...data,
     ...(target ? { dropTarget: target.toObject() } : {}),

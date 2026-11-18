@@ -1,0 +1,25 @@
+<body>
+<link rel="stylesheet" href="basics.css">
+<style>
+    #zone { position: absolute; top: 300px; left: 0; width: 300px; height: 150px; background: #eee; }
+</style>
+<button id="item-1" class="item one">1</button>
+<button id="item-2" class="item two">2</button>
+<div id="item-3" class="item three">3</div>
+<div id="zone"></div>
+<script src="../../dist/DragSelect.js"></script>
+<script>
+    window.ends = []
+    window.starts = []
+
+    const ds = new DragSelect({
+        selectables: document.querySelectorAll('.item'),
+        dropZones: [{ element: document.querySelector('#zone'), id: 'zone' }],
+        keyboardDragSpeed: 50,
+    });
+    ds.subscribe('DS:start', ({ isDragging }) => window.starts.push({ isDragging }))
+    ds.subscribe('DS:end', ({ isDragging, items, dropTarget }) => {
+        window.ends.push({ isDragging, items: items.map(item => item.id), dropTarget: dropTarget?.id ?? null })
+    })
+</script>
+</body>

@@ -25,6 +25,7 @@ export default class DropZone<E extends DSInputElement> {
   private _rect?: DOMRect
   private _observers?: { cleanup: () => void }
   private _timeout?: ReturnType<typeof setTimeout>
+  private _rectTimeout?: ReturnType<typeof setTimeout>
   private _itemsDropped: E[] = []
   private _itemsInside?: E[]
   private DS: DragSelect<E>
@@ -181,7 +182,16 @@ export default class DropZone<E extends DSInputElement> {
   public get rect() {
     if (this.isDestroyed) return undefined
     if (this._rect) return this._rect
-    return (this._rect = this.element.getBoundingClientRect())
+    this._rect = this.element.getBoundingClientRect()
+
+    // since zones might move, we need to update the rect every X ms
+    if (this._rectTimeout) clearTimeout(this._rectTimeout)
+    this._rectTimeout = setTimeout(
+      () => (this._rect = undefined),
+      this.Settings.refreshMemoryRate
+    )
+
+    return this._rect
   }
 
   public get itemsDropped() {

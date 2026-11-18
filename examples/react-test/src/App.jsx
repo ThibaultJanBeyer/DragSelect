@@ -21,7 +21,7 @@ export default function App() {
       <h1>@dragselect/react</h1>
       <p>Drag to select. Drag selected items onto a folder. Hold Shift/Ctrl to add.</p>
       <Toolbar />
-      <Area>
+      <Area onMove={move}>
         <div className="grid">
           {files.map((f) => (
             <Item key={f.id} file={f} />
@@ -37,18 +37,22 @@ export default function App() {
   )
 }
 
-function Area({ children }) {
+function Area({ onMove, children }) {
   const ref = useDragSelectArea()
+  // dropped next to the folders: the items leave their folder
+  useDragSelectEvent('DS:end', ({ items, isDragging, dropTarget }) => {
+    if (isDragging && !dropTarget) onMove(items.map((el) => el.dataset.id), null)
+  })
   return <div ref={ref} className="area">{children}</div>
 }
 
 function Item({ file }) {
   const ref = useSelectable()
   return (
-    <div ref={ref} className="item" data-id={file.id}>
+    <button type="button" ref={ref} className="item" data-id={file.id}>
       {file.id}
       {file.folder && <small>{file.folder}</small>}
-    </div>
+    </button>
   )
 }
 

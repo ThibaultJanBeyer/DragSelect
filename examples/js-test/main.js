@@ -2,7 +2,8 @@ import DragSelect from 'dragselect'
 
 const grid = document.getElementById('grid')
 for (let i = 1; i <= 12; i++) {
-  const item = document.createElement('div')
+  const item = document.createElement('button')
+  item.type = 'button'
   item.className = 'item'
   item.dataset.id = String(i)
   item.textContent = i

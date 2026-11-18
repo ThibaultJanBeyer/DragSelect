@@ -31,7 +31,11 @@ function Gallery({ photos }) {
 
 function Photo({ photo }) {
   const ref = useSelectable()
-  return <img ref={ref} src={photo.url} data-id={photo.id} />
+  return (
+    <button type="button" ref={ref} data-id={photo.id}>
+      <img src={photo.url} alt="" />
+    </button>
+  )
 }
 
 function Toolbar() {
@@ -56,12 +60,16 @@ The settings are read once. To change them later, use `useDragSelect()?.setSetti
 
 ## 2. `useSelectable` goes on each item
 
-It gives you a ref. Put it on the element, and put whatever you need to find the item again on the element too, e.g. a `data-id`:
+It gives you a ref. Put it on the element, and put whatever you need to find the item again on the element too, e.g. a `data-id`. Use a `<button type="button">`, so it works with the [keyboard](#6-keyboard):
 
 ```tsx
 function File({ file }) {
   const ref = useSelectable()
-  return <li ref={ref} data-id={file.id}>{file.name}</li>
+  return (
+    <button type="button" ref={ref} data-id={file.id}>
+      {file.name}
+    </button>
+  )
 }
 ```
 
@@ -112,9 +120,9 @@ By default you can start a selection anywhere on the page. `useDragSelectArea` l
 function FileList({ files }) {
   const ref = useDragSelectArea()
   return (
-    <ul ref={ref}>
+    <div ref={ref}>
       {files.map((file) => <File key={file.id} file={file} />)}
-    </ul>
+    </div>
   )
 }
 ```
@@ -144,7 +152,7 @@ The id also ends up in CSS classes, so you can style things. More about that in 
 
 ## 6. Keyboard
 
-If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys. More in [accessibility](/docs/guided-examples/Accessibility).
+Make your items `<button type="button">`s. Then people can focus them with Tab, select them with Enter or Space and move them with the arrow keys, also onto drop zones. A `<div>`, `<li>` or `<img>` can't be focused, so it doesn't work with the keyboard. More in [accessibility](/docs/guided-examples/Accessibility).
 
 ## Good to know
 

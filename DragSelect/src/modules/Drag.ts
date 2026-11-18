@@ -122,7 +122,7 @@ export default class Drag<E extends DSInputElement> {
       isDraggingKeyboard: true,
       key,
     }
-    this.PS.publish(['Interaction:end:pre', 'Interaction:end'], publishData)
+    this.PS.publish('Interaction:end:pre', publishData)
   }
 
   private start = ({

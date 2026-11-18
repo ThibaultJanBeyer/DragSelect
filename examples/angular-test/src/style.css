@@ -2,11 +2,14 @@ body { font-family: system-ui, sans-serif; margin: 24px; }
 .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
 .area { border: 1px solid #ccc; padding: 16px; display: flex; gap: 24px; min-height: 260px; }
 .grid { display: grid; grid-template-columns: repeat(4, 64px); gap: 12px; align-content: start; }
-.item { width: 64px; height: 64px; display: grid; place-items: center; align-content: center; background: #eee; border-radius: 8px; user-select: none; }
+.item { width: 64px; height: 64px; display: grid; place-items: center; align-content: center; background: #eee; border-radius: 8px; user-select: none; border: 0; font: inherit; color: inherit; }
 .item small { font-size: 10px; color: #666; }
+.item:focus-visible { outline: 2px solid #4f7cff; outline-offset: 2px; }
 .item.ds-selected { background: #4f7cff; color: #fff; }
 .item.ds-selected small { color: #dde; }
 .folders { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+/* the folder components are the flex items, the zone fills them */
+app-folder { flex: 1; display: flex; }
 .zone { flex: 1; border: 2px dashed #aaa; border-radius: 8px; display: grid; place-items: center; color: #555; }
 .zone.ds-dropzone-ready { border-color: #4f7cff; }
 .log { background: #f6f6f6; padding: 8px; height: 120px; overflow: auto; }

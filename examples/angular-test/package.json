@@ -12,8 +12,8 @@
     "@angular/compiler": "^22.2.6",
     "@angular/core": "^22.2.6",
     "@angular/platform-browser": "^22.2.6",
-    "@dragselect/angular": "^3.1.6",
-    "dragselect": "^3.1.6",
+    "@dragselect/angular": "^3.2.1",
+    "dragselect": "^3.2.1",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.2"
   },
