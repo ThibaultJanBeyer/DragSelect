@@ -47,6 +47,7 @@ The documentation is being migrated to [https://dragselect.com/](https://dragsel
 
 - 🧑‍💻 Project Page: [https://dragselect.com/](https://dragselect.com/)
 - 📘 Docs Page: [https://dragselect.com/docs/intro](https://dragselect.com/docs/intro)
+- [React Guide](http://dragselect.com/docs/guided-examples/React), [Angular Guide](http://dragselect.com/docs/guided-examples/Angular)
 
 # Key-Features
 
