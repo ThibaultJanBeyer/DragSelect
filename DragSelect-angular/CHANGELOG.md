@@ -1,6 +1,6 @@
 # Changelog
 
-## NEXT
+## 3.2.0
 
 First release. Versions follow `dragselect`: `@dragselect/angular@X.Y.Z` pairs with `dragselect@X.Y.Z`.
 

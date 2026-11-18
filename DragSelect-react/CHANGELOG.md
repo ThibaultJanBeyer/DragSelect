@@ -1,6 +1,6 @@
 # Changelog
 
-## NEXT
+## 3.2.0
 
 - Fix: an area from `useDragSelectArea` that grows (e.g. after your data loads) now works everywhere in it. Before, clicks in the new part were ignored.
 - `useDropZone` adds and removes only its own zone now, so other zones keep what was dropped in them.

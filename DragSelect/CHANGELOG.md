@@ -1,4 +1,4 @@
-# NEXT
+# 3.2.0
 
 - Fix an `area` set after init (with `setSettings`) not being watched for size changes.
 - Add `getDropZones()`, `addDropZones()` and `removeDropZones()`: add or remove one drop zone without touching the others. Before, you could only replace all of them with `setSettings({ dropZones })`, which also reset what was dropped in the other zones.
