@@ -1,0 +1,19 @@
+{
+  "name": "dragselect-react-test",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@dragselect/react": "^3.1.6",
+    "dragselect": "^3.1.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.3.0",
+    "vite": "^8.3.7"
+  }
+}

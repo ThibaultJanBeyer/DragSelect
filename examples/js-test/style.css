@@ -1,0 +1,10 @@
+body { font-family: system-ui, sans-serif; margin: 24px; }
+.toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+#area { border: 1px solid #ccc; padding: 16px; display: flex; gap: 24px; min-height: 260px; }
+#grid { display: grid; grid-template-columns: repeat(4, 64px); gap: 12px; align-content: start; }
+.item { width: 64px; height: 64px; display: grid; place-items: center; background: #eee; border-radius: 8px; user-select: none; }
+.item.ds-selected { background: #4f7cff; color: #fff; }
+.zone { flex: 1; border: 2px dashed #aaa; border-radius: 8px; display: grid; place-items: center; color: #777; }
+.zone.ds-dropzone-ready { border-color: #4f7cff; }
+.item.ds-dropped-target-zone { outline: 2px solid #2bb673; }
+#log { background: #f6f6f6; padding: 8px; height: 120px; overflow: auto; }

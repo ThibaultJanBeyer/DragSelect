@@ -1,0 +1,60 @@
+<h1>&#64;dragselect/angular example</h1>
+
+<label>
+  <input
+    type="checkbox"
+    data-testid="draggable"
+    [checked]="draggable()"
+    (change)="draggable.set(!draggable())"
+  />
+  Drag &amp; drop
+</label>
+
+<section
+  class="board"
+  data-testid="board"
+  [dragSelect]="settings()"
+  dsArea
+  [(dsSelection)]="selected"
+  (dsEnd)="onEnd($event)"
+  #ds="dragSelect"
+>
+  <app-toolbar />
+
+  <!-- buttons, so they can be selected with Enter/Space and moved with the arrow keys -->
+  <div class="grid" role="listbox" aria-multiselectable="true" aria-label="Photos">
+    @for (photo of photos(); track photo.id) {
+      <button
+        type="button"
+        [dsSelectable]="photo"
+        role="option"
+        [attr.data-testid]="photo.id"
+        [style.--hue]="photo.hue"
+      >
+        {{ photo.name }}
+      </button>
+    }
+  </div>
+
+  <app-folder id="trash" name="Trash" (moved)="moveToTrash($event)" />
+
+  <!-- inside the area: without stopping the press, DragSelect would clear the selection first -->
+  <button
+    type="button"
+    data-testid="trash-selected"
+    (mousedown)="$event.stopPropagation()"
+    (touchstart)="$event.stopPropagation()"
+    (click)="moveToTrash(selected())"
+  >
+    Trash selected
+  </button>
+  <button type="button" data-testid="trash-selected-broken" (click)="moveToTrash(selected())">
+    Trash selected (without stopPropagation)
+  </button>
+</section>
+
+<!-- `ds` is typed DragSelectDirective<Photo>: inferred from [(dsSelection)] -->
+<p>First selected: <span data-testid="first">{{ ds.selection().at(0)?.name }}</span></p>
+<p>Selected: <span data-testid="selected">{{ selectedNames() }}</span></p>
+<p>Trash: <span data-testid="trash">{{ trashNames() }}</span></p>
+<p>Last end: <span data-testid="last-end">{{ lastEnd() }}</span></p>

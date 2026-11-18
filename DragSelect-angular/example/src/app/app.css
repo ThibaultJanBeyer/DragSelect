@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  font-family: system-ui, sans-serif;
+  padding: 16px;
+}
+
+.board {
+  position: relative;
+  padding: 48px 16px 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  user-select: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 120px);
+  gap: 16px;
+}
+
+.grid button {
+  height: 80px;
+  border: 0;
+  border-radius: 6px;
+  font: inherit;
+  background: hsl(calc(var(--hue) * 1deg) 70% 80%);
+}
+
+.grid button[aria-selected='true'] {
+  outline: 3px solid #333;
+}

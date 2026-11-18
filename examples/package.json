@@ -1,0 +1,17 @@
+{
+  "name": "dragselect-release-tests",
+  "private": true,
+  "type": "module",
+  "description": "Post-release smoke tests: installs the published packages from NPM and drives them in a real browser.",
+  "scripts": {
+    "install:latest": "npm --prefix js-test i dragselect@latest && npm --prefix react-test i dragselect@latest @dragselect/react@latest && npm --prefix angular-test i dragselect@latest @dragselect/angular@latest",
+    "test": "playwright test",
+    "test:latest": "npm run install:latest && playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1"
+  }
+}

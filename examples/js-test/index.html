@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DragSelect JS test</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <h1>DragSelect (vanilla JS)</h1>
+    <p>Drag to select. Drag selected items into the drop zone. Hold Shift/Ctrl to add.</p>
+    <div class="toolbar">
+      <button id="select-all">Select all</button>
+      <button id="clear">Clear</button>
+      <span id="count">0 selected</span>
+    </div>
+    <div id="area">
+      <div id="grid"></div>
+      <div id="zone" class="zone">Drop zone</div>
+    </div>
+    <pre id="log"></pre>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
