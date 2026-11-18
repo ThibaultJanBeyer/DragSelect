@@ -17,6 +17,7 @@
     "test:debug": "cd ./DragSelect && yarn test:debug",
     "test:react": "cd ./DragSelect-react && yarn test",
     "test:angular": "cd ./DragSelect-angular && yarn test",
+    "test:all": "node ./scripts/test-all.js",
     "start:docs": "yarn build:react && cd ./www && yarn start",
     "build:docs": "cd www && yarn && yarn build && cd ..",
     "build:dragselect": "cd ./DragSelect && yarn build -- --ci && cd ..",

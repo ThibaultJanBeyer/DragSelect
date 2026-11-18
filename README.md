@@ -28,7 +28,7 @@
 Select elements by dragging a box around them, like on your desktop, then drag and drop them. No dependencies, with official [React](https://dragselect.com/docs/guided-examples/React) and [Angular](https://dragselect.com/docs/guided-examples/Angular) bindings.
 
 - 🧑‍💻 Project page and demo: [https://dragselect.com/](https://dragselect.com/)
-- 📘 Docs: [https://dragselect.com/docs/intro](https://dragselect.com/docs/intro), or see the [list of all docs](#docs) below
+- 📘 Docs: [https://dragselect.com/docs/intro](https://dragselect.com/docs/intro)
 
 # TOC
 
