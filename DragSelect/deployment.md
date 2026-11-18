@@ -57,3 +57,21 @@ yarn publish:wrappers
 ## www
 
 Make sure that www pins the latest react version.
+
+## All Together
+
+```
+# 1. core
+cd DragSelect
+yarn build && yarn test
+npm version minor   # → 3.2.0, includes the changelog edit if you commit it first
+yarn build
+git push --follow-tags
+npm publish
+cd ..
+
+# 2. wrappers: syncs versions/peer deps to 3.2.0, runs yarn, tests, builds, and the Angular browser tests
+yarn release:wrappers
+git add -A && git commit -m "release wrappers 3.2.0" && git push
+yarn publish:wrappers
+```

@@ -25,7 +25,7 @@
     "prebuild": "yarn initial:ci",
     "build": "yarn build:dragselect && yarn build:react && yarn test:react && yarn build:angular && yarn test:angular && yarn build:docs && node ./build.js && yarn test",
     "release:wrappers": "node ./scripts/release-wrappers.js",
-    "publish:wrappers": "cd ./DragSelect-react && npm publish && cd ../DragSelect-angular && npm publish ./dist"
+    "publish:wrappers": "cd ./DragSelect-react && npm publish --registry=https://registry.npmjs.org/ && cd ../DragSelect-angular && npm publish ./dist --registry=https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",
