@@ -18,10 +18,6 @@ If tests were successful, the next step is to publish the new version on `npm`:
 ```
 yarn build
 yarn test
-```
-- Build is necessary for npm packages (since `dist` will be deployed to npm but is ignored in repo)
-
-```
 npm version patch
 yarn build
 ```
