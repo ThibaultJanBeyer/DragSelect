@@ -21,6 +21,8 @@ declare class DropZone<E extends DSInputElement> {
     private Settings;
     private isDestroyed;
     private _parentNodes?;
+    /** so `destroy` can unsubscribe */
+    private _classSubscription?;
     constructor({ DS, PS, id, element, droppables, }: {
         DS: DragSelect<E>;
         PS: PubSub<E>;
@@ -612,10 +614,10 @@ declare class DropZones<E extends DSInputElement> {
     private _zoneByElement;
     /** Get the drop zone by the zone id */
     private _zoneById;
-    /** Get the drop zones by one zone item */
-    private _zonesByDroppable;
-    /** Get the drop zones by one zone item */
-    private _zones?;
+    /** All drop zones, in the order they were added */
+    private _zones;
+    /** Each zone as it was passed in, for `get` */
+    private _inputs;
     private DS;
     private PS;
     private Settings;
@@ -623,7 +625,19 @@ declare class DropZones<E extends DSInputElement> {
         DS: DragSelect<E>;
         PS: PubSub<E>;
     });
+    /** Replaces all drop zones (the `dropZones` setting) */
     private setDropZones;
+    /** Adds drop zones. A zone with the same id or element as an existing one replaces it. */
+    add: (zones: DSInputDropZone<E>[]) => void;
+    /** Removes drop zones by id or by element. The other zones are not touched. */
+    remove: (idsOrElements: (string | E)[]) => void;
+    /** The current drop zones, as they were passed in */
+    get: () => DSInputDropZone<E>[];
+    /** Zones removed by `stopZones` (when DragSelect stops), added back by `startZones` */
+    private _stopped;
+    /** Removes the zones (and their listeners) but remembers them for `startZones` */
+    stopZones: () => void;
+    startZones: () => void;
     private _handleDrops;
     private _getZoneByElementsFromPoint;
     private stop;
@@ -912,6 +926,19 @@ declare class DragSelect<E extends DSInputElement = DSInputElement> {
     isMultiSelect: (event: MouseEvent | TouchEvent | PointerEvent | KeyboardEvent) => boolean;
     /** Whether the user is currently drag n dropping elements (instead of selection) */
     isDragging: () => boolean;
+    /** Returns the current drop zones */
+    getDropZones: () => DSInputDropZone<E>[];
+    /**
+     * Adds one or more drop zones, without touching the others.
+     * A zone with the same id or element as an existing one replaces it.
+     * @return the current drop zones
+     */
+    addDropZones: (zones: DSInputDropZone<E> | DSInputDropZone<E>[]) => DSInputDropZone<E>[];
+    /**
+     * Removes one or more drop zones, by id or by element, without touching the others.
+     * @return the current drop zones
+     */
+    removeDropZones: (zones: string | E | (string | E)[]) => DSInputDropZone<E>[];
     /** Returns first DropsZone under coordinates, if no coordinated provided current pointer coordinates are used */
     getZoneByCoordinates: (coordinates?: Vect2) => DSDropZone<E> | undefined;
     /** Returns itemsDropped into zone by zone id */

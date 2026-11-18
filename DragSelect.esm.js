@@ -1,6 +1,6 @@
 /***
 
- ~~~ Version 3.1.6 ~~~
+ ~~~ Version 3.2.0 ~~~
 
  ******************************************
 
@@ -217,8 +217,15 @@ class Area {
             computedStyle: this.computedStyle,
             node: this._node,
         });
+        // when the area changes after init, watch the new area (and its parents) instead of the old one
+        if (this._observers) {
+            this._observers.cleanup();
+            this.init();
+        }
         // first immediate debounce to update values after dom-update
         setTimeout(() => {
+            if (this.DS.stopped)
+                return;
             this.PS.publish('Area:modified:pre', { item: this.HTMLNode });
             this.reset();
             this.PS.publish('Area:modified', { item: this.HTMLNode });
@@ -259,6 +266,7 @@ class Area {
     };
     stop = () => {
         this._observers?.cleanup();
+        this._observers = undefined;
         this.reset();
     };
     /// ///////////////////////////////////////////////////////////////////////////////////
@@ -678,7 +686,9 @@ const isCollision = (el1, el2, percent = 0) => {
 const ensureArray = input => {
     if (!input)
         return [];
-    if (!Array.isArray(input) && typeof input[Symbol.iterator] !== 'function')
+    // strings are iterable too, but a string is one item (e.g. an id), not a list of characters
+    if (typeof input === 'string' ||
+        (!Array.isArray(input) && typeof input[Symbol.iterator] !== 'function'))
         return [input];
     return [...new Set([...input])];
 };
@@ -697,6 +707,8 @@ class DropZone {
     Settings;
     isDestroyed = false;
     _parentNodes;
+    /** so `destroy` can unsubscribe */
+    _classSubscription;
     constructor({ DS, PS, id, element, droppables, }) {
         this.DS = DS;
         this.PS = PS;
@@ -706,7 +718,7 @@ class DropZone {
         if (droppables)
             this.droppables = ensureArray(droppables);
         this.element.classList.add(`${this.Settings.dropZoneClass}`);
-        this.PS.subscribe('Settings:updated:dropZoneClass', ({ settings }) => {
+        this._classSubscription = this.PS.subscribe('Settings:updated:dropZoneClass', ({ settings }) => {
             if (!this.element)
                 return;
             this.element.classList.remove(settings['dropZoneClass:pre']);
@@ -794,6 +806,7 @@ class DropZone {
     };
     destroy() {
         this._observers?.cleanup();
+        this.PS.unsubscribe('Settings:updated:dropZoneClass', null, this._classSubscription);
         this.element.classList.remove(`${this.Settings.dropZoneClass}`);
         this.element.classList.remove(`${this.Settings.dropZoneTargetClass}`);
         this.element.classList.remove(`${this.Settings.dropZoneReadyClass}`);
@@ -864,10 +877,10 @@ class DropZones {
     _zoneByElement = new Map();
     /** Get the drop zone by the zone id */
     _zoneById = new Map();
-    /** Get the drop zones by one zone item */
-    _zonesByDroppable = new Map();
-    /** Get the drop zones by one zone item */
-    _zones;
+    /** All drop zones, in the order they were added */
+    _zones = [];
+    /** Each zone as it was passed in, for `get` */
+    _inputs = new Map();
     DS;
     PS;
     Settings;
@@ -879,25 +892,55 @@ class DropZones {
         this.setDropZones({ dropZones: this.Settings.dropZones });
         this.PS.subscribe('Interaction:end', this.stop);
     }
+    /** Replaces all drop zones (the `dropZones` setting) */
     setDropZones = ({ dropZones, }) => {
         if (!dropZones)
             return;
-        if (this._zones)
-            this._zones.forEach((zone) => zone.destroy());
-        this._zones = dropZones.map((zone) => new DropZone({ DS: this.DS, PS: this.PS, ...zone }));
-        this._zones.forEach((zone) => {
+        this.remove(this._zones.map((zone) => zone.element));
+        this.add(dropZones);
+    };
+    /** Adds drop zones. A zone with the same id or element as an existing one replaces it. */
+    add = (zones) => {
+        this.remove(zones.flatMap((zone) => [zone.id, zone.element]));
+        zones.forEach((input) => {
+            const zone = new DropZone({ DS: this.DS, PS: this.PS, ...input });
+            this._zones.push(zone);
+            this._inputs.set(zone, input);
             this._zoneByElement.set(zone.element, zone);
             this._zoneById.set(zone.id, zone);
-            zone.droppables.forEach((droppable) => {
-                const zones = this._zonesByDroppable.get(droppable);
-                if (!zones?.length)
-                    return this._zonesByDroppable.set(droppable, [zone]);
-                this._zonesByDroppable.set(droppable, [...new Set([...zones, zone])]);
-            });
         });
     };
+    /** Removes drop zones by id or by element. The other zones are not touched. */
+    remove = (idsOrElements) => {
+        const match = new Set(idsOrElements);
+        const removed = this._zones.filter((zone) => match.has(zone.id) || match.has(zone.element));
+        if (!removed.length)
+            return;
+        removed.forEach((zone) => {
+            zone.destroy();
+            this._zoneByElement.delete(zone.element);
+            this._zoneById.delete(zone.id);
+            this._inputs.delete(zone);
+        });
+        this._zones = this._zones.filter((zone) => !removed.includes(zone));
+    };
+    /** The current drop zones, as they were passed in */
+    get = () => this._zones.map((zone) => ({ ...this._inputs.get(zone) }));
+    /** Zones removed by `stopZones` (when DragSelect stops), added back by `startZones` */
+    _stopped = [];
+    /** Removes the zones (and their listeners) but remembers them for `startZones` */
+    stopZones = () => {
+        this._stopped = this.get();
+        this.remove(this._zones.map((zone) => zone.element));
+    };
+    startZones = () => {
+        if (!this._stopped.length)
+            return;
+        this.add(this._stopped);
+        this._stopped = [];
+    };
     _handleDrops = (target) => {
-        this._zones?.forEach((zone) => {
+        this._zones.forEach((zone) => {
             if (zone !== target)
                 zone.handleNoDrop();
         });
@@ -945,7 +988,7 @@ class DropZones {
     };
     /** Returns first DropsZone under current pointer or coordinates if passed */
     getTarget = ({ coordinates, isDraggingKeyboard, event, }) => {
-        if (!this._zones?.length)
+        if (!this._zones.length)
             return;
         let keyboardCoordinates;
         if (!coordinates && isDraggingKeyboard && event) {
@@ -2518,6 +2561,7 @@ class DragSelect {
     start = () => {
         this.stopped = false;
         this.Interaction.init();
+        this.DropZones.startZones();
     };
     /**
      * Complete function teardown
@@ -2540,6 +2584,7 @@ class DragSelect {
         this.stores.KeyStore.stop();
         this.stores.PointerStore.stop();
         this.stores.ScrollStore.stop();
+        this.DropZones.stopZones();
         if (remove)
             this.SelectableSet.clear();
         if (fromSelection)
@@ -2699,6 +2744,25 @@ class DragSelect {
     isMultiSelect = (event) => this.stores.KeyStore.isMultiSelectKeyPressed(event);
     /** Whether the user is currently drag n dropping elements (instead of selection) */
     isDragging = () => this.Interaction.isDragging;
+    /** Returns the current drop zones */
+    getDropZones = () => this.DropZones.get();
+    /**
+     * Adds one or more drop zones, without touching the others.
+     * A zone with the same id or element as an existing one replaces it.
+     * @return the current drop zones
+     */
+    addDropZones = (zones) => {
+        this.DropZones.add(ensureArray(zones));
+        return this.getDropZones();
+    };
+    /**
+     * Removes one or more drop zones, by id or by element, without touching the others.
+     * @return the current drop zones
+     */
+    removeDropZones = (zones) => {
+        this.DropZones.remove(ensureArray(zones));
+        return this.getDropZones();
+    };
     /** Returns first DropsZone under coordinates, if no coordinated provided current pointer coordinates are used */
     getZoneByCoordinates = (coordinates) => this.DropZones.getTarget({ coordinates })?.toObject();
     /** Returns itemsDropped into zone by zone id */
