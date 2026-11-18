@@ -248,6 +248,7 @@ This adds a DragSelect skill to your agent (Claude Code, Cursor, Codex and [many
 
 - which package to use (`dragselect`, `@dragselect/react` or `@dragselect/angular`)
 - to look things up in the docs of your installed version instead of guessing
+- to prefer `<button>`s, so they work with the keyboard
 - the things that are easy to get wrong, like buttons inside the area or adding a single drop zone
 
 ### 2. The docs are in your node_modules
@@ -310,7 +311,7 @@ type Photo = { id: string; url: string }
   template: `
     <div dragSelect [(dsSelection)]="selected" #ds="dragSelect">
       @for (photo of photos(); track photo.id) {
-        <img [dsSelectable]="photo" [src]="photo.url" />
+        <button type="button" [dsSelectable]="photo"><img [src]="photo.url" alt="" /></button>
       }
       <p>{{ selected().length }} selected</p>
       <button (click)="ds.selectAll()">Select all</button>
@@ -338,11 +339,11 @@ If the settings change, DragSelect gets the new ones. If you don't want an extra
 
 ### 2. `dsSelectable` goes on each item
 
-Give it the thing you want back when it's selected. That can be the whole object or just an id:
+Give it the thing you want back when it's selected. That can be the whole object or just an id. Use a `<button type="button">`, so it works with the [keyboard](#6-accessibility):
 
 ```html
-<li [dsSelectable]="file">{{ file.name }}</li>
-<li [dsSelectable]="file.id">{{ file.name }}</li>
+<button type="button" [dsSelectable]="file">{{ file.name }}</button>
+<button type="button" [dsSelectable]="file.id">{{ file.name }}</button>
 ```
 
 Items are compared with `===`. So if you reload your list and get new objects, use the id.
@@ -350,7 +351,7 @@ Items are compared with `===`. So if you reload your list and get new objects, u
 Selected items get the `ds-selected` class, so most of the time CSS is enough. If you need the state in the template, use `selected()`:
 
 ```html
-<li [dsSelectable]="file" #item="dsSelectable" [class.active]="item.selected()">…</li>
+<button type="button" [dsSelectable]="file" #item="dsSelectable" [class.active]="item.selected()">…</button>
 ```
 
 ### 3. The selection
@@ -459,7 +460,7 @@ The id also ends up in CSS classes, so you can style things. More about that in 
 
 Use `role="listbox"` on the wrapper and `role="option"` on the items, and `dsSelectable` keeps `aria-selected` up to date for screen readers. It only does that for roles where `aria-selected` is allowed (`option`, `gridcell`, `row`, `tab`, `treeitem`, `columnheader`, `rowheader`).
 
-If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys. More in [accessibility](/docs/guided-examples/Accessibility).
+Make your items `<button type="button">`s. Then people can focus them with Tab, select them with Enter or Space and move them with the arrow keys, also onto drop zones. A `<div>`, `<li>` or `<img>` can't be focused, so it doesn't work with the keyboard. More in [accessibility](/docs/guided-examples/Accessibility).
 
 ### Good to know
 
@@ -799,7 +800,11 @@ function Gallery({ photos }) {
 
 function Photo({ photo }) {
   const ref = useSelectable()
-  return <img ref={ref} src={photo.url} data-id={photo.id} />
+  return (
+    <button type="button" ref={ref} data-id={photo.id}>
+      <img src={photo.url} alt="" />
+    </button>
+  )
 }
 
 function Toolbar() {
@@ -824,12 +829,16 @@ The settings are read once. To change them later, use `useDragSelect()?.setSetti
 
 ### 2. `useSelectable` goes on each item
 
-It gives you a ref. Put it on the element, and put whatever you need to find the item again on the element too, e.g. a `data-id`:
+It gives you a ref. Put it on the element, and put whatever you need to find the item again on the element too, e.g. a `data-id`. Use a `<button type="button">`, so it works with the [keyboard](#6-keyboard):
 
 ```tsx
 function File({ file }) {
   const ref = useSelectable()
-  return <li ref={ref} data-id={file.id}>{file.name}</li>
+  return (
+    <button type="button" ref={ref} data-id={file.id}>
+      {file.name}
+    </button>
+  )
 }
 ```
 
@@ -880,9 +889,9 @@ By default you can start a selection anywhere on the page. `useDragSelectArea` l
 function FileList({ files }) {
   const ref = useDragSelectArea()
   return (
-    <ul ref={ref}>
+    <div ref={ref}>
       {files.map((file) => <File key={file.id} file={file} />)}
-    </ul>
+    </div>
   )
 }
 ```
@@ -912,7 +921,7 @@ The id also ends up in CSS classes, so you can style things. More about that in 
 
 ### 6. Keyboard
 
-If your items are `<button>`s, people can select them with Enter or Space and move them with the arrow keys. More in [accessibility](/docs/guided-examples/Accessibility).
+Make your items `<button type="button">`s. Then people can focus them with Tab, select them with Enter or Space and move them with the arrow keys, also onto drop zones. A `<div>`, `<li>` or `<img>` can't be focused, so it doesn't work with the keyboard. More in [accessibility](/docs/guided-examples/Accessibility).
 
 ### Good to know
 

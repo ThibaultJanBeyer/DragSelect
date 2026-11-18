@@ -14,6 +14,7 @@ declare class DropZone<E extends DSInputElement> {
     private _rect?;
     private _observers?;
     private _timeout?;
+    private _rectTimeout?;
     private _itemsDropped;
     private _itemsInside?;
     private DS;
@@ -98,7 +99,7 @@ declare class Interaction<E extends DSInputElement> {
         scroll_multiplier?: number | undefined;
     }) => void;
     reset: (event: InteractionEvent) => void;
-    _reset: (event: InteractionEvent | KeyboardEvent) => void;
+    _reset: (data: DSInteractionPublishEventData) => void;
     private setAreaEventListeners;
     private removeAreaEventListeners;
     private setDocEventListeners;
@@ -640,16 +641,21 @@ declare class DropZones<E extends DSInputElement> {
     startZones: () => void;
     private _handleDrops;
     private _getZoneByElementsFromPoint;
+    /** The zone under the pointer (or the keyboard-dragged items) when the last interaction ended.
+     * Looked up once in `stop`, the `DS:end` events use it too. */
+    endTarget?: DropZone<E>;
     private stop;
     getItemsDroppedById: (zoneId: string) => void | E[];
     getItemsInsideById: (zoneId: string, addClasses?: boolean) => void | E[];
-    private getKeyboardItemCenter;
+    /** No pointer when dragging with the keyboard: the zone under any of the dragged (selected) items */
+    private getKeyboardTarget;
     /** Returns first DropsZone under current pointer or coordinates if passed */
-    getTarget: ({ coordinates, isDraggingKeyboard, event, }: {
+    getTarget: ({ coordinates, isDraggingKeyboard, }: {
         coordinates?: Vect2 | undefined;
         isDraggingKeyboard?: boolean | undefined;
-        event?: InteractionEvent | KeyboardEvent | undefined;
     }) => DropZone<E> | undefined;
+    /** The topmost zone at this point */
+    private getTargetAt;
 }
 
 declare class ScrollStore<E extends DSInputElement> {

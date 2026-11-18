@@ -1,6 +1,6 @@
 /***
 
- ~~~ Version 3.2.1 ~~~
+ ~~~ Version 3.2.2 ~~~
 
  ******************************************
 
@@ -579,7 +579,7 @@ class Drag {
             isDraggingKeyboard: true,
             key,
         };
-        this.PS.publish(['Interaction:end:pre', 'Interaction:end'], publishData);
+        this.PS.publish('Interaction:end:pre', publishData);
     };
     start = ({ isDragging, isDraggingKeyboard, }) => {
         if (!isDragging || isDraggingKeyboard)
@@ -700,6 +700,7 @@ class DropZone {
     _rect;
     _observers;
     _timeout;
+    _rectTimeout;
     _itemsDropped = [];
     _itemsInside;
     DS;
@@ -832,7 +833,12 @@ class DropZone {
             return undefined;
         if (this._rect)
             return this._rect;
-        return (this._rect = this.element.getBoundingClientRect());
+        this._rect = this.element.getBoundingClientRect();
+        // since zones might move, we need to update the rect every X ms
+        if (this._rectTimeout)
+            clearTimeout(this._rectTimeout);
+        this._rectTimeout = setTimeout(() => (this._rect = undefined), this.Settings.refreshMemoryRate);
+        return this._rect;
     }
     get itemsDropped() {
         if (this.isDestroyed)
@@ -955,11 +961,13 @@ class DropZones {
                 return zone;
         }
     };
-    stop = ({ isDragging, isDraggingKeyboard, event, }) => {
-        if (!isDragging)
-            return;
-        const target = this.getTarget({ isDraggingKeyboard, event });
-        this._handleDrops(target);
+    /** The zone under the pointer (or the keyboard-dragged items) when the last interaction ended.
+     * Looked up once in `stop`, the `DS:end` events use it too. */
+    endTarget;
+    stop = ({ isDragging, isDraggingKeyboard, }) => {
+        this.endTarget = this.getTarget({ isDraggingKeyboard });
+        if (isDragging)
+            this._handleDrops(this.endTarget);
     };
     /// ///////////////////////////////////////////////////////////////////////////////////
     // Getters
@@ -977,32 +985,30 @@ class DropZones {
             zone.handleItemsInsideClasses();
         return zone.itemsInside;
     };
-    getKeyboardItemCenter = (isDraggingKeyboard, event) => {
-        if (!isDraggingKeyboard || !event)
-            return;
-        const rect = event.target?.getBoundingClientRect();
-        // center of rect
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + rect.height / 2;
-        return { x, y };
+    /** No pointer when dragging with the keyboard: the zone under any of the dragged (selected) items */
+    getKeyboardTarget = () => {
+        const threshold = Math.min(this.Settings.dropTargetThreshold, 0.5);
+        for (const rect of this.DS.SelectedSet.rects.values()) {
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+            const point = { left: x, right: x, top: y, bottom: y };
+            if (!this._zones.some((zone) => isCollision(zone.rect, point, threshold)))
+                continue;
+            const zone = this.getTargetAt({ x, y });
+            if (zone)
+                return zone;
+        }
     };
     /** Returns first DropsZone under current pointer or coordinates if passed */
-    getTarget = ({ coordinates, isDraggingKeyboard, event, }) => {
+    getTarget = ({ coordinates, isDraggingKeyboard, }) => {
         if (!this._zones.length)
             return;
-        let keyboardCoordinates;
-        if (!coordinates && isDraggingKeyboard && event) {
-            keyboardCoordinates = this.getKeyboardItemCenter(isDraggingKeyboard, event);
-        }
-        const x = coordinates?.x ||
-            keyboardCoordinates?.x ||
-            this.DS.stores.PointerStore.currentVal.x;
-        const y = coordinates?.y ||
-            keyboardCoordinates?.y ||
-            this.DS.stores.PointerStore.currentVal.y;
-        const elements = document.elementsFromPoint(x, y);
-        return this._getZoneByElementsFromPoint(elements, { x, y });
+        if (!coordinates && isDraggingKeyboard)
+            return this.getKeyboardTarget();
+        return this.getTargetAt(coordinates ?? this.DS.stores.PointerStore.currentVal);
     };
+    /** The topmost zone at this point */
+    getTargetAt = ({ x, y }) => this._getZoneByElementsFromPoint(document.elementsFromPoint(x, y), { x, y });
 }
 
 class Interaction {
@@ -1025,7 +1031,7 @@ class Interaction {
         this.PS.subscribe('Selectable:pointer', ({ event }) => this.start(event));
         this.PS.subscribe('Interaction:start:pre', ({ event }) => this._start(event));
         this.PS.subscribe('Interaction:init:pre', this._init);
-        this.PS.subscribe('Interaction:end:pre', ({ event }) => this._reset(event));
+        this.PS.subscribe('Interaction:end:pre', this._reset);
         this.PS.subscribe('Area:scroll', this.update);
     }
     init = () => this.PS.publish('Interaction:init:pre', { init: true });
@@ -1122,12 +1128,11 @@ class Interaction {
         event,
         isDragging: this.isDragging,
     });
-    _reset = (event) => {
-        const { isDragging } = this;
+    _reset = (data) => {
         this.isInteracting = false;
         this.isDragging = false;
         this.removeDocEventListeners();
-        this.PS.publish('Interaction:end', { event, isDragging });
+        this.PS.publish('Interaction:end', data);
     };
     //////////////////////////////////////////////////////////////////////////////////////
     // Event Listeners
@@ -1224,7 +1229,7 @@ class KeyStore {
     };
     stop = () => {
         document.removeEventListener('keydown', this.keydown);
-        document.removeEventListener('keyup', this.reset);
+        document.removeEventListener('keyup', this.keyup);
         window.removeEventListener('blur', this.reset);
         this.reset();
     };
@@ -2395,7 +2400,7 @@ const deprecatedNamesMap = {
     precallback: 'DS:end:pre',
 };
 const endExtraData = (data, DS) => {
-    const target = DS.DropZones.getTarget(data);
+    const target = DS.DropZones.endTarget;
     return {
         ...data,
         ...(target ? { dropTarget: target.toObject() } : {}),
