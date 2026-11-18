@@ -1,6 +1,6 @@
 {
   "name": "@dragselect/angular",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Angular directives for DragSelect: drag-to-select and drag-and-drop for Angular components.",
   "scripts": {
     "build": "ng-packagr -p ng-package.json -c tsconfig.lib.json",
@@ -11,7 +11,7 @@
   "peerDependencies": {
     "@angular/common": ">=19.0.0",
     "@angular/core": ">=19.0.0",
-    "dragselect": "^3.2.0"
+    "dragselect": "^3.2.1"
   },
   "devDependencies": {
     "@angular/common": "^22.2.6",
@@ -20,7 +20,7 @@
     "@angular/core": "^22.2.6",
     "@angular/platform-browser": "^22.2.6",
     "@angular/platform-server": "^22.2.6",
-    "dragselect": "^3.2.0",
+    "dragselect": "^3.2.1",
     "jsdom": "^25.0.1",
     "ng-packagr": "^22.2.6",
     "rxjs": "^7.8.1",

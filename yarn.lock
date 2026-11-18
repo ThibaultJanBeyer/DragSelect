@@ -7089,11 +7089,6 @@ dot-prop@^6.0.1:
   dependencies:
     is-obj "^2.0.0"
 
-dragselect@3.2.0:
-  version "3.2.0"
-  resolved "https://registry.npmjs.org/dragselect/-/dragselect-3.2.0.tgz"
-  integrity sha512-U1YtUp4KaDPRqGK+VlTRKsm1Mi/ihhH6S86obBOuIkI64ay2j0QDr9cL/SdpHriI3WycqTPL+GtQx+ICWErExQ==
-
 dts-resolver@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/dts-resolver/-/dts-resolver-3.0.0.tgz"
