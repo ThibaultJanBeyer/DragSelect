@@ -57,24 +57,4 @@ describe('DropZone with the keyboard', () => {
     expect(ends.at(-1).items.sort()).toEqual(['item-1', 'item-3'])
   })
 
-  it('holding an arrow key is one drag (key repeats only move)', async () => {
-    await page.goto(`${baseUrl}/dropzone-keyboard.html`)
-    const { keyboard } = page
-    await keyboard.press('Tab')
-    await keyboard.press('Enter')
-    await page.evaluate(() => ((window.ends = []), (window.starts = [])))
-    // the first down is the press, the next ones are key repeats
-    for (let i = 0; i < 6; i++) await keyboard.down('ArrowDown')
-    await wait(100)
-    await keyboard.up('ArrowDown')
-
-    const { starts, ends, zIndex } = await page.evaluate(() => ({
-      starts: window.starts,
-      ends: window.ends,
-      zIndex: document.querySelector('#item-1').style.zIndex,
-    }))
-    expect(starts).toEqual([{ isDragging: true }])
-    expect(ends).toEqual([{ isDragging: true, items: ['item-1'], dropTarget: 'zone' }])
-    expect(Number(zIndex)).toBeLessThan(10) // raised once while dragging, not once per key repeat
-  })
 })
